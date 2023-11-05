@@ -3,3 +3,4 @@
 - react-natvie : 0.71.4
 - react : 18.2.0
 - typescript : 4.8.4
+- ruby : 2.7.6
