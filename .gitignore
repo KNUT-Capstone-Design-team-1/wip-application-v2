@@ -70,6 +70,9 @@ local.properties
 /packages/react-native/android/*
 !/packages/react-native/android/README.md
 
+# IOS
+ios/Pods/*
+
 # Node
 node_modules
 *.log
@@ -158,3 +161,7 @@ vendor/
 
 # CircleCI
 .circleci/generated_config.yml
+
+# Keystore
+*.jks
+*.pem

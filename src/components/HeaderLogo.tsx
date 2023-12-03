@@ -1,9 +1,9 @@
 import { StyleSheet, View, Image } from 'react-native';
 
 const HeaderLogo = () => {
-    
+
     const styles = StyleSheet.create({
-        headerLogo: { width: 120, height: 55, marginTop: 10 },
+        headerLogo: { width: 120, height: 55, marginTop: 25 },
     });
 
     return (

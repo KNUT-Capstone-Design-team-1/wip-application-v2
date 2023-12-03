@@ -12,7 +12,7 @@ import Home from '@screens/Home';
 
 const Navigation = (): JSX.Element => {
 
-    const Stack: JSX.Element = createNativeStackNavigator();
+    const Stack: any = createNativeStackNavigator();
     const screenOptions = ScreenOptions.initScreenOptions();
 
     /* 상태바 스타일 변경 */

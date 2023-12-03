@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 
-const HeaderBackground = ({ children }: object): JSX.Element => {
+const HeaderBackground = ({ children }: any): JSX.Element => {
 
     const styles = StyleSheet.create({
         headerBackground: {

@@ -12,4 +12,4 @@ const initScreenOptions = (): object => {
     return screenOptions;
 }
 
-export default {initScreenOptions};
+export default { initScreenOptions };
