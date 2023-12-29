@@ -1,14 +1,20 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
     StyleSheet,
-    BackHandler,
-    Text,
     View,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import LinearGradient from 'react-native-linear-gradient';
 
 import HeaderBackground from '@components/HeaderBackground';
+import HeaderLogo from '@/components/HeaderLogo';
+import { getStatusBarHeight } from 'react-native-safearea-height';
+import { StatusBar, Platform } from 'react-native';
+
+/* 기기 별 상태바 높이 계산 */
+const StatusBarHeight: number = (Platform.OS === 'ios' ? getStatusBarHeight(true) : StatusBar.currentHeight) ?? 0;
+/* OS 별 헤더 높이 */
+const HeaderHeight: number = (Platform.OS === 'ios' ? 10 : 40) ?? 0;
 
 
 const WebViewArea = (): JSX.Element => {
@@ -18,7 +24,14 @@ const WebViewArea = (): JSX.Element => {
     const [currentUrl, setCurrentUrl] = useState<string>('');
 
     const styles = StyleSheet.create({
-        viewWrap: {
+        headerTitleWrapper: {
+            height: StatusBarHeight + HeaderHeight,
+            marginTop: StatusBarHeight + (HeaderHeight / 2),
+            marginBottom: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        viewWrapper: {
             flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
@@ -29,7 +42,10 @@ const WebViewArea = (): JSX.Element => {
 
     return (
         <HeaderBackground>
-            <View style={styles.viewWrap}>
+            <View style={styles.headerTitleWrapper}>
+                <HeaderLogo />
+            </View>
+            <View style={styles.viewWrapper}>
                 {/* 웹뷰 */}
                 <WebView
                     source={{ uri: BASE_URL }}

@@ -9,82 +9,82 @@
 9        android:targetSdkVersion="33" />
 10
 11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-11-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/debug/AndroidManifest.xml:5:5-77
-11-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/debug/AndroidManifest.xml:5:22-75
+11-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/debug/AndroidManifest.xml:5:5-77
+11-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/debug/AndroidManifest.xml:5:22-75
 12    <uses-permission android:name="android.permission.INTERNET" />
-12-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:3:5-67
-12-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:3:22-64
+12-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:3:5-67
+12-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:3:22-64
 13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 13-->[com.facebook.flipper:flipper:0.125.0] /Users/jongyeon/.gradle/caches/transforms-3/395a660dbeae9fac8654b9ab15b5a051/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:16:5-76
 13-->[com.facebook.flipper:flipper:0.125.0] /Users/jongyeon/.gradle/caches/transforms-3/395a660dbeae9fac8654b9ab15b5a051/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:16:22-73
 14
 15    <application
-15-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:5:5-24:19
+15-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:5:5-24:19
 16        android:name="com.whatispill.MainApplication"
-16-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:6:7-38
+16-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:6:7-38
 17        android:allowBackup="false"
-17-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:10:7-34
+17-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:10:7-34
 18        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 18-->[androidx.core:core:1.7.0] /Users/jongyeon/.gradle/caches/transforms-3/f8167cb761617da3d08e06a582cea1c0/transformed/core-1.7.0/AndroidManifest.xml:24:18-86
 19        android:debuggable="true"
 20        android:icon="@mipmap/ic_launcher"
-20-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:8:7-41
+20-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:8:7-41
 21        android:label="@string/app_name"
-21-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:7:7-39
+21-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:7:7-39
 22        android:roundIcon="@mipmap/ic_launcher_round"
-22-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:9:7-52
+22-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:9:7-52
 23        android:theme="@style/AppTheme"
-23-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:11:7-38
+23-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:11:7-38
 24        android:usesCleartextTraffic="true" >
-24-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/debug/AndroidManifest.xml:8:9-44
+24-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/debug/AndroidManifest.xml:8:9-44
 25        <activity
-25-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/debug/AndroidManifest.xml:11:9-111
+25-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/debug/AndroidManifest.xml:11:9-111
 26            android:name="com.facebook.react.devsupport.DevSettingsActivity"
-26-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/debug/AndroidManifest.xml:11:19-83
+26-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/debug/AndroidManifest.xml:11:19-83
 27            android:exported="false" />
-27-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/debug/AndroidManifest.xml:11:84-108
+27-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/debug/AndroidManifest.xml:11:84-108
 28        <activity
-28-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:12:7-23:18
+28-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:12:7-23:18
 29            android:name="com.whatispill.MainActivity"
-29-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:13:9-37
+29-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:13:9-37
 30            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-30-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:15:9-118
+30-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:15:9-118
 31            android:exported="true"
-31-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:18:9-32
+31-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:18:9-32
 32            android:label="@string/app_name"
-32-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:14:9-41
+32-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:14:9-41
 33            android:launchMode="singleTask"
-33-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:16:9-40
+33-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:16:9-40
 34            android:windowSoftInputMode="adjustResize" >
-34-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:17:9-51
+34-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:17:9-51
 35            <intent-filter>
-35-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:19:9-22:25
+35-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:19:9-22:25
 36                <action android:name="android.intent.action.MAIN" />
-36-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:20:13-65
-36-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:20:21-62
+36-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:20:13-65
+36-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:20:21-62
 37
 38                <category android:name="android.intent.category.LAUNCHER" />
-38-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:21:13-73
-38-->/Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/android/app/src/main/AndroidManifest.xml:21:23-70
+38-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:21:13-73
+38-->/Users/jongyeon/Desktop/Projects/whatispill/application-v2/android/app/src/main/AndroidManifest.xml:21:23-70
 39            </intent-filter>
 40        </activity>
 41
 42        <provider
-42-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-18:20
+42-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-18:20
 43            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
-43-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-83
+43-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-83
 44            android:authorities="com.whatispill.fileprovider"
-44-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-64
+44-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-64
 45            android:exported="false"
-45-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-37
+45-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-37
 46            android:grantUriPermissions="true" >
-46-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-47
+46-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-47
 47            <meta-data
-47-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-17:63
+47-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-17:63
 48                android:name="android.support.FILE_PROVIDER_PATHS"
-48-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:17-67
+48-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:17-67
 49                android:resource="@xml/file_provider_paths" />
-49-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/이게뭐약/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:17-60
+49-->[:react-native-webview] /Users/jongyeon/Desktop/Projects/whatispill/application-v2/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:17-60
 50        </provider>
 51        <provider
 51-->[androidx.emoji2:emoji2:1.0.0] /Users/jongyeon/.gradle/caches/transforms-3/4ec9ca9c4763c8df3ea35b45d5fe5435/transformed/jetified-emoji2-1.0.0/AndroidManifest.xml:26:9-34:20

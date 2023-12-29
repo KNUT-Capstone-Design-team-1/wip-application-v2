@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.whatispill.app-mergeDebugResources-32:/values-gl/values-gl.xml",
+            "outputFile": "com.whatispill.app-mergeDebugResources-27:/values-gl/values-gl.xml",
             "map": [
                 {
                     "source": "/Users/jongyeon/.gradle/caches/transforms-3/ab43212b6b70eb44245adc4519d217b0/transformed/appcompat-1.4.1/res/values-gl/values-gl.xml",

@@ -2,7 +2,7 @@ import HeaderLogo from '@components/HeaderLogo';
 
 const initScreenOptions = (): object => {
     const screenOptions: object = {
-        headerTitle: () => <HeaderLogo />,
+        headerTitle: '',
         headerTitleAlign: 'center',
         headerShadowVisible: false,
         headerTransparent: true,
