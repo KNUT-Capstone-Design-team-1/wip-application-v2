@@ -10,11 +10,12 @@ import HeaderBackground from '@components/HeaderBackground';
 import HeaderLogo from '@/components/HeaderLogo';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import { StatusBar, Platform } from 'react-native';
+import BottomNavagation from '@/components/BottomNavigation';
 
 /* 기기 별 상태바 높이 계산 */
 const StatusBarHeight: number = (Platform.OS === 'ios' ? getStatusBarHeight(true) : StatusBar.currentHeight) ?? 0;
 /* OS 별 헤더 높이 */
-const HeaderHeight: number = (Platform.OS === 'ios' ? 10 : 40) ?? 0;
+const HeaderHeight: number = (Platform.OS === 'ios' ? 8 : 40) ?? 0;
 
 
 const WebViewArea = (): JSX.Element => {
@@ -36,6 +37,7 @@ const WebViewArea = (): JSX.Element => {
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: 'hidden',
+            backgroundColor: 'white',
         },
         webView: { flex: 1 },
     });
@@ -56,6 +58,7 @@ const WebViewArea = (): JSX.Element => {
                     }}
                 />
             </View>
+            <BottomNavagation />
         </HeaderBackground>
     )
 }
