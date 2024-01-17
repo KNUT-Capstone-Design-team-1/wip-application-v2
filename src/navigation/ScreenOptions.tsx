@@ -1,4 +1,4 @@
-import HeaderLogo from '@components/HeaderLogo';
+import HeaderLogo from '@/components/atoms/HeaderLogo';
 
 const initScreenOptions = (): object => {
     const screenOptions: object = {

@@ -5,9 +5,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import ScreenOptions from '@navigation/ScreenOptions'
-import StatusBarStyle from '@components/StatusBarStyle';
+import StatusBarStyle from '@/components/atoms/StatusBarStyle';
 
-import Home from '@screens/Home';
+import Home from '@/components/screens/Home';
 
 
 const Navigation = (): JSX.Element => {
