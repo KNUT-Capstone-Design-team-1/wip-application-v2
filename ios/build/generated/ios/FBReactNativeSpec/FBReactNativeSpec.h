@@ -443,6 +443,7 @@ namespace facebook {
 @protocol NativeAppearanceSpec <RCTBridgeModule, RCTTurboModule>
 
 - (NSString * _Nullable)getColorScheme;
+- (void)setColorScheme:(NSString *)colorScheme;
 - (void)addListener:(NSString *)eventName;
 - (void)removeListeners:(double)count;
 
@@ -619,21 +620,22 @@ namespace facebook {
   } // namespace react
 } // namespace facebook
 
-@protocol NativeDevSplitBundleLoaderSpec <RCTBridgeModule, RCTTurboModule>
+@protocol NativeDevToolsSettingsManagerSpec <RCTBridgeModule, RCTTurboModule>
 
-- (void)loadBundle:(NSString *)bundlePath
-           resolve:(RCTPromiseResolveBlock)resolve
-            reject:(RCTPromiseRejectBlock)reject;
+- (void)setConsolePatchSettings:(NSString *)newConsolePatchSettings;
+- (NSString * _Nullable)getConsolePatchSettings;
+- (void)setProfilingSettings:(NSString *)newProfilingSettings;
+- (NSString * _Nullable)getProfilingSettings;
 
 @end
 namespace facebook {
   namespace react {
     /**
-     * ObjC++ class for module 'NativeDevSplitBundleLoader'
+     * ObjC++ class for module 'NativeDevToolsSettingsManager'
      */
-    class JSI_EXPORT NativeDevSplitBundleLoaderSpecJSI : public ObjCTurboModule {
+    class JSI_EXPORT NativeDevToolsSettingsManagerSpecJSI : public ObjCTurboModule {
     public:
-      NativeDevSplitBundleLoaderSpecJSI(const ObjCTurboModule::InitParams &params);
+      NativeDevToolsSettingsManagerSpecJSI(const ObjCTurboModule::InitParams &params);
     };
   } // namespace react
 } // namespace facebook
@@ -941,9 +943,9 @@ namespace JS {
 
       struct Builder {
         struct Input {
-          RCTRequired<bool> isRTL;
           RCTRequired<bool> doLeftAndRightSwapInRTL;
-          RCTRequired<NSString *> localeIdentifier;
+          RCTRequired<bool> isRTL;
+          NSString *localeIdentifier;
         };
 
         /** Initialize with a set of values */
@@ -1328,6 +1330,7 @@ namespace JS {
       struct Builder {
         struct Input {
           RCTRequired<bool> isTesting;
+          std::optional<bool> isDisableAnimations;
           RCTRequired<JS::NativePlatformConstantsIOS::ConstantsReactNativeVersion::Builder> reactNativeVersion;
           RCTRequired<bool> forceTouchAvailable;
           RCTRequired<NSString *> osVersion;
@@ -2162,11 +2165,11 @@ inline std::optional<bool> JS::NativeFrameRateLogger::SpecSetGlobalOptionsOption
 
 inline JS::NativeI18nManager::Constants::Builder::Builder(const Input i) : _factory(^{
   NSMutableDictionary *d = [NSMutableDictionary new];
-  auto isRTL = i.isRTL.get();
-  d[@"isRTL"] = @(isRTL);
   auto doLeftAndRightSwapInRTL = i.doLeftAndRightSwapInRTL.get();
   d[@"doLeftAndRightSwapInRTL"] = @(doLeftAndRightSwapInRTL);
-  auto localeIdentifier = i.localeIdentifier.get();
+  auto isRTL = i.isRTL.get();
+  d[@"isRTL"] = @(isRTL);
+  auto localeIdentifier = i.localeIdentifier;
   d[@"localeIdentifier"] = localeIdentifier;
   return d;
 }) {}
@@ -2295,6 +2298,8 @@ inline JS::NativePlatformConstantsIOS::Constants::Builder::Builder(const Input i
   NSMutableDictionary *d = [NSMutableDictionary new];
   auto isTesting = i.isTesting.get();
   d[@"isTesting"] = @(isTesting);
+  auto isDisableAnimations = i.isDisableAnimations;
+  d[@"isDisableAnimations"] = isDisableAnimations.has_value() ? @((BOOL)isDisableAnimations.value()) : nil;
   auto reactNativeVersion = i.reactNativeVersion.get();
   d[@"reactNativeVersion"] = reactNativeVersion.buildUnsafeRawValue();
   auto forceTouchAvailable = i.forceTouchAvailable.get();
