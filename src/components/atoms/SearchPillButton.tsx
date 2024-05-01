@@ -1,7 +1,12 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Button from "@/components/atoms/Button";
+import { font, os } from "@/style/font";
+import { useNavigation } from "@react-navigation/native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 
 const SearchPillButton = (): JSX.Element => {
+  const nav: any = useNavigation();
+
   const styles = StyleSheet.create({
     searchPillButtonWrapper: {
       width: '100%',
@@ -9,7 +14,7 @@ const SearchPillButton = (): JSX.Element => {
     searchPillButton: {
       width: '100%',
       height: 140,
-      borderRadius: 25,
+      borderRadius: 20,
       overflow: 'hidden'
     },
     searchPillTextWrapper: {
@@ -20,26 +25,25 @@ const SearchPillButton = (): JSX.Element => {
     },
     searchPillMainText: {
       color: 'white',
-      fontSize: 32,
-      fontWeight: '900',
-      fontFamily: 'Noto Sans',
+      fontSize: font(32),
+      fontFamily: os.font(600, 700),
       textAlign: 'right',
       paddingRight: 32,
-      paddingBottom: 4,
       textShadowColor: 'rgba(0, 0, 0, 0.5)',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 25,
+      includeFontPadding: false,
     },
     searchPillSubText: {
       color: 'white',
       fontSize: 16,
-      fontWeight: '500',
-      fontFamily: 'Noto Sans',
+      fontFamily: os.font(400, 400),
       textAlign: 'right',
       paddingRight: 32,
       textShadowColor: 'rgba(0, 0, 0, 0.5)',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 25,
+      includeFontPadding: false,
     },
     fill: {
       width: '100%',
@@ -56,9 +60,12 @@ const SearchPillButton = (): JSX.Element => {
   });
 
   return (
-    <View style={styles.searchPillButtonWrapper}>
+    <Button.scale
+      style={styles.searchPillButtonWrapper}
+      onPress={() => nav.navigate('알약 검색')}
+    >
       <Shadow distance={13} offset={[2, 4]} startColor='#00000015' style={styles.searchPillButton}>
-        <TouchableOpacity style={styles.fill}>
+        <View style={styles.fill}>
           <Image
             style={styles.backgroundImage}
             source={require('@assets/images/searchPill.png')} // header에 들어갈 로고이미지.
@@ -67,9 +74,9 @@ const SearchPillButton = (): JSX.Element => {
             <Text style={styles.searchPillMainText}>알약 검색</Text>
             <Text style={styles.searchPillSubText}>Pill Search</Text>
           </View>
-        </TouchableOpacity>
+        </View>
       </Shadow>
-    </View>
+    </Button.scale>
   )
 };
 

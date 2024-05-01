@@ -1,3 +1,4 @@
+import { font, os } from "@/style/font";
 import { StyleSheet, Text, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
@@ -7,16 +8,17 @@ const UpdateText = () => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'flex-end',
-      alignItems: 'center', gap: 6,
+      alignItems: 'center',
+      gap: 6,
       paddingTop: 20,
-      paddingRight: 25,
-      paddingBottom: 8,
+      paddingRight: 20,
+      paddingBottom: 12,
     },
     updateText: {
-      fontWeight: '500',
-      fontSize: 11,
-      paddingBottom: 2,
-      color: 'black'
+      fontFamily: os.font(400, 500),
+      fontSize: font(12),
+      color: 'black',
+      includeFontPadding: false,
     },
   });
 
@@ -28,7 +30,7 @@ const UpdateText = () => {
 
   return (
     <View style={styles.updateViewWrapper}>
-      <SvgXml xml={REFRESH_ICON} width={11} height={11} />
+      <SvgXml xml={REFRESH_ICON} width={13} height={13} />
       <Text style={styles.updateText}>정보 업데이트 날짜 : 2023. 03. 02</Text>
     </View>
   )
