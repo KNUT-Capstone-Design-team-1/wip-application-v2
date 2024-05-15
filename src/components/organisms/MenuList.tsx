@@ -10,7 +10,7 @@ const MenuList = () => {
       justifyContent: 'space-between',
       gap: 20,
       //backgroundColor: '#fff',
-      marginBottom: 25,
+      marginBottom: 35,
     },
     menu: {
       position: 'relative',

@@ -9,8 +9,8 @@
       "@screens/*": ["screens/*"],
       "@assets/*": ["assets/*"],
       "@navigation/*": ["navigation/*"],
-      "@styles/*": ["styles/*"],
+      "@styles/*": ["styles/*"]
     }
   },
-  "include": ["src", "**/*.tsx"]
+  "include": ["src", "**/*.tsx", "declarations.d.ts"]
 }

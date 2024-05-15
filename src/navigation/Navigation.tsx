@@ -8,10 +8,11 @@ import StatusBarStyle from '@/components/atoms/StatusBarStyle';
 
 import Home from '@/components/screens/Home';
 import Search from '@/components/screens/Search';
-import Layout from '@/components/organisms/Layout';
 import Storage from '@/components/screens/Storage';
 import Settings from '@/components/screens/Settings';
 import SearchCamera from '@/components/screens/SearchCamera';
+import SearchCrop from '@/components/screens/SearchCrop';
+import SearchResult from '@/components/screens/SearchResult';
 
 
 const Navigation = (): JSX.Element => {
@@ -72,9 +73,25 @@ const Navigation = (): JSX.Element => {
                 <Stack.Screen
                     name="카메라"
                     component={SearchCamera}
+                    presentation='modal'
                     options={{
                         headerShown: false,
                         gestureEnabled: false,
+                        detachPreviousScreen: true,
+                    }}
+                />
+                <Stack.Screen
+                    name="알약 촬영"
+                    component={SearchCrop}
+                    options={{
+                        headerShown: false,
+                    }}
+                />
+                <Stack.Screen
+                    name="알약 검색 결과"
+                    component={SearchResult}
+                    options={{
+                        headerShown: false,
                     }}
                 />
             </Stack.Navigator>

@@ -7,13 +7,13 @@ import MenuList from "@/components/organisms/MenuList";
 import TakeGuide from "@/components/organisms/TakeGuide";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { gstyles } from "@/style/globalStyle";
 import Layout, { StatusBarHeight, totalHeaderHeight } from "@/components/organisms/Layout";
 
 const Home = (): JSX.Element => {
     const nav: any = useNavigation();
-    const [screen, setScreen]: any = useRecoilState(screenState);
+    const [screen, setScreen] = useRecoilState(screenState);
 
     const handleSetScreen = () => {
         setScreen('홈');

@@ -15,6 +15,8 @@ import { useRecoilValue } from "recoil";
 /* 기기 별 상태바 높이 계산 */
 export const StatusBarHeight: number = (Platform.OS === 'ios' ? getStatusBarHeight(true) : StatusBar.currentHeight) ?? 0;
 /* 화면 전체 높이 */
+export const windowWidth: number = Dimensions.get('window').width;
+/* 화면 전체 높이 */
 export const windowHeight: number = Dimensions.get('window').height;
 /* OS 별 헤더 높이 */
 export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.14) ?? 0;
@@ -101,14 +103,14 @@ const Layout = {
   default: ({ children }: any) => {
     const nav: any = useNavigation();
     const screen: any = useRecoilValue(screenState);
-    const heightAnimation = useRef(new Animated.Value(totalHeaderHeight)).current;
-    const marginTopAnimation = useRef(new Animated.Value(totalHeaderHeight + StatusBarHeight)).current;
+    const heightAnimation = useRef(new Animated.Value(defaultHeaderHeight)).current;
+    const marginTopAnimation = useRef(new Animated.Value(defaultHeaderHeight + StatusBarHeight)).current;
     const logoAnimation = useRef(new Animated.Value(1)).current;
     const titleAnimation = useRef(new Animated.Value(0)).current;
     const pressAnimation = useRef(new Animated.Value(0)).current;
     const [backAvaliableState, setBackAvaliableState] = useState<boolean>(true);
 
-    const visibleList: string[] = ['홈', '보관함', '설정', '카메라'];
+    const visibleList: string[] = ['홈', '보관함', '설정', '카메라', '알약 촬영'];
 
     /** 로고 나타나는 애니메이션 */
     const logoFadeInAni = () => {
@@ -168,7 +170,7 @@ const Layout = {
         useNativeDriver: true,
       }).start();
     }
-    /** 뒤로갸기 버튼 press 애니메이션 */
+    /** 뒤로가기 버튼 press 애니메이션 */
     const pressAni = () => {
       Animated.timing(pressAnimation, {
         toValue: -3.5,
@@ -178,7 +180,7 @@ const Layout = {
         useNativeDriver: true,
       }).start();
     }
-    /** 뒤로갸기 버튼 pressOut 애니메이션 */
+    /** 뒤로가기 버튼 pressOut 애니메이션 */
     const pressOutAni = () => {
       Animated.timing(pressAnimation, {
         toValue: 0,
@@ -260,7 +262,7 @@ const Layout = {
     changeNavigationBarColor('black', true);
 
     return (
-      <View style={[styles.fill, { backgroundColor: '#555' }]}>
+      <View style={[styles.fill, { backgroundColor: '#000' }]}>
         {children}
       </View>
     )
