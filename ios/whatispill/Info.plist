@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>&apos;이게뭐약&apos;에서 카메라 관련 마이크 권한이 필요합니다.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>&apos;이게뭐약&apos;에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -26,17 +30,23 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/NotoSansKR-Medium.ttf</string>
+		<string>Fonts/NotoSansKR-Regular.ttf</string>
+		<string>Fonts/NotoSansKR-SemiBold.ttf</string>
+		<string>Fonts/NotoSansKR-Bold.ttf</string>
+		<string>Fonts/NotoSansKR-ExtraBold.ttf</string>
+		<string>Fonts/NotoSansKR-Black.ttf</string>
+		<string>Fonts/NotoSansKR-Light.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

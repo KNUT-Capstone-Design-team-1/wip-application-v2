@@ -1,3 +1,4 @@
+import { font, os } from "@/style/font";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
@@ -6,17 +7,21 @@ const TakeGuide = () => {
     takeGuide: {
       gap: 6,
       alignItems: 'center',
+      paddingBottom: 110,
     },
     takeGuideText1: {
-      fontSize: 12,
-      fontWeight: '900',
+      paddingBottom: 0,
+      fontSize: font(12),
+      fontFamily: os.font(700, 700),
       color: '#9B0505',
+      includeFontPadding: false,
     },
     takeGuideText2: {
-      fontSize: 11,
-      fontWeight: '500',
-      color: '#000',
       paddingBottom: 3,
+      fontSize: font(11),
+      fontFamily: os.font(500, 500),
+      color: '#000',
+      includeFontPadding: false,
     },
     takeGuideButtonWrapper: {
       flexDirection: 'row',

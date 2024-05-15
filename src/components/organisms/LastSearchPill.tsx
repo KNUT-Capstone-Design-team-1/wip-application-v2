@@ -1,3 +1,5 @@
+import Button from "@/components/atoms/Button";
+import { font, os } from "@/style/font";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
@@ -8,13 +10,19 @@ const LastSearchPill = () => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: 8,
-      paddingTop: 26,
-      paddingBottom: 15,
+      paddingTop: 24,
+      paddingBottom: 16,
     },
     lastSearchPillText: {
-      paddingBottom: 2,
       color: '#000',
-      fontSize: 14,
+      fontSize: font(15),
+      fontFamily: os.font(500, 600),
+      includeFontPadding: false,
+    },
+    lastSearchIcon: {
+      flex: 1,
+      justifyContent: 'center',
+      marginTop: 3,
     },
     lastSearchPillListWrapper: {
       flexDirection: 'row',
@@ -22,7 +30,7 @@ const LastSearchPill = () => {
       flexWrap: 'wrap',
       gap: 7,
       rowGap: 9,
-      marginBottom: 25,
+      marginBottom: 30,
     },
     lastSearchPillList: {
       flexDirection: 'row',
@@ -36,7 +44,9 @@ const LastSearchPill = () => {
     },
     lastSearchPillListText: {
       color: '#000',
-      fontSize: 12,
+      fontSize: font(12),
+      fontFamily: os.font(400, 500),
+      includeFontPadding: false,
     },
   })
 
@@ -51,16 +61,18 @@ const LastSearchPill = () => {
   return (
     <>
       <View style={styles.lastSearchPillWrapper}>
-        <SvgXml xml={SEARCH_ICON} />
+        <SvgXml xml={SEARCH_ICON} width={16} height={16} style={styles.lastSearchIcon} />
         <Text style={styles.lastSearchPillText}>
           최근 검색한 알약
         </Text>
       </View>
       <View style={styles.lastSearchPillListWrapper}>
         {lastSearchList.map((i: string, key: number) =>
-          <TouchableOpacity style={styles.lastSearchPillList} key={key}>
-            <Text style={styles.lastSearchPillListText}>{i}</Text>
-          </TouchableOpacity>
+          <Button.scale activeScale={0.9} key={key}>
+            <View style={styles.lastSearchPillList}>
+              <Text style={styles.lastSearchPillListText}>{i}</Text>
+            </View>
+          </Button.scale>
         )}
       </View>
     </>

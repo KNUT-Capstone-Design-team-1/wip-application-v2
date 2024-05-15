@@ -27,6 +27,33 @@
     <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Compartilhar com"</string>
     <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Compartilhar com <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
     <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Recolher"</string>
+    <string gender="unknown" name="alert_description">Alerta</string>
+    <string gender="unknown" name="catalyst_dev_menu_header">Menu de desenvolvedor de reações nativas (%1$s)</string>
+    <string gender="unknown" name="catalyst_dev_menu_sub_header">%1$s em veiculação</string>
+    <string gender="unknown" name="combobox_description">Caixa de combinação</string>
+    <string gender="unknown" name="header_description">Título</string>
+    <string gender="unknown" name="image_description">Imagem</string>
+    <string gender="unknown" name="imagebutton_description">Botão, imagem</string>
+    <string gender="unknown" name="link_description">Link</string>
+    <string gender="unknown" name="menu_description">Menu</string>
+    <string gender="unknown" name="menubar_description">Barra do menu</string>
+    <string gender="unknown" name="menuitem_description">Item do menu</string>
+    <string gender="unknown" name="progressbar_description">Barra de progresso</string>
+    <string gender="unknown" name="radiogroup_description">Botão de grupo de opções</string>
+    <string gender="unknown" name="rn_tab_description">Aba</string>
+    <string gender="unknown" name="scrollbar_description">Barra de rolamento</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Pesquisar"</string>
+    <string gender="unknown" name="spinbutton_description">Botão de rotação</string>
+    <string gender="unknown" name="state_busy_description">ocupado</string>
+    <string gender="unknown" name="state_collapsed_description">recolhido</string>
+    <string gender="unknown" name="state_expanded_description">expandido</string>
+    <string gender="unknown" name="state_mixed_description">misto</string>
+    <string gender="unknown" name="state_off_description">desativado</string>
+    <string gender="unknown" name="state_on_description">ativado</string>
+    <string gender="unknown" name="state_unselected_description">desmarcados</string>
     <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string gender="unknown" name="summary_description">Resumo</string>
+    <string gender="unknown" name="tablist_description">Lista de abas</string>
+    <string gender="unknown" name="timer_description">Temporizador</string>
+    <string gender="unknown" name="toolbar_description">Barra de ferramentas</string>
 </resources>
