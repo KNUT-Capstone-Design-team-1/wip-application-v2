@@ -1,6 +1,5 @@
 import { screenState } from '@/atoms/screen';
 import NavButton from '@/components/atoms/NavButton';
-import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import { useRecoilValue } from 'recoil';
@@ -25,7 +24,7 @@ const BottomNavHeight: number = (Platform.OS === 'ios' ?
 const BottomNavagation = (): JSX.Element => {
     const screen: any = useRecoilValue(screenState);
 
-    const visibleList: string[] = ['홈', '보관함', '설정'];
+    const visibleList: string[] = ['홈', '보관함', '설정', '검색 결과'];
 
     const styles = StyleSheet.create({
         container: {
@@ -129,9 +128,9 @@ const BottomNavagation = (): JSX.Element => {
     return visibleList.includes(screen) ? (
         <Shadow distance={22} startColor={'#00000011'} offset={[0, 7]} style={styles.container}>
             <View style={styles.tabWrapper}>
-                <NavButton iconXML={HOME_ICON} name='홈' navName={'홈'} />
-                <NavButton iconXML={STORAGE_ICON} name='보관함' navName='보관함' />
-                <NavButton iconXML={SETTING_ICON} name='설정' navName='설정' />
+                <NavButton iconXML={HOME_ICON} name='홈' navName='홈' tabName='HomeStack' />
+                <NavButton iconXML={STORAGE_ICON} name='보관함' navName='보관함' tabName='StorageStack' />
+                <NavButton iconXML={SETTING_ICON} name='설정' navName='설정' tabName='SettingsStack' />
             </View>
         </Shadow >
     ) : <></>

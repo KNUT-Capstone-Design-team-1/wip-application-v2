@@ -62,7 +62,6 @@ const SearchCrop = (): JSX.Element => {
         }).start();
     }
 
-
     const downArrowInterpolated = downArrowAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [0, 8]
@@ -90,7 +89,7 @@ const SearchCrop = (): JSX.Element => {
     }
 
     const handlePressSearch = () => {
-        nav.navigate('알약 검색 결과');
+        nav.replace('알약 검색 결과');
     }
 
     useEffect(() => {
@@ -99,16 +98,6 @@ const SearchCrop = (): JSX.Element => {
             nav.removeListener('focus', () => handleSetScreen());
         }
     }, []);
-
-    useEffect(() => {
-        if (imgFile) {
-            convertImgToBase64(imgFile).then((base64String: any) => {
-                console.log('Base64 string:', base64String.slice(0, 10));
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-    }, [imgFile])
 
     useEffect(() => {
         downArrowAni();
@@ -141,7 +130,7 @@ const SearchCrop = (): JSX.Element => {
         },
         cropImgWrapper: {
             width: '100%',
-            aspectRatio: 304 / 352,
+            aspectRatio: 1 / 1,
             marginTop: 30,
             borderRadius: 10,
             borderColor: '#000000',
@@ -228,7 +217,7 @@ const SearchCrop = (): JSX.Element => {
             <View style={styles.viewWrapper}>
                 <View style={styles.imgViewWrapper}>
                     <View style={styles.cropImgWrapper}>
-                        {imgFile && <Image src={getImgPath(imgFile)} style={styles.cropImg} />}
+                        {!!imgFile && <Image src={getImgPath(imgFile)} style={styles.cropImg} />}
                     </View>
                     <Button.scale onPress={handlePressRePick}>
                         <View style={styles.pickButtonWrapper}>

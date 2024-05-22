@@ -4,7 +4,7 @@ import Layout, { StatusBarHeight, windowHeight, windowWidth } from "@/components
 import { font, os } from "@/style/font";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image, Animated, Easing, Vibration } from "react-native";
+import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image, Animated, Easing, Vibration, Pressable } from "react-native";
 import { SvgXml } from "react-native-svg";
 import { Camera, Point, useCameraDevice, useCameraFormat } from "react-native-vision-camera";
 import { useRecoilState } from "recoil";
@@ -18,13 +18,8 @@ import { runOnJS } from 'react-native-reanimated';
 import { trigger } from "react-native-haptic-feedback";
 import { imgFileState } from "@/atoms/file";
 import { cameraDeviceOption } from "@/constans/options";
-
-/* 뒤로가기 icon xml */
-const BACKBUTTON_ICON = `
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" >
-        <path d="M13 1L1 13M1 1L13 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-`
+import MaskedView from "@react-native-masked-view/masked-view";
+import { getImgPath } from "@/utils/image";
 
 /* 촬영버튼 xml */
 const TAKEPIC_BTN = `
@@ -175,6 +170,11 @@ const SearchCamera = (): JSX.Element => {
         }
     }
 
+    /** 썸네일 클릭 핸들러 */
+    const handlePressThumbnail = async () => {
+        await nav.replace('알약 촬영');
+    }
+
     useEffect(() => {
         nav.addListener('focus', () => handleSetScreen());
         return () => {
@@ -205,27 +205,110 @@ const SearchCamera = (): JSX.Element => {
 
     const styles = StyleSheet.create({
         topWrapper: {
+            flex: 1,
+            justifyContent: 'center',
             paddingTop: StatusBarHeight + 10,
-            paddingBottom: 18,
+            paddingBottom: 30,
             paddingRight: 10,
             paddingLeft: 12,
-            flexDirection: 'row',
-            backgroundColor: 'rgba(0, 0, 0, 0.75)'
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            zIndex: 10,
         },
-        mainWrapper: {
-            flex: 1,
-            pointerEvents: 'box-none',
-            zIndex: 100
-        },
-        bottomWrapper: {
-            width: '100%',
+        backBtnWrapper: {
+            position: 'absolute',
+            top: StatusBarHeight + 10,
+            right: 0,
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'flex-end',
+        },
+        backBtn: {
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        noteWrapper: {
+            width: '100%',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 24,
+        },
+        title: {
+            width: '100%',
+            textAlign: 'center',
+            fontFamily: os.font(500, 500),
+            fontSize: font(24),
+            color: '#fff',
+            includeFontPadding: false,
+            paddingBottom: 0,
+        },
+        note: {
+            paddingVertical: 10,
+            paddingHorizontal: 18,
+            color: '#f4ffa5',
+            borderRadius: 16,
+            overflow: 'hidden',
+        },
+        mainWrapper: {
+            width: '100%',
+            aspectRatio: '1/1',
+            pointerEvents: 'box-none',
+            zIndex: 0,
+        },
+        bottomWrapper: {
+            flex: 1,
+            gap: 44,
+            paddingTop: 22,
+            paddingBottom: 86,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            zIndex: 10,
+        },
+        buttonWrapper: {
+            height: 76,
+            flexDirection: 'row',
             justifyContent: 'space-around',
-            paddingHorizontal: 15,
-            paddingBottom: 45,
-            paddingTop: 30,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)'
+            alignItems: 'center',
+        },
+        zoomLevelWrapper: {
+        },
+        zoomLevelList: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            gap: 10,
+            width: '100%',
+            pointerEvents: 'box-none',
+            zIndex: 10,
+        },
+        zoomLevelButton: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 36,
+            height: 36,
+            borderRadius: 100,
+            borderWidth: 1,
+            borderColor: '#ffffff60',
+            backgroundColor: 'rgba(0,0,0,0.75)'
+        },
+        zoomLevelText: {
+            width: '100%',
+            marginBottom: 1,
+            textAlign: 'center',
+            color: '#fff',
+            fontSize: font(12),
+            fontFamily: os.font(500, 500),
+            includeFontPadding: false,
+        },
+        zoomLevelActiveText: {
+            color: '#d9ff00',
+            fontSize: font(11),
+            fontFamily: os.font(400, 400),
+        },
+        zoomLevelButtonActive: {
+            transform: [{
+                scale: 1.3
+            }],
+            marginHorizontal: 6,
         },
         takePicBtnWrapper: {
             justifyContent: 'center',
@@ -235,24 +318,6 @@ const SearchCamera = (): JSX.Element => {
             borderRadius: 100,
             borderWidth: 3,
             borderColor: '#fff',
-        },
-        backBtn: {
-            position: 'absolute',
-            height: '100%',
-            paddingHorizontal: 40,
-            top: StatusBarHeight + 7,
-            right: -20,
-            justifyContent: 'center',
-        },
-        title: {
-            width: '100%',
-            paddingLeft: 7,
-            paddingBottom: 0,
-            textAlign: 'center',
-            fontFamily: os.font(500, 500),
-            fontSize: font(18),
-            color: '#fff',
-            includeFontPadding: false,
         },
         thumbnailImage: {
             width: 52,
@@ -266,6 +331,12 @@ const SearchCamera = (): JSX.Element => {
             justifyContent: 'center',
             alignItems: 'center',
             pointerEvents: 'none',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+        },
+        frame: {
+            width: '66%',
+            aspectRatio: '1/1',
+            backgroundColor: '#000',
         },
         flashBtnWrapper: {
             position: 'absolute',
@@ -338,64 +409,6 @@ const SearchCamera = (): JSX.Element => {
             height: 1.1,
             backgroundColor: '#ff0c'
         },
-        zoomLevelWrapper: {
-        },
-        zoomLevelList: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            gap: 10,
-            position: 'absolute',
-            bottom: 30,
-            left: 0,
-            width: '100%',
-            pointerEvents: 'box-none',
-            zIndex: 10,
-        },
-        zoomLevelButton: {
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: 36,
-            height: 36,
-            borderRadius: 100,
-            borderWidth: 1,
-            borderColor: '#ffffff60',
-            backgroundColor: 'rgba(0,0,0,0.75)'
-        },
-        zoomLevelText: {
-            width: '100%',
-            marginBottom: 1,
-            textAlign: 'center',
-            color: '#fff',
-            fontSize: font(12),
-            fontFamily: os.font(500, 500),
-            includeFontPadding: false,
-        },
-        zoomLevelActiveText: {
-            color: '#d9ff00',
-            fontSize: font(11),
-            fontFamily: os.font(400, 400),
-        },
-        zoomLevelButtonActive: {
-            transform: [{
-                scale: 1.3
-            }],
-            marginHorizontal: 6,
-        },
-        noteWrapper: {
-            position: 'absolute',
-            top: '20%',
-            width: '100%',
-            alignItems: 'center',
-            pointerEvents: 'none',
-        },
-        note: {
-            paddingVertical: 10,
-            paddingHorizontal: 18,
-            color: '#fff',
-            backgroundColor: '#0005',
-            borderRadius: 16,
-            overflow: 'hidden',
-        },
         focusLock: {
             position: 'absolute',
             top: - 20,
@@ -405,36 +418,54 @@ const SearchCamera = (): JSX.Element => {
 
     return (
         <Layout.fullscreen>
-            {cameraDevice &&
-                <GestureDetector gesture={gesture}>
-                    <Camera
-                        ref={cameraRef}
-                        style={StyleSheet.absoluteFill}
-                        device={cameraDevice}
-                        isActive={true}
-                        photo={true}
-                        torch={isTorch}
-                        format={cameraFormat}
-                        zoom={zoomLevel}
-                        enableZoomGesture
-                    />
-                </GestureDetector>
-            }
-            {cameraLoading &&
-                <View style={styles.loadingTextWrapper}>
-                    <Text style={styles.loadingText}>카메라를 불러오는중입니다.</Text>
-                </View>
-            }
             <View style={styles.topWrapper}>
-                <Text style={styles.title}>알약 촬영</Text>
-                <TouchableOpacity style={styles.backBtn} onPress={handleBackBtn}>
-                    <ExitSvg width={17} height={28} preserveAspectRatio="xMinYMax" />
-                </TouchableOpacity>
+                <View style={styles.backBtnWrapper}>
+                    <TouchableOpacity style={styles.backBtn} onPress={handleBackBtn}>
+                        <ExitSvg width={17} height={17} preserveAspectRatio="xMinYMax" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.noteWrapper}>
+                    <Text style={styles.title}>알약 촬영</Text>
+                    <Text style={styles.note}>알약을 화면 중앙에 두고 촬영해주세요.</Text>
+                </View>
             </View>
             <View style={styles.mainWrapper}>
-                <View style={styles.frameWrapper}>
-                    <FrameSvg width={'45%'} />
-                </View>
+                <MaskedView
+                    style={{ flex: 1, height: '100%' }}
+                    maskElement={
+                        <View style={styles.frameWrapper}>
+                            <View style={styles.frame} />
+                        </View>
+                    }
+                >
+                    {cameraDevice &&
+                        <GestureDetector gesture={gesture}>
+                            <Camera
+                                ref={cameraRef}
+                                style={StyleSheet.absoluteFill}
+                                device={cameraDevice}
+                                isActive={true}
+                                photo={true}
+                                torch={isTorch}
+                                format={cameraFormat}
+                                zoom={zoomLevel}
+                                enableZoomGesture
+                            />
+                        </GestureDetector>
+                    }
+                    {cameraLoading &&
+                        <View style={styles.loadingTextWrapper}>
+                            <Text style={styles.loadingText}>카메라를 불러오는중입니다.</Text>
+                        </View>
+                    }
+                </MaskedView>
+                <Animated.View style={styles.focusDetected}>
+                    <View style={styles.LineTop} />
+                    <View style={styles.LineLeft} />
+                    <View style={styles.LineBottom} />
+                    <View style={styles.LineRight} />
+                    {longFocus && <FocusLockSvg style={styles.focusLock} width={9} />}
+                </Animated.View>
                 <Button.scale
                     style={styles.flashBtnWrapper}
                     onPress={() => handleClickFlash()}
@@ -448,9 +479,8 @@ const SearchCamera = (): JSX.Element => {
                         }
                     </View>
                 </Button.scale>
-                <View style={styles.noteWrapper}>
-                    <Text style={styles.note}>알약을 화면 중앙에 두고 촬영해주세요.</Text>
-                </View>
+            </View>
+            <View style={styles.bottomWrapper}>
                 <View style={styles.zoomLevelList}>
                     <Button.scale activeScale={1.1} style={styles.zoomLevelWrapper} onPress={() => handleClickZoomLevelButton(0)}>
                         <View style={[styles.zoomLevelButton, selectZoomLevel === 0 && styles.zoomLevelButtonActive]}>
@@ -468,25 +498,18 @@ const SearchCamera = (): JSX.Element => {
                         </View>
                     </Button.scale>
                 </View>
+                <View style={styles.buttonWrapper}>
+                    <Button.scale activeScale={1.1} onPress={handlePressThumbnail}>
+                        <View style={{ width: 50 }}>
+                            {!!imgFile && <Image src={getImgPath(imgFile)} style={styles.thumbnailImage} />}
+                        </View>
+                    </Button.scale>
+                    <TouchableOpacity style={styles.takePicBtnWrapper} onPress={handleTakePic}>
+                        <SvgXml xml={TAKEPIC_BTN} width={64} height={64} />
+                    </TouchableOpacity>
+                    <View style={{ width: 50 }} />
+                </View>
             </View>
-            <View style={styles.bottomWrapper}>
-                <Button.scale activeScale={1.1}>
-                    <View style={{ width: 52 }}>
-                        {imgFile?.path && <Image src={'file://' + imgFile.path} style={styles.thumbnailImage} />}
-                    </View>
-                </Button.scale>
-                <TouchableOpacity style={styles.takePicBtnWrapper} onPress={handleTakePic}>
-                    <SvgXml xml={TAKEPIC_BTN} width={64} height={64} />
-                </TouchableOpacity>
-                <View style={{ width: 52 }} />
-            </View>
-            <Animated.View style={styles.focusDetected}>
-                <View style={styles.LineTop} />
-                <View style={styles.LineLeft} />
-                <View style={styles.LineBottom} />
-                <View style={styles.LineRight} />
-                {longFocus && <FocusLockSvg style={styles.focusLock} width={9} />}
-            </Animated.View>
         </Layout.fullscreen>
     )
 }

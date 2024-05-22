@@ -17,7 +17,13 @@ export const convertImgToBase64 = async (imagePath: any) => {
 export const getImgPath = (img: any) => {
   let result: string = '';
   if (img.uri) result = img.uri
-  if (img.path) result = `file://${img.path}`
+  if (img.path) result = img.path
+
+  if (!result.includes('file://')) {
+    result = 'file://' + result;
+  }
+
+  console.log('#############', result);
 
   return result;
 }

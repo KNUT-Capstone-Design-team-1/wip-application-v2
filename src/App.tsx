@@ -1,5 +1,7 @@
+import { toastConfig } from '@/constans/toast';
 import Navigation from '@navigation/Navigation';
 import { LogBox } from 'react-native';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { RecoilRoot } from 'recoil';
 
 const App = (): React.JSX.Element => {
@@ -9,6 +11,11 @@ const App = (): React.JSX.Element => {
   return (
     <RecoilRoot>
       <Navigation />
+      <Toast
+        config={toastConfig}
+        position='bottom'
+        bottomOffset={130}
+      />
     </RecoilRoot>
   );
 }

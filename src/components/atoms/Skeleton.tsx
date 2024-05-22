@@ -1,0 +1,50 @@
+import React from 'react';
+import { View, StyleSheet, Animated, Dimensions, Easing } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+const SkeletonPlaceholder = (style: any) => {
+  const translateX = new Animated.Value(-SCREEN_WIDTH * 2);
+
+  React.useEffect(() => {
+    const animate = () => {
+      Animated.timing(translateX, {
+        toValue: SCREEN_WIDTH,
+        duration: 1500,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start(() => {
+        translateX.setValue(-SCREEN_WIDTH * 2);
+        animate();
+      });
+    };
+
+    animate();
+  }, [translateX]);
+
+  return (
+    <View style={[styles.container, style]}>
+      <Animated.View style={{ ...StyleSheet.absoluteFillObject, transform: [{ translateX }] }}>
+        <LinearGradient
+          colors={['#fafdfe00', '#fafdfe', '#fafdfe00']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ flex: 1, width: '300%' }}
+        />
+      </Animated.View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    overflow: 'hidden',
+    width: 100,
+    height: 100,
+    borderRadius: 4,
+    backgroundColor: '#ebf1f5',
+  },
+});
+
+export default SkeletonPlaceholder;
