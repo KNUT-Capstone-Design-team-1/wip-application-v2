@@ -28,7 +28,7 @@ export const requestCameraPermission = async (first: boolean, callback?: any) =>
     } else if (result === RESULTS.DENIED) {
       // 권한이 설정되어 있지 않을 때
       if (first) {
-        request(platformPermissionsCamera).then(() => requestCameraPermission(true));
+        request(platformPermissionsCamera).then(() => requestCameraPermission(false, callback));
       }
     } else if (result === RESULTS.BLOCKED) {
       // 권한이 거절되어 있을 때

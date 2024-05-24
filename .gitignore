@@ -3115,3 +3115,9 @@ android/app/build/tmp/kotlin-classes/developDebug/META-INF/app_developDebug.kotl
 android/app/build/tmp/kotlin-classes/developDebug/com/whatispill/MainActivity.class
 android/app/build/tmp/kotlin-classes/developDebug/com/whatispill/MainApplication.class
 android/app/build/tmp/kotlin-classes/developDebug/com/whatispill/MainApplication$reactNativeHost$1.class
+android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+android/.gradle/buildOutputCleanup/cache.properties
+android/.gradle/buildOutputCleanup/outputFiles.bin
+android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+android/.gradle/buildOutputCleanup/cache.properties
+android/.gradle/buildOutputCleanup/outputFiles.bin

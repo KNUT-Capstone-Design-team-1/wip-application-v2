@@ -3,24 +3,25 @@ import { screenState } from "@/atoms/screen";
 import ResultItem from "@/components/atoms/ResultItem";
 import Layout, { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
-import { convertImgToBase64 } from "@/utils/image";
+import { convertImgUriToBase64, getResizeImgUri } from "@/utils/image";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Platform, FlatList, Text } from "react-native";
+import { View, StyleSheet, Platform, FlatList, Text, Image } from "react-native";
 import { useRecoilState } from "recoil";
 import SkeletonResultItem from "@/components/atoms/SkeletonResultItem";
 import Skeleton from "@/components/atoms/Skeleton";
 import Toast from "react-native-toast-message";
 import Config from "react-native-config";
 
-const SearchResult = (): JSX.Element => {
+const SearchResult = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();
     const [screen, setScreen]: any = useRecoilState(screenState);
     const [imgFile, setImgFile]: any = useRecoilState(imgFileState);
     const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<any[] | undefined>(undefined);
+    const mergedImgUri = route.params.data;
 
     const handleSetScreen = () => {
         setScreen('검색 결과');
@@ -30,7 +31,7 @@ const SearchResult = (): JSX.Element => {
         const URL = Config.API_URL + '/pill-search/image?skip=0&limit=20';
         const base64 = imageBase64;
         setLoading(true);
-        await axios.post(URL, { base64 }, { timeout: 100000 }).then((res: any) => {
+        await axios.post(URL, { base64 }, { timeout: 10000 }).then((res: any) => {
             setLoading(false);
             setData(res.data.data.pillInfoList);
         })
@@ -43,15 +44,19 @@ const SearchResult = (): JSX.Element => {
             });
     }
 
+
+
     useEffect(() => {
-        if (imgFile) {
-            convertImgToBase64(imgFile).then((base64String: any) => {
-                setImageBase64(base64String);
+        if (mergedImgUri) {
+            getResizeImgUri(mergedImgUri).then((resized: string) => {
+                convertImgUriToBase64(resized).then((base64String: any) => {
+                    setImageBase64(base64String);
+                })
             }).catch((error) => {
                 console.error('Error:', error);
             });
         }
-    }, [imgFile])
+    }, [mergedImgUri])
 
     useEffect(() => {
         nav.addListener('focus', () => handleSetScreen());

@@ -3,31 +3,35 @@ import Button from "@/components/atoms/Button";
 import Layout, { StatusBarHeight, windowHeight, windowWidth } from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image, Animated, Easing, Vibration, Pressable } from "react-native";
-import { SvgXml } from "react-native-svg";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
+import { View, StyleSheet, Text, TouchableOpacity, Image, Animated, Easing } from "react-native";
 import { Camera, Point, useCameraDevice, useCameraFormat } from "react-native-vision-camera";
 import { useRecoilState } from "recoil";
-import FrameSvg from '@assets/svgs/cameraFrame.svg';
+import CameraMaskFrame from '@assets/svgs/cameraMaskFrame.svg';
 import FlashOnSvg from '@assets/svgs/flash_on.svg';
 import FlashOffSvg from '@assets/svgs/flash_off.svg';
 import FocusLockSvg from '@assets/svgs/lock.svg';
 import ExitSvg from '@assets/svgs/exit.svg';
+import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { runOnJS } from 'react-native-reanimated';
 import { trigger } from "react-native-haptic-feedback";
 import { imgFileState } from "@/atoms/file";
 import { cameraDeviceOption } from "@/constans/options";
-import MaskedView from "@react-native-masked-view/masked-view";
-import { getImgPath } from "@/utils/image";
+import { getCropImage, getImgPath } from "@/utils/image";
 
-/* 촬영버튼 xml */
-const TAKEPIC_BTN = `
-    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M32 64C49.6731 64 64 49.6731 64 32C64 14.3269 49.6731 0 32 0C14.3269 0 0 14.3269 0 32C0 49.6731 14.3269 64 32 64ZM22.5 30.2222C22.5 25.4051 26.4051 21.5 31.2222 21.5C36.0394 21.5 39.9444 25.4051 39.9444 30.2222C39.9444 35.0394 36.0394 38.9444 31.2222 38.9444C26.4051 38.9444 22.5 35.0394 22.5 30.2222ZM31.2222 18.5C24.7482 18.5 19.5 23.7482 19.5 30.2222C19.5 36.6963 24.7482 41.9444 31.2222 41.9444C33.9269 41.9444 36.4177 41.0284 38.4012 39.4897L42.9355 44.0568C43.5192 44.6447 44.4689 44.6481 45.0568 44.0645C45.6447 43.4808 45.6481 42.5311 45.0645 41.9432L40.5183 37.3641C42.0398 35.3867 42.9444 32.9101 42.9444 30.2222C42.9444 23.7482 37.6963 18.5 31.2222 18.5Z" fill="white"/>
-    </svg>
-`
 
+interface ICameraImg {
+    front: any,
+    back: any,
+}
+
+interface ImageInfo {
+    width: number;
+    height: number;
+}
+
+// 포커스 UI 가로,세로 크기
 const focusSize = 90;
 
 const SearchCamera = (): JSX.Element => {
@@ -36,19 +40,25 @@ const SearchCamera = (): JSX.Element => {
     const cameraRef = useRef<Camera>(null);
     const focusScaleAnimation = useRef(new Animated.Value(1.2)).current;
     const focusOpacityAnimation = useRef(new Animated.Value(1)).current;
+    const boxGapAnimation = useRef(new Animated.Value(-60)).current;
+    const boxOpacityAnimation = useRef(new Animated.Value(0)).current;
+    const guideFrontTopAnimation = useRef(new Animated.Value(-100)).current;
+    const guideBackTopAnimation = useRef(new Animated.Value(-100)).current;
+    const arrowLoopAnimation = useRef(new Animated.Value(0)).current;
+
     const [screen, setScreen]: any = useRecoilState(screenState);
     const [imgFile, setImgFile] = useRecoilState<any>(imgFileState);
     const [cameraLoading, setCameraLoading] = useState<boolean>(true);
-    const [cameraImage, setCameraImage] = useState<null | any>(null);
+    const [cameraImage, setCameraImage] = useState<null | ICameraImg>(null);
+    const [currentDirection, setCurrentDirection] = useState<'front' | 'back'>('front');
     const [isTorch, setIsTorch] = useState<"off" | "on" | undefined>('off');
     const [focusXY, setFocusXY] = useState<any>({ x: 0, y: 0 });
     const [selectZoomLevel, setSelectZoomLevel] = useState<0 | 1 | 2>(1);
     const [zoomLevel, setZoomLevel] = useState<number | undefined>(cameraDevice?.neutralZoom);
     const [longFocus, setLongFocus] = useState<boolean>(false);
 
-
     const cameraFormat = useCameraFormat(cameraDevice, [
-        { photoResolution: { width: 640, height: 640 } }
+        { photoResolution: { width: 1280, height: 1280 } }
     ])
 
     /** 포커스 크기 축소 애니메이션 */
@@ -71,6 +81,68 @@ const SearchCamera = (): JSX.Element => {
             easing: Easing.bezier(.14, 1.07, .59, .97),
             useNativeDriver: false,
         }).start();
+    }
+
+    /** 뒷면 이미지 박스 이동 애니메이션 */
+    const boxGapAni = () => {
+        Animated.timing(boxGapAnimation, {
+            toValue: 24,
+            delay: 0,
+            duration: 600,
+            easing: Easing.bezier(.14, 1.07, .59, .97),
+            useNativeDriver: false,
+        }).start();
+    }
+
+    /** 뒷면 이미지 박스 나타나는 애니메이션 */
+    const boxOpacityAni = () => {
+        Animated.timing(boxOpacityAnimation, {
+            toValue: 1,
+            delay: 0,
+            duration: 600,
+            easing: Easing.bezier(.14, 1.07, .59, .97),
+            useNativeDriver: false,
+        }).start();
+    }
+
+    /** 가이드 나타나는 애니메이션 */
+    const guideFrontTopAni = () => {
+        Animated.timing(guideFrontTopAnimation, {
+            toValue: 14,
+            delay: 0,
+            duration: 300,
+            easing: Easing.bezier(.14, 1.07, .59, .97),
+            useNativeDriver: false,
+        }).start();
+    }
+
+    /** 가이드 나타나는 애니메이션 */
+    const guideBackTopAni = () => {
+        Animated.timing(guideBackTopAnimation, {
+            toValue: 14,
+            delay: 0,
+            duration: 300,
+            easing: Easing.bezier(.14, 1.07, .59, .97),
+            useNativeDriver: false,
+        }).start();
+    }
+
+    /** 화살표 반복 애니메이션 */
+    const downArrowAni = () => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(arrowLoopAnimation, {
+                    toValue: 5,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(arrowLoopAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                })
+            ])
+        ).start();
     }
 
     /** 수동 포커스 실행 */
@@ -132,9 +204,26 @@ const SearchCamera = (): JSX.Element => {
         if (cameraRef.current === null) return;
         try {
             const imageData = await cameraRef.current.takePhoto();
-            setCameraImage(imageData);
-            setImgFile(imageData);
-            await nav.replace('알약 촬영');
+            let result: null | ICameraImg = { front: null, back: null };
+
+            if (cameraImage) {
+                result = { ...cameraImage };
+                if (currentDirection === 'front') {
+                    if (!result.back) setCurrentDirection('back');
+                }
+                if (currentDirection === 'back') {
+                    if (!result.front) setCurrentDirection('front');
+                }
+            } else {
+                if (currentDirection === 'front') {
+                    setCurrentDirection('back');
+                }
+                if (currentDirection === 'back') {
+                    setCurrentDirection('front');
+                }
+            }
+            result[currentDirection] = await getCropImage(imageData, 0.666);
+            setCameraImage(result);
         } catch (e) {
             console.log(e);
         }
@@ -170,10 +259,17 @@ const SearchCamera = (): JSX.Element => {
         }
     }
 
-    /** 썸네일 클릭 핸들러 */
-    const handlePressThumbnail = async () => {
-        await nav.replace('알약 촬영');
+    const handlePressBox = (direction: 'front' | 'back') => {
+        setCurrentDirection(direction);
     }
+
+    const handlePressComplete = () => {
+        if (cameraImage) {
+            setImgFile(cameraImage);
+            nav.replace('알약 촬영');
+        }
+    }
+
 
     useEffect(() => {
         nav.addListener('focus', () => handleSetScreen());
@@ -189,11 +285,6 @@ const SearchCamera = (): JSX.Element => {
     }, [cameraDevice]);
 
     useEffect(() => {
-        if (focusXY.x !== 0 && focusXY.y !== 0) {
-        }
-    }, [focusXY]);
-
-    useEffect(() => {
         const options = {
             enableVibrateFallback: true,
             ignoreAndroidSystemSettings: true,
@@ -201,22 +292,60 @@ const SearchCamera = (): JSX.Element => {
         if (longFocus) {
             trigger("impactLight", options);
         }
-    }, [longFocus])
+    }, [longFocus]);
+
+    useEffect(() => {
+        if (cameraImage) {
+            boxGapAni();
+            boxOpacityAni();
+        }
+    }, [cameraImage]);
+
+    useEffect(() => {
+        const options = {
+            enableVibrateFallback: true,
+            ignoreAndroidSystemSettings: true,
+        };
+        trigger("impactLight", options);
+        guideFrontTopAnimation.setValue(-100);
+        guideBackTopAnimation.setValue(-100);
+        if (currentDirection === 'front') {
+            guideFrontTopAni();
+        }
+        if (currentDirection === 'back') {
+            guideBackTopAni();
+        }
+    }, [currentDirection])
+
+    useEffect(() => {
+        downArrowAni();
+    }, [])
 
     const styles = StyleSheet.create({
         topWrapper: {
             flex: 1,
             justifyContent: 'center',
             paddingTop: StatusBarHeight + 10,
-            paddingBottom: 30,
-            paddingRight: 10,
-            paddingLeft: 12,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundColor: 'rgba(0, 0, 0, 1)',
             zIndex: 10,
+        },
+        titleWrapper: {
+            flexDirection: 'row',
+            marginTop: 0,
+            width: '100%',
+        },
+        title: {
+            width: '100%',
+            textAlign: 'center',
+            fontFamily: os.font(500, 500),
+            fontSize: font(20),
+            color: '#fff',
+            includeFontPadding: false,
+            paddingBottom: 0,
+            paddingTop: 2,
         },
         backBtnWrapper: {
             position: 'absolute',
-            top: StatusBarHeight + 10,
             right: 0,
             flexDirection: 'row',
             alignItems: 'center',
@@ -228,29 +357,81 @@ const SearchCamera = (): JSX.Element => {
             justifyContent: 'center',
             alignItems: 'center',
         },
-        noteWrapper: {
+        FrontBackContainer: {
+            position: 'relative',
+            flex: 1,
+            flexDirection: 'row',
             width: '100%',
             alignItems: 'center',
-            gap: 8,
-            marginTop: 24,
+            justifyContent: 'center',
+            paddingTop: 20,
+            paddingBottom: 20,
         },
-        title: {
-            width: '100%',
-            textAlign: 'center',
-            fontFamily: os.font(500, 500),
-            fontSize: font(24),
+        boxWrapper: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            aspectRatio: '1/1',
+            borderRadius: 12,
+            borderWidth: 1.5,
+            borderColor: '#000',
+            backgroundColor: '#1e1e26',
+            overflow: 'hidden',
+            transform: [{ scale: 0.9 }],
+        },
+        boxBack: {
+            marginLeft: boxGapAnimation,
+            opacity: boxOpacityAnimation,
+        },
+        activeBoxWrapper: {
+            borderColor: '#ffffa1',
+            transform: [{ scale: 1 }],
+        },
+        boxText: {
             color: '#fff',
+            fontSize: font(14),
+            fontFamily: os.font(400, 400),
             includeFontPadding: false,
             paddingBottom: 0,
         },
-        note: {
+        boxImg: {
+            width: '100%',
+            height: '100%',
+            borderRadius: 10,
+        },
+        noteWrapper: {
+            flexDirection: 'row',
+            position: 'absolute',
             paddingVertical: 10,
             paddingHorizontal: 18,
-            color: '#f4ffa5',
-            borderRadius: 16,
-            overflow: 'hidden',
+            backgroundColor: '#00000066',
+            borderRadius: 22,
+        },
+        noteFrontWrapper: {
+            top: guideFrontTopAnimation,
+        },
+        noteBackWrapper: {
+            top: guideBackTopAnimation,
+        },
+        note: {
+            color: '#ffffff',
+            fontSize: font(14),
+            fontFamily: os.font(400, 500),
+            includeFontPadding: false,
+            paddingBottom: 0,
+        },
+        noteBold: {
+            fontFamily: os.font(800, 800),
+        },
+        noteFront: {
+            color: '#FF6868',
+        },
+        noteBack: {
+            color: '#8598FF',
         },
         mainWrapper: {
+            position: 'relative',
+            alignItems: 'center',
             width: '100%',
             aspectRatio: '1/1',
             pointerEvents: 'box-none',
@@ -259,9 +440,9 @@ const SearchCamera = (): JSX.Element => {
         bottomWrapper: {
             flex: 1,
             gap: 44,
-            paddingTop: 22,
-            paddingBottom: 86,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            paddingTop: 20,
+            paddingBottom: 68,
+            backgroundColor: 'rgba(0, 0, 0, 1)',
             zIndex: 10,
         },
         buttonWrapper: {
@@ -319,6 +500,12 @@ const SearchCamera = (): JSX.Element => {
             borderWidth: 3,
             borderColor: '#fff',
         },
+        takePicBtn: {
+            width: 64,
+            height: 64,
+            borderRadius: 100,
+            backgroundColor: '#fff'
+        },
         thumbnailImage: {
             width: 52,
             height: 52,
@@ -327,11 +514,15 @@ const SearchCamera = (): JSX.Element => {
             borderColor: '#444'
         },
         frameWrapper: {
-            flex: 1,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
             justifyContent: 'center',
             alignItems: 'center',
             pointerEvents: 'none',
-            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
         },
         frame: {
             width: '66%',
@@ -341,7 +532,7 @@ const SearchCamera = (): JSX.Element => {
         flashBtnWrapper: {
             position: 'absolute',
             right: 10,
-            top: 10,
+            bottom: 10,
         },
         flashBtn: {
             justifyContent: 'center',
@@ -413,73 +604,116 @@ const SearchCamera = (): JSX.Element => {
             position: 'absolute',
             top: - 20,
             left: (focusSize / 2) - 4,
-        }
+        },
+        completeBtn: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+        },
+        completeText: {
+            color: '#fff',
+            fontSize: font(20),
+            fontFamily: os.font(400, 400),
+            includeFontPadding: false,
+            paddingBottom: 2,
+        },
+        completeArrow: {
+            flexDirection: 'row',
+            gap: -10,
+            transform: [{ translateX: arrowLoopAnimation }]
+        },
     });
 
     return (
         <Layout.fullscreen>
             <View style={styles.topWrapper}>
-                <View style={styles.backBtnWrapper}>
-                    <TouchableOpacity style={styles.backBtn} onPress={handleBackBtn}>
-                        <ExitSvg width={17} height={17} preserveAspectRatio="xMinYMax" />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.noteWrapper}>
+                <View style={styles.titleWrapper}>
                     <Text style={styles.title}>알약 촬영</Text>
-                    <Text style={styles.note}>알약을 화면 중앙에 두고 촬영해주세요.</Text>
+                    <View style={styles.backBtnWrapper}>
+                        <TouchableOpacity style={styles.backBtn} onPress={handleBackBtn}>
+                            <ExitSvg width={17} height={17} preserveAspectRatio="xMinYMax" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.FrontBackContainer}>
+                    <Button.scale style={{ zIndex: 2 }} onPress={() => handlePressBox('front')}>
+                        <View style={[styles.boxWrapper, currentDirection === 'front' && styles.activeBoxWrapper]}>
+                            {cameraImage?.front ?
+                                <Image src={getImgPath(cameraImage.front)} style={styles.boxImg} />
+                                :
+                                <Text style={styles.boxText}>앞면</Text>
+                            }
+                        </View>
+                    </Button.scale>
+                    {!!cameraImage &&
+                        <Button.scale style={{ zIndex: 1 }} onPress={() => handlePressBox('back')}>
+                            <Animated.View style={[styles.boxWrapper, currentDirection === 'back' && styles.activeBoxWrapper, styles.boxBack]}>
+                                {cameraImage?.back ?
+                                    <Image src={getImgPath(cameraImage.back)} style={styles.boxImg} />
+                                    :
+                                    <Text style={styles.boxText}>뒷면</Text>
+                                }
+                            </Animated.View>
+                        </Button.scale>}
                 </View>
             </View>
-            <View style={styles.mainWrapper}>
-                <MaskedView
-                    style={{ flex: 1, height: '100%' }}
-                    maskElement={
-                        <View style={styles.frameWrapper}>
-                            <View style={styles.frame} />
-                        </View>
-                    }
-                >
+            <GestureDetector gesture={gesture}>
+                <View style={styles.mainWrapper}>
                     {cameraDevice &&
-                        <GestureDetector gesture={gesture}>
-                            <Camera
-                                ref={cameraRef}
-                                style={StyleSheet.absoluteFill}
-                                device={cameraDevice}
-                                isActive={true}
-                                photo={true}
-                                torch={isTorch}
-                                format={cameraFormat}
-                                zoom={zoomLevel}
-                                enableZoomGesture
-                            />
-                        </GestureDetector>
+                        <Camera
+                            ref={cameraRef}
+                            style={StyleSheet.absoluteFill}
+                            device={cameraDevice}
+                            isActive={true}
+                            photo={true}
+                            torch={isTorch}
+                            format={cameraFormat}
+                            zoom={zoomLevel}
+                            enableZoomGesture
+                        />
                     }
                     {cameraLoading &&
                         <View style={styles.loadingTextWrapper}>
                             <Text style={styles.loadingText}>카메라를 불러오는중입니다.</Text>
                         </View>
                     }
-                </MaskedView>
-                <Animated.View style={styles.focusDetected}>
-                    <View style={styles.LineTop} />
-                    <View style={styles.LineLeft} />
-                    <View style={styles.LineBottom} />
-                    <View style={styles.LineRight} />
-                    {longFocus && <FocusLockSvg style={styles.focusLock} width={9} />}
-                </Animated.View>
-                <Button.scale
-                    style={styles.flashBtnWrapper}
-                    onPress={() => handleClickFlash()}
-                    activeScale={0.85}
-                >
-                    <View style={styles.flashBtn}>
-                        {isTorch === 'on' ?
-                            <FlashOnSvg width={'70%'} />
-                            :
-                            <FlashOffSvg width={'70%'} />
-                        }
-                    </View>
-                </Button.scale>
-            </View>
+                    <CameraMaskFrame width={'100%'} height={'100%'} style={{ pointerEvents: 'none' }} />
+                    <Animated.View style={styles.focusDetected}>
+                        <View style={styles.LineTop} />
+                        <View style={styles.LineLeft} />
+                        <View style={styles.LineBottom} />
+                        <View style={styles.LineRight} />
+                        {longFocus && <FocusLockSvg style={styles.focusLock} width={9} />}
+                    </Animated.View>
+                    <Button.scale
+                        style={styles.flashBtnWrapper}
+                        onPress={() => handleClickFlash()}
+                        activeScale={0.85}
+                    >
+                        <View style={styles.flashBtn}>
+                            {isTorch === 'on' ?
+                                <FlashOnSvg width={'70%'} />
+                                :
+                                <FlashOffSvg width={'70%'} />
+                            }
+                        </View>
+                    </Button.scale>
+                    {currentDirection === 'front' &&
+                        <Animated.View style={[styles.noteWrapper, styles.noteFrontWrapper]}>
+                            <Text style={[styles.note, styles.noteBold, styles.noteFront]}>1. (앞면)</Text>
+                            <Text style={[styles.note, styles.noteBold]}> 알약의 글자가 보이도록</Text>
+                            <Text style={[styles.note]}> 찍어주세요 !</Text>
+                        </Animated.View>
+                    }
+                    {currentDirection === 'back' &&
+                        <Animated.View style={[styles.noteWrapper, styles.noteBackWrapper]}>
+                            <Text style={[styles.note, styles.noteBold, styles.noteBack]}>2. (뒷면)</Text>
+                            <Text style={[styles.note, styles.noteBold]}> 알약을 뒤집어서</Text>
+                            <Text style={[styles.note]}> 한 번 더 찍어주세요 !</Text>
+                        </Animated.View>
+                    }
+                </View>
+            </GestureDetector>
             <View style={styles.bottomWrapper}>
                 <View style={styles.zoomLevelList}>
                     <Button.scale activeScale={1.1} style={styles.zoomLevelWrapper} onPress={() => handleClickZoomLevelButton(0)}>
@@ -499,15 +733,23 @@ const SearchCamera = (): JSX.Element => {
                     </Button.scale>
                 </View>
                 <View style={styles.buttonWrapper}>
-                    <Button.scale activeScale={1.1} onPress={handlePressThumbnail}>
-                        <View style={{ width: 50 }}>
-                            {!!imgFile && <Image src={getImgPath(imgFile)} style={styles.thumbnailImage} />}
-                        </View>
-                    </Button.scale>
+                    <View style={{ flex: 1 }} />
                     <TouchableOpacity style={styles.takePicBtnWrapper} onPress={handleTakePic}>
-                        <SvgXml xml={TAKEPIC_BTN} width={64} height={64} />
+                        <View style={styles.takePicBtn} />
                     </TouchableOpacity>
-                    <View style={{ width: 50 }} />
+                    <View style={{ flex: 1, alignItems: 'center' }}>
+                        {(cameraImage?.front && cameraImage.back) &&
+                            <Button.scale onPress={handlePressComplete}>
+                                <View style={styles.completeBtn}>
+                                    <Text style={styles.completeText}>완료</Text>
+                                    <Animated.View style={styles.completeArrow}>
+                                        <ArrowRightSvg width={16} height={16} />
+                                        <ArrowRightSvg width={16} height={16} />
+                                    </Animated.View>
+                                </View>
+                            </Button.scale>
+                        }
+                    </View>
                 </View>
             </View>
         </Layout.fullscreen>

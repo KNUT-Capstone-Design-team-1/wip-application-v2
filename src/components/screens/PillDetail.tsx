@@ -70,8 +70,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
         const itemSeq = data.ITEM_SEQ;
         setLoading(true);
         let parsedData = { EE: [''], UD: [''], NB: [''] };
-        await axios.post(URL, { ITEM_SEQ: '201100488' }, { timeout: 10000 }).then((res) => {
-            console.log(data.ITEM_SEQ, res.data.data);
+        await axios.post(URL, { ITEM_SEQ: itemSeq }, { timeout: 10000 }).then((res) => {
             if (res.data.success) {
                 parsedData = {
                     EE: parseXML(res.data.data[0].EE_DOC_DATA),
@@ -121,11 +120,6 @@ const PillDetail = ({ route }: any): JSX.Element => {
         getStorageList();
         getDetailData();
     }, [route]);
-
-    useEffect(() => {
-        if (infoData)
-            console.log(infoData.EE);
-    }, [infoData])
 
     const styles = StyleSheet.create({
         scrollViewWrapper: {
@@ -207,6 +201,9 @@ const PillDetail = ({ route }: any): JSX.Element => {
             fontFamily: os.font(400, 400),
             includeFontPadding: false,
             paddingBottom: 2,
+        },
+        emptyText: {
+            color: '#aaa',
         },
         detailInfoContents: {
             gap: 10,
@@ -306,6 +303,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
                                         {infoData.EE.map((i: any, idx: number) =>
                                             <Text key={idx} style={styles.detailInfoContentsText}>{i}</Text>
                                         )}
+                                        {infoData.EE.length === 0 && <Text style={[styles.detailInfoContentsText, styles.emptyText]}>정보 없음</Text>}
                                     </View>
                                 }
                                 <Button.scale activeScale={1} onPress={() => handlePressDropdown(setInfo2)}>
@@ -321,6 +319,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
                                         {infoData.UD.map((i: any, idx: number) =>
                                             <Text key={idx} style={styles.detailInfoContentsText}>{i}</Text>
                                         )}
+                                        {infoData.UD.length === 0 && <Text style={[styles.detailInfoContentsText, styles.emptyText]}>정보 없음</Text>}
                                     </View>
                                 }
                                 <Button.scale activeScale={1} onPress={() => handlePressDropdown(setInfo3)}>
@@ -336,6 +335,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
                                         {infoData.NB.map((i: any, idx: number) =>
                                             <Text key={idx} style={styles.detailInfoContentsText}>{i}</Text>
                                         )}
+                                        {infoData.NB.length === 0 && <Text style={[styles.detailInfoContentsText, styles.emptyText]}>정보 없음</Text>}
                                     </View>
                                 }
                             </View>

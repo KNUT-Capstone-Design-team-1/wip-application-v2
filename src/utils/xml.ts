@@ -17,11 +17,11 @@ export const parseXML = (xmlString: string) => {
       const doc = result.DOC;
       const sections = doc.SECTION;
 
-      sections.forEach((section: any) => {
+      sections && sections.forEach((section: any) => {
         const articles = section.ARTICLE;
-        articles.forEach((article: any) => {
+        articles && articles.forEach((article: any) => {
           const paras = article.PARAGRAPH;
-          paras.forEach((para: any) => {
+          paras && paras.forEach((para: any) => {
             const paragraphText = para._;
             if (!hasHtmlTags(paragraphText)) {
               if (!hasTableParas(paragraphText)) {
