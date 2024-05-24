@@ -2,5 +2,5 @@ import { atom } from 'recoil';
 
 export const imgFileState = atom({
   key: 'imgFileState',
-  default: undefined,
+  default: { front: null, back: null },
 })

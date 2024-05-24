@@ -112,6 +112,8 @@ const Layout = {
 
     const visibleList: string[] = ['홈', '보관함', '설정', '카메라', '알약 촬영'];
 
+    changeNavigationBarColor('black', true);
+
     /** 로고 나타나는 애니메이션 */
     const logoFadeInAni = () => {
       Animated.timing(heightAnimation, {

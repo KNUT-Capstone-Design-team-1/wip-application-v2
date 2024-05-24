@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef } from "react";
 import { View, StyleSheet, Platform, Image, Text, Alert, Animated, Easing } from "react-native";
 import { useRecoilState } from "recoil";
-import { convertImgToBase64, getImgPath } from "@/utils/image";
+import { getCropImage, getImgPath } from "@/utils/image";
 import { launchImageLibrary } from "react-native-image-picker";
 import { imgPickerOption } from "@/constans/options";
 import ArrowLeftSvg from '@assets/svgs/arrow_left.svg';
@@ -15,12 +15,15 @@ import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import CameraSvg from '@assets/svgs/camera.svg';
 import SearchSvg from '@assets/svgs/search.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
+import ViewShot, { captureRef } from 'react-native-view-shot';
+import Toast from "react-native-toast-message";
 
 const SearchCrop = (): JSX.Element => {
     const nav: any = useNavigation();
     const downArrowAnimation = useRef(new Animated.Value(0)).current;
     const noteOpacityAnimation = useRef(new Animated.Value(0)).current;
     const noteUpAnimation = useRef(new Animated.Value(10)).current;
+    const viewShotRef = useRef<any>(null);
     const [screen, setScreen]: any = useRecoilState(screenState);
     const [imgFile, setImgFile]: any = useRecoilState(imgFileState);
 
@@ -62,7 +65,6 @@ const SearchCrop = (): JSX.Element => {
         }).start();
     }
 
-
     const downArrowInterpolated = downArrowAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [0, 8]
@@ -76,22 +78,44 @@ const SearchCrop = (): JSX.Element => {
         nav.navigate('카메라');
     }
 
-    const handlePressRePick = async () => {
-        const response = await launchImageLibrary(imgPickerOption)
+    const handlePressRePick = async (direction: string) => {
+        const response = await launchImageLibrary(imgPickerOption);
+        let result;
+        if (imgFile) {
+            result = { ...imgFile };
+        } else {
+            result = { front: null, back: null };
+        }
 
-        if (response.didCancel) { } // 앨범에서 선택이 취소되었을 때
+        if (response.didCancel) { }
         else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage)
         else {
             const uris: any[] = [];
 
-            response.assets?.forEach((value) => uris.push(value)); // 선택한 사진 순서와 상관없이 들어옴
-            setImgFile(uris[0]);
+            response.assets?.forEach((value) => uris.push(value));
+            result[direction] = await getCropImage(uris[0], 1);
+            setImgFile(result);
         }
     }
 
-    const handlePressSearch = () => {
-        nav.navigate('알약 검색 결과');
+    const handlePressSearch = async () => {
+        if (!!imgFile.front && !!imgFile.back) {
+            mergeImages();
+        } else {
+            Toast.show({
+                type: 'errorToast',
+                text1: '검색할 알약의 사진을 선택해주세요.',
+            });
+        }
     }
+
+    const mergeImages = async () => {
+        if (viewShotRef.current) {
+            viewShotRef.current.capture().then((uri: any) => {
+                nav.replace('알약 검색 결과', { data: uri });
+            });
+        }
+    };
 
     useEffect(() => {
         nav.addListener('focus', () => handleSetScreen());
@@ -99,16 +123,6 @@ const SearchCrop = (): JSX.Element => {
             nav.removeListener('focus', () => handleSetScreen());
         }
     }, []);
-
-    useEffect(() => {
-        if (imgFile) {
-            convertImgToBase64(imgFile).then((base64String: any) => {
-                console.log('Base64 string:', base64String.slice(0, 10));
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-    }, [imgFile])
 
     useEffect(() => {
         downArrowAni();
@@ -137,18 +151,42 @@ const SearchCrop = (): JSX.Element => {
             alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
-            paddingHorizontal: 10,
+        },
+        cropImgList: {
+            flexDirection: 'row',
+            gap: 12,
+            position: 'relative',
+            width: '100%',
+            marginTop: 30,
+            borderColor: '#000000',
         },
         cropImgWrapper: {
-            width: '100%',
-            aspectRatio: 304 / 352,
-            marginTop: 30,
-            borderRadius: 10,
-            borderColor: '#000000',
-            overflow: 'hidden',
+            alignItems: 'center',
+            position: 'relative',
+            flex: 1,
         },
         cropImg: {
-            height: '100%',
+            width: '100%',
+            aspectRatio: '1/1',
+            borderRadius: 10,
+        },
+        emptyImg: {
+            padding: 14,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            aspectRatio: '1/1',
+            borderRadius: 10,
+            backgroundColor: '#efeff7',
+        },
+        emptyImgText: {
+            width: '100%',
+            textAlign: 'center',
+            color: '#a1a1a1',
+            fontSize: font(14),
+            fontFamily: os.font(400, 400),
+            includeFontPadding: false,
+            paddingBottom: 0,
         },
         btnWrapper: {
             flexDirection: 'row',
@@ -190,8 +228,8 @@ const SearchCrop = (): JSX.Element => {
         noteTextWrapper: {
             flex: 1,
             alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 14,
+            justifyContent: 'flex-end',
+            marginBottom: 60,
             opacity: noteOpacityAnimation,
             transform: [{ translateY: noteUpAnimation }],
         },
@@ -211,6 +249,13 @@ const SearchCrop = (): JSX.Element => {
             paddingVertical: 16,
             paddingHorizontal: 16,
         },
+        labelText: {
+            color: '#000',
+            fontSize: font(14),
+            fontFamily: os.font(500, 500),
+            includeFontPadding: false,
+            paddingBottom: 10,
+        },
         pickButton: {
             color: '#A5A5A5',
             fontSize: font(14),
@@ -225,17 +270,52 @@ const SearchCrop = (): JSX.Element => {
 
     return (
         <Layout.default>
+            <ViewShot ref={viewShotRef} style={{ position: 'absolute', width: 1280, height: 640, flexDirection: 'row', zIndex: -1 }} options={{ fileName: "merged", format: "jpg", quality: 1 }}>
+                {imgFile?.front && <Image src={getImgPath(imgFile.front)} style={{ width: '50%', height: '100%' }} />}
+                {imgFile?.back && <Image src={getImgPath(imgFile.back)} style={{ width: '50%', height: '100%' }} />}
+            </ViewShot>
             <View style={styles.viewWrapper}>
                 <View style={styles.imgViewWrapper}>
-                    <View style={styles.cropImgWrapper}>
-                        {imgFile && <Image src={getImgPath(imgFile)} style={styles.cropImg} />}
-                    </View>
-                    <Button.scale onPress={handlePressRePick}>
-                        <View style={styles.pickButtonWrapper}>
-                            <ElbumSvg width={20} height={20} color={'#A5A5A5'} preserveAspectRatio="xMinYMax" />
-                            <Text style={styles.pickButton}>앨범에서 다시 선택하기</Text>
+                    <View style={styles.cropImgList}>
+
+                        <View style={styles.cropImgWrapper}>
+                            <Text style={styles.labelText}>앞면</Text>
+                            <Button.scale onPress={() => handlePressRePick('front')}>
+                                {imgFile?.front ?
+                                    <Image src={getImgPath(imgFile.front)} style={styles.cropImg} />
+                                    :
+                                    <View style={styles.emptyImg}>
+                                        <Text style={styles.emptyImgText}>알약의 글자가 보이는 사진을 선택해주세요.</Text>
+                                    </View>
+                                }
+                            </Button.scale>
+                            <Button.scale onPress={() => handlePressRePick('front')}>
+                                <View style={styles.pickButtonWrapper}>
+                                    <ElbumSvg width={20} height={20} color={'#A5A5A5'} preserveAspectRatio="xMinYMax" />
+                                    <Text style={styles.pickButton}>앨범에서 선택하기</Text>
+                                </View>
+                            </Button.scale>
                         </View>
-                    </Button.scale>
+                        <View style={styles.cropImgWrapper}>
+                            <Text style={styles.labelText}>뒷면</Text>
+                            <Button.scale onPress={() => handlePressRePick('back')}>
+                                {imgFile?.back ?
+                                    <Image src={getImgPath(imgFile.back)} style={styles.cropImg} />
+                                    :
+                                    <View style={styles.emptyImg}>
+                                        <Text style={styles.emptyImgText}>알약의 반대 면의 사진을 선택해주세요.</Text>
+                                    </View>
+                                }
+                            </Button.scale>
+                            <Button.scale onPress={() => handlePressRePick('back')}>
+                                <View style={styles.pickButtonWrapper}>
+                                    <ElbumSvg width={20} height={20} color={'#A5A5A5'} preserveAspectRatio="xMinYMax" />
+                                    <Text style={styles.pickButton}>앨범에서 선택하기</Text>
+                                </View>
+                            </Button.scale>
+                        </View>
+                    </View>
+
                     <Animated.View style={styles.noteTextWrapper}>
                         <Text style={styles.noteText}>{`위 알약 사진이 제대로 나왔다면,\n아래 검색 버튼을 눌러주세요!`}</Text>
                         <Animated.View style={styles.downArrow}>

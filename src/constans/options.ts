@@ -1,5 +1,5 @@
 import { ImageLibraryOptions } from "react-native-image-picker";
-import { DeviceFilter, useCameraDevice, useCameraFormat } from "react-native-vision-camera";
+import { DeviceFilter } from "react-native-vision-camera";
 
 export const imgPickerOption: ImageLibraryOptions = {
   mediaType: "photo",
@@ -13,5 +13,5 @@ export const cameraDeviceOption: DeviceFilter = {
     'ultra-wide-angle-camera',
     'wide-angle-camera',
     'telephoto-camera'
-  ]
+  ],
 }

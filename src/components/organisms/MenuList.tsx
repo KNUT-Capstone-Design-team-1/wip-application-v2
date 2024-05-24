@@ -1,16 +1,31 @@
 import Button from "@/components/atoms/Button";
 import { font, os } from "@/style/font";
+import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
+import Toast from "react-native-toast-message";
 
 const MenuList = () => {
+  const nav: any = useNavigation();
+
+  const handlePressStorageMenu = () => {
+    nav.navigate('StorageStack', { screen: '보관함' });
+  }
+
+  const handlePressNeerbyMenu = () => {
+    Toast.show({
+      type: 'noteToast',
+      text1: '현재 개발중인 기능입니다.',
+    });
+  }
+
   const styles = StyleSheet.create({
     menuListWrapper: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       gap: 20,
       //backgroundColor: '#fff',
-      marginBottom: 35,
+      marginBottom: 40,
     },
     menu: {
       position: 'relative',
@@ -61,7 +76,7 @@ const MenuList = () => {
 
   return (
     <View style={styles.menuListWrapper}>
-      <Button.scale style={styles.menu}>
+      <Button.scale style={styles.menu} onPress={handlePressNeerbyMenu}>
         <Shadow distance={15} offset={[2, 4]} startColor='#00000015' style={styles.menuShadow}>
           <Image
             style={styles.menuBackgroundImage}
@@ -71,7 +86,7 @@ const MenuList = () => {
           <Text style={styles.menuSubText}>Nearby Pharmacy</Text>
         </Shadow>
       </Button.scale>
-      <Button.scale style={styles.menu}>
+      <Button.scale style={styles.menu} onPress={handlePressStorageMenu}>
         <Shadow distance={15} offset={[2, 4]} startColor='#00000015' style={styles.menuShadow}>
           <Image
             style={styles.menuBackgroundImage}

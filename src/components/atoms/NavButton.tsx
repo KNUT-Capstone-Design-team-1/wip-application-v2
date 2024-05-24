@@ -11,6 +11,7 @@ interface INavWrapperProps {
   iconXML: INavIcon,
   name: string,
   navName: string,
+  tabName?: string,
 }
 
 interface INavIcon {
@@ -29,7 +30,7 @@ interface INavIconSize {
   top?: number,
 }
 
-const NavButton = ({ iconXML, name, navName }: INavWrapperProps) => {
+const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
   const nav: any = useNavigation();
   const screen: any = useRecoilValue(screenState);
   const [currentScreen, setCurrentScreen] = useState<string | null>(null);
@@ -50,6 +51,14 @@ const NavButton = ({ iconXML, name, navName }: INavWrapperProps) => {
     }
 
     return result;
+  }
+
+  const handlePressTab = () => {
+    if (tabName) {
+      nav.navigate(tabName, { screen: navName });
+    } else {
+      nav.navigate(navName);
+    }
   }
 
   const styles = StyleSheet.create({
@@ -94,7 +103,7 @@ const NavButton = ({ iconXML, name, navName }: INavWrapperProps) => {
   return (
     <Button.scale
       style={styles.tab}
-      onPress={() => nav.navigate(navName)}
+      onPress={handlePressTab}
       activeScale={1.15}
     >
       <View style={{ height: '100%' }}>

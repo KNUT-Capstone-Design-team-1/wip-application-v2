@@ -1,21 +1,44 @@
 import Button from "@/components/atoms/Button";
 import { font, os } from "@/style/font";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { getItem, setItem } from "@/utils/storage";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 const LastSearchPill = () => {
+  const nav: any = useNavigation();
+  const [latestList, setLatestList] = useState<any[]>([]);
+
+  const getItemList = async () => {
+    const LIST = await getItem('latestSearchPill');
+    let list = [];
+    if (LIST) {
+      list = JSON.parse(LIST);
+      setLatestList(list);
+    }
+  }
+
+  const handlePressItem = (data: any) => {
+    nav.navigate('알약 정보', { data: data });
+  }
+
+  useFocusEffect(() => {
+    getItemList();
+  })
+
   const styles = StyleSheet.create({
     lastSearchPillWrapper: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       gap: 8,
-      paddingTop: 24,
-      paddingBottom: 16,
+      paddingTop: 34,
+      paddingBottom: 22,
     },
     lastSearchPillText: {
       color: '#000',
-      fontSize: font(15),
+      fontSize: font(16),
       fontFamily: os.font(500, 600),
       includeFontPadding: false,
     },
@@ -30,7 +53,10 @@ const LastSearchPill = () => {
       flexWrap: 'wrap',
       gap: 7,
       rowGap: 9,
-      marginBottom: 30,
+      marginBottom: 36,
+      paddingBottom: 2,
+      maxHeight: 74,
+      overflow: 'hidden',
     },
     lastSearchPillList: {
       flexDirection: 'row',
@@ -48,6 +74,14 @@ const LastSearchPill = () => {
       fontFamily: os.font(400, 500),
       includeFontPadding: false,
     },
+    noListText: {
+      color: '#969696',
+      fontSize: font(14),
+      fontFamily: os.font(400, 400),
+      includeFontPadding: false,
+      paddingTop: 0,
+      paddingBottom: 2,
+    }
   })
 
   const SEARCH_ICON = `
@@ -56,24 +90,23 @@ const LastSearchPill = () => {
     </svg>
     `
 
-  const lastSearchList = ['칸살탄정', '올메르탄플러스정', '펜폴캡슐', '온글라이자정', '실버셉트오디정']
-
   return (
     <>
       <View style={styles.lastSearchPillWrapper}>
-        <SvgXml xml={SEARCH_ICON} width={16} height={16} style={styles.lastSearchIcon} />
+        <SvgXml xml={SEARCH_ICON} width={17} height={17} style={styles.lastSearchIcon} />
         <Text style={styles.lastSearchPillText}>
           최근 검색한 알약
         </Text>
       </View>
       <View style={styles.lastSearchPillListWrapper}>
-        {lastSearchList.map((i: string, key: number) =>
-          <Button.scale activeScale={0.9} key={key}>
+        {latestList.length > 0 ? latestList.map((i: any, key: number) =>
+          <Button.scale activeScale={0.9} key={key} onPress={() => handlePressItem(i)}>
             <View style={styles.lastSearchPillList}>
-              <Text style={styles.lastSearchPillListText}>{i}</Text>
+              <Text style={styles.lastSearchPillListText}>{i.ITEM_NAME}</Text>
             </View>
           </Button.scale>
-        )}
+        ) : <Text style={styles.noListText}>최근 검색한 알약이 없습니다.</Text>
+        }
       </View>
     </>
   )

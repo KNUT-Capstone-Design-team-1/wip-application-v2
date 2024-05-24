@@ -54,17 +54,8 @@ const Search = ({ route }: any): JSX.Element => {
     }
 
     const handlePressImgPicker = async () => {
-        const response = await launchImageLibrary(imgPickerOption)
-
-        if (response.didCancel) { } // 앨범에서 선택이 취소되었을 때
-        else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage)
-        else {
-            const uris: any[] = [];
-
-            response.assets?.forEach((value) => uris.push(value)); // 선택한 사진 순서와 상관없이 들어옴
-            setImgFile(uris[0]);
-            nav.navigate('알약 촬영');
-        }
+        setImgFile({ front: null, back: null })
+        nav.navigate('알약 촬영');
     }
 
     useEffect(() => {
@@ -94,11 +85,11 @@ const Search = ({ route }: any): JSX.Element => {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 20,
+            marginTop: 10,
             marginBottom: 30,
         },
         sampleImage: {
-            top: '-10%',
+            top: '-8%',
             height: '180%',
             resizeMode: 'contain',
         },
@@ -200,7 +191,7 @@ const Search = ({ route }: any): JSX.Element => {
                         </View>
                         <Text style={styles.note}>네모칸 안에 알약이 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>알약에 글자가 선명히 보이도록 촬영해주세요</Text>
-                        <Text style={styles.note}>여러 알약을 촬영 시 겹치지 않게 해주세요</Text>
+                        <Text style={styles.note}>하나의 알약만 보이도록 촬영해주세요</Text>
                     </View>
                 </View>
 

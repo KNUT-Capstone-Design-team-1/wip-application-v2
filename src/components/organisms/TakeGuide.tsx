@@ -7,7 +7,7 @@ const TakeGuide = () => {
     takeGuide: {
       gap: 6,
       alignItems: 'center',
-      paddingBottom: 110,
+      paddingBottom: 90,
     },
     takeGuideText1: {
       paddingBottom: 0,
