@@ -81,9 +81,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.whatispill"
+    namespace "com.mbm.whatispill"
     defaultConfig {
-        applicationId "com.whatispill"
+        applicationId "com.mbm.whatispill"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

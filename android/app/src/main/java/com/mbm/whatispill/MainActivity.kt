@@ -1,4 +1,4 @@
-package com.whatispill
+package com.mbm.whatispill
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
