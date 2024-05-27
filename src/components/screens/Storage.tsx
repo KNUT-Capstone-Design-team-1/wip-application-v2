@@ -102,7 +102,7 @@ const Storage = (): JSX.Element => {
                 {data.length > 0 ?
                     <View style={styles.pillList}>
                         {data.map((i: any) => (
-                            <StorageItem key={i._id} data={i} refresh={getStorage} />
+                            <StorageItem key={i.ITEM_SEQ} data={i} refresh={getStorage} />
                         ))}
                     </View>
                     :

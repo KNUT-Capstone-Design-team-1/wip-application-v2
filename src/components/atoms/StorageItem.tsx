@@ -25,7 +25,7 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
     let result: any[] = [];
     if (LIST) {
       list.map((i: any) => {
-        if (i._id !== data._id) {
+        if (i.ITEM_SEQ !== data.ITEM_SEQ) {
           result.push(i);
         }
       })
@@ -115,7 +115,7 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
     <Button.scale onPress={handlePressDetail}>
       <View style={styles.wrapper}>
         <View style={styles.pillImgWrapper}>
-          {!!data.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.ITEM_IMAGE }} resizeMode="contain" />}
+          {!!data.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }} resizeMode="contain" />}
         </View>
         <View style={styles.nameWrapper}>
           <Text style={styles.name} numberOfLines={2}>{data.ITEM_NAME}</Text>

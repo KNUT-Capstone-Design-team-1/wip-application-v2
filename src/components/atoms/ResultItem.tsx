@@ -15,7 +15,7 @@ const ResultItem = ({ data, last, index }: any) => {
     if (LIST) {
       list = [{},];
       JSON.parse(LIST).map((i: any) => {
-        if (i._id !== data._id) list.push(i)
+        if (i.ITEM_SEQ !== data.ITEM_SEQ) list.push(i)
       });
       list[0] = data;
     }
@@ -32,6 +32,7 @@ const ResultItem = ({ data, last, index }: any) => {
       borderBottomColor: '#E7E7E7',
       borderBottomWidth: 1,
       marginBottom: last ? 200 : 0,
+      backgroundColor: '#fff',
     },
     imgWrapper: {
       position: 'relative',

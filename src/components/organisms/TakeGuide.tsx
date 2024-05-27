@@ -11,14 +11,14 @@ const TakeGuide = () => {
     },
     takeGuideText1: {
       paddingBottom: 0,
-      fontSize: font(12),
+      fontSize: font(15),
       fontFamily: os.font(700, 700),
       color: '#9B0505',
       includeFontPadding: false,
     },
     takeGuideText2: {
       paddingBottom: 3,
-      fontSize: font(11),
+      fontSize: font(14),
       fontFamily: os.font(500, 500),
       color: '#000',
       includeFontPadding: false,
@@ -39,7 +39,7 @@ const TakeGuide = () => {
   return (
     <View style={styles.takeGuide}>
       <Text style={styles.takeGuideText1}>
-        약의 오용과 남용은 오히려 건강을 해칠수 있습니다.
+        약의 오용과 남용은 건강을 해칠수 있습니다.
       </Text>
       <TouchableOpacity style={styles.takeGuideButtonWrapper}>
         <Text style={styles.takeGuideText2}>

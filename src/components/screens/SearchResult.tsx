@@ -13,6 +13,10 @@ import SkeletonResultItem from "@/components/atoms/SkeletonResultItem";
 import Skeleton from "@/components/atoms/Skeleton";
 import Toast from "react-native-toast-message";
 import Config from "react-native-config";
+import { BottomNavHeight } from "@/components/organisms/BottomNavigation";
+import LoadingCircle from "@/components/atoms/LoadingCircle";
+
+const limit = 20;
 
 const SearchResult = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();
@@ -20,7 +24,10 @@ const SearchResult = ({ route }: any): JSX.Element => {
     const [imgFile, setImgFile]: any = useRecoilState(imgFileState);
     const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(true);
+    const [infiLoading, setInfiLoading] = useState<boolean>(false);
     const [data, setData] = useState<any[] | undefined>(undefined);
+    const [page, setPage] = useState<number>(1);
+    const [finishData, setFinishData] = useState<boolean>(false);
     const mergedImgUri = route.params.data;
 
     const handleSetScreen = () => {
@@ -28,22 +35,49 @@ const SearchResult = ({ route }: any): JSX.Element => {
     }
 
     const getResultData = async () => {
-        const URL = Config.API_URL + '/pill-search/image?skip=0&limit=20';
+        const URL = Config.API_URL + `/pill-search/image?skip=${page}&limit=${limit}`;
         const base64 = imageBase64;
         setLoading(true);
         await axios.post(URL, { base64 }, { timeout: 10000 }).then((res: any) => {
             setLoading(false);
-            setData(res.data.data.pillInfoList);
-        })
-            .catch(error => {
+            if (res.data.success) {
+                setData(res.data.data.pillInfoList);
+            } else {
                 nav.goBack();
                 Toast.show({
                     type: 'errorToast',
-                    text1: '알약검색에 실패했습니다.',
+                    text1: res.data.message ?? '알약검색에 실패했습니다.',
                 });
+            }
+        }).catch(error => {
+            nav.goBack();
+            Toast.show({
+                type: 'errorToast',
+                text1: `알약검색에 실패했습니다. 잠시 후 다시 시도해주세요.`,
             });
+        });
     }
 
+    const getResultDataByPage = async () => {
+        const URL = Config.API_URL + `/pill-search/image?skip=${(page + 1) * limit}&limit=${limit}`;
+        const base64 = imageBase64;
+        if (!finishData) {
+            setInfiLoading(true);
+            await axios.post(URL, { base64 }, { timeout: 10000 }).then((res: any) => {
+                if (res.data.success && !!data) {
+                    let pre = [...data, ...res.data.data.pillInfoList];
+                    setData(pre);
+                    setPage(prev => prev + 1);
+                    setInfiLoading(false);
+                    if (res.data.data.pillInfoList.length < 10) {
+                        setFinishData(true);
+                    }
+                } else {
+                }
+            }).catch(error => {
+            });
+        }
+    }
 
 
     useEffect(() => {
@@ -115,6 +149,16 @@ const SearchResult = ({ route }: any): JSX.Element => {
         },
         skeletonList: {
             paddingTop: 50,
+        },
+        infiLoading: {
+            position: 'absolute',
+            bottom: BottomNavHeight,
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingVertical: 22,
+            paddingBottom: 40,
+            zIndex: -1,
         }
     });
 
@@ -123,15 +167,21 @@ const SearchResult = ({ route }: any): JSX.Element => {
             {(!loading && data) ?
                 <View style={styles.viewWrapper}>
                     <View style={styles.noteWrapper}>
-                        <Text style={[styles.note, styles.bold]}>총 {data.length}개</Text>
-                        <Text style={styles.note}>의 알약이 검색 되었습니다.</Text>
+                        <Text style={styles.note}>이미지에 대한 알약 검색 결과입니다.</Text>
                     </View>
                     <FlatList
                         style={styles.resultListWrapper}
                         data={data}
                         renderItem={({ item, index }) => <ResultItem data={item} last={(data.length - 1) === index} index={index} />}
-                        keyExtractor={item => item._id}
+                        keyExtractor={item => item.ITEM_SEQ}
+                        onEndReached={getResultDataByPage}
+                        onEndReachedThreshold={0.5}
                     />
+                    {infiLoading &&
+                        <View style={styles.infiLoading}>
+                            <LoadingCircle size={'small'} />
+                        </View>
+                    }
                 </View>
                 :
                 <View style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>

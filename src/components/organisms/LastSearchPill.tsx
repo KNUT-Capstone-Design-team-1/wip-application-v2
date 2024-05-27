@@ -2,7 +2,7 @@ import Button from "@/components/atoms/Button";
 import { font, os } from "@/style/font";
 import { getItem, setItem } from "@/utils/storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
@@ -38,7 +38,7 @@ const LastSearchPill = () => {
     },
     lastSearchPillText: {
       color: '#000',
-      fontSize: font(16),
+      fontSize: font(18),
       fontFamily: os.font(500, 600),
       includeFontPadding: false,
     },
@@ -55,7 +55,7 @@ const LastSearchPill = () => {
       rowGap: 9,
       marginBottom: 36,
       paddingBottom: 2,
-      maxHeight: 74,
+      maxHeight: 80,
       overflow: 'hidden',
     },
     lastSearchPillList: {
@@ -70,7 +70,7 @@ const LastSearchPill = () => {
     },
     lastSearchPillListText: {
       color: '#000',
-      fontSize: font(12),
+      fontSize: font(14),
       fontFamily: os.font(400, 500),
       includeFontPadding: false,
     },

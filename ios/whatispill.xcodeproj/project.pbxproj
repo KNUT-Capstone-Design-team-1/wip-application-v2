@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* whatispillTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* whatispillTests.m */; };
-		07E5DEB9F84FB51B74BDE0E4 /* libPods-whatispill.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BA01A77F4240D7D7A3A875 /* libPods-whatispill.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		28D873982A57C74BC6CDFDDE /* libPods-whatispill-whatispillTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 445D6739C5FD8662F2AFAE8E /* libPods-whatispill-whatispillTests.a */; };
+		3E98A218CBE222F020CDE1DF /* libPods-whatispill-whatispillTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F181897B1F4FC1B4A737F2 /* libPods-whatispill-whatispillTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8703A3637A9757ED1C86E865 /* libPods-whatispill.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F72B27AAD4F26BBEDCAF8DB /* libPods-whatispill.a */; };
 		9DD3BD132BA4741100859426 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 9DD3BD122BA4741100859426 /* Fonts */; };
 /* End PBXBuildFile section */
 
@@ -31,21 +31,21 @@
 		00E356EE1AD99517003FC87E /* whatispillTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = whatispillTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* whatispillTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = whatispillTests.m; sourceTree = "<group>"; };
-		0B4B0DAC31897AE37324C502 /* Pods-whatispill-whatispillTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill-whatispillTests.release.xcconfig"; path = "Target Support Files/Pods-whatispill-whatispillTests/Pods-whatispill-whatispillTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* whatispill.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = whatispill.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = whatispill/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = whatispill/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = whatispill/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = whatispill/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = whatispill/main.m; sourceTree = "<group>"; };
-		445D6739C5FD8662F2AFAE8E /* libPods-whatispill-whatispillTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-whatispill-whatispillTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		51D90F8AA133CBBAE19F232D /* Pods-whatispill-whatispillTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill-whatispillTests.debug.xcconfig"; path = "Target Support Files/Pods-whatispill-whatispillTests/Pods-whatispill-whatispillTests.debug.xcconfig"; sourceTree = "<group>"; };
+		32F1FF7E8B071F7CD52C2547 /* Pods-whatispill-whatispillTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill-whatispillTests.release.xcconfig"; path = "Target Support Files/Pods-whatispill-whatispillTests/Pods-whatispill-whatispillTests.release.xcconfig"; sourceTree = "<group>"; };
+		4CD4DD23F42D3D2512530921 /* Pods-whatispill.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill.debug.xcconfig"; path = "Target Support Files/Pods-whatispill/Pods-whatispill.debug.xcconfig"; sourceTree = "<group>"; };
+		5C35E0A82E4493E20CC7BDEA /* Pods-whatispill-whatispillTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill-whatispillTests.debug.xcconfig"; path = "Target Support Files/Pods-whatispill-whatispillTests/Pods-whatispill-whatispillTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6F72B27AAD4F26BBEDCAF8DB /* libPods-whatispill.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-whatispill.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742A098161EC58DD9563F63E /* Pods-whatispill.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill.release.xcconfig"; path = "Target Support Files/Pods-whatispill/Pods-whatispill.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = whatispill/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		875DCA3CDC95B7B964880243 /* Pods-whatispill.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill.debug.xcconfig"; path = "Target Support Files/Pods-whatispill/Pods-whatispill.debug.xcconfig"; sourceTree = "<group>"; };
+		95F181897B1F4FC1B4A737F2 /* libPods-whatispill-whatispillTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-whatispill-whatispillTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DD3BD122BA4741100859426 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		9DDE0D0A2BFDC6AA001557F6 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		C60B264778CEACD353882C21 /* Pods-whatispill.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-whatispill.release.xcconfig"; path = "Target Support Files/Pods-whatispill/Pods-whatispill.release.xcconfig"; sourceTree = "<group>"; };
-		C8BA01A77F4240D7D7A3A875 /* libPods-whatispill.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-whatispill.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28D873982A57C74BC6CDFDDE /* libPods-whatispill-whatispillTests.a in Frameworks */,
+				3E98A218CBE222F020CDE1DF /* libPods-whatispill-whatispillTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07E5DEB9F84FB51B74BDE0E4 /* libPods-whatispill.a in Frameworks */,
+				8703A3637A9757ED1C86E865 /* libPods-whatispill.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,8 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				C8BA01A77F4240D7D7A3A875 /* libPods-whatispill.a */,
-				445D6739C5FD8662F2AFAE8E /* libPods-whatispill-whatispillTests.a */,
+				6F72B27AAD4F26BBEDCAF8DB /* libPods-whatispill.a */,
+				95F181897B1F4FC1B4A737F2 /* libPods-whatispill-whatispillTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -145,10 +145,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				875DCA3CDC95B7B964880243 /* Pods-whatispill.debug.xcconfig */,
-				C60B264778CEACD353882C21 /* Pods-whatispill.release.xcconfig */,
-				51D90F8AA133CBBAE19F232D /* Pods-whatispill-whatispillTests.debug.xcconfig */,
-				0B4B0DAC31897AE37324C502 /* Pods-whatispill-whatispillTests.release.xcconfig */,
+				4CD4DD23F42D3D2512530921 /* Pods-whatispill.debug.xcconfig */,
+				742A098161EC58DD9563F63E /* Pods-whatispill.release.xcconfig */,
+				5C35E0A82E4493E20CC7BDEA /* Pods-whatispill-whatispillTests.debug.xcconfig */,
+				32F1FF7E8B071F7CD52C2547 /* Pods-whatispill-whatispillTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -160,12 +160,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "whatispillTests" */;
 			buildPhases = (
-				78BC5BC574229EF54B745B76 /* [CP] Check Pods Manifest.lock */,
+				F6E3A04CB647CA81DDD1DEB9 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				EF332C600F05B96C5CE73C0D /* [CP] Embed Pods Frameworks */,
-				D94B009E3FBD9171F3DC26C7 /* [CP] Copy Pods Resources */,
+				B0892E1EF7EA49FE1DCE0ED7 /* [CP] Embed Pods Frameworks */,
+				38B3D497B1AFCFBB280FF2AF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -181,13 +181,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "whatispill" */;
 			buildPhases = (
-				F2000853EB211029F05D069A /* [CP] Check Pods Manifest.lock */,
+				71592927C87B36EE7132E8E3 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				50DB6F56D62C1A7B4A2BFAD6 /* [CP] Embed Pods Frameworks */,
-				0AB3E6649006BC146189648D /* [CP] Copy Pods Resources */,
+				9409CADE8FD7EA597416C4DD /* [CP] Embed Pods Frameworks */,
+				245A592085BDFCD2C1379738 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -271,7 +271,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		0AB3E6649006BC146189648D /* [CP] Copy Pods Resources */ = {
+		245A592085BDFCD2C1379738 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -288,46 +288,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		50DB6F56D62C1A7B4A2BFAD6 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		78BC5BC574229EF54B745B76 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-whatispill-whatispillTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D94B009E3FBD9171F3DC26C7 /* [CP] Copy Pods Resources */ = {
+		38B3D497B1AFCFBB280FF2AF /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -344,7 +305,46 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-whatispill-whatispillTests/Pods-whatispill-whatispillTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EF332C600F05B96C5CE73C0D /* [CP] Embed Pods Frameworks */ = {
+		71592927C87B36EE7132E8E3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-whatispill-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9409CADE8FD7EA597416C4DD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-whatispill/Pods-whatispill-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B0892E1EF7EA49FE1DCE0ED7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -361,7 +361,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-whatispill-whatispillTests/Pods-whatispill-whatispillTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F2000853EB211029F05D069A /* [CP] Check Pods Manifest.lock */ = {
+		F6E3A04CB647CA81DDD1DEB9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -376,7 +376,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-whatispill-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-whatispill-whatispillTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -416,7 +416,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51D90F8AA133CBBAE19F232D /* Pods-whatispill-whatispillTests.debug.xcconfig */;
+			baseConfigurationReference = 5C35E0A82E4493E20CC7BDEA /* Pods-whatispill-whatispillTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -443,7 +443,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0B4B0DAC31897AE37324C502 /* Pods-whatispill-whatispillTests.release.xcconfig */;
+			baseConfigurationReference = 32F1FF7E8B071F7CD52C2547 /* Pods-whatispill-whatispillTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -467,7 +467,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 875DCA3CDC95B7B964880243 /* Pods-whatispill.debug.xcconfig */;
+			baseConfigurationReference = 4CD4DD23F42D3D2512530921 /* Pods-whatispill.debug.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -500,7 +500,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C60B264778CEACD353882C21 /* Pods-whatispill.release.xcconfig */;
+			baseConfigurationReference = 742A098161EC58DD9563F63E /* Pods-whatispill.release.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

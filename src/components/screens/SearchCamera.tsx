@@ -3,8 +3,8 @@ import Button from "@/components/atoms/Button";
 import Layout, { StatusBarHeight, windowHeight, windowWidth } from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
 import { useNavigation } from "@react-navigation/native";
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image, Animated, Easing } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View, StyleSheet, Text, TouchableOpacity, Image, Animated, Easing, Platform } from "react-native";
 import { Camera, Point, useCameraDevice, useCameraFormat } from "react-native-vision-camera";
 import { useRecoilState } from "recoil";
 import CameraMaskFrame from '@assets/svgs/cameraMaskFrame.svg';
@@ -34,6 +34,12 @@ interface ImageInfo {
 // 포커스 UI 가로,세로 크기
 const focusSize = 90;
 
+// 진동 옵션
+const options = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: true,
+};
+
 const SearchCamera = (): JSX.Element => {
     const nav: any = useNavigation();
     const cameraDevice = useCameraDevice('back', cameraDeviceOption);
@@ -44,18 +50,20 @@ const SearchCamera = (): JSX.Element => {
     const boxOpacityAnimation = useRef(new Animated.Value(0)).current;
     const guideFrontTopAnimation = useRef(new Animated.Value(-100)).current;
     const guideBackTopAnimation = useRef(new Animated.Value(-100)).current;
+    const guideCompleteTopAnimation = useRef(new Animated.Value(-100)).current;
     const arrowLoopAnimation = useRef(new Animated.Value(0)).current;
 
     const [screen, setScreen]: any = useRecoilState(screenState);
     const [imgFile, setImgFile] = useRecoilState<any>(imgFileState);
     const [cameraLoading, setCameraLoading] = useState<boolean>(true);
     const [cameraImage, setCameraImage] = useState<null | ICameraImg>(null);
-    const [currentDirection, setCurrentDirection] = useState<'front' | 'back'>('front');
+    const [currentDirection, setCurrentDirection] = useState<'front' | 'back' | 'complete'>('front');
     const [isTorch, setIsTorch] = useState<"off" | "on" | undefined>('off');
     const [focusXY, setFocusXY] = useState<any>({ x: 0, y: 0 });
     const [selectZoomLevel, setSelectZoomLevel] = useState<0 | 1 | 2>(1);
     const [zoomLevel, setZoomLevel] = useState<number | undefined>(cameraDevice?.neutralZoom);
     const [longFocus, setLongFocus] = useState<boolean>(false);
+    const [isCameraActive, setIsCameraActvie] = useState<boolean>(false);
 
     const cameraFormat = useCameraFormat(cameraDevice, [
         { photoResolution: { width: 1280, height: 1280 } }
@@ -119,6 +127,17 @@ const SearchCamera = (): JSX.Element => {
     /** 가이드 나타나는 애니메이션 */
     const guideBackTopAni = () => {
         Animated.timing(guideBackTopAnimation, {
+            toValue: 14,
+            delay: 0,
+            duration: 300,
+            easing: Easing.bezier(.14, 1.07, .59, .97),
+            useNativeDriver: false,
+        }).start();
+    }
+
+    /** 가이드 나타나는 애니메이션 */
+    const guideCompleteTopAni = () => {
+        Animated.timing(guideCompleteTopAnimation, {
             toValue: 14,
             delay: 0,
             duration: 300,
@@ -203,27 +222,33 @@ const SearchCamera = (): JSX.Element => {
     const handleTakePic = async () => {
         if (cameraRef.current === null) return;
         try {
-            const imageData = await cameraRef.current.takePhoto();
-            let result: null | ICameraImg = { front: null, back: null };
+            if (currentDirection !== 'complete') {
+                const imageData = await cameraRef.current.takePhoto();
+                let result: null | ICameraImg = { front: null, back: null };
 
-            if (cameraImage) {
-                result = { ...cameraImage };
-                if (currentDirection === 'front') {
-                    if (!result.back) setCurrentDirection('back');
+                if (cameraImage) {
+                    result = { ...cameraImage };
+                    if (currentDirection === 'front') {
+                        if (!result.back) setCurrentDirection('back')
+                        else
+                            setCurrentDirection('complete');
+                    }
+                    if (currentDirection === 'back') {
+                        if (!result.front) setCurrentDirection('front');
+                        else
+                            setCurrentDirection('complete');
+                    }
+                } else {
+                    if (currentDirection === 'front') {
+                        setCurrentDirection('back');
+                    }
+                    if (currentDirection === 'back') {
+                        setCurrentDirection('front');
+                    }
                 }
-                if (currentDirection === 'back') {
-                    if (!result.front) setCurrentDirection('front');
-                }
-            } else {
-                if (currentDirection === 'front') {
-                    setCurrentDirection('back');
-                }
-                if (currentDirection === 'back') {
-                    setCurrentDirection('front');
-                }
+                result[currentDirection] = await getCropImage(imageData, 0.666);
+                setCameraImage(result);
             }
-            result[currentDirection] = await getCropImage(imageData, 0.666);
-            setCameraImage(result);
         } catch (e) {
             console.log(e);
         }
@@ -285,10 +310,6 @@ const SearchCamera = (): JSX.Element => {
     }, [cameraDevice]);
 
     useEffect(() => {
-        const options = {
-            enableVibrateFallback: true,
-            ignoreAndroidSystemSettings: true,
-        };
         if (longFocus) {
             trigger("impactLight", options);
         }
@@ -299,21 +320,24 @@ const SearchCamera = (): JSX.Element => {
             boxGapAni();
             boxOpacityAni();
         }
+        if (cameraImage?.front && cameraImage.back) {
+            trigger("impactLight", options);
+        }
     }, [cameraImage]);
 
     useEffect(() => {
-        const options = {
-            enableVibrateFallback: true,
-            ignoreAndroidSystemSettings: true,
-        };
         trigger("impactLight", options);
         guideFrontTopAnimation.setValue(-100);
         guideBackTopAnimation.setValue(-100);
+        guideCompleteTopAnimation.setValue(-100);
         if (currentDirection === 'front') {
             guideFrontTopAni();
         }
         if (currentDirection === 'back') {
             guideBackTopAni();
+        }
+        if (currentDirection === 'complete') {
+            guideCompleteTopAni();
         }
     }, [currentDirection])
 
@@ -324,6 +348,7 @@ const SearchCamera = (): JSX.Element => {
     const styles = StyleSheet.create({
         topWrapper: {
             flex: 1,
+            maxHeight: 200,
             justifyContent: 'center',
             paddingTop: StatusBarHeight + 10,
             backgroundColor: 'rgba(0, 0, 0, 1)',
@@ -333,16 +358,18 @@ const SearchCamera = (): JSX.Element => {
             flexDirection: 'row',
             marginTop: 0,
             width: '100%',
+            zIndex: 10,
         },
         title: {
             width: '100%',
-            textAlign: 'center',
+            textAlign: 'left',
             fontFamily: os.font(500, 500),
             fontSize: font(20),
             color: '#fff',
             includeFontPadding: false,
             paddingBottom: 0,
             paddingTop: 2,
+            paddingLeft: 16,
         },
         backBtnWrapper: {
             position: 'absolute',
@@ -357,20 +384,18 @@ const SearchCamera = (): JSX.Element => {
             justifyContent: 'center',
             alignItems: 'center',
         },
-        FrontBackContainer: {
+        frontBackContainer: {
             position: 'relative',
             flex: 1,
             flexDirection: 'row',
             width: '100%',
             alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: 20,
-            paddingBottom: 20,
         },
         boxWrapper: {
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100%',
+            height: '85%',
             aspectRatio: '1/1',
             borderRadius: 12,
             borderWidth: 1.5,
@@ -413,6 +438,9 @@ const SearchCamera = (): JSX.Element => {
         noteBackWrapper: {
             top: guideBackTopAnimation,
         },
+        noteCompleteWrapper: {
+            top: guideCompleteTopAnimation,
+        },
         note: {
             color: '#ffffff',
             fontSize: font(14),
@@ -429,6 +457,9 @@ const SearchCamera = (): JSX.Element => {
         noteBack: {
             color: '#8598FF',
         },
+        noteComplete: {
+            color: '#fffa5f',
+        },
         mainWrapper: {
             position: 'relative',
             alignItems: 'center',
@@ -438,10 +469,9 @@ const SearchCamera = (): JSX.Element => {
             zIndex: 0,
         },
         bottomWrapper: {
-            flex: 1,
-            gap: 44,
+            gap: Platform.OS === "ios" ? 44 : 24,
             paddingTop: 20,
-            paddingBottom: 68,
+            paddingBottom: Platform.OS === "ios" ? 66 : 18,
             backgroundColor: 'rgba(0, 0, 0, 1)',
             zIndex: 10,
         },
@@ -498,13 +528,14 @@ const SearchCamera = (): JSX.Element => {
             height: 76,
             borderRadius: 100,
             borderWidth: 3,
-            borderColor: '#fff',
+            borderColor: currentDirection === 'complete' ? 'rgba(255, 255, 255 , 0.3)' : 'rgba(255, 255, 255, 1)',
         },
         takePicBtn: {
             width: 64,
             height: 64,
             borderRadius: 100,
-            backgroundColor: '#fff'
+            backgroundColor: '#fff',
+            opacity: currentDirection === 'complete' ? 0.3 : 1,
         },
         thumbnailImage: {
             width: 52,
@@ -628,14 +659,13 @@ const SearchCamera = (): JSX.Element => {
         <Layout.fullscreen>
             <View style={styles.topWrapper}>
                 <View style={styles.titleWrapper}>
-                    <Text style={styles.title}>알약 촬영</Text>
                     <View style={styles.backBtnWrapper}>
                         <TouchableOpacity style={styles.backBtn} onPress={handleBackBtn}>
                             <ExitSvg width={17} height={17} preserveAspectRatio="xMinYMax" />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={styles.FrontBackContainer}>
+                <View style={styles.frontBackContainer}>
                     <Button.scale style={{ zIndex: 2 }} onPress={() => handlePressBox('front')}>
                         <View style={[styles.boxWrapper, currentDirection === 'front' && styles.activeBoxWrapper]}>
                             {cameraImage?.front ?
@@ -712,6 +742,14 @@ const SearchCamera = (): JSX.Element => {
                             <Text style={[styles.note]}> 한 번 더 찍어주세요 !</Text>
                         </Animated.View>
                     }
+                    {currentDirection === 'complete' &&
+                        <Animated.View style={[styles.noteWrapper, styles.noteCompleteWrapper]}>
+                            <Text style={[styles.note, styles.noteBold]}>검색</Text>
+                            <Text style={[styles.note]}>하시려면 아래에</Text>
+                            <Text style={[styles.note, styles.noteBold, styles.noteComplete]}> 완료 </Text>
+                            <Text style={[styles.note]}>버튼을 눌러주세요 !</Text>
+                        </Animated.View>
+                    }
                 </View>
             </GestureDetector>
             <View style={styles.bottomWrapper}>
@@ -734,7 +772,7 @@ const SearchCamera = (): JSX.Element => {
                 </View>
                 <View style={styles.buttonWrapper}>
                     <View style={{ flex: 1 }} />
-                    <TouchableOpacity style={styles.takePicBtnWrapper} onPress={handleTakePic}>
+                    <TouchableOpacity style={styles.takePicBtnWrapper} onPress={handleTakePic} disabled={currentDirection === 'complete'}>
                         <View style={styles.takePicBtn} />
                     </TouchableOpacity>
                     <View style={{ flex: 1, alignItems: 'center' }}>
