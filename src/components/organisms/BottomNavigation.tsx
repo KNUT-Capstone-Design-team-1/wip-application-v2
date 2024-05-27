@@ -13,7 +13,7 @@ interface INavWrapperProps {
 const HomeIndicatorHeight = 34;
 
 /* 기기 별 상태바 높이 계산 */
-const BottomNavHeight: number = (Platform.OS === 'ios' ?
+export const BottomNavHeight: number = (Platform.OS === 'ios' ?
     // ios
     65 + HomeIndicatorHeight
     :

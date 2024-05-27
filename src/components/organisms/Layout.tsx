@@ -112,7 +112,7 @@ const Layout = {
 
     const visibleList: string[] = ['홈', '보관함', '설정', '카메라', '알약 촬영'];
 
-    changeNavigationBarColor('black', true);
+    changeNavigationBarColor('black', false);
 
     /** 로고 나타나는 애니메이션 */
     const logoFadeInAni = () => {
@@ -261,7 +261,7 @@ const Layout = {
     )
   },
   fullscreen: ({ children }: any) => {
-    changeNavigationBarColor('black', true);
+    changeNavigationBarColor('black', false);
 
     return (
       <View style={[styles.fill, { backgroundColor: '#000' }]}>

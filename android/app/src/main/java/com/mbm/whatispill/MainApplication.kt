@@ -1,4 +1,4 @@
-package com.whatispill
+package com.mbm.whatispill
 
 import android.app.Application
 import com.facebook.react.PackageList

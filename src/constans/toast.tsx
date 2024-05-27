@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     fontFamily: os.font(500, 500),
     includeFontPadding: false,
     paddingBottom: 0,
+    textAlign: 'center',
   },
   errorText: {
     color: '#ffffff',
@@ -32,6 +33,7 @@ const styles = StyleSheet.create({
     fontFamily: os.font(500, 500),
     includeFontPadding: false,
     paddingBottom: 0,
+    textAlign: 'center',
   }
 })
 
