@@ -1,8 +1,16 @@
 import { font, os } from "@/style/font";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
+import Toast from "react-native-toast-message";
 
 const TakeGuide = () => {
+  const handlePressTakeGuide = () => {
+    Toast.show({
+      type: 'noteToast',
+      text1: '현재 개발중인 기능입니다.',
+    });
+  }
+
   const styles = StyleSheet.create({
     takeGuide: {
       gap: 6,
@@ -41,7 +49,7 @@ const TakeGuide = () => {
       <Text style={styles.takeGuideText1}>
         약의 오용과 남용은 건강을 해칠수 있습니다.
       </Text>
-      <TouchableOpacity style={styles.takeGuideButtonWrapper}>
+      <TouchableOpacity style={styles.takeGuideButtonWrapper} onPress={handlePressTakeGuide}>
         <Text style={styles.takeGuideText2}>
           올바른 복용법 보러가기
         </Text>

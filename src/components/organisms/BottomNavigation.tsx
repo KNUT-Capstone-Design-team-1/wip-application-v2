@@ -21,7 +21,7 @@ export const BottomNavHeight: number = (Platform.OS === 'ios' ?
     42 + HomeIndicatorHeight
 );
 
-const BottomNavagation = (): JSX.Element => {
+const BottomNavagation = (): JSX.Element | null => {
     const screen: any = useRecoilValue(screenState);
 
     const visibleList: string[] = ['홈', '보관함', '설정', '검색 결과'];
@@ -133,7 +133,7 @@ const BottomNavagation = (): JSX.Element => {
                 <NavButton iconXML={SETTING_ICON} name='설정' navName='설정' tabName='SettingsStack' />
             </View>
         </Shadow >
-    ) : <></>
+    ) : null
 }
 
 export default BottomNavagation;

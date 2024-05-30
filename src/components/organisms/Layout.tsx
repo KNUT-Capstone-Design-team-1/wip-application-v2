@@ -19,11 +19,11 @@ export const windowWidth: number = Dimensions.get('window').width;
 /* 화면 전체 높이 */
 export const windowHeight: number = Dimensions.get('window').height;
 /* OS 별 헤더 높이 */
-export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.14) ?? 0;
+export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.12) ?? 0;
 /* 총(메인) 헤더 높이 */
 export const totalHeaderHeight: number = StatusBarHeight + HeaderHeight;
 /* 기본 헤더 높이 */
-export const defaultHeaderHeight: number = StatusBarHeight + (Platform.OS === 'ios' ? windowHeight * 0.012 : windowHeight * 0.06) ?? 0;
+export const defaultHeaderHeight: number = StatusBarHeight + (Platform.OS === 'ios' ? windowHeight * 0.012 : windowHeight * 0.03) ?? 0;
 
 /* 뒤로가기 icon xml */
 const BACKBUTTON_ICON = `
@@ -247,6 +247,7 @@ const Layout = {
         </Animated.View>
         <Animated.View
           style={{
+            position: 'relative',
             flex: 1,
             marginTop: marginTopAnimation,
             backgroundColor: 'transparent',

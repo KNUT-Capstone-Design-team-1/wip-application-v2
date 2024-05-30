@@ -138,7 +138,7 @@ const SearchCrop = (): JSX.Element => {
             borderTopRightRadius: 30,
         },
         viewWrapper: {
-            minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
+            flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: 'hidden',
@@ -270,7 +270,7 @@ const SearchCrop = (): JSX.Element => {
 
     return (
         <Layout.default>
-            <ViewShot ref={viewShotRef} style={{ position: 'absolute', width: 1280, height: 640, flexDirection: 'row', zIndex: -1 }} options={{ fileName: "merged", format: "jpg", quality: 1 }}>
+            <ViewShot ref={viewShotRef} style={{ position: 'absolute', width: 1280, height: 640, flexDirection: 'row', zIndex: -1, opacity: 0 }} options={{ fileName: "merged", format: "jpg", quality: 1 }}>
                 {imgFile?.front && <Image src={getImgPath(imgFile.front)} style={{ width: '50%', height: '100%' }} />}
                 {imgFile?.back && <Image src={getImgPath(imgFile.back)} style={{ width: '50%', height: '100%' }} />}
             </ViewShot>
