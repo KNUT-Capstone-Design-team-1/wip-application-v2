@@ -72,13 +72,13 @@ const Search = ({ route }: any): JSX.Element => {
             ...gstyles.screenBorder,
         },
         viewWrapper: {
-            minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
+            flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: 'hidden',
             paddingHorizontal: 15,
             paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
-            backgroundColor: '#ffffff',
+            backgroundColor: '#fff',
         },
         guideFrameWrapper: {
             position: 'relative',

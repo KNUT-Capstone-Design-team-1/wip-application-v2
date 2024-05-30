@@ -3,7 +3,7 @@ import { StyleSheet, View, Image } from 'react-native';
 const HeaderLogo = () => {
 
     const styles = StyleSheet.create({
-        headerLogo: { height: '100%', resizeMode: "contain" },
+        headerLogo: { height: '96%', resizeMode: "contain" },
     });
 
     return (

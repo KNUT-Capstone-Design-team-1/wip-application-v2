@@ -16,7 +16,7 @@ import Config from "react-native-config";
 import { BottomNavHeight } from "@/components/organisms/BottomNavigation";
 import LoadingCircle from "@/components/atoms/LoadingCircle";
 
-const limit = 20;
+const limit = 10;
 
 const SearchResult = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();

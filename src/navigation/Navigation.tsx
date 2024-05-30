@@ -30,8 +30,8 @@ const Navigation = (): JSX.Element => {
         <NavigationContainer theme={theme}>
             <Tab.Navigator tabBar={() => <></>} screenOptions={{ headerShown: false }}>
                 <Tab.Screen name="HomeStack" component={HomeStack} />
-                <Tab.Screen name="StorageStack" component={StorageStack} />
-                <Tab.Screen name="SettingsStack" component={SettingsStack} />
+                <Tab.Screen name="StorageStack" component={StorageStack} options={{ tabBarStyle: { display: 'none' } }} />
+                <Tab.Screen name="SettingsStack" component={SettingsStack} options={{ tabBarStyle: { display: 'none' } }} />
             </Tab.Navigator>
         </NavigationContainer>
     );

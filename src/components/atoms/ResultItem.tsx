@@ -103,7 +103,7 @@ const ResultItem = ({ data, last, index }: any) => {
           <Text style={styles.etc} numberOfLines={1}>{data.MAIN_ITEM_INGR}</Text>
         </View>
         <View style={styles.btnWrapper}>
-          <ArrowRightSvg style={styles.rightArrow} />
+          <ArrowRightSvg style={styles.rightArrow} width={8} height={14} />
         </View>
       </View>
     </Button.scale>

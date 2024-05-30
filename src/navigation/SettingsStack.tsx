@@ -1,4 +1,5 @@
 import Settings from "@/components/screens/Settings";
+import Terms from "@/components/screens/Terms";
 import ScreenOptions from "@/navigation/ScreenOptions";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -12,6 +13,14 @@ const SettingsStack: React.FC = () => {
       <Stack.Screen
         name="설정"
         component={Settings}
+        options={{
+          headerShown: false,
+        }}
+      />
+      {/* 이용약관 화면 */}
+      <Stack.Screen
+        name="이용약관"
+        component={Terms}
         options={{
           headerShown: false,
         }}
