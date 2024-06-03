@@ -26,7 +26,7 @@ const SearchResult = ({ route }: any): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(true);
     const [infiLoading, setInfiLoading] = useState<boolean>(false);
     const [data, setData] = useState<any[] | undefined>(undefined);
-    const [page, setPage] = useState<number>(1);
+    const [page, setPage] = useState<number>(0);
     const [finishData, setFinishData] = useState<boolean>(false);
     const mergedImgUri = route.params.data;
 
@@ -38,7 +38,7 @@ const SearchResult = ({ route }: any): JSX.Element => {
         const URL = Config.API_URL + `/pill-search/image?skip=${page}&limit=${limit}`;
         const base64 = imageBase64;
         setLoading(true);
-        await axios.post(URL, { base64 }, { timeout: 10000 }).then((res: any) => {
+        await axios.post(URL, { base64 }, { timeout: 1000 * 120 }).then((res: any) => {
             setLoading(false);
             if (res.data.success) {
                 setData(res.data.data.pillInfoList);
@@ -46,14 +46,38 @@ const SearchResult = ({ route }: any): JSX.Element => {
                 nav.goBack();
                 Toast.show({
                     type: 'errorToast',
-                    text1: res.data.message ?? '알약검색에 실패했습니다.',
+                    text1: res.data.message ?? '알약검색에 실패했습니다. (Unknown)',
                 });
             }
         }).catch(error => {
+            const status = error.response?.status;
+            let text: string = '';
+
+            switch (status) {
+                case 401:
+                    text = ' (인증오류)'
+                    break;
+                case 404:
+                    text = ' (not found)'
+                    break;
+                case 408:
+                    text = ' (요청만료)'
+                    break;
+                case 500:
+                    text = ' (서버통신오류)'
+                    break;
+                case undefined:
+                    text = ` (${error.code})`
+                    break;
+                default:
+                    text = `\n(${status} : ${error.code})`
+                    break;
+            }
+
             nav.goBack();
             Toast.show({
                 type: 'errorToast',
-                text1: `알약검색에 실패했습니다. 잠시 후 다시 시도해주세요.`,
+                text1: `알약검색에 실패했습니다.${text}`,
             });
         });
     }
@@ -63,7 +87,7 @@ const SearchResult = ({ route }: any): JSX.Element => {
         const base64 = imageBase64;
         if (!finishData) {
             setInfiLoading(true);
-            await axios.post(URL, { base64 }, { timeout: 10000 }).then((res: any) => {
+            await axios.post(URL, { base64 }, { timeout: 1000 * 120 }).then((res: any) => {
                 if (res.data.success && !!data) {
                     let pre = [...data, ...res.data.data.pillInfoList];
                     setData(pre);
@@ -75,6 +99,7 @@ const SearchResult = ({ route }: any): JSX.Element => {
                 } else {
                 }
             }).catch(error => {
+                setInfiLoading(false);
             });
         }
     }
