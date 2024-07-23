@@ -1,11 +1,12 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 project.ext.envConfigFiles = [
+    debug: "env/.env.development",
+    release: "env/.env.production",
     developdebug: "env/.env.development",
-    productdebug: "env/.env.producttion",
+    productdebug: "env/.env.production",
     anothercustombuild: ".env",
 ]
 
@@ -141,4 +142,5 @@ dependencies {
     }
 }
 
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
