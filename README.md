@@ -1,8 +1,74 @@
-## ReactNaive 개발환경
-- react-native-cli : 2.0.1
-- react-natvie : 0.71.6
-- react : 18.2.0
-- typescript : 4.8.4
-- ruby : 2.7.6
+# wip-application-v2 실행 및 빌드 방법
 
-## [FIGMA 프로토타입](https://www.figma.com/file/wCMj7D09X5EyiAW2qiGIi0/%EB%AA%A8%EB%B0%94%EC%9D%BC-%EB%94%94%EC%9E%90%EC%9D%B8-%EC%8B%9C%EC%95%88?type=design&node-id=22-1094&mode=design&t=fBnmniiXBlwFOyKN-0)
+## 1. Git 클론
+
+```bash
+git clone https://github.com/KNUT-Capstone-Design-team-1/wip-application-v2.git
+```
+
+## 2. 패키지 설치
+
+```bash
+npm install
+```
+
+## 3. 환경변수 파일
+
+1. 프로젝트 최상단에 `env`폴더 생성
+2. `env`폴더에 `.env.development` , `.env.production`파일 생성
+3. 각 파일 내용에 아래 코드를 환경에 맞게 작성
+   ```
+   API_URL="API 주소"
+   # 예시: API_URL=http://localhost:5000
+   ```
+
+## 4. 앱 실행
+
+`npx react-native doctor` 명령어를 사용해 앱을 실행하는데 문제가 없는지 확인 가능.
+
+### - 안드로이드
+
+개발 환경 실행
+
+```bash
+npm run android:dev
+```
+
+프로덕션 환경 실행
+
+```bash
+npm run android:prod
+```
+
+### - IOS
+
+개발 환경 실행
+
+```bash
+npm run ios:dev
+```
+
+프로덕션 환경 실행
+
+```bash
+npm run ios:prod
+```
+
+## 5. 앱 빌드
+
+1. **keystore** 파일 추가
+2. 경로: `wip-application-v2/android/app`
+
+**APK** 파일 생성
+생성위치: `wip-application-v2/android/app/build/outputs/apk`
+
+```bash
+npm run apk
+```
+
+**AAB** 파일 생성
+생성위치: `wip-application-v2/android/app/build/outputs/bundle`
+
+```bash
+npm run aab
+```
