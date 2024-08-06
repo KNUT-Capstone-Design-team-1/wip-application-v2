@@ -115,11 +115,11 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
     <Button.scale onPress={handlePressDetail}>
       <View style={styles.wrapper}>
         <View style={styles.pillImgWrapper}>
-          {!!data.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }} resizeMode="contain" />}
+          {!!data.info1.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.info1.ITEM_IMAGE, cache: 'only-if-cached' }} resizeMode="contain" />}
         </View>
         <View style={styles.nameWrapper}>
-          <Text style={styles.name} numberOfLines={2}>{data.ITEM_NAME}</Text>
-          <Text style={styles.efficacy}>{data.ENTP_NAME ?? ''}</Text>
+          <Text style={styles.name} numberOfLines={2}>{data.info1.ITEM_NAME}</Text>
+          <Text style={styles.efficacy}>{data.info1.ENTP_NAME ?? ''}</Text>
         </View>
         <View style={styles.detailWrapper}>
           <Text style={styles.detailText}>자세히 보기</Text>
