@@ -2,7 +2,7 @@ import { screenState } from "@/atoms/screen";
 import Button from "@/components/atoms/Button";
 import Layout from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
 import { View, ScrollView, StyleSheet, Image, Text } from "react-native";
 import { useRecoilState } from "recoil";
@@ -17,84 +17,87 @@ import axios from "axios";
 import LoadingCircle from "@/components/atoms/LoadingCircle";
 import Toast from "react-native-toast-message";
 import PillInfo from "@/components/atoms/PillInfo";
+import { useSetScreen } from "@/hooks/useSetScreen";
+
+interface InfoData {
+    EE: string[] | null;
+    UD: string[] | null;
+    NB: string[] | null;
+}
 
 const PillDetail = ({ route }: any): JSX.Element => {
-    const nav: any = useNavigation();
+    useSetScreen('알약 정보');
     const infoRef = useRef<any>();
-    const [screen, setScreen]: any = useRecoilState(screenState);
-    const [isStorage, setIsStorage] = useState<boolean>(false);
-    const [infoData, setInfoData] = useState<any>({ EE: null, UD: null, NB: null });
-    const [loading, setLoading] = useState<boolean>(true);
-    const [info1, setInfo1] = useState<boolean>(true);
-    const [info2, setInfo2] = useState<boolean>(true);
-    const [info3, setInfo3] = useState<boolean>(true);
-    const [moreInfo, setMoreInfo] = useState<boolean>(false);
+    const [isStorage, setIsStorage] = useState(false);
+    const [storageList, setStorageList] = useState<any[]>([]);
+    const [infoData, setInfoData] = useState<InfoData>({ EE: null, UD: null, NB: null });
+    const [loading, setLoading] = useState(true);
+    const [info1, setInfo1] = useState(true);
+    const [info2, setInfo2] = useState(true);
+    const [info3, setInfo3] = useState(true);
+    const [moreInfo, setMoreInfo] = useState(false);
     const data = route.params.data;
 
-    const handleSetScreen = () => {
-        setScreen('알약 정보');
-    }
-
     const handlePressAddStorage = async () => {
-        const LIST = await getItem('pillStorage');
-        let list = [];
-        if (LIST) {
-            list = JSON.parse(LIST);
-            if (!!list.find((i: any) => i.ITEM_SEQ === data.ITEM_SEQ)) {
-                let tempList: any[] = [];
-                list.map((i: any) => {
-                    if (i.ITEM_SEQ !== data.ITEM_SEQ) {
-                        tempList.push(i)
-                    }
-                })
-                list = tempList;
+        if (!loading) {
+            let updatedList = [...storageList];
+            const existingItemIndex = updatedList.findIndex(i => i.info1.ITEM_SEQ === data.info1.ITEM_SEQ);
+
+            if (existingItemIndex !== -1) {
+                updatedList.splice(existingItemIndex, 1);
+                setIsStorage(false);
             } else {
-                list.push(data);
+                updatedList.push({ info1: { ...data.info1 }, info2: infoData });
+                setIsStorage(true);
             }
-        } else {
-            list.push(data);
+
+            await setItem('pillStorage', JSON.stringify(updatedList));
+            setStorageList(updatedList);
         }
-        await setItem('pillStorage', JSON.stringify(list));
-        await getStorageList();
-    }
+    };
 
     /** 알약 보관함에 해당 알약이 있는지 확인 */
     const getStorageList = async () => {
-        const LIST = await getItem('pillStorage');
-        let list = [];
-        if (LIST) {
-            list = JSON.parse(LIST);
-            setIsStorage(!!list.find((i: any) => i.ITEM_SEQ === data.ITEM_SEQ));
+        const storaged = await getItem('pillStorage');
+        if (storaged) {
+            const list = JSON.parse(storaged);
+            const currentData = list.find((i: any) => i.info1.ITEM_SEQ === data.info1.ITEM_SEQ);
+            if (currentData) {
+                setInfoData(currentData.info2);
+                setStorageList(list);
+                setLoading(false);
+            } else {
+                getDetailData();
+            }
+            setIsStorage(!!currentData);
+        } else {
+            getDetailData();
         }
-    }
+    };
 
     const getDetailData = async () => {
-        const URL = Config.API_URL + '/pill-search/detail?skip=0&limit=20';
-        const itemSeq = data.ITEM_SEQ;
-        setLoading(true);
-        let parsedData;
-        await axios.post(URL, { ITEM_SEQ: itemSeq }, { timeout: 10000 }).then((res) => {
+        const URL = `${Config.API_URL}/pill-search/detail?skip=0&limit=20`;
+        const itemSeq = data.info1.ITEM_SEQ;
+        try {
+            const res = await axios.post(URL, { ITEM_SEQ: itemSeq }, { timeout: 10000 });
             if (res.data.success) {
-                parsedData = {
+                const parsedData = {
                     EE: parseXML(res.data.data[0].EE_DOC_DATA),
                     UD: parseXML(res.data.data[0].UD_DOC_DATA),
                     NB: parseXML(res.data.data[0].NB_DOC_DATA),
-                }
+                };
                 setInfoData(parsedData);
             }
-            setLoading(false);
-        }).catch((err) => {
-            console.log(err);
-            setLoading(false);
+        } catch (err) {
+            console.error(err);
             Toast.show({
                 type: 'errorToast',
                 text1: '상세검색을 가져오는데 문제가 생겼습니다.',
             });
-            // [임시]
-            //setLoading(false);
-            //setInfoData(getMockData());
-        });
-    }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // [임시] 테스트를 위한 MockData
     const getMockData = () => {
@@ -117,15 +120,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
     }
 
     useEffect(() => {
-        nav.addListener('focus', () => handleSetScreen());
-        return () => {
-            nav.removeListener('focus', () => handleSetScreen());
-        }
-    }, []);
-
-    useEffect(() => {
         getStorageList();
-        getDetailData();
     }, [route]);
 
     const styles = StyleSheet.create({
@@ -247,16 +242,16 @@ const PillDetail = ({ route }: any): JSX.Element => {
             <ScrollView style={styles.scrollViewWrapper}>
                 <View style={styles.viewWrapper}>
                     <View style={styles.pillImgWrapper}>
-                        {data.ITEM_IMAGE &&
+                        {data.info1.ITEM_IMAGE &&
                             <Image
                                 style={styles.pillImg}
-                                source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }}
+                                source={{ uri: data.info1.ITEM_IMAGE, cache: 'only-if-cached' }}
                                 resizeMode="contain"
                             />}
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.nameWrapper}>
-                            <Text style={styles.name}>{data.ITEM_NAME}</Text>
+                            <Text style={styles.name}>{data.info1.ITEM_NAME}</Text>
                             <View style={styles.buttonWrapper}>
                                 <Button.scale
                                     activeScale={1.2}
@@ -276,17 +271,17 @@ const PillDetail = ({ route }: any): JSX.Element => {
                             </View>
                         </View>
                         <View style={styles.infoWrapper} ref={infoRef}>
-                            <PillInfo label='제조사' ct={data.ENTP_NAME} />
-                            <PillInfo label='주성분' ct={data.MAIN_ITEM_INGR} />
-                            <PillInfo label='성상' ct={data.CHART} />
-                            <PillInfo label='포장 단위' ct={data.PACK_UNIT} />
-                            <PillInfo label='저장 방법' ct={data.STORAGE_METHOD} />
-                            <PillInfo label='유효 기간' ct={data.VALID_TERM} />
+                            <PillInfo label='제조사' ct={data.info1.ENTP_NAME} />
+                            <PillInfo label='주성분' ct={data.info1.MAIN_ITEM_INGR} />
+                            <PillInfo label='성상' ct={data.info1.CHART} />
+                            <PillInfo label='포장 단위' ct={data.info1.PACK_UNIT} />
+                            <PillInfo label='저장 방법' ct={data.info1.STORAGE_METHOD} />
+                            <PillInfo label='유효 기간' ct={data.info1.VALID_TERM} />
                             {moreInfo &&
                                 <>
-                                    <PillInfo label='원료 성분' ct={data.MATERIAL_NAME} />
-                                    <PillInfo label='첨가제' ct={data.INGR_NAME} />
-                                    <PillInfo label='모양' ct={data.DRUG_SHAPE} />
+                                    <PillInfo label='원료 성분' ct={data.info1.MATERIAL_NAME} />
+                                    <PillInfo label='첨가제' ct={data.info1.INGR_NAME} />
+                                    <PillInfo label='모양' ct={data.info1.DRUG_SHAPE} />
                                 </>
                             }
                         </View>

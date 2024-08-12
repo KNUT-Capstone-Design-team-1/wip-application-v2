@@ -2,7 +2,7 @@ import Button from "@/components/atoms/Button";
 import { font, os } from "@/style/font";
 import { getItem, setItem } from "@/utils/storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
@@ -15,17 +15,19 @@ const LastSearchPill = () => {
     let list = [];
     if (LIST) {
       list = JSON.parse(LIST);
-      setLatestList(list);
     }
+    setLatestList(list);
   }
 
   const handlePressItem = (data: any) => {
     nav.navigate('알약 정보', { data: data });
   }
 
-  useFocusEffect(() => {
-    getItemList();
-  })
+  useFocusEffect(
+    useCallback(() => {
+      getItemList();
+    }, [])
+  );
 
   const styles = StyleSheet.create({
     lastSearchPillWrapper: {
@@ -102,7 +104,13 @@ const LastSearchPill = () => {
         {latestList.length > 0 ? latestList.map((i: any, key: number) =>
           <Button.scale activeScale={0.9} key={key} onPress={() => handlePressItem(i)}>
             <View style={styles.lastSearchPillList}>
-              <Text style={styles.lastSearchPillListText}>{i.ITEM_NAME}</Text>
+              <Text
+                style={styles.lastSearchPillListText}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {i.info1.ITEM_NAME}
+              </Text>
             </View>
           </Button.scale>
         ) : <Text style={styles.noListText}>최근 검색한 알약이 없습니다.</Text>

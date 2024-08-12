@@ -1,21 +1,15 @@
-import { screenState } from "@/atoms/screen";
 import StorageItem from "@/components/atoms/StorageItem";
 import Layout, { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
+import { useSetScreen } from "@/hooks/useSetScreen";
 import { font, os } from "@/style/font";
 import { getItem } from "@/utils/storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, Text } from "react-native";
-import { useRecoilState } from "recoil";
 
 const Storage = (): JSX.Element => {
-    const nav: any = useNavigation();
-    const [screen, setScreen]: any = useRecoilState(screenState);
+    useSetScreen('보관함');
     const [data, setData] = useState<any[]>([]);
-
-    const handleSetScreen = () => {
-        setScreen('보관함');
-    }
 
     const getStorage = async () => {
         const LIST = await getItem('pillStorage');
@@ -24,16 +18,11 @@ const Storage = (): JSX.Element => {
         }
     }
 
-    useFocusEffect(() => {
-        getStorage();
-    })
-
-    useEffect(() => {
-        nav.addListener('focus', () => handleSetScreen());
-        return () => {
-            nav.removeListener('focus', () => handleSetScreen());
-        }
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            getStorage();
+        }, [])
+    );
 
     const styles = StyleSheet.create({
         scrollViewWrapper: {
@@ -102,7 +91,7 @@ const Storage = (): JSX.Element => {
                 {data.length > 0 ?
                     <View style={styles.pillList}>
                         {data.map((i: any) => (
-                            <StorageItem key={i.ITEM_SEQ} data={i} refresh={getStorage} />
+                            <StorageItem key={i.info1.ITEM_SEQ} data={i} refresh={getStorage} />
                         ))}
                     </View>
                     :

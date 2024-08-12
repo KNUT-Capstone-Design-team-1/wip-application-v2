@@ -1,26 +1,25 @@
 import { font, os } from "@/style/font";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { useNavigation } from "@react-navigation/native";
 import Button from "@/components/atoms/Button";
 import { getItem, setItem } from "@/utils/storage";
-import { useEffect } from "react";
 
-const ResultItem = ({ data, last, index }: any) => {
+const ResultItem = ({ data, last }: any) => {
   const nav: any = useNavigation();
 
   const handlePressItem = async () => {
     const LIST = await getItem('latestSearchPill');
-    let list: any[] = [data];
+    let list: any[] = [{ info1: data }];
     if (LIST) {
-      list = [{},];
+      list = [{ info1: {} }];
       JSON.parse(LIST).map((i: any) => {
-        if (i.ITEM_SEQ !== data.ITEM_SEQ) list.push(i)
+        if (i.info1.ITEM_SEQ !== data.ITEM_SEQ) list.push({ info1: i.info1 });
       });
-      list[0] = data;
+      list[0] = { info1: data };
     }
     setItem('latestSearchPill', JSON.stringify(list));
-    nav.navigate('알약 정보', { data: data });
+    nav.navigate('알약 정보', { data: { info1: data } });
   }
 
   const styles = StyleSheet.create({
