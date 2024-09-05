@@ -1,6 +1,6 @@
 import { screenState } from "@/atoms/screen";
 import { useRecoilState } from "recoil";
-import SearchPillButton from "@/components/atoms/SearchPillButton";
+import SearchImageButton from "@/components/atoms/SearchImageButton";
 import UpdateText from "@/components/atoms/UpdateText";
 import LastSearchPill from "@/components/organisms/LastSearchPill";
 import MenuList from "@/components/organisms/MenuList";
@@ -54,7 +54,7 @@ const Home = (): JSX.Element => {
                     {/* 정보 업데이트 날짜 뷰 */}
                     <UpdateText />
                     {/* 알약 검색 버튼 */}
-                    <SearchPillButton />
+                    <SearchImageButton />
                     {/* 최근 검색 알약 */}
                     <LastSearchPill />
                     {/* 메뉴 리스트 */}

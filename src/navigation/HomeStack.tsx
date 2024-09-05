@@ -1,6 +1,6 @@
 import Home from "@/components/screens/Home";
 import PillDetail from "@/components/screens/PillDetail";
-import Search from "@/components/screens/Search";
+import SearchImage from "@/components/screens/SearchImage";
 import SearchCamera from "@/components/screens/SearchCamera";
 import SearchCrop from "@/components/screens/SearchCrop";
 import SearchResult from "@/components/screens/SearchResult";
@@ -24,7 +24,7 @@ const HomeStack: React.FC = () => {
       {/* 알약 검색 화면 */}
       <Stack.Screen
         name="알약 검색"
-        component={Search}
+        component={SearchImage}
         options={{
           headerShown: false,
         }}

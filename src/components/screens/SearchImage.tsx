@@ -18,7 +18,7 @@ import { imgFileState } from "@/atoms/file";
 import { requestCameraPermission } from "@/utils/permission";
 import { imgPickerOption } from "@/constans/options";
 
-const Search = ({ route }: any): JSX.Element => {
+const SearchImage = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();
     const [screen, setScreen] = useRecoilState(screenState);
     const [imgFile, setImgFile] = useRecoilState(imgFileState);
@@ -228,4 +228,4 @@ const Search = ({ route }: any): JSX.Element => {
     )
 }
 
-export default Search;
+export default SearchImage;

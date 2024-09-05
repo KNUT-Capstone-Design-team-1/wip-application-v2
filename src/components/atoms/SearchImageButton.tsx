@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 
-const SearchPillButton = (): JSX.Element => {
+const SearchImageButton = (): JSX.Element => {
   const nav: any = useNavigation();
 
   const styles = StyleSheet.create({
@@ -83,4 +83,4 @@ const SearchPillButton = (): JSX.Element => {
 
 
 
-export default SearchPillButton;
+export default SearchImageButton;
