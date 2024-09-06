@@ -9,8 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
 
@@ -23,6 +22,16 @@ jobs:
           base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
           mkdir env
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
+
+      - name: get-google-service-key
+        run: |
+          mkdir -p ./secrets
+          echo "${{ secrets.GOOGLE_SERVICE_KEY }}" > ./secrets/googleServiceKey.ts
+
+      - name: get-aes-private-key
+        run: |
+          mkdir -p ./secrets    
+          echo "${{ secrets.AES_KEY }}" > ./secrets/aesKey.ts
 
       - name: build-apk
         run: npm run apk

@@ -170,3 +170,6 @@ vendor/
 
 # etc
 .env.*
+
+# secret
+secrets
