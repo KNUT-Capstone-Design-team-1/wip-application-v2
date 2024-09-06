@@ -24,10 +24,10 @@ jobs:
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
       - name: get-google-service-key
-        run: sed -i -e 's/{}/${{ secrets.GOOGLE_SERVICE_KEY }}/g' ./src/secrets/googleServiceKey.ts
+        run: sed -i 's/{}/${{ secrets.GOOGLE_SERVICE_KEY }}/g' ./src/secrets/googleServiceKey.ts
   
       - name: get-aes-private-key
-        run: sed -i -e 's/{}/${{ secrets.AES_KEY }}/g' ./src/secrets/aesKey.ts
+        run: sed -i 's/{}/${{ secrets.AES_KEY }}/g' ./src/secrets/aesKey.ts
 
       - name: build-apk
         run: npm run apk
