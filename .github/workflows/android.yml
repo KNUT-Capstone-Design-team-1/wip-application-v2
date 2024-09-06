@@ -6,22 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  initialize:
+  build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - name: initialize
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch }}
-      - uses: ./.github/workflows/initialize.yml
 
-  build-apk:
-    runs-on: ubuntu-24.04
-    steps:
-      - run: npm run apk
+      - name: get-required-file
+        run: |
+          echo ${{ secrets.KEY_STORE }} > ./android/app/wip240524.jks.bs64
+          base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
+
+      - name: build-apk
+        run: npm run apk
       - uses: actions/upload-artifact@v3
 
-  build-aab:
-    runs-on: ubuntu-24.04
-    steps:
-      - run: npm run aab
+      - name: build-aab
+        run: npm run aab
       - uses: actions/upload-artifact@v3
