@@ -9,7 +9,7 @@ jobs:
   initialize:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - run: |
           echo ${{ secrets.KEY_STORE }} >> ./android/app/wip240524.jks.bs64
           base64 -d wip240524.jks.bs64 > wip240524.jks
