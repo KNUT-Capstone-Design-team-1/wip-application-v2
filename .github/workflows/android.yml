@@ -26,14 +26,14 @@ jobs:
 
       - name: build-apk
         run: npm run apk
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: apk
           path: ./android/app/build/outputs/apk/product/release
 
       - name: build-aab
         run: npm run aab
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: aab
           path: ./android/app/build/outputs/bundle/productRelease
