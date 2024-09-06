@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 
 jobs:
+  wip-application-get-secret-file:
+    uses: ./.github/workflows/get-secret-file
+
   build:
     runs-on: ubuntu-24.04
     steps:
@@ -22,8 +25,6 @@ jobs:
           base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
           mkdir env
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
-
-      - uses: wip-application-get-secret-file
 
       - name: build-apk
         run: npm run apk
