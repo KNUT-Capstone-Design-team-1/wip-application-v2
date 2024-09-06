@@ -7,7 +7,7 @@ on:
 
 jobs:
   wip-application-get-secret-file:
-    uses: ./.github/workflows/get-secret-file
+    uses: ./.github/workflows/get-secret-file.yml
 
   build:
     runs-on: ubuntu-24.04
