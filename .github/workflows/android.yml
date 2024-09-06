@@ -23,7 +23,7 @@ jobs:
           mkdir env
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
-      - uses: YongSiHun/wip-application-v2/.github/workflows/wip-application-get-secret-file@main
+      - uses: wip-application-get-secret-file
 
       - name: build-apk
         run: npm run apk
