@@ -24,7 +24,9 @@ jobs:
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
       - name: get-secret-file
-        uses: ./.github/workflows/subworkflows/get-secret-file.yml
+        uses: ./.github/workflows/get-secret-file.yml
+        with:
+          bucketFolder: staging
 
       - name: build-apk
         run: npm run apk
