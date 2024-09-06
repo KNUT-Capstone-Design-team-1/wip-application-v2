@@ -1,0 +1,39 @@
+name: wip-android
+
+run-name: ${{ github.actor }}-android
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: install-library
+        run: npm install
+
+      - name: get-required-file
+        run: |
+          echo "${{ secrets.KEY_STORE }}" > ./android/app/wip240524.jks.bs64
+          base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
+          mkdir env
+          echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
+
+      - name: build-apk
+        run: npm run apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: ./android/app/build/outputs/apk/product/release
+
+      - name: build-aab
+        run: npm run aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aab
+          path: ./android/app/build/outputs/bundle/productRelease
