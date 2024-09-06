@@ -24,9 +24,7 @@ jobs:
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
       - name: get-secret-file
-        uses: ./.github/workflows/get-secret-file.yml
-        with:
-          config-path: ./.github/workflows/get-secret-file.yml
+        uses: YongSiHun/wip-application-v2/.github/workflows/get-secret-file.yml
 
       - name: build-apk
         run: npm run apk
