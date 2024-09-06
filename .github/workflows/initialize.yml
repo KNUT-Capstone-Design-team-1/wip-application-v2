@@ -1,0 +1,15 @@
+name: wip-application-build-initialize
+
+run-name: ${{ github.actor }}-wip-application-build-initialize
+
+on:
+  workflow_call:
+
+jobs:
+  initialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          echo ${{ secrets.KEY_STORE }} >> ./android/app/wip240524.jks.bs64
+          base64 -d wip240524.jks.bs64 > wip240524.jks

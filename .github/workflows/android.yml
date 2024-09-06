@@ -1,0 +1,26 @@
+name: wip-android
+
+run-name: ${{ github.actor }}-android
+
+on:
+  workflow_dispatch:
+
+jobs:
+  initialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: ./.github/workflows/initialize.yml
+
+  build-apk:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm run apk
+      - uses: actions/upload-artifact@v3
+
+  build-aab:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm run aab
+      - uses: actions/upload-artifact@v3
