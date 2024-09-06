@@ -15,13 +15,11 @@ jobs:
   build-apk:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
       - run: npm run apk
       - uses: actions/upload-artifact@v3
 
   build-aab:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
       - run: npm run aab
       - uses: actions/upload-artifact@v3
