@@ -24,6 +24,9 @@ jobs:
           mkdir env
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
+      - name: get-secret-file
+        uses: ./.github/workflows/get-secret-file.yml
+
       - name: build-apk
         run: npm run apk
       - uses: actions/upload-artifact@v4
