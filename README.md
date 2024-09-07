@@ -22,33 +22,33 @@ npm install
    # 예시: API_URL=http://localhost:5000
    ```
 
-## 4. 시크릿 파일
+## 4. config 파일
 
-1. 프로젝트 최상단에 `secrets`폴더 생성
-2. `secrets` 폴더에 `aesKey.json` 파일 생성
-
-```json
-{
-  "aesKey": "",
-  "aesIv": ""
-}
-```
-
-3. `secrets` 폴더에 `googleServiceKey.json` 파일 생성
+- 프로젝트 최상단에 `config.json` 생성
 
 ```json
 {
-  "type": "",
-  "project_id": "",
-  "private_key_id": "",
-  "private_key": "",
-  "client_email": "",
-  "client_id": "",
-  "auth_uri": "",
-  "token_uri": "",
-  "auth_provider_x509_cert_url": "",
-  "client_x509_cert_url": "",
-  "universe_domain": ""
+  "resource": {
+    "aesKey": "",
+    "aesIv": ""
+  },
+  "googleServiceKey": {
+    "type": "",
+    "project_id": "",
+    "private_key_id": "",
+    "private_key": "",
+    "client_email": "",
+    "client_id": "",
+    "auth_uri": "",
+    "token_uri": "",
+    "auth_provider_x509_cert_url": "",
+    "client_x509_cert_url": "",
+    "universe_domain": ""
+  },
+  "googleCloud": {
+    "initInfoURL": "",
+    "deeplearningServerURL": ""
+  }
 }
 ```
 

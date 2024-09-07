@@ -16,22 +16,16 @@ jobs:
       - name: install-library
         run: npm install
 
-      - name: get-required-file
+      - name: get-key-store
         run: |
           echo "${{ secrets.KEY_STORE }}" > ./android/app/wip240524.jks.bs64
           base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
+
+      - name: get-config
+        run: |
+          echo "${{ secrets.CONFIG }}" > ./config.json
           mkdir env
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
-
-      - name: get-google-service-key
-        run: |
-          mkdir -p ./secrets
-          echo "${{ secrets.GOOGLE_SERVICE_KEY }}" > ./secrets/googleServiceKey.ts
-
-      - name: get-aes-private-key
-        run: |
-          mkdir -p ./secrets    
-          echo "${{ secrets.AES_KEY }}" > ./secrets/aesKey.ts
 
       - name: build-apk
         run: npm run apk
