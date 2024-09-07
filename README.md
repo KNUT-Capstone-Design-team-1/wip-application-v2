@@ -31,6 +31,13 @@ API_URL="API 주소"
   "googleCloud": {
     "initInfoURL": "",
     "deeplearningServerURL": ""
+  },
+  "cloudflare": {
+    "resourceDownloadURL": "",
+    "resourceBucket": "",
+    "tokenValue": "",
+    "accessKeyID": "",
+    "secretAccessKey": ""
   }
 }
 ```
