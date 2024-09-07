@@ -8,7 +8,7 @@
 npm install
 ```
 
-# envronment
+# environment
 
 - /env/.env.development
 - /env/.env.production
@@ -53,7 +53,7 @@ API_URL="API 주소"
 }
 ```
 
-# Execute
+# Execution
 
 ```bash
 # 앱 실행 전 문제점 점검
