@@ -170,6 +170,4 @@ vendor/
 
 # etc
 .env.*
-
-# secret
-secrets
+/env/*.json
