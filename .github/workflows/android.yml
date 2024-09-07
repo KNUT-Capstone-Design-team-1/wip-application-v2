@@ -21,10 +21,11 @@ jobs:
           echo "${{ secrets.KEY_STORE }}" > ./android/app/wip240524.jks.bs64
           base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
 
-      - name: get-config
+      - name: get-environment-and-configs
         run: |
-          echo "${{ secrets.CONFIG }}" > ./config.json
           mkdir env
+          echo "${{ secrets.CONFIG }}" > ./env/config.json
+          echo "${{ secrets.GOOGLE_CLOUD_SERVICE_KEY }}" > ./env/google_cloud_service_key.json
           echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
       - name: build-apk

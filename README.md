@@ -1,49 +1,32 @@
-# wip-application-v2 실행 및 빌드 방법
+# wip-application-v2
 
-## 1. Git 클론
+- 알약 촬영 검색 애플리케이션 이게뭐약
 
-```bash
-git clone https://github.com/KNUT-Capstone-Design-team-1/wip-application-v2.git
-```
-
-## 2. 패키지 설치
+# Install Library
 
 ```bash
 npm install
 ```
 
-## 3. 환경변수 파일
+# envronment
 
-1. 프로젝트 최상단에 `env`폴더 생성
-2. `env`폴더에 `.env.development` , `.env.production`파일 생성
-3. 각 파일 내용에 아래 코드를 환경에 맞게 작성
-   ```
-   API_URL="API 주소"
-   # 예시: API_URL=http://localhost:5000
-   ```
+- /env/.env.development
+- /env/.env.production
 
-## 4. config 파일
+```
+API_URL="API 주소"
+# 예시: API_URL=http://localhost:5000
+```
 
-- 프로젝트 최상단에 `config.json` 생성
+# Requirement
+
+- /env/config.json
 
 ```json
 {
   "resource": {
     "aesKey": "",
     "aesIv": ""
-  },
-  "googleServiceKey": {
-    "type": "",
-    "project_id": "",
-    "private_key_id": "",
-    "private_key": "",
-    "client_email": "",
-    "client_id": "",
-    "auth_uri": "",
-    "token_uri": "",
-    "auth_provider_x509_cert_url": "",
-    "client_x509_cert_url": "",
-    "universe_domain": ""
   },
   "googleCloud": {
     "initInfoURL": "",
@@ -52,53 +35,51 @@ npm install
 }
 ```
 
-## 5. 앱 실행
+- /env/google_cloud_service_key.json
 
-`npx react-native doctor` 명령어를 사용해 앱을 실행하는데 문제가 없는지 확인 가능.
+```json
+{
+  "type": "",
+  "project_id": "",
+  "private_key_id": "",
+  "private_key": "",
+  "client_email": "",
+  "client_id": "",
+  "auth_uri": "",
+  "token_uri": "",
+  "auth_provider_x509_cert_url": "",
+  "client_x509_cert_url": "",
+  "universe_domain": ""
+}
+```
 
-### - 안드로이드
-
-개발 환경 실행
+# Execute
 
 ```bash
+# 앱 실행 전 문제점 점검
+npx react-native doctor
+
+# 안드로이드 개발 환경 실행
 npm run android:dev
-```
 
-프로덕션 환경 실행
-
-```bash
+# 안드로이드 프로덕션 환경 실행
 npm run android:prod
-```
 
-### - IOS
-
-개발 환경 실행
-
-```bash
+# IOS 개발 환경 실행
 npm run ios:dev
-```
 
-프로덕션 환경 실행
-
-```bash
+# IOS 프로덕션 환경 실행
 npm run ios:prod
 ```
 
-## 6. 앱 빌드
+# Build
 
-1. **keystore** 파일 추가
-2. 경로: `wip-application-v2/android/app`
-
-**APK** 파일 생성
-생성위치: `wip-application-v2/android/app/build/outputs/apk`
+- `/android/app` 경로에 **keystore (.jks)** 파일 추가 후 빌드 진행
 
 ```bash
+# APK 파일 생성 (/android/app/build/outputs/apk)
 npm run apk
-```
 
-**AAB** 파일 생성
-생성위치: `wip-application-v2/android/app/build/outputs/bundle`
-
-```bash
+# AAB 파일 생성 (/android/app/build/outputs/bundle)
 npm run aab
 ```

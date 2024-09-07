@@ -170,4 +170,4 @@ vendor/
 
 # etc
 .env.*
-/config.json
+/env/*.json
