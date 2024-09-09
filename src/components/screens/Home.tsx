@@ -10,6 +10,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { gstyles } from "@/style/globalStyle";
 import Layout, { StatusBarHeight, totalHeaderHeight } from "@/components/organisms/Layout";
+import SearchSelectButton from "@/components/atoms/SearchSelectButton";
 
 const Home = (): JSX.Element => {
     const nav: any = useNavigation();
@@ -54,8 +55,8 @@ const Home = (): JSX.Element => {
                     {/* 정보 업데이트 날짜 뷰 */}
                     <UpdateText />
                     {/* 알약 검색 버튼 */}
-                    <SearchImageButton />
-                    {/* 최근 검색 알약 */}
+                    <SearchSelectButton />
+                    {/* 최근 조회 알약 */}
                     <LastSearchPill />
                     {/* 메뉴 리스트 */}
                     <MenuList />

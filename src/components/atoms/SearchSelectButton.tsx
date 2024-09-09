@@ -4,13 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 
-const SearchImageButton = (): JSX.Element => {
+const SearchSelectButton = (): JSX.Element => {
   const nav: any = useNavigation();
 
   const styles = StyleSheet.create({
     searchPillButtonWrapper: {
       width: '100%',
-      paddingTop: 16,
     },
     searchPillButton: {
       width: '100%',
@@ -63,7 +62,7 @@ const SearchImageButton = (): JSX.Element => {
   return (
     <Button.scale
       style={styles.searchPillButtonWrapper}
-      onPress={() => nav.navigate('알약 이미지 검색')}
+      onPress={() => nav.navigate('알약 검색')}
     >
       <Shadow distance={13} offset={[2, 4]} startColor='#00000015' style={styles.searchPillButton}>
         <View style={styles.fill}>
@@ -72,8 +71,8 @@ const SearchImageButton = (): JSX.Element => {
             source={require('@assets/images/searchPill.png')} // header에 들어갈 로고이미지.
           />
           <View style={styles.searchPillTextWrapper}>
-            <Text style={styles.searchPillMainText}>이미지 검색</Text>
-            <Text style={styles.searchPillSubText}>Pill Image Search</Text>
+            <Text style={styles.searchPillMainText}>알약 검색</Text>
+            <Text style={styles.searchPillSubText}>Pill Search</Text>
           </View>
         </View>
       </Shadow>
@@ -84,4 +83,4 @@ const SearchImageButton = (): JSX.Element => {
 
 
 
-export default SearchImageButton;
+export default SearchSelectButton;
