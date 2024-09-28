@@ -20,44 +20,19 @@ API_URL="API 주소"
 
 # Requirement
 
-- /env/config.json
+- /env/.env
 
-```json
-{
-  "resource": {
-    "aesKey": "",
-    "aesIv": ""
-  },
-  "googleCloud": {
-    "initInfoURL": "",
-    "deeplearningServerURL": ""
-  },
-  "cloudflare": {
-    "resourceDownloadURL": "",
-    "resourceBucket": "",
-    "tokenValue": "",
-    "accessKeyID": "",
-    "secretAccessKey": ""
-  }
-}
-```
-
-- /env/google_cloud_service_key.json
-
-```json
-{
-  "type": "",
-  "project_id": "",
-  "private_key_id": "",
-  "private_key": "",
-  "client_email": "",
-  "client_id": "",
-  "auth_uri": "",
-  "token_uri": "",
-  "auth_provider_x509_cert_url": "",
-  "client_x509_cert_url": "",
-  "universe_domain": ""
-}
+```bash
+RESOURCE_AES_KEY=""
+RESOURCE_AES_IV=""
+GOOGLE_CLOUD_RSA_PUB_KEY=""
+GOOGLE_CLOUD_INIT_INFO_URL=""
+GOOGLE_CLOUD_DL_SERVER_URL=""
+CLOUD_FLARE_RESOURCE_DOWNLOAD_URL=""
+CLOUD_FLARE_RESOURCE_BUCKET=""
+CLOUD_FLARE_TOKEN_VALUE=""
+CLOUD_FLARE_ACCESS_KEY_ID=""
+CLOUD_FLARE_SECRET_ACCESS_KEY=""
 ```
 
 # Execution
