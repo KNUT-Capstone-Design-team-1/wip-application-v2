@@ -23,6 +23,7 @@ jobs:
 
       - name: get-config
         run: |
+          mkdir ./env
           cat <<EOL > ./env/.env
           RESOURCE_AES_KEY="${{ secrets.RESOURCE_AES_KEY }}"
           RESOURCE_AES_IV="${{ secrets.RESOURCE_AES_IV }}"
