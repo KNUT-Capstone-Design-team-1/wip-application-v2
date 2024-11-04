@@ -25,8 +25,7 @@ jobs:
         run: |
           mkdir ./env
           cat <<EOL > ./env/.env
-          RESOURCE_AES_KEY="${{ secrets.RESOURCE_AES_KEY }}"
-          RESOURCE_AES_IV="${{ secrets.RESOURCE_AES_IV }}"
+          REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
 
           GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"
           GOOGLE_CLOUD_INIT_INFO_URL="${{ secrets.GOOGLE_CLOUD_INIT_INFO_URL }}"
@@ -43,7 +42,6 @@ jobs:
           PERM_ENC_SERVICE_KEY="${{ secrets.PERM_ENC_SERVICE_KEY }}"
           PERM_DEC_SERVICE_KEY="${{ secrets.PERM_DEC_SERVICE_KEY }}"
           EOL
-          echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
 
       - name: build-apk
         run: npm run apk
