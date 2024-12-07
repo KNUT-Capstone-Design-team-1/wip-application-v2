@@ -1,16 +1,16 @@
 import { screenState } from "@/atoms/screen";
 import { useRecoilState } from "recoil";
-import SearchImageButton from "@/components/atoms/SearchImageButton";
 import UpdateText from "@/components/atoms/UpdateText";
+import SearchButtonList from "@/components/organisms/SearchButtonList";
 import LastSearchPill from "@/components/organisms/LastSearchPill";
 import MenuList from "@/components/organisms/MenuList";
 import TakeGuide from "@/components/organisms/TakeGuide";
-import { View, ScrollView, StyleSheet } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
+import { View, ScrollView, StyleSheet, BackHandler } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
 import { gstyles } from "@/style/globalStyle";
-import Layout, { StatusBarHeight, totalHeaderHeight } from "@/components/organisms/Layout";
-import SearchSelectButton from "@/components/atoms/SearchSelectButton";
+import Layout from "@/components/organisms/Layout";
+import RNExitApp from "react-native-exit-app";
 
 const Home = (): JSX.Element => {
     const nav: any = useNavigation();
@@ -22,8 +22,13 @@ const Home = (): JSX.Element => {
 
     useEffect(() => {
         nav.addListener('focus', () => handleSetScreen());
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            RNExitApp.exitApp()
+            return true;
+        })
         return () => {
             nav.removeListener('focus', () => handleSetScreen());
+            backHandler.remove();
         }
     }, []);
 
@@ -44,7 +49,9 @@ const Home = (): JSX.Element => {
             paddingHorizontal: 15,
         },
     });
-
+    // TODO: 식별검색, 이미지검색 => 이미지 변경
+    // TODO: 복용법 => "정확한 정보는 약사에게 표시"
+    // TODO: 화면 구조 수정 => 공백 줄이기
     return (
         <Layout.default>
             <ScrollView
@@ -55,7 +62,7 @@ const Home = (): JSX.Element => {
                     {/* 정보 업데이트 날짜 뷰 */}
                     <UpdateText />
                     {/* 알약 검색 버튼 */}
-                    <SearchSelectButton />
+                    <SearchButtonList />
                     {/* 최근 조회 알약 */}
                     <LastSearchPill />
                     {/* 메뉴 리스트 */}

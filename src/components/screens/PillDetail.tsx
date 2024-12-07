@@ -1,23 +1,19 @@
-import { screenState } from "@/atoms/screen";
 import Button from "@/components/atoms/Button";
 import Layout from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
-import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
 import { View, ScrollView, StyleSheet, Image, Text } from "react-native";
-import { useRecoilState } from "recoil";
 import AddStorageSvg from '@assets/svgs/addStorage.svg';
-import ShareSvg from '@assets/svgs/share.svg';
 import ArrowDownSvg from '@assets/svgs/dropdown.svg';
 import { getItem, setItem } from "@/utils/storage";
 import { parseXML } from "@/utils/xml";
-import { DETAIL_DATA } from "@/constans/mock";
+import { DETAIL_DATA } from "@/constants/mock";
 import Config from "react-native-config";
-import axios from "axios";
 import LoadingCircle from "@/components/atoms/LoadingCircle";
 import Toast from "react-native-toast-message";
 import PillInfo from "@/components/atoms/PillInfo";
 import { useSetScreen } from "@/hooks/useSetScreen";
+import { getDrugDetail } from "@/api/server";
 
 interface InfoData {
     EE: string[] | null;
@@ -74,29 +70,30 @@ const PillDetail = ({ route }: any): JSX.Element => {
             getDetailData();
         }
     };
-
+    //TODO: response 데이터의 형태 확인 &nbsp 나옴
     const getDetailData = async () => {
-        const URL = `${Config.API_URL}/pill-search/detail?skip=0&limit=20`;
+        const URL = `${Config.GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
         const itemSeq = data.info1.ITEM_SEQ;
-        try {
-            const res = await axios.post(URL, { ITEM_SEQ: itemSeq }, { timeout: 10000 });
-            if (res.data.success) {
+        await getDrugDetail(URL, itemSeq)
+            .then(val => {
                 const parsedData = {
-                    EE: parseXML(res.data.data[0].EE_DOC_DATA),
-                    UD: parseXML(res.data.data[0].UD_DOC_DATA),
-                    NB: parseXML(res.data.data[0].NB_DOC_DATA),
-                };
-                setInfoData(parsedData);
-            }
-        } catch (err) {
-            console.error(err);
-            Toast.show({
-                type: 'errorToast',
-                text1: '상세검색을 가져오는데 문제가 생겼습니다.',
+                    EE: parseXML(val.data.EE_DOC_DATA),
+                    UD: parseXML(val.data.UD_DOC_DATA),
+                    NB: parseXML(val.data.NB_DOC_DATA),
+                }
+
+                setInfoData(parsedData)
+            })
+            .catch(err => {
+                console.error(err);
+                Toast.show({
+                    type: 'errorToast',
+                    text1: '상세정보를 가져오는데 문제가 생겼습니다.',
+                });
+            })
+            .finally(() => {
+                setLoading(false);
             });
-        } finally {
-            setLoading(false);
-        }
     };
 
     // [임시] 테스트를 위한 MockData

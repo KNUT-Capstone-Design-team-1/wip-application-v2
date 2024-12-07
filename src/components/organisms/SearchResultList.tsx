@@ -1,14 +1,12 @@
-import LoadingCircle from "@/components/atoms/LoadingCircle";
 import ResultItem from "@/components/atoms/ResultItem";
-import { BottomNavHeight } from "@/components/organisms/BottomNavigation";
 import { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
-import SkeletoneSearchResult from "@/components/organisms/SkeletoneSearchResult";
-import { useGetSearchData } from "@/hooks/useGetSearchData";
 import { font, os } from "@/style/font";
 import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
+import { usePagination } from "@/hooks/usePagination";
 
-const SearchResultList = (): JSX.Element => {
-  const { data, isVisible, infiLoading } = useGetSearchData();
+//TODO: flatlist 메모리 최적화 필요
+const SearchResultList = ({ filter, params }: { filter: string, params: any }): JSX.Element => {
+  const { paginatedData, totalSize, loadData } = usePagination(filter, params, 20)
 
   const styles = StyleSheet.create({
     resultListWrapper: {
@@ -41,44 +39,24 @@ const SearchResultList = (): JSX.Element => {
       includeFontPadding: false,
       paddingBottom: 0,
     },
-    skeletonList: {
-      paddingTop: 50,
-    },
-    infiLoading: {
-      position: 'absolute',
-      bottom: BottomNavHeight,
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      paddingVertical: 22,
-      paddingBottom: 40,
-      zIndex: -1,
-    }
   })
 
-  return data && isVisible ?
+  return (
     <View style={styles.viewWrapper}>
       <View style={styles.noteWrapper}>
-        <Text style={styles.note}>이미지에 대한 알약 검색 결과입니다.</Text>
+        <Text style={styles.note}>총 {totalSize}개의 검색 결과입니다.</Text>
       </View>
       <FlatList
         style={styles.resultListWrapper}
-        data={data}
+        data={paginatedData}
         renderItem={({ item, index }) =>
-          <ResultItem data={item} last={(data.length - 1) === index} index={index} />
+          <ResultItem data={item} last={(paginatedData.length - 1) === index} index={index} />
         }
         keyExtractor={item => item.ITEM_SEQ}
-        //onEndReached={getResultDataByPage} // [임시제거] 페이징 기능
+        onEndReached={loadData}
         onEndReachedThreshold={0.5}
       />
-      {infiLoading &&
-        <View style={styles.infiLoading}>
-          <LoadingCircle size={'small'} />
-        </View>
-      }
-    </View>
-    :
-    <SkeletoneSearchResult />
+    </View>)
 };
 
 export default SearchResultList;

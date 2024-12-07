@@ -16,7 +16,7 @@ import GuideFrameSvg from '@assets/svgs/guideFrame.svg';
 import { ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker";
 import { imgFileState } from "@/atoms/file";
 import { requestCameraPermission } from "@/utils/permission";
-import { imgPickerOption } from "@/constans/options";
+import { imgPickerOption } from "@/constants/options";
 
 const SearchImage = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();

@@ -1,0 +1,166 @@
+import Layout from "@/components/organisms/Layout";
+import { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, View, BackHandler } from "react-native";
+import { font, os } from "@/style/font";
+import * as Progress from "react-native-progress"
+import CustomAlert from "@/components/organisms/CustomAlert";
+import { DBResClient } from "@/api/client/DBResClient";
+import { formatBytes, formatDateToString, formatProgress } from "@/utils/formatter";
+import RNExitApp from "react-native-exit-app"
+import RNRestart from 'react-native-restart';
+import { upsertDB } from "@/api/update";
+import { getItem, setItem } from "@/utils/storage";
+import Toast from "react-native-toast-message";
+
+const resClient = DBResClient.getInstance();
+let isExitApp = false
+let timeout: NodeJS.Timeout;
+
+const UpdateDB = (): JSX.Element => {
+  const [status, setStatus] = useState('DB 업데이트 확인')
+  const [progress, setProgress] = useState(0)
+  const [resSize, setResSize] = useState(0)
+  const [modalVisible, setModalVisible] = useState(false)
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (!isExitApp) {
+        isExitApp = true;
+        Toast.show({
+          type: 'noteToast',
+          text1: '앱을 종료하시겠습니까?',
+        })
+
+        timeout = setTimeout(() => {
+          isExitApp = false;
+        }, 2000)
+      } else {
+        clearTimeout(timeout)
+        RNExitApp.exitApp()
+      }
+      return true;
+    })
+
+    const getResourceInfo = async () => {
+      const lastUpdateDate = await getItem('lastUpdateDate');
+      await resClient.getResourceList(lastUpdateDate !== '' ? 'update' : 'initial');
+      setResSize(resClient.resSize)
+      setModalVisible(true)
+    }
+    getResourceInfo();
+
+    return () => {
+      backHandler.remove();
+    }
+  }, [])
+
+  const runUpdate = async () => {
+    setStatus('DB 초기화 중')
+    await resClient.clearRes();
+    setProgress((prev) => prev + 1)
+    setStatus('리소스 다운로드 중')
+    await resClient.getResourceChunk(() => { setProgress((prev) => prev + 1) })
+    setStatus('DB 업데이트 적용 중')
+    await upsertDB((idx, total) => { setProgress((prev) => prev + ((idx ?? 1) / (total ?? 1))) })
+    await resClient.clearRes();
+    // setProgress((prev) => prev + 1)
+    await setItem('lastUpdateDate', formatDateToString(new Date()))
+    RNRestart.restart();
+  }
+
+  const styles = StyleSheet.create({
+    initViewWrapper: {
+      flex: 1,
+    },
+    infoViewWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    infoText: {
+      fontFamily: os.font(500, 500),
+      fontSize: font(20),
+      color: '#fff',
+      marginBottom: 16
+    },
+    logoViewWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    logo: {
+      width: 150,
+      height: 150,
+      resizeMode: 'contain'
+    }
+  })
+
+  return (
+    <Layout.initscreen>
+      <CustomAlert
+        visible={modalVisible}
+        onRequestClose={() => {
+          if (!isExitApp) {
+            isExitApp = true;
+            Toast.show({
+              type: 'noteToast',
+              text1: '앱을 종료하시겠습니까?',
+            })
+
+            timeout = setTimeout(() => {
+              isExitApp = false;
+            }, 2000)
+          } else {
+            clearTimeout(timeout)
+            RNExitApp.exitApp()
+          }
+          return true;
+        }}
+        title="DB 업데이트"
+        message={'DB 업데이트가 필요합니다' + `\n` + '다운로드 용량:' + formatBytes(resSize) + `\n` + '(wifi 사용권장)'}
+        buttons={
+          [
+            {
+              text: '취소',
+              onPress: () => {
+                RNExitApp.exitApp()
+                return true
+              },
+              style: {}
+            },
+            {
+              text: '확인',
+              onPress: async () => {
+                setModalVisible(false)
+                await runUpdate();
+              },
+              style: {}
+            }
+          ]
+        }
+      />
+      <View style={styles.initViewWrapper}>
+        <View style={styles.logoViewWrapper}>
+          <Image
+            style={styles.logo}
+            source={require('@assets/images/logo_default.png')} />
+        </View>
+        <View style={styles.infoViewWrapper}>
+          <Text style={styles.infoText}>{status + ' ' + formatProgress(progress, resClient.resCount)}</Text>
+          <Progress.Bar
+            width={200}
+            height={10}
+            indeterminate={progress > 0 ? false : true}
+            progress={progress / resClient.resCount}
+            color="#7472EB"
+            unfilledColor="#fff"
+            borderWidth={0}
+            borderColor="#cacaca"
+          />
+        </View>
+      </View>
+    </Layout.initscreen>
+  )
+}
+
+export default UpdateDB

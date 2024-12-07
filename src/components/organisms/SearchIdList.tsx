@@ -1,13 +1,25 @@
 import { View, Text, StyleSheet, Platform, TextInput } from "react-native";
-import { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
 import { SectionGrid } from "react-native-super-grid";
 import { Shadow } from "react-native-shadow-2";
-import { idSelectData } from "@/constans/data";
+import { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
+import { idSelectData } from "@/constants/data";
 import Button from "@/components/atoms/Button";
 import { font, os } from "@/style/font";
 import SearchSvg from "@/assets/svgs/search.svg"
+import { useNavigation } from "@react-navigation/native";
+import { useSelectSearchId } from "@/hooks/useSelectSearchId";
 
 const SearchIdList = (): JSX.Element => {
+  const {
+    idText,
+    setIdText,
+    shapeSelected,
+    colorSelected,
+    handlePressItem,
+    handlePressInit,
+    handlePressSearch
+  } = useSelectSearchId();
+
   const styles = StyleSheet.create({
     viewWrapper: {
       minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
@@ -74,6 +86,7 @@ const SearchIdList = (): JSX.Element => {
       fontSize: font(16),
       fontFamily: os.font(700, 800),
       includeFontPadding: false,
+      maxHeight: font(16 * 3)
     },
     buttonWrapper: {
       position: 'absolute',
@@ -122,8 +135,8 @@ const SearchIdList = (): JSX.Element => {
         spacing={16}
         sections={idSelectData}
         renderItem={({ item }) =>
-          <Button.scale style={styles.itemButtonWrapper}>
-            <Shadow distance={6} style={styles.itemButton}>
+          <Button.scale style={styles.itemButtonWrapper} onPress={() => handlePressItem(item)}>
+            <Shadow startColor={shapeSelected.includes(item.category + item.key) || colorSelected.includes(item.category + item.key) ? '#7472EB' : '#00000020'} distance={6} style={styles.itemButton}>
               {item.icon ?
                 <View style={styles.itemIconWrapper}>
                   {item.icon}
@@ -144,6 +157,11 @@ const SearchIdList = (): JSX.Element => {
                 <TextInput
                   placeholder="식별 문자 (선택)"
                   placeholderTextColor={"#cacaca"}
+                  onChangeText={setIdText}
+                  value={idText}
+                  autoCapitalize="none"
+                  maxLength={10}
+                  autoComplete="off"
                   style={styles.sectionTextInput} />
               </View>
             }
@@ -153,12 +171,12 @@ const SearchIdList = (): JSX.Element => {
         contentContainerStyle={{ paddingBottom: 30 }}
       />
       <View style={styles.buttonWrapper}>
-        <Button.scale>
+        <Button.scale onPress={handlePressInit}>
           <View style={styles.resetButton}>
             <Text style={{ ...styles.buttonText }}>초기화</Text>
           </View>
         </Button.scale>
-        <Button.scale>
+        <Button.scale onPress={handlePressSearch}>
           <View style={styles.searchButton}>
             <SearchSvg width={14} height={14} color={'#fff'} />
             <Text style={{ color: '#fff', ...styles.buttonText }}>알약 검색하기</Text>

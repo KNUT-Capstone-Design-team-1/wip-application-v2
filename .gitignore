@@ -169,5 +169,6 @@ vendor/
 *.pem
 
 # etc
+.env
 .env.*
 /env/*.json

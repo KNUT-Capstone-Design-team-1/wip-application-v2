@@ -22,16 +22,6 @@ const SearchId = ({ route }: any): JSX.Element => {
     }
   }, []);
 
-  const styles = StyleSheet.create({
-    scrollViewWrapper: {
-      flex: 1,
-      backgroundColor: 'white',
-      //marginTop: totalHeaderHeight + StatusBarHeight,
-      zIndex: 1000,
-      ...gstyles.screenBorder,
-    },
-  })
-
   return (
     <Layout.default>
       <SearchIdList />
