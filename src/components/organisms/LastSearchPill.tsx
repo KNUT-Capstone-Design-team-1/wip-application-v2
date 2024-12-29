@@ -109,7 +109,7 @@ const LastSearchPill = () => {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {i.info1.ITEM_NAME}
+                {i.ITEM_NAME}
               </Text>
             </View>
           </Button.scale>

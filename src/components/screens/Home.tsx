@@ -32,26 +32,9 @@ const Home = (): JSX.Element => {
         }
     }, []);
 
-
-    const styles = StyleSheet.create({
-        scrollViewWrapper: {
-            flex: 1,
-            backgroundColor: 'white',
-            //marginTop: totalHeaderHeight + StatusBarHeight,
-            zIndex: 1000,
-            ...gstyles.screenBorder,
-        },
-        viewWrapper: {
-            minHeight: '100%',
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            overflow: 'hidden',
-            paddingHorizontal: 15,
-        },
-    });
     // TODO: 식별검색, 이미지검색 => 이미지 변경
     // TODO: 복용법 => "정확한 정보는 약사에게 표시"
-    // TODO: 화면 구조 수정 => 공백 줄이기
+    // TODO: 화면 구조 수정 => 공백 줄이기 + ScrollView => View
     return (
         <Layout.default>
             <ScrollView
@@ -76,5 +59,22 @@ const Home = (): JSX.Element => {
         </Layout.default>
     )
 }
+
+const styles = StyleSheet.create({
+    scrollViewWrapper: {
+        flex: 1,
+        backgroundColor: 'white',
+        //marginTop: totalHeaderHeight + StatusBarHeight,
+        zIndex: 1000,
+        ...gstyles.screenBorder,
+    },
+    viewWrapper: {
+        minHeight: '100%',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: 'hidden',
+        paddingHorizontal: 15,
+    },
+});
 
 export default Home;

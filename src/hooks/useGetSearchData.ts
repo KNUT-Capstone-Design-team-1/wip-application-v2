@@ -16,10 +16,6 @@ export const useGetSearchData = () => {
   const [filter, setFilter] = useState<string | undefined>(undefined);
   const [params, setParams] = useState<any>(undefined);
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [infiLoading, setInfiLoading] = useState<boolean>(false);
-  const isVisible = !!(!isLoading && filter && params);
-
   const setFilterParams = (data: any) => {
     const { filter, params } = mode == 1 ? getQueryForSearchImage(data) : getQueryForSearchId(data)
     setFilter(filter)
@@ -28,10 +24,8 @@ export const useGetSearchData = () => {
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
-    setIsLoading(true);
     await postImageServer(imageBase64)
       .then((res: any) => {
-        setIsLoading(false);
         if (res.data.success) {
           const data: TPillSearchImageParam = { ITEM_SEQ: [] }
           for (const d of res.data.data) {
@@ -60,7 +54,6 @@ export const useGetSearchData = () => {
   useEffect(() => {
     if (initData && mode == 0) {
       setFilterParams(initData)
-      setIsLoading(false);
     }
 
     if (initData && mode == 1) {
@@ -81,5 +74,5 @@ export const useGetSearchData = () => {
 
   }, [imageBase64])
 
-  return { filter, params, isVisible, infiLoading }
+  return { filter, params }
 }

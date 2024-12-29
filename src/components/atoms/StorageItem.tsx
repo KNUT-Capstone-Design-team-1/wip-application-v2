@@ -6,6 +6,8 @@ import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import DeleteSvg from '@assets/svgs/exit.svg';
 import { useNavigation } from "@react-navigation/native";
 import { getItem, setItem } from "@/utils/storage";
+import { useAlert } from "@/hooks/useAlert";
+import { usePillBox } from "@/hooks/usePillBox";
 
 interface IProps {
   data: any,
@@ -14,34 +16,32 @@ interface IProps {
 
 const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
   const nav: any = useNavigation();
+  const { showAlert } = useAlert();
+  const { delPill } = usePillBox();
 
   const handlePressDetail = () => {
     nav.navigate('StorageStack', { screen: '알약 정보', params: { data: data } });
   }
 
   const handleDeleteItem = async () => {
-    const LIST = await getItem('pillStorage');
-    let list: any[] = JSON.parse(LIST);
-    let result: any[] = [];
-    if (LIST) {
-      list.map((i: any) => {
-        if (i.ITEM_SEQ !== data.ITEM_SEQ) {
-          result.push(i);
-        }
-      })
-    }
-    setItem('pillStorage', JSON.stringify(result));
+    delPill(data.ITEM_SEQ);
     await refresh();
   }
 
   const handlePressDelete = () => {
-    Alert.alert('알약 삭제', `'${data.ITEM_NAME}'을 보관함에서 삭제하시겠습니까?`, [
-      {
-        text: '취소',
-        style: 'cancel',
-      },
-      { text: '삭제', onPress: () => handleDeleteItem() },
-    ]);
+    showAlert(
+      '알약 삭제',
+      `'${data.ITEM_NAME}'을 보관함에서 삭제하시겠습니까?`,
+      [
+        {
+          text: '취소',
+        },
+        {
+          text: '삭제',
+          onPress: () => handleDeleteItem(),
+        },
+      ]
+    )
   }
 
   const styles = StyleSheet.create({
@@ -115,11 +115,11 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
     <Button.scale onPress={handlePressDetail}>
       <View style={styles.wrapper}>
         <View style={styles.pillImgWrapper}>
-          {!!data.info1.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.info1.ITEM_IMAGE, cache: 'only-if-cached' }} resizeMode="contain" />}
+          {!!data.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }} resizeMode="contain" />}
         </View>
         <View style={styles.nameWrapper}>
-          <Text style={styles.name} numberOfLines={2}>{data.info1.ITEM_NAME}</Text>
-          <Text style={styles.efficacy}>{data.info1.ENTP_NAME ?? ''}</Text>
+          <Text style={styles.name} numberOfLines={2}>{data.ITEM_NAME}</Text>
+          <Text style={styles.efficacy}>{data.ENTP_NAME ?? ''}</Text>
         </View>
         <View style={styles.detailWrapper}>
           <Text style={styles.detailText}>자세히 보기</Text>

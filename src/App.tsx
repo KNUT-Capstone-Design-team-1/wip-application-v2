@@ -9,7 +9,8 @@ import { RecoilRoot } from 'recoil';
 import { updateCheck } from '@/api/update';
 import UpdateDB from '@/components/screens/UpdateDB';
 import { RealmProvider } from '@realm/react';
-import { dbConfig } from './api/db/config';
+import { dbConfig } from '@/api/db/config';
+import { AlertProvider } from '@/provider/AlertProvider';
 
 // TODO: initDB 표시 로직 확인
 // TODO: 전체 코드 jsdoc 작성
@@ -40,23 +41,23 @@ const App = (): React.JSX.Element => {
       }
     }
     checkDB();
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000);
+    SplashScreen.hide();
   }, []);
 
   return (
     <RealmProvider {...dbConfig}>
-      <RecoilRoot>
-        {updateDB ? <UpdateDB /> :
-          <Navigation />
-        }
-        <Toast
-          config={toastConfig}
-          position='bottom'
-          bottomOffset={130}
-        />
-      </RecoilRoot>
+      <AlertProvider>
+        <RecoilRoot>
+          {updateDB ? <UpdateDB /> :
+            <Navigation />
+          }
+          <Toast
+            config={toastConfig}
+            position='bottom'
+            bottomOffset={130}
+          />
+        </RecoilRoot>
+      </AlertProvider>
     </RealmProvider>
   );
 }

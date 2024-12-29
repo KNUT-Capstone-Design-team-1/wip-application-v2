@@ -2,10 +2,6 @@ import { StyleSheet, View, Image } from 'react-native';
 
 const HeaderLogo = () => {
 
-    const styles = StyleSheet.create({
-        headerLogo: { height: '96%', resizeMode: "contain" },
-    });
-
     return (
         <View>
             <Image
@@ -15,5 +11,8 @@ const HeaderLogo = () => {
         </View>
     )
 }
+const styles = StyleSheet.create({
+    headerLogo: { height: '96%', resizeMode: "contain" },
+});
 
 export default HeaderLogo;

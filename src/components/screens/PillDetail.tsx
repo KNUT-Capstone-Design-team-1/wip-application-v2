@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { View, ScrollView, StyleSheet, Image, Text } from "react-native";
 import AddStorageSvg from '@assets/svgs/addStorage.svg';
 import ArrowDownSvg from '@assets/svgs/dropdown.svg';
-import { getItem, setItem } from "@/utils/storage";
 import { parseXML } from "@/utils/xml";
 import { DETAIL_DATA } from "@/constants/mock";
 import Config from "react-native-config";
@@ -14,18 +13,20 @@ import Toast from "react-native-toast-message";
 import PillInfo from "@/components/atoms/PillInfo";
 import { useSetScreen } from "@/hooks/useSetScreen";
 import { getDrugDetail } from "@/api/server";
+import { usePillBox } from "@/hooks/usePillBox";
+import { deepCopyRealmObj } from "@/utils/converter";
 
 interface InfoData {
-    EE: string[] | null;
-    UD: string[] | null;
-    NB: string[] | null;
+    EE?: string[] | null | undefined;
+    UD?: string[] | null | undefined;
+    NB?: string[] | null | undefined;
 }
 
 const PillDetail = ({ route }: any): JSX.Element => {
     useSetScreen('알약 정보');
+    const { addPill, getPill, delPill } = usePillBox();
     const infoRef = useRef<any>();
     const [isStorage, setIsStorage] = useState(false);
-    const [storageList, setStorageList] = useState<any[]>([]);
     const [infoData, setInfoData] = useState<InfoData>({ EE: null, UD: null, NB: null });
     const [loading, setLoading] = useState(true);
     const [info1, setInfo1] = useState(true);
@@ -34,46 +35,39 @@ const PillDetail = ({ route }: any): JSX.Element => {
     const [moreInfo, setMoreInfo] = useState(false);
     const data = route.params.data;
 
-    const handlePressAddStorage = async () => {
+    const handlePressAddStorage = () => {
         if (!loading) {
-            let updatedList = [...storageList];
-            const existingItemIndex = updatedList.findIndex(i => i.info1.ITEM_SEQ === data.info1.ITEM_SEQ);
+            const existPillData = getPill(data.ITEM_SEQ);
 
-            if (existingItemIndex !== -1) {
-                updatedList.splice(existingItemIndex, 1);
+            if (existPillData) {
+                delPill(data.ITEM_SEQ);
                 setIsStorage(false);
             } else {
-                updatedList.push({ info1: { ...data.info1 }, info2: infoData });
+                addPill({ ...data, infoData: infoData });
                 setIsStorage(true);
             }
-
-            await setItem('pillStorage', JSON.stringify(updatedList));
-            setStorageList(updatedList);
         }
-    };
+    }
 
     /** 알약 보관함에 해당 알약이 있는지 확인 */
-    const getStorageList = async () => {
-        const storaged = await getItem('pillStorage');
-        if (storaged) {
-            const list = JSON.parse(storaged);
-            const currentData = list.find((i: any) => i.info1.ITEM_SEQ === data.info1.ITEM_SEQ);
-            if (currentData) {
-                setInfoData(currentData.info2);
-                setStorageList(list);
-                setLoading(false);
-            } else {
-                getDetailData();
+    const getDataFromPillBox = () => {
+        const pill = getPill(data.ITEM_SEQ)
+        if (pill) {
+            if (pill.infoData) {
+                const parsedData = deepCopyRealmObj(pill.infoData)
+                setInfoData(parsedData);
             }
-            setIsStorage(!!currentData);
+            setIsStorage(true)
+            setLoading(false);
         } else {
             getDetailData();
         }
-    };
+    }
+
     //TODO: response 데이터의 형태 확인 &nbsp 나옴
     const getDetailData = async () => {
         const URL = `${Config.GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
-        const itemSeq = data.info1.ITEM_SEQ;
+        const itemSeq = data.ITEM_SEQ;
         await getDrugDetail(URL, itemSeq)
             .then(val => {
                 const parsedData = {
@@ -117,142 +111,29 @@ const PillDetail = ({ route }: any): JSX.Element => {
     }
 
     useEffect(() => {
-        getStorageList();
+        getDataFromPillBox();
     }, [route]);
-
-    const styles = StyleSheet.create({
-        scrollViewWrapper: {
-            flex: 1,
-            backgroundColor: '#fff',
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-        },
-        viewWrapper: {
-            flex: 1,
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            overflow: 'hidden',
-            backgroundColor: 'white',
-            paddingHorizontal: 15,
-        },
-        pillImgWrapper: {
-            width: '100%',
-            aspectRatio: '1299/709',
-            borderRadius: 18,
-            overflow: 'hidden',
-            marginTop: 16,
-        },
-        pillImg: {
-            width: '100%',
-            height: '100%',
-            borderRadius: 18,
-            overflow: 'hidden',
-        },
-        name: {
-            flex: 1,
-            color: '#000',
-            fontSize: font(22),
-            fontFamily: os.font(700, 700),
-            includeFontPadding: false,
-            paddingBottom: 0,
-            paddingRight: 20,
-        },
-        infoContainer: {
-
-        },
-        nameWrapper: {
-            position: 'relative',
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-            marginTop: 16,
-        },
-        buttonWrapper: {
-            flexDirection: 'row',
-            marginRight: -4,
-        },
-        button: {
-            padding: 8,
-            paddingHorizontal: 14,
-        },
-        addStorageActive: {
-            opacity: 0.3,
-        },
-        detailInfoContainer: {
-            paddingBottom: 200,
-        },
-        detailInfoWrapper: {
-        },
-        detailInfoHeadWrapper: {
-            flexDirection: 'row',
-            gap: 10,
-            alignItems: 'center',
-        },
-        detailInfoHeadText: {
-            color: '#3c42ec',
-            fontSize: font(20),
-            fontFamily: os.font(700, 700),
-            includeFontPadding: false,
-            paddingBottom: 6,
-        },
-        detailInfoContentsText: {
-            color: '#000000',
-            fontSize: font(18),
-            fontFamily: os.font(400, 400),
-            includeFontPadding: false,
-            paddingBottom: 2,
-        },
-        emptyText: {
-            color: '#aaa',
-        },
-        detailInfoContents: {
-            gap: 10,
-            marginBottom: 16,
-        },
-        infoWrapper: {
-            gap: 6,
-            paddingVertical: 12,
-            paddingBottom: 0,
-        },
-        infoMoreBtn: {
-            paddingVertical: 18,
-            borderBottomWidth: 1.5,
-            borderBottomColor: '#eee',
-            marginBottom: 16,
-        },
-        infoMoreBtnText: {
-            color: '#aaa',
-            textAlign: 'center',
-            fontSize: font(16),
-            fontFamily: os.font(500, 500),
-            includeFontPadding: false,
-            paddingBottom: 0,
-        },
-        loadingWrapper: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 200,
-        }
-    });
 
     return (
         <Layout.default>
             <ScrollView style={styles.scrollViewWrapper}>
                 <View style={styles.viewWrapper}>
                     <View style={styles.pillImgWrapper}>
-                        {data.info1.ITEM_IMAGE &&
+                        {data.ITEM_IMAGE &&
                             <Image
                                 style={styles.pillImg}
-                                source={{ uri: data.info1.ITEM_IMAGE, cache: 'only-if-cached' }}
+                                source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }}
                                 resizeMode="contain"
                             />}
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.nameWrapper}>
-                            <Text style={styles.name}>{data.info1.ITEM_NAME}</Text>
+                            <Text style={styles.name}>{data.ITEM_NAME}</Text>
                             <View style={styles.buttonWrapper}>
                                 <Button.scale
                                     activeScale={1.2}
                                     onPress={handlePressAddStorage}
+                                    disabled={loading}
                                 >
                                     <View style={[styles.button, !isStorage && styles.addStorageActive]}>
                                         <AddStorageSvg width={22} height={18} />
@@ -268,17 +149,17 @@ const PillDetail = ({ route }: any): JSX.Element => {
                             </View>
                         </View>
                         <View style={styles.infoWrapper} ref={infoRef}>
-                            <PillInfo label='제조사' ct={data.info1.ENTP_NAME} />
-                            <PillInfo label='주성분' ct={data.info1.MAIN_ITEM_INGR} />
-                            <PillInfo label='성상' ct={data.info1.CHART} />
-                            <PillInfo label='포장 단위' ct={data.info1.PACK_UNIT} />
-                            <PillInfo label='저장 방법' ct={data.info1.STORAGE_METHOD} />
-                            <PillInfo label='유효 기간' ct={data.info1.VALID_TERM} />
+                            <PillInfo label='제조사' ct={data.ENTP_NAME} />
+                            <PillInfo label='주성분' ct={data.MAIN_ITEM_INGR} />
+                            <PillInfo label='성상' ct={data.CHART} />
+                            <PillInfo label='포장 단위' ct={data.PACK_UNIT} />
+                            <PillInfo label='저장 방법' ct={data.STORAGE_METHOD} />
+                            <PillInfo label='유효 기간' ct={data.VALID_TERM} />
                             {moreInfo &&
                                 <>
-                                    <PillInfo label='원료 성분' ct={data.info1.MATERIAL_NAME} />
-                                    <PillInfo label='첨가제' ct={data.info1.INGR_NAME} />
-                                    <PillInfo label='모양' ct={data.info1.DRUG_SHAPE} />
+                                    <PillInfo label='원료 성분' ct={data.MATERIAL_NAME} />
+                                    <PillInfo label='첨가제' ct={data.INGR_NAME} />
+                                    <PillInfo label='모양' ct={data.DRUG_SHAPE} />
                                 </>
                             }
                         </View>
@@ -355,5 +236,119 @@ const PillDetail = ({ route }: any): JSX.Element => {
         </Layout.default>
     )
 }
+
+const styles = StyleSheet.create({
+    scrollViewWrapper: {
+        flex: 1,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+    },
+    viewWrapper: {
+        flex: 1,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: 'hidden',
+        backgroundColor: 'white',
+        paddingHorizontal: 15,
+    },
+    pillImgWrapper: {
+        width: '100%',
+        aspectRatio: '1299/709',
+        borderRadius: 18,
+        overflow: 'hidden',
+        marginTop: 16,
+    },
+    pillImg: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 18,
+        overflow: 'hidden',
+    },
+    name: {
+        flex: 1,
+        color: '#000',
+        fontSize: font(22),
+        fontFamily: os.font(700, 700),
+        includeFontPadding: false,
+        paddingBottom: 0,
+        paddingRight: 20,
+    },
+    infoContainer: {
+
+    },
+    nameWrapper: {
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginTop: 16,
+    },
+    buttonWrapper: {
+        flexDirection: 'row',
+        marginRight: -4,
+    },
+    button: {
+        padding: 8,
+        paddingHorizontal: 14,
+    },
+    addStorageActive: {
+        opacity: 0.3,
+    },
+    detailInfoContainer: {
+        paddingBottom: 200,
+    },
+    detailInfoWrapper: {
+    },
+    detailInfoHeadWrapper: {
+        flexDirection: 'row',
+        gap: 10,
+        alignItems: 'center',
+    },
+    detailInfoHeadText: {
+        color: '#3c42ec',
+        fontSize: font(20),
+        fontFamily: os.font(700, 700),
+        includeFontPadding: false,
+        paddingBottom: 6,
+    },
+    detailInfoContentsText: {
+        color: '#000000',
+        fontSize: font(18),
+        fontFamily: os.font(400, 400),
+        includeFontPadding: false,
+        paddingBottom: 2,
+    },
+    emptyText: {
+        color: '#aaa',
+    },
+    detailInfoContents: {
+        gap: 10,
+        marginBottom: 16,
+    },
+    infoWrapper: {
+        gap: 6,
+        paddingVertical: 12,
+        paddingBottom: 0,
+    },
+    infoMoreBtn: {
+        paddingVertical: 18,
+        borderBottomWidth: 1.5,
+        borderBottomColor: '#eee',
+        marginBottom: 16,
+    },
+    infoMoreBtnText: {
+        color: '#aaa',
+        textAlign: 'center',
+        fontSize: font(16),
+        fontFamily: os.font(500, 500),
+        includeFontPadding: false,
+        paddingBottom: 0,
+    },
+    loadingWrapper: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 200,
+    }
+});
 
 export default PillDetail;

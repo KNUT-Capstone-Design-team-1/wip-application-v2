@@ -1,13 +1,13 @@
-import { useEffect } from "react"
-import { StyleSheet } from "react-native"
+import { Suspense, useEffect, lazy } from "react"
+import { Platform, StyleSheet, View } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { useRecoilState } from "recoil"
-import Layout from "@/components/organisms/Layout"
-import SearchIdList from "@/components/organisms/SearchIdList"
+import Layout, { defaultHeaderHeight, StatusBarHeight, windowHeight } from "@/components/organisms/Layout"
 import { screenState } from "@/atoms/screen"
-import { gstyles } from "@/style/globalStyle"
 
-const SearchId = ({ route }: any): JSX.Element => {
+const SearchIdList = lazy(() => import("@/components/organisms/SearchIdList"))
+
+const SearchId = (): JSX.Element => {
   const nav: any = useNavigation();
   const [screen, setScreen] = useRecoilState(screenState);
 
@@ -24,9 +24,23 @@ const SearchId = ({ route }: any): JSX.Element => {
 
   return (
     <Layout.default>
-      <SearchIdList />
+      <Suspense fallback={<View style={styles.viewWrapper} />}>
+        <SearchIdList />
+      </Suspense>
     </Layout.default>
   )
 }
+
+const styles = StyleSheet.create({
+  viewWrapper: {
+    minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    overflow: 'hidden',
+    paddingTop: 21,
+    paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
+    backgroundColor: '#ffffff',
+  },
+})
 
 export default SearchId

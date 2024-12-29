@@ -10,3 +10,6 @@
 # Add any project specific keep options here:
 
 -keep class com.mbm.whatispill.BuildConfig { *; }
+
+# Realm proguard bug fix https://github.com/realm/realm-js/issues/6074
+-keep class io.realm.react.**

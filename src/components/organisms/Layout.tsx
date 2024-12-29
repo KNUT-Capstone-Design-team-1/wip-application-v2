@@ -20,7 +20,7 @@ export const windowWidth: number = Dimensions.get('window').width;
 /* 화면 전체 높이 */
 export const windowHeight: number = Dimensions.get('window').height;
 /* OS 별 헤더 높이 */
-export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.12);
+export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.10);
 /* 총(메인) 헤더 높이 */
 export const totalHeaderHeight: number = StatusBarHeight + HeaderHeight;
 /* 기본 헤더 높이 */

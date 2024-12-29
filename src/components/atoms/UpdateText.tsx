@@ -22,7 +22,7 @@ const UpdateText = () => {
       justifyContent: 'flex-end',
       alignItems: 'center',
       gap: 6,
-      paddingTop: 20,
+      paddingTop: 12,
       paddingRight: 14,
       paddingBottom: 12,
     },

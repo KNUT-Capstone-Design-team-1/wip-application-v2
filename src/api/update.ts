@@ -3,18 +3,25 @@ import { getItem } from '@/utils/storage'
 import { getDBInfo } from './client/dbInfo'
 import { dbConfig, updateDBConfig } from './db/config'
 
+const batchSize = 1000
+
 // TODO: 업데이트 progress 표시
-const upsertDB = async (callback: (idx?: number, total?: number) => void | undefined) => {
+const upsertDB = async (callback: (idx: number, total: number) => void | undefined) => {
   const realm = await Realm.open(dbConfig)
   const updateRealm = await Realm.open(updateDBConfig)
 
   try {
-    for (const schema of dbConfig.schema ?? []) {
-      updateRealm.objects(schema.name).forEach((obj, idx) => {
-        realm.write(() => {
-          realm.create(schema.name, obj, Realm.UpdateMode.Modified)
-        })
-        callback(idx, dbConfig.schema?.length)
+    for (const schema of updateDBConfig.schema ?? []) {
+      const updateObjects = updateRealm.objects(schema.name)
+
+      realm.write(() => {
+        for (let idx = 0; idx < updateObjects.length; idx++) {
+          realm.create(schema.name, updateObjects[idx], Realm.UpdateMode.Modified)
+
+          if (idx % batchSize === 0 || idx === updateObjects.length - 1) {
+            callback(idx, updateObjects.length)
+          }
+        }
       })
     }
 

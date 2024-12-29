@@ -101,6 +101,7 @@ export class DBResClient {
   }
 
   public async getResourceList(mode: string = 'initial') {
+    this.resSize = 0;
     const command = new ListObjectsV2Command({
       Bucket: Config.CLOUD_FLARE_RESOURCE_BUCKET,
     })
