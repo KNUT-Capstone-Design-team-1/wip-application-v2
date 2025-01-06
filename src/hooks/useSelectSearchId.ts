@@ -60,7 +60,8 @@ export const useSelectSearchId = () => {
     }
 
     if (idText !== "") {
-      data['PRINT_FRONT'] = data['PRINT_BACK'] = idText
+      // 문자사이에 '*'와일드카드 삽입
+      data['PRINT_FRONT'] = data['PRINT_BACK'] = '*' + idText.replace(/(?<=.)|(?=.)/g, "*")
     }
 
     for (const item of idSelectData) {

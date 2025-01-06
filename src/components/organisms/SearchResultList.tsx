@@ -8,8 +8,8 @@ import SkeletoneSearchResult from "@/components/organisms/SkeletoneSearchResult"
 
 
 //TODO: flatlist 메모리 최적화 필요
-const SearchResultList = ({ filter, params }: { filter: string, params: any }): JSX.Element => {
-  const { paginatedData, totalSize, loadData, isLoading } = usePagination(filter, params, 20)
+const SearchResultList = ({ filter, params, initData }: { filter: string, params: any, initData: any }): JSX.Element => {
+  const { paginatedData, totalSize, loadData, isLoading } = usePagination(filter, params, 20, initData)
 
   return (
     <>

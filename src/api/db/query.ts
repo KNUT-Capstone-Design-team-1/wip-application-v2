@@ -13,11 +13,11 @@ type TPillSearchParam = {
 };
 
 type TPillSearchIdParam = {
-  COLOR_CLASS1?: string[];
-  COLOR_CLASS2?: string[];
-  PRINT_FRONT?: string;
-  PRINT_BACK?: string;
-  DRUG_SHAPE?: string[];
+  COLOR_CLASS1: string[];
+  COLOR_CLASS2: string[];
+  PRINT_FRONT: string;
+  PRINT_BACK: string;
+  DRUG_SHAPE: string[];
 }
 
 type TPillSearchImageParam = {
@@ -104,23 +104,36 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
 
   let filter = '';
   let index = 0;
+  const filters: string[] = []
   const params: string[] = []
 
-  for (const [column, value] of Object.entries(param)) {
-    if (['COLOR_CLASS1', 'COLOR_CLASS2', 'DRUG_SHAPE'].includes(column)) {
-      const arr = [...value]
-      const queryStr = `${column} CONTAINS[c] {${arr.map((val) => {
-        params.push(val)
-        return `$${index++}`
-      }).join(',')}}`
-      filter += filter ? ` OR ${queryStr}` : `${queryStr}`
-    } else {
-      if (value === "") continue
+  if (param.PRINT_FRONT != '') {
+    filters.push(`(PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++})`)
+    params.push(param.PRINT_FRONT) // 문자사이에 '*'와일드카드 삽입
+    params.push(param.PRINT_BACK) // 문자사이에 '*'와일드카드 삽입
+  }
 
-      const queryStr = `${column} CONTAINS[c] $${index++}`
-      params.push(value as string)
-      filter += filter ? ` OR ${queryStr}` : `${queryStr}`
-    }
+  if (param.COLOR_CLASS1.length != 0) {
+    filters.push(`(COLOR_CLASS1 CONTAINS[c] {${param.COLOR_CLASS1.map((v) => {
+      params.push(v)
+      return `$${index++}`
+    }).join(', ')}} OR COLOR_CLASS2 CONTAINS[c] {${param.COLOR_CLASS2.map((v) => {
+      params.push(v)
+      return `$${index++}`
+    }).join(', ')}})`)
+  }
+
+  if (param.DRUG_SHAPE.length != 0) {
+    filters.push(`DRUG_SHAPE CONTAINS[c] {${param.DRUG_SHAPE.map((v) => {
+      params.push(v)
+      return `$${index++}`
+    }).join(', ')}}`)
+  }
+
+  filter = filters.join(' AND ')
+
+  if (param.PRINT_FRONT == '') {
+    filter += " SORT(ITEM_NAME ASC)"
   }
 
   return { filter, params }
