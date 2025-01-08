@@ -17,6 +17,7 @@ import SearchSvg from '@assets/svgs/search.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Toast from "react-native-toast-message";
+import { requestCameraPermission } from "@/utils/permission";
 
 const SearchCrop = (): JSX.Element => {
     const nav: any = useNavigation();
@@ -75,7 +76,8 @@ const SearchCrop = (): JSX.Element => {
     }
 
     const handlePressRetry = () => {
-        nav.navigate('카메라');
+        if (Platform.OS !== "ios" && Platform.OS !== "android") return;
+        requestCameraPermission(true, () => nav.navigate('카메라'))
     }
 
     const handlePressRePick = async (direction: string) => {
