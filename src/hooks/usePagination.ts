@@ -4,7 +4,6 @@ import { DrugRecognition, TDrugRecognition } from '@/api/db/models/drugRecogniti
 import { calcCosineSimilarity, textToVector } from '@/utils/similarity'
 import { deepCopyRealmObj } from '@/utils/converter'
 
-//TODO: 정렬 알고리즘 구현 필요 => properties similarity
 //TODO: 데이터를 가져오는 과정을 비동기로 처리하기
 export const usePagination = (filter: string, params: string[], pageSize: number, initData: any) => {
 

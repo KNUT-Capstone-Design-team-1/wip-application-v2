@@ -49,7 +49,7 @@ export const useSelectSearchId = () => {
     setShapeSelected(['shape0'])
     setColorSelected(['color0'])
   }
-  //TODO: 문자열 formatter 만들기
+
   const handlePressSearch = () => {
     const data: TPillSearchIdParam = {
       PRINT_FRONT: '',

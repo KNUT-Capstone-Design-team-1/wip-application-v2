@@ -99,7 +99,7 @@ function getQueryByType(param: TPillSearchParam) {
 
   return { filter, params };
 }
-//TODO: Search Id 쿼리 만들기 => string similarity check
+
 function getQueryForSearchId(param: TPillSearchIdParam) {
 
   let filter = '';

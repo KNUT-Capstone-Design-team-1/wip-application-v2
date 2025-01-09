@@ -5,7 +5,7 @@ import SearchButtonList from "@/components/organisms/SearchButtonList";
 import LastSearchPill from "@/components/organisms/LastSearchPill";
 import MenuList from "@/components/organisms/MenuList";
 import TakeGuide from "@/components/organisms/TakeGuide";
-import { View, ScrollView, StyleSheet, BackHandler } from "react-native";
+import { View, StyleSheet, BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { gstyles } from "@/style/globalStyle";
@@ -32,14 +32,11 @@ const Home = (): JSX.Element => {
         }
     }, []);
 
-    // TODO: 식별검색, 이미지검색 => 이미지 변경
     // TODO: 복용법 => "정확한 정보는 약사에게 표시"
-    // TODO: 화면 구조 수정 => 공백 줄이기 + ScrollView => View
     return (
         <Layout.default>
-            <ScrollView
-                style={styles.scrollViewWrapper}
-                showsVerticalScrollIndicator={false}
+            <View
+                style={styles.homeViewWrapper}
             >
                 <View style={styles.viewWrapper}>
                     {/* 정보 업데이트 날짜 뷰 */}
@@ -50,20 +47,18 @@ const Home = (): JSX.Element => {
                     <LastSearchPill />
                     {/* 메뉴 리스트 */}
                     <MenuList />
-                    {/* 여백 */}
-                    <View style={{ flex: 1 }} />
                     {/* 복용법 */}
                     <TakeGuide />
                 </View>
-            </ScrollView>
+            </View>
         </Layout.default>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewWrapper: {
+    homeViewWrapper: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#fff',
         //marginTop: totalHeaderHeight + StatusBarHeight,
         zIndex: 1000,
         ...gstyles.screenBorder,

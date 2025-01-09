@@ -14,6 +14,7 @@ export type TDrugRecognition = {
   LINE_FRONT?: string // 분할선 (앞)
   LINE_BACK?: string // 분할선 (뒤)
   IMG_REGIST_TS?: string // 약학 정보원 이미지 생성일
+  CLASS_NAME?: string // 분류명
   ETC_OTC_CODE?: string // 전문/일반
   ITEM_PERMIT_DATE?: string // 품목 허가 일자
   // Finished Medicine Permission Detail Schema
@@ -43,6 +44,7 @@ export class DrugRecognition extends Realm.Object<DrugRecognition> {
   LINE_FRONT?: string // 분할선 (앞)
   LINE_BACK?: string // 분할선 (뒤)
   IMG_REGIST_TS?: string // 약학 정보원 이미지 생성일
+  CLASS_NAME?: string // 분류명
   ETC_OTC_CODE?: string // 전문/일반
   ITEM_PERMIT_DATE?: string // 품목 허가 일자
   // Finished Medicine Permission Detail Schema
@@ -72,6 +74,7 @@ export class DrugRecognition extends Realm.Object<DrugRecognition> {
       LINE_FRONT: 'string?', // 분할선 (앞)
       LINE_BACK: 'string?', // 분할선 (뒤)
       IMG_REGIST_TS: 'string?', // 약학 정보원 이미지 생성일
+      CLASS_NAME: 'string?', // 분류명
       ETC_OTC_CODE: 'string?', // 전문/일반
       ITEM_PERMIT_DATE: 'string?', // 품목 허가 일자
       // Finished Medicine Permission Detail Schema
