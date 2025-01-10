@@ -1,9 +1,12 @@
 package com.mbm.whatispill
 
+import android.os.Bundle // react-native-screen activity restart
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
+
+import org.devio.rn.splashscreen.SplashScreen
 
 class MainActivity : ReactActivity() {
 
@@ -19,4 +22,10 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+  //react-native-screens override
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(null)
+    SplashScreen.show(this)
+  }
 }
