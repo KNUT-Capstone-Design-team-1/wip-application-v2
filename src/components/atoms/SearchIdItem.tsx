@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     fontFamily: os.font(600, 700),
     includeFontPadding: false,
     textAlign: 'center',
+    color: '#000'
   },
 })
 

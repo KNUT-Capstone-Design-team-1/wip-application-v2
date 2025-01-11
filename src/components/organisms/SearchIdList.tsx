@@ -8,6 +8,7 @@ import SearchSvg from "@/assets/svgs/search.svg"
 import { useSelectSearchId } from "@/hooks/useSelectSearchId";
 import SearchIdItem from "../atoms/SearchIdItem";
 
+// TODO: 특수문자 입력 안되게 하기
 const SearchIdList = (): JSX.Element => {
   const {
     idText,
@@ -47,8 +48,9 @@ const SearchIdList = (): JSX.Element => {
                   onChangeText={setIdText}
                   value={idText}
                   autoCapitalize="none"
-                  maxLength={10}
+                  maxLength={15}
                   autoComplete="off"
+                  inputMode="text"
                   style={styles.sectionTextInput} />
               </View>
             }
@@ -60,7 +62,7 @@ const SearchIdList = (): JSX.Element => {
       <View style={styles.buttonWrapper}>
         <Button.scale onPress={handlePressInit}>
           <View style={styles.resetButton}>
-            <Text style={styles.buttonText}>초기화</Text>
+            <Text style={{ color: '#000', ...styles.buttonText }}>초기화</Text>
           </View>
         </Button.scale>
         <Button.scale onPress={handlePressSearch}>
@@ -92,6 +94,7 @@ const styles = StyleSheet.create({
     fontFamily: os.font(700, 800),
     textAlign: 'center',
     includeFontPadding: false,
+    color: '#000'
   },
   sectionTextInputWrapper: {
     width: "100%",
@@ -115,7 +118,9 @@ const styles = StyleSheet.create({
     fontSize: font(16),
     fontFamily: os.font(700, 800),
     includeFontPadding: false,
-    maxHeight: font(16 * 3)
+    maxHeight: font(16 * 3),
+    color: "#000",
+    backgroundColor: '#fff'
   },
   buttonWrapper: {
     position: 'absolute',
@@ -152,7 +157,7 @@ const styles = StyleSheet.create({
     fontSize: font(16),
     fontFamily: os.font(700, 800),
     includeFontPadding: false,
-    textAlign: 'center'
+    textAlign: 'center',
   }
 })
 

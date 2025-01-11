@@ -24,7 +24,7 @@ export const BottomNavHeight: number = (Platform.OS === 'ios' ?
 const BottomNavagation = (): JSX.Element | null => {
     const screen: any = useRecoilValue(screenState);
 
-    const visibleList: string[] = ['홈', '보관함', '설정', '검색 결과'];
+    const visibleList: string[] = ['홈', '보관함', '설정'];
 
     const styles = StyleSheet.create({
         container: {
