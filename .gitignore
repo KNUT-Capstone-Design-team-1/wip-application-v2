@@ -171,4 +171,5 @@ vendor/
 # etc
 .env
 .env.*
+/env/.env*
 /env/*.json

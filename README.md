@@ -8,56 +8,23 @@
 npm install
 ```
 
-# environment
-
-- /env/.env.development
-- /env/.env.production
-
-```
-API_URL="API 주소"
-# 예시: API_URL=http://localhost:5000
-```
-
 # Requirement
 
-- /env/config.json
+- /env/.env
 
-```json
-{
-  "resource": {
-    "aesKey": "",
-    "aesIv": ""
-  },
-  "googleCloud": {
-    "initInfoURL": "",
-    "deeplearningServerURL": ""
-  },
-  "cloudflare": {
-    "resourceDownloadURL": "",
-    "resourceBucket": "",
-    "tokenValue": "",
-    "accessKeyID": "",
-    "secretAccessKey": ""
-  }
-}
-```
+```bash
+REALM_ENCRYPTION_KEY="realm 데이터베이스 암호화 키"
 
-- /env/google_cloud_service_key.json
+GOOGLE_CLOUD_RSA_PUB_KEY="구글 클라우드 플랫폼 서버리스 토큰 암호화 키"
+GOOGLE_CLOUD_INIT_INFO_URL="구글 클라우드 플랫폼 init-info API URL"
+GOOGLE_CLOUD_DL_SERVER_URL="구글 클라우드 플랫폼 image-search API URL"
+GOOGLE_CLOUD_DRUG_DETAIL_URL="구글 클라우드 플랫폼 drug-detail API URL"
 
-```json
-{
-  "type": "",
-  "project_id": "",
-  "private_key_id": "",
-  "private_key": "",
-  "client_email": "",
-  "client_id": "",
-  "auth_uri": "",
-  "token_uri": "",
-  "auth_provider_x509_cert_url": "",
-  "client_x509_cert_url": "",
-  "universe_domain": ""
-}
+CLOUD_FLARE_RESOURCE_DOWNLOAD_URL="클라우드 플레어 리소스 스토리지 URL"
+CLOUD_FLARE_RESOURCE_BUCKET="클라우드 플레어 리소스 버킷 이름"
+CLOUD_FLARE_TOKEN_VALUE="클라우드 플레어 R2 토큰"
+CLOUD_FLARE_ACCESS_KEY_ID="클라우드 플레어 R2 액세스 키 아이디"
+CLOUD_FLARE_SECRET_ACCESS_KEY="클라우드 플레어 R2 액세스 키"
 ```
 
 # Execution

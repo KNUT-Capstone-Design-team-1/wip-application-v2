@@ -23,10 +23,21 @@ jobs:
 
       - name: get-config
         run: |
-          mkdir env
-          echo "${{ secrets.CONFIG }}" > ./env/config.json
-          echo "${{ secrets.GOOGLE_CLOUD_SERVICE_KEY }}" > ./env/google_cloud_service_key.json
-          echo "${{ secrets.ENV_PRODUCTION }}" > env/.env.production
+          mkdir ./env
+          cat <<EOL > ./env/.env
+          REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
+
+          GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"
+          GOOGLE_CLOUD_INIT_INFO_URL="${{ secrets.GOOGLE_CLOUD_INIT_INFO_URL }}"
+          GOOGLE_CLOUD_DL_SERVER_URL="${{ secrets.GOOGLE_CLOUD_DL_SERVER_URL }}"
+          GOOGLE_CLOUD_DRUG_DETAIL_URL="${{ secrets.GOOGLE_CLOUD_DRUG_DETAIL_URL }}"
+
+          CLOUD_FLARE_RESOURCE_DOWNLOAD_URL="${{ secrets.CLOUD_FLARE_RESOURCE_DOWNLOAD_URL }}"
+          CLOUD_FLARE_RESOURCE_BUCKET="${{ secrets.CLOUD_FLARE_RESOURCE_BUCKET }}"
+          CLOUD_FLARE_TOKEN_VALUE="${{ secrets.CLOUD_FLARE_TOKEN_VALUE }}"
+          CLOUD_FLARE_ACCESS_KEY_ID="${{ secrets.CLOUD_FLARE_ACCESS_KEY_ID }}"
+          CLOUD_FLARE_SECRET_ACCESS_KEY="${{ secrets.CLOUD_FLARE_SECRET_ACCESS_KEY }}"
+          EOL
 
       - name: build-apk
         run: npm run apk
