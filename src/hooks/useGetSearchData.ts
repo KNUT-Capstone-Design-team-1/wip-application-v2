@@ -4,23 +4,21 @@ import { handleError } from "@/utils/error";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
-import { getQueryForSearchId, getQueryForSearchImage, TPillSearchImageParam } from "@/api/db/query";
+import { TPillSearchImageParam } from "@/api/db/query";
+import { useRecoilRefresher_UNSTABLE, useResetRecoilState, useSetRecoilState } from "recoil";
+import { searchDataState } from "@/atoms/query";
+import { searchFilterParams } from "@/selectors/query";
 
 //TODO: 로직 변경 필요 => 식별 검색 결과 화면 로딩 필요
 export const useGetSearchData = () => {
   const route: any = useRoute();
   const mode = route.params.mode ?? 0;
+  const initData = route.params.data
   const nav: any = useNavigation();
   const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
-  const [filter, setFilter] = useState<string | undefined>(undefined);
-  const [params, setParams] = useState<any>(undefined);
-  const [initData, setInitData] = useState<any>(route.params.data)
-
-  const setFilterParams = (data: any) => {
-    const { filter, params } = mode == 1 ? getQueryForSearchImage(data) : getQueryForSearchId(data)
-    setFilter(filter)
-    setParams(params)
-  }
+  const setSearchData = useSetRecoilState(searchDataState)
+  const resetSearchData = useResetRecoilState(searchDataState)
+  const refreshFilter = useRecoilRefresher_UNSTABLE(searchFilterParams)
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
@@ -31,8 +29,7 @@ export const useGetSearchData = () => {
           for (const d of res.data.data) {
             data.ITEM_SEQ.push(d.ITEM_SEQ as string)
           }
-          setInitData(data)
-          setFilterParams(data)
+          setSearchData({ data, mode })
         } else {
           nav.goBack();
           Toast.show({
@@ -54,7 +51,7 @@ export const useGetSearchData = () => {
 
   useEffect(() => {
     if (initData && mode == 0) {
-      setFilterParams(initData)
+      setSearchData({ data: initData, mode })
     }
 
     if (initData && mode == 1) {
@@ -66,7 +63,13 @@ export const useGetSearchData = () => {
         console.error('Error:', error);
       });
     }
-  }, [initData])
+
+    return (() => {
+      resetSearchData()
+      refreshFilter()
+    })
+
+  }, [])
 
   useEffect(() => {
     if (imageBase64) {
@@ -74,6 +77,4 @@ export const useGetSearchData = () => {
     }
 
   }, [imageBase64])
-
-  return { filter, params, initData }
 }

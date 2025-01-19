@@ -41,7 +41,30 @@ const UpdateDB = (): JSX.Element => {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress',
       () => {
-        handleClose();
+        showAlert(
+          "앱 종료",
+          '앱을 종료하시겠습니까?',
+          [
+            {
+              text: '취소',
+              onPress: () => {
+                return true
+              },
+              style: {}
+            },
+            {
+              text: '확인',
+              onPress: () => {
+                RNExitApp.exitApp()
+              },
+              style: {}
+            }
+          ],
+          {
+            modalType: 'default'
+          }
+        )
+        // handleClose();
         return true
       })
 
@@ -62,8 +85,8 @@ const UpdateDB = (): JSX.Element => {
           },
           {
             text: '확인',
-            onPress: async () => {
-              await runUpdate();
+            onPress: () => {
+              runUpdate();
             },
             style: {}
           }
@@ -89,14 +112,13 @@ const UpdateDB = (): JSX.Element => {
   const runUpdate = async () => {
     setStatus('DB 초기화 중')
     await handleReset();
-    setProgress((prev) => prev + 1)
     setStatus('리소스 다운로드 중')
     console.log('start update:', new Date().toISOString())
     await resClient.getResourceChunk(() => { setProgress((prev) => prev + 1) })
     setStatus('DB 업데이트 적용 중')
     await upsertDB((idx, total) => { setProgress((prev) => prev + ((idx) / (total))) })
+    setProgress(prev => prev + 1)
     await resClient.clearRes();
-    // setProgress((prev) => prev + 1)
     await setItem('lastUpdateDate', formatDateToString(new Date()))
     console.log('end update:', new Date().toISOString())
     RNRestart.restart();
@@ -121,6 +143,7 @@ const UpdateDB = (): JSX.Element => {
             unfilledColor="#fff"
             borderWidth={0}
             borderColor="#cacaca"
+            useNativeDriver={true}
           />
         </View>
       </View>

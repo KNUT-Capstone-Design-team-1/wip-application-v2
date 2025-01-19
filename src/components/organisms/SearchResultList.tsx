@@ -3,13 +3,13 @@ import { FlashList } from '@shopify/flash-list'
 import { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
 import ResultItem from "@/components/atoms/ResultItem";
-import { usePagination } from "@/hooks/usePagination";
+import { useGetPillData } from "@/hooks/useGetPillData";
 import SkeletoneSearchResult from "@/components/organisms/SkeletoneSearchResult";
 
 
 //TODO: flatlist 메모리 최적화 필요
-const SearchResultList = ({ filter, params, initData }: { filter: string, params: any, initData: any }): JSX.Element => {
-  const { paginatedData, totalSize, loadData, isLoading } = usePagination(filter, params, 20, initData)
+const SearchResultList = (): JSX.Element => {
+  const { paginatedData, totalSize, loadData, isLoading } = useGetPillData(20)
 
   return (
     <>

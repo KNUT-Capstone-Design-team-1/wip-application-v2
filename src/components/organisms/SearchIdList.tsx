@@ -11,8 +11,9 @@ import SearchIdItem from "../atoms/SearchIdItem";
 // TODO: 특수문자 입력 안되게 하기
 const SearchIdList = (): JSX.Element => {
   const {
+    btnState,
     idText,
-    setIdText,
+    handleSetIdText,
     shapeSelected,
     colorSelected,
     handlePressItem,
@@ -45,13 +46,16 @@ const SearchIdList = (): JSX.Element => {
                 <TextInput
                   placeholder="식별 문자 (선택)"
                   placeholderTextColor={"#cacaca"}
-                  onChangeText={setIdText}
+                  onChangeText={handleSetIdText}
                   value={idText}
                   autoCapitalize="none"
                   maxLength={15}
                   autoComplete="off"
                   inputMode="text"
-                  style={styles.sectionTextInput} />
+                  style={[styles.sectionTextInput, btnState && styles.error]} />
+                <View style={styles.sectionErrorWrapper}>
+                  {btnState ? <Text style={styles.sectionTextInputError}>'*' 또는 '?'를 제외하고 입력하세요</Text> : null}
+                </View>
               </View>
             }
           </View>
@@ -65,8 +69,8 @@ const SearchIdList = (): JSX.Element => {
             <Text style={{ color: '#000', ...styles.buttonText }}>초기화</Text>
           </View>
         </Button.scale>
-        <Button.scale onPress={handlePressSearch}>
-          <View style={styles.searchButton}>
+        <Button.scale onPress={handlePressSearch} disabled={btnState}>
+          <View style={[styles.searchButton, btnState && styles.btnDisabled]}>
             <SearchSvg width={14} height={14} color={'#fff'} />
             <Text style={{ color: '#fff', ...styles.buttonText }}>알약 검색하기</Text>
           </View>
@@ -100,9 +104,9 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 16,
     paddingTop: 8,
-    marginBottom: 8,
   },
   sectionTextInputLabel: {
+    paddingLeft: 4,
     paddingBottom: 4,
     fontSize: font(14),
     fontFamily: os.font(600, 700),
@@ -114,13 +118,24 @@ const styles = StyleSheet.create({
     paddingStart: 16,
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: '#cacaca',
+    borderColor: '#858585',
     fontSize: font(16),
     fontFamily: os.font(700, 800),
     includeFontPadding: false,
     maxHeight: font(16 * 3),
     color: "#000",
     backgroundColor: '#fff'
+  },
+  sectionErrorWrapper: {
+    minHeight: 21
+  },
+  sectionTextInputError: {
+    alignSelf: 'flex-end',
+    paddingRight: 4,
+    fontSize: font(13),
+    fontFamily: os.font(600, 700),
+    color: "#f00",
+    includeFontPadding: false
   },
   buttonWrapper: {
     position: 'absolute',
@@ -158,6 +173,13 @@ const styles = StyleSheet.create({
     fontFamily: os.font(700, 800),
     includeFontPadding: false,
     textAlign: 'center',
+  },
+  error: {
+    borderColor: '#f00'
+  },
+  btnDisabled: {
+    borderColor: '#cacaca',
+    backgroundColor: '#cacaca'
   }
 })
 

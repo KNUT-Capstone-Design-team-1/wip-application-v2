@@ -32,7 +32,6 @@ const Home = (): JSX.Element => {
         }
     }, []);
 
-    // TODO: 복용법 => "정확한 정보는 약사에게 표시"
     return (
         <Layout.default>
             <View

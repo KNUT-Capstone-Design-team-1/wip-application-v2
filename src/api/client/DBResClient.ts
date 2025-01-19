@@ -4,12 +4,12 @@ import { Buffer } from "@craftzdog/react-native-buffer";
 import 'react-native-url-polyfill/auto'
 import 'react-native-get-random-values'
 import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
-import { updateDBConfig } from "../db/config";
+import { updateDBConfig } from "@api/db/config";
+import pLimit from "p-limit"
 
 type TRangeAndLength = {
   start: number,
-  end: number,
-  length: number
+  end: number
 }
 
 export class DBResClient {
@@ -49,18 +49,7 @@ export class DBResClient {
     return this.client.send(command)
   }
 
-  private getRangeAndLength = (contentRange: string): TRangeAndLength => {
-    const [range, length] = contentRange.split('/')
-    const [start, end] = range.split('-')
-
-    return {
-      start: Number(start),
-      end: Number(end),
-      length: Number(length)
-    }
-  }
-
-  private isComplete = ({ end, length }: TRangeAndLength) => end === length - 1;
+  private isComplete = ({ end }: TRangeAndLength) => end >= this.resSize - 1;
 
   public async getResourceChunk(cb: () => void | undefined) {
     if (this.contents == null) {
@@ -71,32 +60,53 @@ export class DBResClient {
       return false
     }
 
-    if (!await RNFS.exists(RNFS.DocumentDirectoryPath + '/res')) {
-      await RNFS.mkdir(RNFS.DocumentDirectoryPath + '/res')
+    const resDir = `${RNFS.DocumentDirectoryPath}/res`
+    if (!await RNFS.exists(resDir)) {
+      await RNFS.mkdir(resDir)
     }
 
-    let rangeAndLength: TRangeAndLength = { start: -1, end: -1, length: -1 }
+    const ranges: TRangeAndLength[] = []
+    let rangeAndLength: TRangeAndLength = { start: -1, end: -1 }
 
     while (!this.isComplete(rangeAndLength)) {
-      const { end } = rangeAndLength;
-      const nextRange = { start: end + 1, end: end + this.tenMB }
+      const { end } = rangeAndLength
+      ranges.push({ start: end + 1, end: end + this.tenMB })
+      rangeAndLength = { start: end + 1, end: end + this.tenMB }
+    }
 
-      const { ContentRange, Body } = await this.getObjectRange({
-        key: this.contents[0].Key as string,
-        ...nextRange
+    const limit = pLimit(2)
+    const tasks: Promise<string>[] = ranges.map((range, index) =>
+      limit(async () => {
+        const { Body } = await this.getObjectRange({
+          key: this.contents[0].Key as string,
+          ...range
+        })
+
+        const res = await Body?.transformToByteArray();
+
+        if (!res) {
+          throw new Error(`Failed to download file: ${JSON.stringify(range)}`)
+        }
+
+        const partPath = `${resDir}/chunk_${index}`
+        await RNFS.writeFile(partPath, Buffer.from(res).toString('base64'), 'base64')
+        cb();
+        return partPath
       })
+    )
 
-      const res = await Body?.transformToByteArray()
+    const getFiles = await Promise.all(tasks)
 
-      if (!res) {
-        return
-      }
+    getFiles.sort((a, b) => {
+      const aNum = parseInt(a.split('_')[1])
+      const bNum = parseInt(b.split('_')[1])
+      return aNum - bNum
+    })
 
-      const val = Buffer.from(res).toString('base64')
-      await RNFS.appendFile(updateDBConfig.path as string, val, 'base64')
-
-      cb();
-      rangeAndLength = this.getRangeAndLength(ContentRange as string)
+    for (const filePath of getFiles) {
+      const content = await RNFS.readFile(filePath, 'base64');
+      await RNFS.appendFile(updateDBConfig.path as string, content, 'base64')
+      await RNFS.unlink(filePath)
     }
   }
 

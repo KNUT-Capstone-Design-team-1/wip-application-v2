@@ -3,11 +3,14 @@ import { useQuery } from '@realm/react'
 import { DrugRecognition, TDrugRecognition } from '@/api/db/models/drugRecognition'
 import { calcCosineSimilarity, textToVector } from '@/utils/similarity'
 import { deepCopyRealmObj } from '@/utils/converter'
+import { useRecoilValue } from 'recoil'
+import { searchFilterParams } from '@/selectors/query'
 
 //TODO: 데이터를 가져오는 과정을 비동기로 처리하기
-export const usePagination = (filter: string, params: string[], pageSize: number, initData: any) => {
+export const useGetPillData = (pageSize: number) => {
 
   const queryRecog = useQuery(DrugRecognition)
+  const { filter, params, initData } = useRecoilValue(searchFilterParams)
 
   const [page, setPage] = useState(1)
   const [totalSize, setTotalSize] = useState(0)
@@ -16,13 +19,13 @@ export const usePagination = (filter: string, params: string[], pageSize: number
   const [isLoading, setIsLoading] = useState(true)
 
   const mergeData = async () => {
-    if (!filter) {
+    if (filter === undefined || params === undefined) {
       setMergedData([])
       setTotalSize(0)
       return
     }
 
-    const recogFilter = queryRecog.filtered(filter, ...params)
+    const recogFilter = params.length == 0 ? queryRecog : queryRecog.filtered(filter, ...params)
     let recogArr
 
     if ('ITEM_SEQ' in initData) {
@@ -54,7 +57,7 @@ export const usePagination = (filter: string, params: string[], pageSize: number
         return (a.ITEM_NAME as string).localeCompare(b.ITEM_NAME as string)
       })
     } else {
-      recogArr = recogFilter.slice()
+      recogArr = recogFilter.sorted('ITEM_NAME').slice()
     }
 
     setMergedData(recogArr)

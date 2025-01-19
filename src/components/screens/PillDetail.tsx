@@ -1,20 +1,22 @@
-import Button from "@/components/atoms/Button";
-import Layout from "@/components/organisms/Layout";
+import Config from "react-native-config";
 import { font, os } from "@/style/font";
 import { useEffect, useRef, useState } from "react";
 import { View, ScrollView, StyleSheet, Image, Text } from "react-native";
+import Toast from "react-native-toast-message";
+
 import AddStorageSvg from '@assets/svgs/addStorage.svg';
 import ArrowDownSvg from '@assets/svgs/dropdown.svg';
-import { parseXML } from "@/utils/xml";
 import { DETAIL_DATA } from "@/constants/mock";
-import Config from "react-native-config";
-import LoadingCircle from "@/components/atoms/LoadingCircle";
-import Toast from "react-native-toast-message";
-import PillInfo from "@/components/atoms/PillInfo";
 import { useSetScreen } from "@/hooks/useSetScreen";
-import { getDrugDetail } from "@/api/server";
 import { usePillBox } from "@/hooks/usePillBox";
+import { getDrugDetail } from "@/api/server";
 import { deepCopyRealmObj } from "@/utils/converter";
+import { parseXML } from "@/utils/xml";
+import Button from "@/components/atoms/Button";
+import LoadingCircle from "@/components/atoms/LoadingCircle";
+import PillInfo from "@/components/atoms/PillInfo";
+import { PillDetailSection } from "@/components/atoms/PillDetailSection";
+import Layout from "@/components/organisms/Layout";
 
 interface InfoData {
     EE?: string[] | null | undefined;
@@ -64,7 +66,6 @@ const PillDetail = ({ route }: any): JSX.Element => {
         }
     }
 
-    //TODO: response 데이터의 형태 확인 &nbsp 나옴
     const getDetailData = async () => {
         const URL = `${Config.GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
         const itemSeq = data.ITEM_SEQ;
@@ -151,15 +152,16 @@ const PillDetail = ({ route }: any): JSX.Element => {
                         <View style={styles.infoWrapper} ref={infoRef}>
                             <PillInfo label='제조사' ct={data.ENTP_NAME} />
                             <PillInfo label='주성분' ct={data.MAIN_ITEM_INGR} />
+                            <PillInfo label='분류명' ct={data.CLASS_NAME} />
+                            <PillInfo label='제형' ct={data.DRUG_SHAPE} />
                             <PillInfo label='성상' ct={data.CHART} />
                             <PillInfo label='포장 단위' ct={data.PACK_UNIT} />
-                            <PillInfo label='저장 방법' ct={data.STORAGE_METHOD} />
                             <PillInfo label='유효 기간' ct={data.VALID_TERM} />
                             {moreInfo &&
                                 <>
-                                    <PillInfo label='원료 성분' ct={data.MATERIAL_NAME} />
+                                    <PillInfo label='원료 성분' ct={data.MATERIAL_NAME.replaceAll(';', '\n')} searchValue="|" replaceValue="/" />
                                     <PillInfo label='첨가제' ct={data.INGR_NAME} />
-                                    <PillInfo label='모양' ct={data.DRUG_SHAPE} />
+                                    <PillInfo label='저장 방법' ct={data.STORAGE_METHOD} />
                                 </>
                             }
                         </View>
@@ -179,14 +181,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
                                     </View>
                                 </Button.scale>
                                 {info1 &&
-                                    <View style={styles.detailInfoContents}>
-                                        {infoData.EE && infoData.EE.map((i: any, idx: number) =>
-                                            <Text key={idx} style={styles.detailInfoContentsText}>{i}</Text>
-                                        )}
-                                        {(!infoData.EE || infoData.EE.length === 0) &&
-                                            <Text style={[styles.detailInfoContentsText, styles.emptyText]}>정보 없음</Text>
-                                        }
-                                    </View>
+                                    <PillDetailSection parsedData={infoData.EE} />
                                 }
                                 <Button.scale activeScale={1} onPress={() => handlePressDropdown(setInfo2)}>
                                     <View style={styles.detailInfoHeadWrapper}>
@@ -197,14 +192,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
                                     </View>
                                 </Button.scale>
                                 {info2 &&
-                                    <View style={styles.detailInfoContents}>
-                                        {infoData.UD && infoData.UD.map((i: any, idx: number) =>
-                                            <Text key={idx} style={styles.detailInfoContentsText}>{i}</Text>
-                                        )}
-                                        {(!infoData.UD || infoData.UD.length === 0) &&
-                                            <Text style={[styles.detailInfoContentsText, styles.emptyText]}>정보 없음</Text>
-                                        }
-                                    </View>
+                                    <PillDetailSection parsedData={infoData.UD} />
                                 }
                                 <Button.scale activeScale={1} onPress={() => handlePressDropdown(setInfo3)}>
                                     <View style={styles.detailInfoHeadWrapper}>
@@ -215,14 +203,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
                                     </View>
                                 </Button.scale>
                                 {info3 &&
-                                    <View style={styles.detailInfoContents}>
-                                        {infoData.NB && infoData.NB.map((i: any, idx: number) =>
-                                            <Text key={idx} style={styles.detailInfoContentsText}>{i}</Text>
-                                        )}
-                                        {(!infoData.NB || infoData.NB.length === 0) &&
-                                            <Text style={[styles.detailInfoContentsText, styles.emptyText]}>정보 없음</Text>
-                                        }
-                                    </View>
+                                    <PillDetailSection parsedData={infoData.NB} />
                                 }
                             </View>
                             :
@@ -297,8 +278,6 @@ const styles = StyleSheet.create({
     detailInfoContainer: {
         paddingBottom: 200,
     },
-    detailInfoWrapper: {
-    },
     detailInfoHeadWrapper: {
         flexDirection: 'row',
         gap: 10,
@@ -310,20 +289,6 @@ const styles = StyleSheet.create({
         fontFamily: os.font(700, 700),
         includeFontPadding: false,
         paddingBottom: 6,
-    },
-    detailInfoContentsText: {
-        color: '#000000',
-        fontSize: font(18),
-        fontFamily: os.font(400, 400),
-        includeFontPadding: false,
-        paddingBottom: 2,
-    },
-    emptyText: {
-        color: '#aaa',
-    },
-    detailInfoContents: {
-        gap: 10,
-        marginBottom: 16,
     },
     infoWrapper: {
         gap: 6,

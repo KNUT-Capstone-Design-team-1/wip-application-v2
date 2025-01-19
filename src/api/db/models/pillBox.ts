@@ -20,6 +20,7 @@ export class PillBox extends Realm.Object<PillBox> {
   MATERIAL_NAME?: string // 원료 성분
   INGR_NAME?: string // 첨가제명
   DRUG_SHAPE?: string // 모양
+  CLASS_NAME?: string // 분류명
   infoData?: infoData // 효능/효과, 용법/용량, 사용상 주의사항
 
   static schema: Realm.ObjectSchema = {
@@ -38,6 +39,7 @@ export class PillBox extends Realm.Object<PillBox> {
       MATERIAL_NAME: 'string?', // 원료 성분
       INGR_NAME: 'string?', // 첨가제명
       DRUG_SHAPE: 'string?', // 모양
+      CLASS_NAME: 'string?', // 분류명
       infoData: {
         type: 'dictionary',
         objectType: 'mixed',

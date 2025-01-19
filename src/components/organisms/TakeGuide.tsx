@@ -1,15 +1,7 @@
 import { font, os } from "@/style/font";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SvgXml } from "react-native-svg";
-import Toast from "react-native-toast-message";
+import { StyleSheet, Text, View } from "react-native";
 
 const TakeGuide = () => {
-  const handlePressTakeGuide = () => {
-    Toast.show({
-      type: 'noteToast',
-      text1: '현재 개발중인 기능입니다.',
-    });
-  }
 
   const RIGHTARROW_ICON = `
   <svg xmlns="http://www.w3.org/2000/svg" width="4" height="8" viewBox="0 0 4 8" fill="none">
@@ -20,41 +12,30 @@ const TakeGuide = () => {
   return (
     <View style={styles.takeGuide}>
       <Text style={styles.takeGuideText1}>
-        약의 오용과 남용은 건강을 해칠수 있습니다.
+        본 앱의 정보는 참고용으로 제공되며
       </Text>
-      <TouchableOpacity style={styles.takeGuideButtonWrapper} onPress={handlePressTakeGuide}>
-        <Text style={styles.takeGuideText2}>
-          올바른 복용법 보러가기
-        </Text>
-        <SvgXml xml={RIGHTARROW_ICON} />
-      </TouchableOpacity>
+      <Text style={styles.takeGuideText1}>
+        복용에 대한 최종 결정은
+      </Text>
+      <Text style={styles.takeGuideText1}>
+        전문 약사와 상담 후에 이루어져야 합니다.
+      </Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   takeGuide: {
-    gap: 6,
+    gap: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   takeGuideText1: {
     paddingBottom: 0,
-    fontSize: font(15),
+    fontSize: font(14),
     fontFamily: os.font(700, 700),
     color: '#9B0505',
     includeFontPadding: false,
-  },
-  takeGuideText2: {
-    paddingBottom: 3,
-    fontSize: font(14),
-    fontFamily: os.font(500, 500),
-    color: '#000',
-    includeFontPadding: false,
-  },
-  takeGuideButtonWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
   }
 });
 

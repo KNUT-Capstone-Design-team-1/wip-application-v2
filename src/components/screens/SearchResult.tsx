@@ -6,11 +6,11 @@ import { useSetScreen } from "@/hooks/useSetScreen";
 const SearchResult = (): JSX.Element => {
     useSetScreen('검색 결과');
 
-    const { filter, params, initData } = useGetSearchData();
+    useGetSearchData()
 
     return (
         <Layout.default>
-            <SearchResultList filter={filter as string} params={params} initData={initData} />
+            <SearchResultList />
         </Layout.default>
     )
 }

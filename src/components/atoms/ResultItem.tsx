@@ -20,7 +20,6 @@ const ResultItem = ({ data, last }: any) => {
       list[0] = data;
     }
     setItem('latestSearchPill', JSON.stringify(list));
-    console.log(data.ITEM_IMAGE)
     nav.navigate('알약 정보', { data: data });
   }
 
@@ -33,7 +32,7 @@ const ResultItem = ({ data, last }: any) => {
         <View style={styles.infoWrapper}>
           <Text style={styles.name} numberOfLines={2}>{data.ITEM_NAME}</Text>
           <Text style={styles.efficacy}>{data.ENTP_NAME}</Text>
-          <Text style={styles.etc} numberOfLines={1}>{data.MAIN_ITEM_INGR}</Text>
+          <Text style={styles.etc} numberOfLines={1}>{data.CLASS_NAME}</Text>
         </View>
         <View style={styles.btnWrapper}>
           <ArrowRightSvg style={styles.rightArrow} width={8} height={14} />

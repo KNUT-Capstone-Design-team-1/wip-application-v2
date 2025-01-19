@@ -25,6 +25,7 @@ module.exports = {
           '@assets': './src/assets',
           '@navigation': './src/navigation',
           '@styles': './src/styles',
+          '@api': './src/api',
         },
       },
     ],

@@ -6,11 +6,22 @@ import { useNavigation } from '@react-navigation/native'
 
 
 export const useSelectSearchId = () => {
+  const [btnState, setBtnState] = useState<boolean>(false)
   const [idText, setIdText] = useState('')
   const [shapeSelected, setShapeSelected] = useState(['shape0'])
   const [colorSelected, setColorSelected] = useState(['color0'])
 
   const nav: any = useNavigation()
+
+  const checkDisableWord = (text: string) => {
+    const regex = /[*?]/;
+    setBtnState(regex.test(text))
+  }
+
+  const handleSetIdText = (text: string) => {
+    checkDisableWord(text)
+    setIdText(text)
+  }
 
   const handlePressItem = useCallback((item: TItemData) => {
     const k = item.category + item.key
@@ -95,8 +106,9 @@ export const useSelectSearchId = () => {
   }
 
   return {
+    btnState,
     idText,
-    setIdText,
+    handleSetIdText,
     shapeSelected,
     colorSelected,
     handlePressItem,

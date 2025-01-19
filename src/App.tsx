@@ -12,6 +12,11 @@ import { RealmProvider } from '@realm/react';
 import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
 
+// TODO: android 구버전 권한 및 사용 테스트 필요 target < android 13
+
+// TODO: ios 동작 확인
+// TODO: ios 앨범 선택 동작확인 => 기존 PhotoLibrary 권한 없음
+
 // TODO: initDB 표시 로직 확인
 // TODO: 전체 코드 jsdoc 작성
 const App = (): React.JSX.Element => {

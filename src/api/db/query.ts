@@ -124,17 +124,13 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
   }
 
   if (param.DRUG_SHAPE.length != 0) {
-    filters.push(`DRUG_SHAPE CONTAINS[c] {${param.DRUG_SHAPE.map((v) => {
+    filters.push(`DRUG_SHAPE LIKE[c] {${param.DRUG_SHAPE.map((v) => {
       params.push(v)
       return `$${index++}`
     }).join(', ')}}`)
   }
 
   filter = filters.join(' AND ')
-
-  if (param.PRINT_FRONT == '') {
-    filter += " SORT(ITEM_NAME ASC)"
-  }
 
   return { filter, params }
 }
