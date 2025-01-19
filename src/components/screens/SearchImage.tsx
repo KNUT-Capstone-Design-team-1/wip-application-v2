@@ -147,10 +147,24 @@ const SearchImage = ({ route }: any): JSX.Element => {
             fontFamily: os.font(400, 500),
             includeFontPadding: false,
         },
+        warnTextWrapper: {
+            marginVertical: 8,
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        warnText: {
+            paddingLeft: 4,
+            paddingBottom: 0,
+            marginTop: 3,
+            color: '#952323',
+            fontSize: font(14),
+            fontFamily: os.font(600, 600),
+            includeFontPadding: false,
+        },
         guideButton: {
-            paddingVertical: 10,
-            marginVertical: 5,
-            marginBottom: 10,
+            // paddingVertical: 10,
+            // marginVertical: 5,
+            // marginBottom: 10,
         },
         guideButtonWrapper: {
             flexDirection: 'row',
@@ -192,6 +206,10 @@ const SearchImage = ({ route }: any): JSX.Element => {
                         <Text style={styles.note}>네모칸 안에 알약이 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>알약에 글자가 선명히 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>하나의 알약만 보이도록 촬영해주세요</Text>
+                        <View style={styles.warnTextWrapper}>
+                            <Text style={styles.warnText}>현재 개발 중인 기능으로</Text>
+                            <Text style={styles.warnText}>결과가 정확하지 않을 수 있습니다.</Text>
+                        </View>
                     </View>
                 </View>
 

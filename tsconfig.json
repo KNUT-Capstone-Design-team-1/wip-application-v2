@@ -15,10 +15,5 @@
       "@api/*": ["api/*"]
     }
   },
-  "include": [
-    "src",
-    "**/*.tsx",
-    "declarations.d.ts",
-    "react-native-xml2js.d.ts"
-  ]
+  "include": ["src", "**/*.tsx", "declarations.d.ts"]
 }

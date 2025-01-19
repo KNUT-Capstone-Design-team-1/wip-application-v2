@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRecoilState } from "recoil";
+import VersionCheck from 'react-native-version-check'
 import ArrowRightSvg from '@assets/svgs/arrow_right_bold.svg';
 import { font, os } from "@/style/font";
 import { setItem } from "@/utils/storage";
@@ -62,7 +63,7 @@ const Settings = (): JSX.Element => {
             <ScrollView style={styles.scrollViewWrapper}>
                 <View style={styles.settingItem}>
                     <Text style={styles.settingItemLabel}>앱 버전</Text>
-                    <Text style={styles.settingItemText}>v2.0</Text>
+                    <Text style={styles.settingItemText}>{`v${VersionCheck.getCurrentVersion()}`}</Text>
                 </View>
                 <TouchableOpacity style={styles.settingItem} onPress={handlePressTerm}>
                     <Text style={styles.settingItemLabel}>이용약관</Text>
