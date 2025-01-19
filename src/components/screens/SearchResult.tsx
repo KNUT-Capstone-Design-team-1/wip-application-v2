@@ -6,6 +6,8 @@ import { useSetScreen } from "@/hooks/useSetScreen";
 const SearchResult = (): JSX.Element => {
     useSetScreen('검색 결과');
 
+    useGetSearchData()
+
     return (
         <Layout.default>
             <SearchResultList />

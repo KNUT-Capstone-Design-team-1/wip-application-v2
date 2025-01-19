@@ -4,13 +4,15 @@ import { StyleSheet, Text, View } from "react-native";
 interface IProps {
   label: string,
   ct: string,
+  searchValue?: string,
+  replaceValue?: string
 }
 
-const PillInfo = ({ label, ct }: IProps): JSX.Element => {
+const PillInfo = ({ label, ct, searchValue = "|", replaceValue = "\n" }: IProps): JSX.Element => {
   let _ct = '-';
 
   if (ct) {
-    _ct = ct.replaceAll('|', '\n');
+    _ct = ct.replaceAll(searchValue, replaceValue);
   }
 
   const styles = StyleSheet.create({

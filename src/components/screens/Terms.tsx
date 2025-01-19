@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil";
 import ArrowRightSvg from '@assets/svgs/arrow_right_bold.svg';
 import { font, os } from "@/style/font";
 import { getItem, setItem } from "@/utils/storage";
-import { TERMS } from "@/constans/terms";
+import { TERMS } from "@/constants/terms";
 
 const Terms = (): JSX.Element => {
     const nav: any = useNavigation();

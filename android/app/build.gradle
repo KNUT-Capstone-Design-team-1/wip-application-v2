@@ -3,10 +3,10 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 project.ext.envConfigFiles = [
-    debug: "env/.env.development",
-    release: "env/.env.production",
-    developdebug: "env/.env.development",
-    productdebug: "env/.env.production",
+    debug: "env/.env",
+    release: "env/.env",
+    developdebug: "env/.env",
+    productdebug: "env/.env",
     anothercustombuild: ".env",
 ]
 
@@ -87,8 +87,8 @@ android {
         applicationId "com.mbm.whatispill"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "2.0"
+        versionCode 5
+        versionName "2.1"
     }
     signingConfigs {
         debug {
@@ -127,6 +127,9 @@ android {
             product {
             }
         }
+    packagingOptions{
+        pickFirst '**/libcrypto.so'
+    }
 }
 
 dependencies {
@@ -134,6 +137,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
     implementation project(':react-native-worklets-core')
+    implementation("androidx.activity:activity:1.9.+")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
