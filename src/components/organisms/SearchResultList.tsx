@@ -21,13 +21,19 @@ const SearchResultList = (): JSX.Element => {
           </View>
           <FlashList
             data={paginatedData}
-            renderItem={({ item, index }) =>
-              <ResultItem data={item} last={(paginatedData.length - 1) === index} index={index} />
+            renderItem={({ item }) =>
+              <ResultItem data={item} />
             }
             estimatedItemSize={135}
             keyExtractor={item => item.ITEM_SEQ}
             onEndReached={loadData}
             onEndReachedThreshold={0.3}
+            ListEmptyComponent={() =>
+              <View style={styles.emptyViewWrapper}>
+                <Text style={styles.note}>검색 결과가 없습니다</Text>
+              </View>
+            }
+            ListFooterComponent={() => <View style={{ marginBottom: 200 }} />}
             contentContainerStyle={styles.resultListWrapper}
             removeClippedSubviews={true}
           />
@@ -58,6 +64,11 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: '#fff',
     zIndex: 10,
+  },
+  emptyViewWrapper: {
+    marginTop: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   note: {
     color: '#000',

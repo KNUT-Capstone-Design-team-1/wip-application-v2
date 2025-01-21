@@ -8,8 +8,9 @@ export class XmlParser {
     if (!XmlParser.instance) {
       console.log("create XmlParser")
       const arrTag = [
+        "SECTION",
+        "ARTICLE",
         "PARAGRAPH",
-        "ARTICLE"
       ]
       const options: X2jOptions = {
         ignoreAttributes: ['textIndent', 'marginLeft'],

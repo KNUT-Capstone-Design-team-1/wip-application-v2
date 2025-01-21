@@ -4,9 +4,11 @@ import { font, os } from "@/style/font";
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { useNavigation } from "@react-navigation/native";
 import Button from "@/components/atoms/Button";
+import CustomChip from '@/components/atoms/CustomChip';
 import { getItem, setItem } from "@/utils/storage";
+import { TDrugRecognition } from '@/api/db/models/drugRecognition';
 
-const ResultItem = ({ data, last }: any) => {
+const ResultItem = ({ data }: { data: TDrugRecognition }) => {
   const nav: any = useNavigation();
 
   const handlePressItem = async () => {
@@ -25,7 +27,7 @@ const ResultItem = ({ data, last }: any) => {
 
   return (
     <Button.scale activeScale={0.95} onPress={handlePressItem}>
-      <View style={{ ...styles.container, marginBottom: last ? 200 : 0 }}>
+      <View style={styles.container}>
         <View style={styles.imgWrapper}>
           {!!data.ITEM_IMAGE && <Image style={styles.pillImg} source={{ uri: data.ITEM_IMAGE }} resizeMode="contain" />}
         </View>
@@ -33,6 +35,14 @@ const ResultItem = ({ data, last }: any) => {
           <Text style={styles.name} numberOfLines={2}>{data.ITEM_NAME}</Text>
           <Text style={styles.efficacy}>{data.ENTP_NAME}</Text>
           <Text style={styles.etc} numberOfLines={1}>{data.CLASS_NAME}</Text>
+          <View style={styles.chipWrapper}>
+            {
+              (data.PRINT_FRONT as string) != '' && <CustomChip text={data.PRINT_FRONT as string} />
+            }
+            {
+              (data.PRINT_BACK as string) != '' && <CustomChip text={data.PRINT_BACK as string} />
+            }
+          </View>
         </View>
         <View style={styles.btnWrapper}>
           <ArrowRightSvg style={styles.rightArrow} width={8} height={14} />
@@ -45,6 +55,7 @@ const ResultItem = ({ data, last }: any) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
     paddingVertical: 16,
     paddingHorizontal: 16,
@@ -74,7 +85,7 @@ const styles = StyleSheet.create({
     fontSize: font(18),
     fontFamily: os.font(700, 700),
     includeFontPadding: false,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   efficacy: {
     color: '#6E6E6E',
@@ -89,7 +100,11 @@ const styles = StyleSheet.create({
     fontFamily: os.font(500, 500),
     includeFontPadding: false,
     paddingBottom: 0,
-
+  },
+  chipWrapper: {
+    flexDirection: 'row',
+    overflow: 'hidden',
+    gap: 4,
   },
   btnWrapper: {
     flexDirection: 'row',
