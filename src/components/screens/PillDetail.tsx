@@ -150,18 +150,19 @@ const PillDetail = ({ route }: any): JSX.Element => {
                             </View>
                         </View>
                         <View style={styles.infoWrapper} ref={infoRef}>
-                            <PillInfo label='제조사' ct={data.ENTP_NAME} />
-                            <PillInfo label='주성분' ct={data.MAIN_ITEM_INGR} />
-                            <PillInfo label='분류명' ct={data.CLASS_NAME} />
-                            <PillInfo label='제형' ct={data.DRUG_SHAPE} />
-                            <PillInfo label='성상' ct={data.CHART} />
-                            <PillInfo label='포장 단위' ct={data.PACK_UNIT} />
-                            <PillInfo label='유효 기간' ct={data.VALID_TERM} />
+                            <PillInfo.default label='제조사' ct={data.ENTP_NAME} />
+                            <PillInfo.default label='주성분' ct={data.MAIN_ITEM_INGR} />
+                            <PillInfo.default label='분류명' ct={data.CLASS_NAME} />
+                            <PillInfo.default label='제형' ct={data.DRUG_SHAPE} />
+                            <PillInfo.default label='성상' ct={data.CHART} />
+                            <PillInfo.chip label='식별 문자' ct={[data.PRINT_FRONT, data.PRINT_BACK]} />
+                            <PillInfo.default label='포장 단위' ct={data.PACK_UNIT} />
+                            <PillInfo.default label='유효 기간' ct={data.VALID_TERM} />
                             {moreInfo &&
                                 <>
-                                    <PillInfo label='원료 성분' ct={data.MATERIAL_NAME.replaceAll(';', '\n')} searchValue="|" replaceValue="/" />
-                                    <PillInfo label='첨가제' ct={data.INGR_NAME} />
-                                    <PillInfo label='저장 방법' ct={data.STORAGE_METHOD} />
+                                    <PillInfo.default label='원료 성분' ct={data.MATERIAL_NAME.replaceAll(';', '\n')} searchValue="|" replaceValue="/" />
+                                    <PillInfo.default label='첨가제' ct={data.INGR_NAME} />
+                                    <PillInfo.default label='저장 방법' ct={data.STORAGE_METHOD} />
                                 </>
                             }
                         </View>

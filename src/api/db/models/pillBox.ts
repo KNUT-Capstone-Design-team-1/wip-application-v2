@@ -12,6 +12,8 @@ export class PillBox extends Realm.Object<PillBox> {
   ENTP_SEQ!: string // 업체 일련 번호
   ENTP_NAME!: string // 업체명
   ITEM_IMAGE?: string // 큰 제품 이미지
+  PRINT_FRONT?: string // 글자 앞
+  PRINT_BACK?: string // 글자 뒤
   MAIN_ITEM_INGR?: string // 주성분명
   CHART?: string // 성상
   PACK_UNIT?: string // 포장 단위
@@ -31,6 +33,8 @@ export class PillBox extends Realm.Object<PillBox> {
       ENTP_SEQ: 'string', // 업체 일련 번호
       ENTP_NAME: 'string', // 업체명
       ITEM_IMAGE: 'string?', // 큰 제품 이미지
+      PRINT_FRONT: 'string?', // 글자 앞
+      PRINT_BACK: 'string?', // 글자 뒤
       MAIN_ITEM_INGR: 'string?', // 주성분명
       CHART: 'string?', // 성상
       PACK_UNIT: 'string?', // 포장 단위
