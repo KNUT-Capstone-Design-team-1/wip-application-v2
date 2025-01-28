@@ -1,39 +1,48 @@
+import { XmlParser } from "./parser";
+
 /** XML 파싱 */
-const parseString = require('react-native-xml2js').parseString as (xml: string, callback: (err: Error, result: any) => void) => void;
+// TODO: table 데이터 파싱 추가 + return 데이터의 구조가 변경될 가능성 있음
+// TODO: SECTION이 여러개일 경우 처리
+type TPillDetailJsonObj = {
+  "DOC": {
+    "SECTION": {
+      '@_title'?: string
+      "ARTICLE": {
+        '@_title'?: string;
+        "PARAGRAPH"?: {
+          '#text'?: string;
+          '@_tagName'?: string;
+        }[]
+      }[]
+    }[]
+  }
+}
 
 export const parseXML = (xmlString: string) => {
   const paragraphs: any[] = [];
-  const xml = xmlString;
+  const xml = XmlParser.entityDecode(xmlString)
+  const xmlParser = XmlParser.getInstance()
 
-  const hasHtmlTags = (text: string) => /<\/?[a-z][\s\S]*>/i.test(text);
-  const hasTableParas = (text: string) => text.includes('&lt;표 ');
+  const jsonObj: TPillDetailJsonObj = xmlParser.parse(xml)
 
-  parseString(xml, (err, result) => {
-    if (err !== null) {
-      console.log("Error : ", err)
-      return
+  for (const section of jsonObj["DOC"]["SECTION"]) {
+    if (section['@_title'] && section['@_title'] != "") {
+      paragraphs.push(section['@_title'])
     }
-    try {
-      const doc = result.DOC;
-      const sections = doc.SECTION;
+    for (const article of section["ARTICLE"]) {
+      if (article['@_title'] && article['@_title'] !== "") {
+        paragraphs.push(article['@_title'])
+      }
 
-      sections && sections.forEach((section: any) => {
-        const articles = section.ARTICLE;
-        articles && articles.forEach((article: any) => {
-          const paras = article.PARAGRAPH;
-          paras && paras.forEach((para: any) => {
-            const paragraphText = para._;
-            if (!hasHtmlTags(paragraphText)) {
-              if (!hasTableParas(paragraphText)) {
-                paragraphs.push(para._);
-              }
-            }
-          });
-        });
-      });
-    } catch (e) {
-      console.log("Error while processing XML: ", e);
+      if (!article["PARAGRAPH"]) continue
+
+      for (const paragraph of article["PARAGRAPH"]) {
+        if (paragraph['#text'] && (paragraph["@_tagName"] ?? 'p') !== 'table') {
+          paragraphs.push(paragraph['#text'])
+        }
+      }
     }
-  });
+  }
+
   return paragraphs;
 }

@@ -1,6 +1,8 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
+    "module": "ES2020",
+    "target": "esnext",
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
@@ -9,13 +11,9 @@
       "@screens/*": ["screens/*"],
       "@assets/*": ["assets/*"],
       "@navigation/*": ["navigation/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@api/*": ["api/*"]
     }
   },
-  "include": [
-    "src",
-    "**/*.tsx",
-    "declarations.d.ts",
-    "react-native-xml2js.d.ts"
-  ]
+  "include": ["src", "**/*.tsx", "declarations.d.ts"]
 }

@@ -9,7 +9,7 @@ import { View, StyleSheet, Platform, Image, Text, Alert, Animated, Easing } from
 import { useRecoilState } from "recoil";
 import { getCropImage, getImgPath } from "@/utils/image";
 import { launchImageLibrary } from "react-native-image-picker";
-import { imgPickerOption } from "@/constans/options";
+import { imgPickerOption } from "@/constants/options";
 import ArrowLeftSvg from '@assets/svgs/arrow_left.svg';
 import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import CameraSvg from '@assets/svgs/camera.svg';
@@ -17,6 +17,7 @@ import SearchSvg from '@assets/svgs/search.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Toast from "react-native-toast-message";
+import { requestCameraPermission } from "@/utils/permission";
 
 const SearchCrop = (): JSX.Element => {
     const nav: any = useNavigation();
@@ -75,7 +76,8 @@ const SearchCrop = (): JSX.Element => {
     }
 
     const handlePressRetry = () => {
-        nav.navigate('카메라');
+        if (Platform.OS !== "ios" && Platform.OS !== "android") return;
+        requestCameraPermission(true, () => nav.navigate('카메라'))
     }
 
     const handlePressRePick = async (direction: string) => {
@@ -112,7 +114,7 @@ const SearchCrop = (): JSX.Element => {
     const mergeImages = async () => {
         if (viewShotRef.current) {
             viewShotRef.current.capture().then((uri: any) => {
-                nav.replace('알약 검색 결과', { data: uri });
+                nav.replace('알약 검색 결과', { data: uri, mode: 1 });
             });
         }
     };

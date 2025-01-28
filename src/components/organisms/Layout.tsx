@@ -7,6 +7,7 @@ import { gstyles } from "@/style/globalStyle";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Platform, StatusBar, StyleSheet, View, Text, TouchableWithoutFeedback, Easing, Dimensions } from "react-native"
+import LinearGradient from "react-native-linear-gradient";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import { getStatusBarHeight } from "react-native-safearea-height";
 import { SvgXml } from "react-native-svg";
@@ -19,11 +20,11 @@ export const windowWidth: number = Dimensions.get('window').width;
 /* 화면 전체 높이 */
 export const windowHeight: number = Dimensions.get('window').height;
 /* OS 별 헤더 높이 */
-export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.12) ?? 0;
+export const HeaderHeight: number = (Platform.OS === 'ios' ? windowHeight * 0.08 : windowHeight * 0.10);
 /* 총(메인) 헤더 높이 */
 export const totalHeaderHeight: number = StatusBarHeight + HeaderHeight;
 /* 기본 헤더 높이 */
-export const defaultHeaderHeight: number = StatusBarHeight + (Platform.OS === 'ios' ? windowHeight * 0.012 : windowHeight * 0.03) ?? 0;
+export const defaultHeaderHeight: number = StatusBarHeight + (Platform.OS === 'ios' ? windowHeight * 0.012 : windowHeight * 0.03);
 
 /* 뒤로가기 icon xml */
 const BACKBUTTON_ICON = `
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     height: totalHeaderHeight,
-    marginTop: StatusBarHeight - (Platform.OS === 'ios' ? 5 : 0) ?? 0,
+    marginTop: StatusBarHeight - (Platform.OS === 'ios' ? 5 : 0),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -96,7 +97,16 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'white',
     ...gstyles.screenBorder
-  }
+  },
+  headerBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    flex: 1,
+    zIndex: -1,
+  },
 })
 
 const Layout = {
@@ -266,6 +276,20 @@ const Layout = {
 
     return (
       <View style={[styles.fill, { backgroundColor: '#000' }]}>
+        {children}
+      </View>
+    )
+  },
+  initscreen: ({ children }: any) => {
+    return (
+      <View style={[styles.fill, { backgroundColor: '#fff' }]}>
+        <LinearGradient
+          colors={['#6060dd', '#4545a7', '#4545a7', '#ffffff', '#ffffff']}
+          style={styles.headerBackground}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 2 }}
+          locations={[0, 0.15, 0.5, 0.5, 1]}
+        />
         {children}
       </View>
     )

@@ -1,27 +1,26 @@
 import StorageItem from "@/components/atoms/StorageItem";
 import Layout, { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
+import { usePillBox } from "@/hooks/usePillBox";
 import { useSetScreen } from "@/hooks/useSetScreen";
 import { font, os } from "@/style/font";
-import { getItem } from "@/utils/storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, Text } from "react-native";
+import { PillBox } from "@/api/db/models/pillBox";
 
 const Storage = (): JSX.Element => {
     useSetScreen('보관함');
+    const { getPillList } = usePillBox()
     const [data, setData] = useState<any[]>([]);
 
-    const getStorage = async () => {
-        const LIST = await getItem('pillStorage');
-        if (LIST) {
-            setData(JSON.parse(LIST));
-        }
-    }
+    const getStorage = useCallback(() => {
+        setData(getPillList())
+    }, [])
 
     useFocusEffect(
         useCallback(() => {
             getStorage();
-        }, [])
+        }, [getStorage])
     );
 
     const styles = StyleSheet.create({
@@ -90,9 +89,10 @@ const Storage = (): JSX.Element => {
                 </View>
                 {data.length > 0 ?
                     <View style={styles.pillList}>
-                        {data.map((i: any) => (
-                            <StorageItem key={i.info1.ITEM_SEQ} data={i} refresh={getStorage} />
-                        ))}
+                        {
+                            data.map((i: PillBox) =>
+                                <StorageItem key={i.ITEM_SEQ} data={i} refresh={getStorage} />)
+                        }
                     </View>
                     :
                     <View style={styles.noList}>

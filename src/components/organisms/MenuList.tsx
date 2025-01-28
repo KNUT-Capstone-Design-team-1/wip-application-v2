@@ -19,61 +19,6 @@ const MenuList = () => {
     });
   }
 
-  const styles = StyleSheet.create({
-    menuListWrapper: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      gap: 20,
-      //backgroundColor: '#fff',
-      marginBottom: 40,
-    },
-    menu: {
-      position: 'relative',
-      flex: 1,
-      aspectRatio: '155/130',
-    },
-    menuMainText: {
-      color: '#fff',
-      fontSize: font(20),
-      fontFamily: os.font(700, 700),
-      textAlign: 'right',
-      textShadowColor: 'rgba(0, 0, 0, 0.5)',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: 25,
-      paddingRight: 16,
-      paddingBottom: 0,
-      includeFontPadding: false,
-    },
-    menuSubText: {
-      color: '#fff',
-      fontSize: font(12),
-      fontFamily: os.font(500, 500),
-      textAlign: 'right',
-      textShadowColor: 'rgba(0, 0, 0, 0.5)',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: 25,
-      paddingRight: 16,
-      paddingBottom: 16,
-      includeFontPadding: false,
-    },
-    menuBackgroundImage: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%'
-    },
-    menuShadow: {
-      justifyContent: 'flex-end',
-      width: '100%',
-      height: '100%',
-      top: 0,
-      left: 0,
-      borderRadius: 20,
-      overflow: 'hidden',
-    },
-  })
-
   return (
     <View style={styles.menuListWrapper}>
       <Button.scale style={styles.menu} onPress={handlePressNeerbyMenu}>
@@ -100,5 +45,58 @@ const MenuList = () => {
   )
 }
 
+const styles = StyleSheet.create({
+  menuListWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
+    marginBottom: 20,
+  },
+  menu: {
+    position: 'relative',
+    flex: 1,
+    aspectRatio: '155/130',
+  },
+  menuMainText: {
+    color: '#fff',
+    fontSize: font(20),
+    fontFamily: os.font(700, 700),
+    textAlign: 'right',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 25,
+    paddingRight: 16,
+    paddingBottom: 0,
+    includeFontPadding: false,
+  },
+  menuSubText: {
+    color: '#fff',
+    fontSize: font(12),
+    fontFamily: os.font(500, 500),
+    textAlign: 'right',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 25,
+    paddingRight: 16,
+    paddingBottom: 16,
+    includeFontPadding: false,
+  },
+  menuBackgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%'
+  },
+  menuShadow: {
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+})
 
 export default MenuList;

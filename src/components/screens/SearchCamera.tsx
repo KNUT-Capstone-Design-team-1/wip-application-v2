@@ -17,7 +17,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { runOnJS } from 'react-native-reanimated';
 import { trigger } from "react-native-haptic-feedback";
 import { imgFileState } from "@/atoms/file";
-import { cameraDeviceOption } from "@/constans/options";
+import { cameraDeviceOption } from "@/constants/options";
 import { getCropImage, getImgPath } from "@/utils/image";
 
 

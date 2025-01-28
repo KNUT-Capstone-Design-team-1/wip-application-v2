@@ -1,6 +1,7 @@
 import Home from "@/components/screens/Home";
 import PillDetail from "@/components/screens/PillDetail";
-import Search from "@/components/screens/Search";
+import SearchId from "@/components/screens/SearchId";
+import SearchImage from "@/components/screens/SearchImage";
 import SearchCamera from "@/components/screens/SearchCamera";
 import SearchCrop from "@/components/screens/SearchCrop";
 import SearchResult from "@/components/screens/SearchResult";
@@ -21,10 +22,18 @@ const HomeStack: React.FC = () => {
           headerShown: false,
         }}
       />
-      {/* 알약 검색 화면 */}
+      {/* 알약 식별 검색 화면 */}
       <Stack.Screen
-        name="알약 검색"
-        component={Search}
+        name="알약 식별 검색"
+        component={SearchId}
+        options={{
+          headerShown: false,
+        }}
+      />
+      {/* 알약 이미지 검색 화면 */}
+      <Stack.Screen
+        name="알약 이미지 검색"
+        component={SearchImage}
         options={{
           headerShown: false,
         }}
