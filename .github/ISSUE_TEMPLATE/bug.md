@@ -1,6 +1,6 @@
 ---
-name: 버그 수정
-about: 발생한 버그의 해결에 대한 설명과 설계
+name: bug
+about: 버그에 대한 내용 정리
 title: "[BUG]"
 labels: ''
 assignees: ''

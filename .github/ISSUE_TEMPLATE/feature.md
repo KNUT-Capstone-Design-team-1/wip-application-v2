@@ -1,6 +1,6 @@
 ---
-name: 기능 개발
-about: 새로 개발할 기능에 대한 필요성과 설계
+name: feature
+about: 새로 개발할 기능에 대한 필요성과 설계에 대한 내용 정리
 title: "[FEATURE]"
 labels: ''
 assignees: ''
@@ -17,4 +17,4 @@ assignees: ''
 - 
 
 ### 4. 비고 (기타 사항)
- - 
+ -

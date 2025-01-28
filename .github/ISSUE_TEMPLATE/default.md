@@ -1,6 +1,6 @@
 ---
-name: 기본 이슈 템플릿
-about: 기본 이슈 템플릿
+name: default
+about: 기능 개선 등 기타 이슈
 title: ''
 labels: ''
 assignees: ''
