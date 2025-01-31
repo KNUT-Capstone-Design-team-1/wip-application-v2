@@ -1,21 +1,18 @@
 import Button from "@/components/atoms/Button";
 import { windowWidth } from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import DeleteSvg from '@assets/svgs/exit.svg';
 import { useNavigation } from "@react-navigation/native";
-import { getItem, setItem } from "@/utils/storage";
 import { useAlert } from "@/hooks/useAlert";
 import { usePillBox } from "@/hooks/usePillBox";
-import CustomChip from "./CustomChip";
 
 interface IProps {
   data: any,
   refresh: any,
 }
 
-// TODO: 항목표시 변경: CLASS_NAME, PRINT 등
 const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
   const nav: any = useNavigation();
   const { showAlert } = useAlert();

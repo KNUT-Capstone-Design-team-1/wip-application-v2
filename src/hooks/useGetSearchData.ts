@@ -9,7 +9,6 @@ import { useRecoilRefresher_UNSTABLE, useResetRecoilState, useSetRecoilState } f
 import { searchDataState } from "@/atoms/query";
 import { searchFilterParams } from "@/selectors/query";
 
-//TODO: 로직 변경 필요 => 식별 검색 결과 화면 로딩 필요
 export const useGetSearchData = () => {
   const route: any = useRoute();
   const mode = route.params.mode ?? 0;

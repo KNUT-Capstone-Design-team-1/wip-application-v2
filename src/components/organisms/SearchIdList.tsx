@@ -8,7 +8,6 @@ import SearchSvg from "@/assets/svgs/search.svg"
 import { useSelectSearchId } from "@/hooks/useSelectSearchId";
 import SearchIdItem from "../atoms/SearchIdItem";
 
-// TODO: 특수문자 입력 안되게 하기
 const SearchIdList = (): JSX.Element => {
   const {
     btnState,
