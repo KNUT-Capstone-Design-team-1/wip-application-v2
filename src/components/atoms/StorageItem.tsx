@@ -8,12 +8,14 @@ import { useNavigation } from "@react-navigation/native";
 import { getItem, setItem } from "@/utils/storage";
 import { useAlert } from "@/hooks/useAlert";
 import { usePillBox } from "@/hooks/usePillBox";
+import CustomChip from "./CustomChip";
 
 interface IProps {
   data: any,
   refresh: any,
 }
 
+// TODO: 항목표시 변경: CLASS_NAME, PRINT 등
 const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
   const nav: any = useNavigation();
   const { showAlert } = useAlert();
@@ -66,7 +68,9 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
       backgroundColor: '#fff',
     },
     nameWrapper: {
-      padding: 8,
+      paddingHorizontal: 8,
+      paddingTop: 2,
+      gap: 2,
     },
     name: {
       color: '#000',
@@ -76,11 +80,18 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
       includeFontPadding: false,
     },
     efficacy: {
-      color: '#4644B5',
-      fontSize: font(12),
+      color: '#6E6E6E',
+      fontSize: font(10),
       fontFamily: os.font(500, 600),
       paddingBottom: 0,
       includeFontPadding: false,
+    },
+    etc: {
+      color: '#4644B5',
+      fontSize: font(12),
+      fontFamily: os.font(500, 500),
+      includeFontPadding: false,
+      paddingBottom: 0,
     },
     detailWrapper: {
       position: 'absolute',
@@ -120,6 +131,7 @@ const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
         <View style={styles.nameWrapper}>
           <Text style={styles.name} numberOfLines={2}>{data.ITEM_NAME}</Text>
           <Text style={styles.efficacy}>{data.ENTP_NAME ?? ''}</Text>
+          <Text style={styles.etc} numberOfLines={1}>{data.CLASS_NAME ?? '-'}</Text>
         </View>
         <View style={styles.detailWrapper}>
           <Text style={styles.detailText}>자세히 보기</Text>
