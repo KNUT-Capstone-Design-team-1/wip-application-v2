@@ -28,6 +28,7 @@ export type TPillData = {
   INGR_NAME?: string // 첨가제명
   VECTOR?: number[] // PRINT_FRONT_BACK 유니코드 벡터
   SIMILARITY?: number
+  DELETED?: boolean
 }
 
 export class PillData extends Realm.Object<PillData> {
@@ -57,6 +58,7 @@ export class PillData extends Realm.Object<PillData> {
   MAIN_ITEM_INGR?: string // 주성분명
   INGR_NAME?: string // 첨가제명
   VECTOR?: number[] // PRINT_FRONT_BACK 유니코드 벡터
+  DELETED?: boolean // 알약 삭제 여부
 
   static schema: Realm.ObjectSchema = {
     name: 'PillData',
@@ -90,7 +92,8 @@ export class PillData extends Realm.Object<PillData> {
         type: 'list',
         objectType: 'int',
         optional: true
-      }
+      },
+      DELETED: 'bool?'
     },
     primaryKey: 'ITEM_SEQ',
   }

@@ -6,12 +6,14 @@ import RNFS from "react-native-fs";
 
 const dbConfig: Realm.Configuration = {
   schema: [PillData, PillBox],
+  schemaVersion: 1,
   encryptionKey: stringToInt8Array(Config.REALM_ENCRYPTION_KEY as string),
   path: RNFS.DocumentDirectoryPath + "/default.realm"
 }
 
 const updateDBConfig: Realm.Configuration = {
   schema: [PillData],
+  schemaVersion: 1,
   encryptionKey: stringToInt8Array(Config.REALM_ENCRYPTION_KEY as string),
   path: RNFS.DocumentDirectoryPath + "/res/update.realm"
 }
