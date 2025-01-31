@@ -1,6 +1,6 @@
 import { Realm } from '@realm/react'
 
-export type TDrugRecognition = {
+export type TPillData = {
   ITEM_SEQ: string // 품목 일련 번호
   ITEM_NAME: string // 품목명
   ENTP_SEQ: string // 업체 일련 번호
@@ -28,9 +28,10 @@ export type TDrugRecognition = {
   INGR_NAME?: string // 첨가제명
   VECTOR?: number[] // PRINT_FRONT_BACK 유니코드 벡터
   SIMILARITY?: number
+  DELETED?: boolean
 }
 
-export class DrugRecognition extends Realm.Object<DrugRecognition> {
+export class PillData extends Realm.Object<PillData> {
   ITEM_SEQ!: string // 품목 일련 번호
   ITEM_NAME!: string // 품목명
   ENTP_SEQ!: string // 업체 일련 번호
@@ -57,9 +58,10 @@ export class DrugRecognition extends Realm.Object<DrugRecognition> {
   MAIN_ITEM_INGR?: string // 주성분명
   INGR_NAME?: string // 첨가제명
   VECTOR?: number[] // PRINT_FRONT_BACK 유니코드 벡터
+  DELETED?: boolean // 알약 삭제 여부
 
   static schema: Realm.ObjectSchema = {
-    name: 'DrugRecognition',
+    name: 'PillData',
     properties: {
       ITEM_SEQ: 'string', // 품목 일련 번호
       ITEM_NAME: 'string', // 품목명
@@ -90,7 +92,8 @@ export class DrugRecognition extends Realm.Object<DrugRecognition> {
         type: 'list',
         objectType: 'int',
         optional: true
-      }
+      },
+      DELETED: 'bool?'
     },
     primaryKey: 'ITEM_SEQ',
   }

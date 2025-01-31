@@ -2,7 +2,6 @@ import { XmlParser } from "./parser";
 
 /** XML 파싱 */
 // TODO: table 데이터 파싱 추가 + return 데이터의 구조가 변경될 가능성 있음
-// TODO: SECTION이 여러개일 경우 처리
 type TPillDetailJsonObj = {
   "DOC": {
     "SECTION": {

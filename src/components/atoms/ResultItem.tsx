@@ -6,9 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "@/components/atoms/Button";
 import CustomChip from '@/components/atoms/CustomChip';
 import { getItem, setItem } from "@/utils/storage";
-import { TDrugRecognition } from '@/api/db/models/drugRecognition';
+import { TPillData } from '@/api/db/models/pillData';
 
-const ResultItem = ({ data }: { data: TDrugRecognition }) => {
+const ResultItem = ({ data }: { data: TPillData }) => {
   const nav: any = useNavigation();
 
   const handlePressItem = async () => {

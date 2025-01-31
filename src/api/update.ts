@@ -2,6 +2,7 @@ import { Realm } from 'realm'
 import { getItem } from '@/utils/storage'
 import { getDBInfo } from './client/dbInfo'
 import { dbConfig, updateDBConfig } from './db/config'
+import { TPillData } from './db/models/pillData'
 
 
 // TODO: 업데이트 progress 표시
@@ -12,11 +13,18 @@ const upsertDB = async (callback: (idx: number, total: number) => void | undefin
 
   try {
     for (const schema of updateDBConfig.schema ?? []) {
-      const updateObjects = updateRealm.objects(schema.name)
+      const updateObjects = updateRealm.objects<TPillData>(schema.name)
 
       realm.write(() => {
         for (let idx = 0; idx < updateObjects.length; idx++) {
-          realm.create(schema.name, updateObjects[idx], Realm.UpdateMode.Modified)
+          if (updateObjects[idx].DELETED) {
+            const targetObj = realm.objectForPrimaryKey(schema.name, updateObjects[idx].ITEM_SEQ)
+            if (targetObj) {
+              realm.delete(targetObj)
+            }
+          } else {
+            realm.create(schema.name, updateObjects[idx], Realm.UpdateMode.Modified)
+          }
 
           // if (idx % batchSize === 0 || idx === updateObjects.length - 1) {
           //   callback(idx, updateObjects.length)

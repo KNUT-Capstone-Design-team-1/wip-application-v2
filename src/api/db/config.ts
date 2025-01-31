@@ -1,18 +1,19 @@
 import { stringToInt8Array } from "@/utils/converter";
-import { DrugRecognition } from "./models/drugRecognition";
-import { FinishedMedicinePermissionDetail } from "./models/finishedMedicinePermissionDetail";
-import { PillBox } from "./models/pillBox";
+import { PillData } from "@/api/db/models/pillData";
+import { PillBox } from "@/api/db/models/pillBox";
 import Config from "react-native-config";
 import RNFS from "react-native-fs";
 
 const dbConfig: Realm.Configuration = {
-  schema: [DrugRecognition, FinishedMedicinePermissionDetail, PillBox],
+  schema: [PillData, PillBox],
+  schemaVersion: 1,
   encryptionKey: stringToInt8Array(Config.REALM_ENCRYPTION_KEY as string),
   path: RNFS.DocumentDirectoryPath + "/default.realm"
 }
 
 const updateDBConfig: Realm.Configuration = {
-  schema: [DrugRecognition, FinishedMedicinePermissionDetail],
+  schema: [PillData],
+  schemaVersion: 1,
   encryptionKey: stringToInt8Array(Config.REALM_ENCRYPTION_KEY as string),
   path: RNFS.DocumentDirectoryPath + "/res/update.realm"
 }
