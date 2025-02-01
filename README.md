@@ -1,15 +1,12 @@
-# wip-application-v2
-
-- 알약 촬영 검색 애플리케이션 이게뭐약
+# 이게뭐약
+- 알약 촬영 검색 애플리케이션
 
 # Install Library
-
 ```bash
 npm install
 ```
 
 # Requirement
-
 - /env/.env
 
 ```bash
@@ -28,7 +25,6 @@ CLOUD_FLARE_SECRET_ACCESS_KEY="클라우드 플레어 R2 액세스 키"
 ```
 
 # Execution
-
 ```bash
 # 앱 실행 전 문제점 점검
 npx react-native doctor
@@ -47,7 +43,6 @@ npm run ios:prod
 ```
 
 # Build
-
 - `/android/app` 경로에 **keystore (.jks)** 파일 추가 후 빌드 진행
 
 ```bash
