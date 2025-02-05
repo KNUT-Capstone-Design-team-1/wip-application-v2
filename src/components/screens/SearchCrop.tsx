@@ -18,6 +18,8 @@ import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Toast from "react-native-toast-message";
 import { requestCameraPermission } from "@/utils/permission";
+import GoogleAdmob from "@components/screens/GoogleAdmob.tsx";
+import { admobState } from "@/atoms/admob.ts";
 
 const SearchCrop = (): JSX.Element => {
     const nav: any = useNavigation();
@@ -27,6 +29,8 @@ const SearchCrop = (): JSX.Element => {
     const viewShotRef = useRef<any>(null);
     const [screen, setScreen]: any = useRecoilState(screenState);
     const [imgFile, setImgFile]: any = useRecoilState(imgFileState);
+    const { showInterstitial } = GoogleAdmob();
+    const [admobCount, setAdmobCount] = useRecoilState(admobState);
 
     /** 화살표 반복 애니메이션 */
     const downArrowAni = () => {
@@ -102,12 +106,23 @@ const SearchCrop = (): JSX.Element => {
 
     const handlePressSearch = async () => {
         if (!!imgFile.front && !!imgFile.back) {
+            showGoogleAdmobState(); // 광고 재생 성공 시 로직 카운트 적용
             mergeImages();
         } else {
             Toast.show({
                 type: 'errorToast',
                 text1: '검색할 알약의 사진을 선택해주세요.',
             });
+        }
+    }
+
+    // 광고를 언제 한 번 보여줄지 나타내는 함수 (핸재 3번에 한 번 보여지도록)
+    const showGoogleAdmobState = () => {
+        setAdmobCount(prev => prev + 1);
+
+        if(admobCount === 2) {
+            showInterstitial();
+            setAdmobCount(0);
         }
     }
 
