@@ -104,14 +104,21 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
 
   let filter = '';
   let index = 0;
+  const printFilter: string[] = []
   const filters: string[] = []
   const params: string[] = []
 
   if (param.PRINT_FRONT != '') {
-    filters.push(`(PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++})`)
-    params.push(param.PRINT_FRONT) // 문자사이에 '*'와일드카드 삽입
-    params.push(param.PRINT_BACK) // 문자사이에 '*'와일드카드 삽입
+    printFilter.push(`PRINT_FRONT LIKE[c] $${index++}`)
+    params.push(param.PRINT_FRONT)
   }
+
+  if (param.PRINT_BACK != '') {
+    printFilter.push(`PRINT_BACK LIKE[c] $${index++}`)
+    params.push(param.PRINT_BACK)
+  }
+
+  filters.push("(" + printFilter.join(' OR ') + ")")
 
   if (param.COLOR_CLASS1.length != 0) {
     filters.push(`(COLOR_CLASS1 CONTAINS[c] {${param.COLOR_CLASS1.map((v) => {

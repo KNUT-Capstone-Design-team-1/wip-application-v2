@@ -41,7 +41,7 @@ export type {
 
 export const idSelectData: TSectionData[] = [
   {
-    title: '알약의 정보를 입력해주세요',
+    title: '알약의 문자를 입력해주세요',
     data: [],
   },
   {

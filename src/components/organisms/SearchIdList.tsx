@@ -11,7 +11,8 @@ import SearchIdItem from "../atoms/SearchIdItem";
 const SearchIdList = (): JSX.Element => {
   const {
     btnState,
-    idText,
+    idFrontText,
+    idBackText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
@@ -41,17 +42,29 @@ const SearchIdList = (): JSX.Element => {
             <Text style={styles.sectionHeaderText}>{section.title}</Text>
             {section.data.length ? null :
               <View style={styles.sectionTextInputWrapper}>
-                <Text style={styles.sectionTextInputLabel}>앞면 또는 뒷면 식별 문자</Text>
-                <TextInput
-                  placeholder="식별 문자 (선택)"
-                  placeholderTextColor={"#cacaca"}
-                  onChangeText={handleSetIdText}
-                  value={idText}
-                  autoCapitalize="none"
-                  maxLength={15}
-                  autoComplete="off"
-                  inputMode="text"
-                  style={[styles.sectionTextInput, btnState && styles.error]} />
+                <Text style={styles.sectionTextInputLabel}>앞면 또는 뒷면 식별 문자 (선택)</Text>
+                <View style={styles.sectionTextInputSplitWrapper}>
+                  <TextInput
+                    placeholder="앞면 문자"
+                    placeholderTextColor={"#cacaca"}
+                    onChangeText={(val) => handleSetIdText({ text: val, direction: "front" })}
+                    value={idFrontText}
+                    autoCapitalize="none"
+                    maxLength={10}
+                    autoComplete="off"
+                    inputMode="text"
+                    style={[styles.sectionTextInput, btnState && styles.error]} />
+                  <TextInput
+                    placeholder="뒷면 문자"
+                    placeholderTextColor={"#cacaca"}
+                    onChangeText={(val) => handleSetIdText({ text: val, direction: "back" })}
+                    value={idBackText}
+                    autoCapitalize="none"
+                    maxLength={10}
+                    autoComplete="off"
+                    inputMode="text"
+                    style={[styles.sectionTextInput, btnState && styles.error]} />
+                </View>
                 <View style={styles.sectionErrorWrapper}>
                   {btnState ? <Text style={styles.sectionTextInputError}>'*' 또는 '?'를 제외하고 입력하세요</Text> : null}
                 </View>
@@ -112,7 +125,14 @@ const styles = StyleSheet.create({
     color: "#7472EB",
     includeFontPadding: false
   },
+  sectionTextInputSplitWrapper: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+    width: '100%',
+  },
   sectionTextInput: {
+    flex: 1,
     paddingVertical: 8,
     paddingStart: 16,
     borderWidth: 2,
@@ -129,7 +149,7 @@ const styles = StyleSheet.create({
     minHeight: 21
   },
   sectionTextInputError: {
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
     paddingRight: 4,
     fontSize: font(13),
     fontFamily: os.font(600, 700),

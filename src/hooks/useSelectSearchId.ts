@@ -7,9 +7,15 @@ import { useNavigation } from '@react-navigation/native'
 
 export const useSelectSearchId = () => {
   const [btnState, setBtnState] = useState<boolean>(false)
-  const [idText, setIdText] = useState('')
+  const [idFrontText, setIdFrontText] = useState('')
+  const [idBackText, setIdBackText] = useState('')
   const [shapeSelected, setShapeSelected] = useState(['shape0'])
   const [colorSelected, setColorSelected] = useState(['color0'])
+
+  const setIdText = {
+    "front": setIdFrontText,
+    "back": setIdBackText,
+  }
 
   const nav: any = useNavigation()
 
@@ -18,9 +24,9 @@ export const useSelectSearchId = () => {
     setBtnState(regex.test(text))
   }
 
-  const handleSetIdText = (text: string) => {
+  const handleSetIdText = ({ text, direction }: { text: string, direction: ('front' | 'back') }) => {
     checkDisableWord(text)
-    setIdText(text)
+    setIdText[direction](text)
   }
 
   const handlePressItem = useCallback((item: TItemData) => {
@@ -56,7 +62,8 @@ export const useSelectSearchId = () => {
   }, [shapeSelected, colorSelected])
 
   const handlePressInit = () => {
-    setIdText('')
+    setIdFrontText('')
+    setIdBackText('')
     setShapeSelected(['shape0'])
     setColorSelected(['color0'])
   }
@@ -70,9 +77,12 @@ export const useSelectSearchId = () => {
       COLOR_CLASS2: []
     }
 
-    if (idText !== "") {
-      // 문자사이에 '*'와일드카드 삽입
-      data['PRINT_FRONT'] = data['PRINT_BACK'] = '*' + idText.replace(/(?<=.)|(?=.)/g, "*")
+    if (idFrontText !== "") {
+      data['PRINT_FRONT'] = '*' + idFrontText.replace(/(?<=.)|(?=.)/g, "*")
+    }
+
+    if (idBackText !== "") {
+      data['PRINT_BACK'] = '*' + idBackText.replace(/(?<=.)|(?=.)/g, "*")
     }
 
     for (const item of idSelectData) {
@@ -107,7 +117,8 @@ export const useSelectSearchId = () => {
 
   return {
     btnState,
-    idText,
+    idFrontText,
+    idBackText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
