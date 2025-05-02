@@ -168,9 +168,9 @@ vendor/
 *.jks
 *.pem
 
-# etc
+# Environment
 .env
 /env/.env*
 
 # yarn
-.yarn
+.yarn/*.gz
