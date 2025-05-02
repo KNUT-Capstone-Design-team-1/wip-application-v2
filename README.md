@@ -3,7 +3,11 @@
 
 # Install Library
 ```bash
-npm install
+npm install -g yarn
+
+yarn set version berry
+
+yarn install
 ```
 
 # Requirement
@@ -30,16 +34,16 @@ CLOUD_FLARE_SECRET_ACCESS_KEY="클라우드 플레어 R2 액세스 키"
 npx react-native doctor
 
 # 안드로이드 개발 환경 실행
-npm run android:dev
+yarn android:dev
 
 # 안드로이드 프로덕션 환경 실행
-npm run android:prod
+yarn android:prod
 
 # IOS 개발 환경 실행
-npm run ios:dev
+yarn ios:dev
 
 # IOS 프로덕션 환경 실행
-npm run ios:prod
+yarn ios:prod
 ```
 
 # Build
@@ -47,14 +51,14 @@ npm run ios:prod
 
 ```bash
 # APK 파일 생성 (/android/app/build/outputs/apk)
-npm run apk
+yarn apk
 
 # AAB 파일 생성 (/android/app/build/outputs/bundle)
-npm run aab
+yarn aab
 
 # IPA 파일 생성
 # 사전에 XCode 설정 필요 https://reactnative.dev/docs/0.73/publishing-to-app-store
-npm run ipa
+yarn ipa
 ```
 
 # Reset Cache
@@ -62,8 +66,8 @@ npm run ipa
 # 에뮬레이터 종료 후 실행할 것
 
 # 안드로이드 빌드 캐시 제거
-npm run reset:android
+yarn reset:android
 
 # iOS 빌드 캐시 제거
-npm run reset:ios
+yarn reset:ios
 ```
