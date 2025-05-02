@@ -15,7 +15,10 @@
     "pod": "cd ios && pod deintegrate && pod install && cd ..",
     "podstart": "cd ios && pod deintegrate && pod install && cd .. && react-native start -- --reset-cache",
     "apk": "cd android && ./gradlew assembleRelease && cd ..",
-    "aab": "cd android && ./gradlew bundleRelease && cd .."
+    "aab": "cd android && ./gradlew bundleRelease && cd ..",
+    "ipa": "npm run ios -- --mode=\"Release\"",
+    "reset:android": "bash ./reset_build_cache.sh android",
+    "reset:ios": "bash ./reset_build_cache.sh ios"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.658.0",

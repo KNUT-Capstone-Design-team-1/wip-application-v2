@@ -51,4 +51,19 @@ npm run apk
 
 # AAB 파일 생성 (/android/app/build/outputs/bundle)
 npm run aab
+
+# IPA 파일 생성
+# 사전에 XCode 설정 필요 https://reactnative.dev/docs/0.73/publishing-to-app-store
+npm run ipa
+```
+
+# Reset Cache
+```bash
+# 에뮬레이터 종료 후 실행할 것
+
+# 안드로이드 빌드 캐시 제거
+npm run reset:android
+
+# iOS 빌드 캐시 제거
+npm run reset:ios
 ```
