@@ -31,11 +31,12 @@ const SearchIdList = (): JSX.Element => {
         keyExtractor={(item, index) => `${item.key} - ${index}`}
         renderItem={({ item }) =>
           <SearchIdItem
-            item={item}
-            handlePressItem={handlePressItem}
-            shapeSelected={shapeSelected}
-            colorSelected={colorSelected}
-          />
+            text={item.name}
+            handlePressItem={() => handlePressItem(item)}
+            backgroundColor={item.color}
+            selectColor='#7472EB'
+            isSelected={shapeSelected.includes(item.category + item.key) || colorSelected.includes(item.category + item.key) ? true : false}
+          >{item.icon ? item.icon : null}</SearchIdItem>
         }
         renderSectionHeader={({ section }) =>
           <View style={styles.sectionHeaderWrapper}>
