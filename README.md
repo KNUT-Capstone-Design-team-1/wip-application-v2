@@ -1,13 +1,24 @@
 # 이게뭐약
 - 알약 촬영 검색 애플리케이션
 
+# Requirement
+- node 18 이상
+- JDK11
+- (ios) ruby 2.7.6 이상
+- (ios) cocoapods 1.13 이상 1.15 미만
+- (ios) activesupport 6.1.7.5 이상 7.1.0 미만
+
 # Install Library
 ```bash
-npm install
+npm install -g yarn react-native-cli
+
+yarn set version berry
+
+yarn install
 ```
 
-# Requirement
-- /env/.env
+# Configure
+- .env
 
 ```bash
 REALM_ENCRYPTION_KEY="realm 데이터베이스 암호화 키"
@@ -29,17 +40,11 @@ CLOUD_FLARE_SECRET_ACCESS_KEY="클라우드 플레어 R2 액세스 키"
 # 앱 실행 전 문제점 점검
 npx react-native doctor
 
-# 안드로이드 개발 환경 실행
-npm run android:dev
+# 안드로이드  실행
+yarn android
 
-# 안드로이드 프로덕션 환경 실행
-npm run android:prod
-
-# IOS 개발 환경 실행
-npm run ios:dev
-
-# IOS 프로덕션 환경 실행
-npm run ios:prod
+# IOS 실행
+yarn ios
 ```
 
 # Build
@@ -47,8 +52,22 @@ npm run ios:prod
 
 ```bash
 # APK 파일 생성 (/android/app/build/outputs/apk)
-npm run apk
+yarn apk
 
 # AAB 파일 생성 (/android/app/build/outputs/bundle)
-npm run aab
+yarn aab
+
+# IPA 파일 생성 (사전에 XCode 설정 필요 https://reactnative.dev/docs/0.73/publishing-to-app-store)
+yarn ipa
+```
+
+# Reset Cache
+- 에뮬레이터 종료 후 실행할 것
+
+```bash
+# 안드로이드 빌드 캐시 제거
+yarn reset:android
+
+# iOS 빌드 캐시 제거
+yarn reset:ios
 ```

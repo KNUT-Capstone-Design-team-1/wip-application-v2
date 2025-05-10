@@ -14,7 +14,7 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
 
       - name: install-library
-        run: npm install
+        run: yarn install
 
       - name: get-key-store
         run: |
@@ -24,7 +24,7 @@ jobs:
       - name: get-config
         run: |
           mkdir ./env
-          cat <<EOL > ./env/.env
+          cat <<EOL > .env
           REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
 
           GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"
@@ -40,14 +40,14 @@ jobs:
           EOL
 
       - name: build-apk
-        run: npm run apk
+        run: yarn apk
       - uses: actions/upload-artifact@v4
         with:
           name: "wip-${{ github.ref_name }}-${{ github.run_number }}-apk"
           path: ./android/app/build/outputs/apk/product/release
 
       - name: build-aab
-        run: npm run aab
+        run: yarn aab
       - uses: actions/upload-artifact@v4
         with:
           name: "wip-${{ github.ref_name }}-${{ github.run_number }}-aab"

@@ -3,19 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android -- --reset-cache",
-    "android:dev": "react-native run-android --mode=developdebug -- --reset-cache",
-    "android:prod": "react-native run-android --mode=productdebug -- --reset-cache",
-    "ios": "react-native run-ios",
-    "ios:dev": "react-native run-ios --scheme whatispill_development -- --reset-cache",
-    "ios:prod": "react-native run-ios --scheme whatispill_production -- --reset-cache",
+    "android": "react-native run-android --mode=productdebug -- --reset-cache",
+    "ios": "react-native run-ios --scheme whatispill_production -- --reset-cache",
     "lint": "eslint .",
     "start": "react-native start -- --reset-cache",
-    "test": "jest",
     "pod": "cd ios && pod deintegrate && pod install && cd ..",
     "podstart": "cd ios && pod deintegrate && pod install && cd .. && react-native start -- --reset-cache",
     "apk": "cd android && ./gradlew assembleRelease && cd ..",
-    "aab": "cd android && ./gradlew bundleRelease && cd .."
+    "aab": "cd android && ./gradlew bundleRelease && cd ..",
+    "ipa": "npm run ios -- --mode=\"Release\"",
+    "reset:android": "bash ./reset_build_cache.sh android",
+    "reset:ios": "bash ./reset_build_cache.sh ios"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.658.0",
@@ -87,16 +85,13 @@
     "@react-native/eslint-config": "0.73.2",
     "@react-native/metro-config": "0.73.5",
     "@react-native/typescript-config": "0.74.0",
-    "@types/jest": "^29.5.12",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.21",
     "@types/react-native-canvas": "^0.1.13",
     "@types/react-native-version-check": "^3.4.8",
     "@types/react-test-renderer": "^18.0.7",
-    "babel-jest": "^29.7.0",
     "babel-plugin-module-resolver": "^5.0.0",
     "eslint": "^8.19.0",
-    "jest": "^29.7.0",
     "metro-react-native-babel-preset": "0.77.0",
     "prettier": "3.2.5",
     "react-test-renderer": "18.2.0",
@@ -108,5 +103,6 @@
   ],
   "engines": {
     "node": ">=18"
-  }
+  },
+  "packageManager": "yarn@4.9.1"
 }
