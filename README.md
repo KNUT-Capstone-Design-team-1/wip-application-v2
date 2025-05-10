@@ -33,17 +33,11 @@ CLOUD_FLARE_SECRET_ACCESS_KEY="클라우드 플레어 R2 액세스 키"
 # 앱 실행 전 문제점 점검
 npx react-native doctor
 
-# 안드로이드 개발 환경 실행
-yarn android:dev
+# 안드로이드  실행
+yarn android
 
-# 안드로이드 프로덕션 환경 실행
-yarn android:prod
-
-# IOS 개발 환경 실행
-yarn ios:dev
-
-# IOS 프로덕션 환경 실행
-yarn ios:prod
+# IOS 실행
+yarn ios
 ```
 
 # Build
@@ -56,15 +50,14 @@ yarn apk
 # AAB 파일 생성 (/android/app/build/outputs/bundle)
 yarn aab
 
-# IPA 파일 생성
-# 사전에 XCode 설정 필요 https://reactnative.dev/docs/0.73/publishing-to-app-store
+# IPA 파일 생성 (사전에 XCode 설정 필요 https://reactnative.dev/docs/0.73/publishing-to-app-store)
 yarn ipa
 ```
 
 # Reset Cache
-```bash
-# 에뮬레이터 종료 후 실행할 것
+- 에뮬레이터 종료 후 실행할 것
 
+```bash
 # 안드로이드 빌드 캐시 제거
 yarn reset:android
 

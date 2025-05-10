@@ -173,3 +173,5 @@ vendor/
 
 # yarn
 .yarn/*.gz
+.pnp.cjs
+.pnp.loader.mjs
