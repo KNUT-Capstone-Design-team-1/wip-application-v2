@@ -1,16 +1,23 @@
 # 이게뭐약
 - 알약 촬영 검색 애플리케이션
 
+# Requirement
+- node 18 이상
+- JDK11
+- (ios) ruby 2.7.6 이상
+- (ios) cocoapods 1.13 이상 1.15 미만
+- (ios) activesupport 6.1.7.5 이상 7.1.0 미만
+
 # Install Library
 ```bash
-npm install -g yarn
+npm install -g yarn react-native-cli
 
 yarn set version berry
 
 yarn install
 ```
 
-# Requirement
+# Configure
 - .env
 
 ```bash
