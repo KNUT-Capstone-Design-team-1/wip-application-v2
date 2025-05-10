@@ -19,11 +19,14 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies and build
+      - name: Install dependencies
         run: |
           yarn set version berry
           yarn install
           cd ios
           pod install
+
+      - name: Run app
+        run: |
           yarn ios
           tail -n 50 /tmp/ios-build.log
