@@ -14,7 +14,9 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
 
       - name: install-library
-        run: yarn install
+        run: |
+          yarn set version berry
+          yarn install
 
       - name: get-key-store
         run: |

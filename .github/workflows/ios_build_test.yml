@@ -1,10 +1,9 @@
-name: Run React Native iOS Build
+name: wip-ios-build-test
+
+run-name: ${{ github.actor }}-ios-build-test
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   test-ios:
@@ -20,13 +19,11 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install dependencies
+      - name: Install dependencies and build
         run: |
+          yarn set version berry
           yarn install
           cd ios
           pod install
-
-      - name: Run iOS app
-        run: |
-          npx react-native run-ios --scheme whatispill_production -- --reset-cache
+          yarn ios
           tail -n 50 /tmp/ios-build.log
