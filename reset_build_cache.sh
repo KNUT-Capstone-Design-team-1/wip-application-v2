@@ -17,11 +17,12 @@ case $platform in
 
   ios)
     pushd $SCRIPT_DIR/ios
-    xattr -w com.apple.xcode.CreatedByBuildSystem true $SCRIPT_DIR/ios/build
+    xattr -w com.apple.xcode.CreatedByBuildSystem true build
     xcodebuild clean
     rm -rf build \
     ~/Library/Developer/Xcode/DerivedData
     popd
+    pod install
     ;;
 
   *)

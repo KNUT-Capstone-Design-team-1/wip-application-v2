@@ -24,7 +24,7 @@ jobs:
       - name: get-config
         run: |
           mkdir ./env
-          cat <<EOL > ./env/.env
+          cat <<EOL > .env
           REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
 
           GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"

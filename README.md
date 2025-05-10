@@ -11,7 +11,7 @@ yarn install
 ```
 
 # Requirement
-- /env/.env
+- .env
 
 ```bash
 REALM_ENCRYPTION_KEY="realm 데이터베이스 암호화 키"
