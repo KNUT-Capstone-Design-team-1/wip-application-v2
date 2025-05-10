@@ -22,6 +22,8 @@ case $platform in
     rm -rf build \
     ~/Library/Developer/Xcode/DerivedData
     popd
+    pod deintegrate
+    pod cache clean --all
     pod install
     ;;
 
