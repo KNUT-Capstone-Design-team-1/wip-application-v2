@@ -46,5 +46,5 @@ jobs:
 
       - name: Run app
         run: |
-          xcodebuild -workspace ios/whatispill.xcworkspace -scheme whatispill_production -configuration Release
+          xcodebuild -scheme whatispill_production
           tail -n 50 /tmp/ios-build.log
