@@ -11,7 +11,7 @@
     "podstart": "cd ios && pod deintegrate && pod install && cd .. && react-native start -- --reset-cache",
     "apk": "cd android && ./gradlew assembleRelease && cd ..",
     "aab": "cd android && ./gradlew bundleRelease && cd ..",
-    "ipa": "npm run ios -- --mode=\"Release\"",
+    "ipa": "xcodebuild -workspace ios/whatispill.xcworkspace -scheme whatispill_production -sdk iphoneos -configuration Release -archivePath build/whatispill.xcarchive archive && xcodebuild -exportArchive -archivePath build/whatispill.xcarchive -exportOptionsPlist ios/exportOptions.plist -exportPath build/",
     "reset:android": "bash ./reset_build_cache.sh android",
     "reset:ios": "bash ./reset_build_cache.sh ios"
   },
