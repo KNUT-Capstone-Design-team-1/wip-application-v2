@@ -1,0 +1,32 @@
+name: Run React Native iOS Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-ios:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          yarn install
+          cd ios
+          pod install
+
+      - name: Run iOS app
+        run: |
+          npx react-native run-ios --scheme whatispill_production -- --reset-cache
+          tail -n 50 /tmp/ios-build.log
