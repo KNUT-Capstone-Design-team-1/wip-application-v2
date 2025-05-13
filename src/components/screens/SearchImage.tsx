@@ -1,22 +1,18 @@
 import { screenState } from "@/atoms/screen";
 import Button from "@/components/atoms/Button";
-import Layout, { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
+import Layout from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
 import { gstyles } from "@/style/globalStyle";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
-import { View, StyleSheet, Text, Platform, Image, Alert, Linking, PermissionsAndroid } from "react-native";
-import { PERMISSIONS, RESULTS, check, request } from "react-native-permissions";
-import { SvgXml } from "react-native-svg";
+import { View, StyleSheet, Text, Platform, Image, TouchableOpacity } from "react-native";
 import { useRecoilState } from "recoil";
 import CameraSvg from '@assets/svgs/camera.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import NoteSvg from '@assets/svgs/note.svg';
 import GuideFrameSvg from '@assets/svgs/guideFrame.svg';
-import { ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker";
 import { imgFileState } from "@/atoms/file";
 import { requestCameraPermission } from "@/utils/permission";
-import { imgPickerOption } from "@/constants/options";
 
 const SearchImage = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();
@@ -75,9 +71,10 @@ const SearchImage = ({ route }: any): JSX.Element => {
             flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
-            overflow: 'hidden',
+            // overflow: 'hidden',
             paddingHorizontal: 15,
-            paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
+            // paddingBottom: 15 + (Platform.OS === 'ios' ? 0 : 0),
+            paddingBottom: 15,
             backgroundColor: '#fff',
         },
         guideFrameWrapper: {
@@ -127,6 +124,7 @@ const SearchImage = ({ route }: any): JSX.Element => {
             alignItems: 'center',
         },
         noteHeadWrapper: {
+            marginTop: 30,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 7,
@@ -146,11 +144,6 @@ const SearchImage = ({ route }: any): JSX.Element => {
             fontSize: font(14),
             fontFamily: os.font(400, 500),
             includeFontPadding: false,
-        },
-        warnTextWrapper: {
-            marginVertical: 8,
-            justifyContent: 'center',
-            alignItems: 'center'
         },
         warnText: {
             paddingLeft: 4,
@@ -182,6 +175,31 @@ const SearchImage = ({ route }: any): JSX.Element => {
         buttonImg: {
             width: 20,
             height: 20
+        },
+        guideTextWrapper: {
+            marginVertical: 8,
+            marginTop: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: "row",
+            display: "flex",
+            gap: 10
+        },
+        question: {
+            display: "flex",
+            backgroundColor: "#A5A5A5",
+            color: "#fff",
+            textAlign: "center",
+            borderRadius: 50,
+        },
+        questionText: {
+            width: 20,
+            height: 20,
+            textAlign: "center",
+            color: "#fff"
+        },
+        guideText: {
+            color: "#A5A5A5"
         }
     });
 
@@ -206,10 +224,18 @@ const SearchImage = ({ route }: any): JSX.Element => {
                         <Text style={styles.note}>네모칸 안에 알약이 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>알약에 글자가 선명히 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>하나의 알약만 보이도록 촬영해주세요</Text>
-                        <View style={styles.warnTextWrapper}>
-                            <Text style={styles.warnText}>현재 개발 중인 기능으로</Text>
-                            <Text style={styles.warnText}>결과가 정확하지 않을 수 있습니다.</Text>
-                        </View>
+                        <TouchableOpacity
+                          style={styles.guideTextWrapper}
+                          onPress={() => {
+                              nav.navigate('촬영 가이드');
+                              setScreen('촬영 가이드');
+                          }}
+                        >
+                            <View style={styles.question}>
+                                <Text style={styles.questionText}>?</Text>
+                            </View>
+                            <Text style={styles.guideText}>촬영 가이드</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
