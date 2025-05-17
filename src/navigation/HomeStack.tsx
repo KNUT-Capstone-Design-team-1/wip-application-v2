@@ -2,6 +2,7 @@ import Home from "@/components/screens/Home";
 import PillDetail from "@/components/screens/PillDetail";
 import SearchId from "@/components/screens/SearchId";
 import SearchImage from "@/components/screens/SearchImage";
+import ShootingGuide from "@/components/screens/ShootingGuide";
 import SearchCamera from "@/components/screens/SearchCamera";
 import SearchCrop from "@/components/screens/SearchCrop";
 import SearchResult from "@/components/screens/SearchResult";
@@ -34,6 +35,13 @@ const HomeStack: React.FC = () => {
       <Stack.Screen
         name="알약 이미지 검색"
         component={SearchImage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="촬영 가이드"
+        component={ShootingGuide}
         options={{
           headerShown: false,
         }}
