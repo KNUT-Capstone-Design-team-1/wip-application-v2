@@ -1,8 +1,11 @@
 import React, { useRef, useState } from "react";
-import { StyleSheet, Text, View, Dimensions, FlatList, Image, Animated } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Platform, FlatList, Image, Animated, Button, TouchableOpacity } from "react-native";
 import Layout from "@/components/organisms/Layout";
 import NoteSvg from "@assets/svgs/note.svg";
 import { font, os } from "@/style/font.ts";
+import CameraSvg from "@assets/svgs/camera.svg";
+import { requestCameraPermission } from "@/utils/permission";
+import { useNavigation } from "@react-navigation/native";
 
 const shootingGuideData= [
   {
@@ -17,7 +20,7 @@ const shootingGuideData= [
     subImage: require('@/assets/images/search_step2_sub.png')
   },
   {
-    title: '여러 알약을 촬영 시 겹치지 않게 해주세요',
+    title: '알약은 하나씩만 찍어주세요.',
     description: '붙어있거나 겹쳐있으면 정확한 결과가 안나올 수 있어요',
     mainImage: require('@assets/images/search_step3_main.png'),
     subImage: require('@/assets/images/search_step3_sub.png') },
@@ -26,6 +29,7 @@ const shootingGuideData= [
 const { width } = Dimensions.get('window');
 
 const ShootingGuide = () => {
+  const nav: any = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 10 }).current;
@@ -59,6 +63,11 @@ const ShootingGuide = () => {
     });
   };
 
+  const permissionCheck = () => {
+    if (Platform.OS !== "ios" && Platform.OS !== "android") return;
+    requestCameraPermission(true, () => nav.navigate('카메라'));
+  }
+
   return (
     <Layout.default>
       {/* 타이틀*/}
@@ -88,7 +97,20 @@ const ShootingGuide = () => {
         {/* Animated을 사용해서 텍스트 자연스럽게 변하도록 수정 */}
         <Animated.View style={[styles.ShootingGuideBottom, { opacity: fadeAnim }]}>
           <Text style={styles.mainDescription}>{shootingGuideData[currentIndex].title}</Text>
-          <Text style={styles.subDescription}>{shootingGuideData[currentIndex].description}</Text>
+          {
+            currentIndex === 2
+              ?
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  permissionCheck();
+                }}
+              >
+                <CameraSvg width={18} height={18} />
+                <Text style={styles.buttonText}>촬영하기</Text>
+              </TouchableOpacity>
+              : <Text style={styles.subDescription}>{shootingGuideData[currentIndex].description}</Text>
+          }
         </Animated.View>
 
         <View style={styles.indicatorContainer}>
@@ -151,7 +173,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeDot: {
-    backgroundColor: '#000',
+    backgroundColor: '#7472EB',
   },
 
   // 하단 텍스트
@@ -171,6 +193,24 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: font(14),
     color: "#656565"
+  },
+
+  button: {
+    width: 300,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    height: 34,
+    borderRadius: 8,
+    backgroundColor: '#7472EB',
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: font(15),
+    fontFamily: os.font(500, 500),
+    includeFontPadding: false,
   },
 })
 
