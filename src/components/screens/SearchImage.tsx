@@ -3,8 +3,8 @@ import Button from "@/components/atoms/Button";
 import Layout from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
 import { gstyles } from "@/style/globalStyle";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
 import { View, StyleSheet, Text, Platform, Image, TouchableOpacity } from "react-native";
 import { useRecoilState } from "recoil";
 import CameraSvg from '@assets/svgs/camera.svg';
@@ -13,11 +13,15 @@ import NoteSvg from '@assets/svgs/note.svg';
 import GuideFrameSvg from '@assets/svgs/guideFrame.svg';
 import { imgFileState } from "@/atoms/file";
 import { requestCameraPermission } from "@/utils/permission";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SvgXml } from "react-native-svg";
 
 const SearchImage = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();
     const [screen, setScreen] = useRecoilState(screenState);
     const [imgFile, setImgFile] = useRecoilState(imgFileState);
+
+    const [showGuide, setShowGuide] = useState<boolean | null>(null);
 
     /* 샘플 사진 프레임 xml */
     const GUIDE_FRAME = `
@@ -40,13 +44,25 @@ const SearchImage = ({ route }: any): JSX.Element => {
     }
 
     /** 카메라 권한 확인 */
-    const permissionCheck = () => {
-        if (Platform.OS !== "ios" && Platform.OS !== "android") return;
-        requestCameraPermission(true, () => nav.navigate('카메라'));
+    const permissionCheck = async () => {
+        const seen = await AsyncStorage.getItem('hasSeenShootingGuide');
+
+        if (seen === "true") {
+            if (Platform.OS !== "ios" && Platform.OS !== "android") return;
+            requestCameraPermission(true, () => nav.navigate('카메라'));
+        } else {
+            nav.navigate('촬영 가이드');
+        }
+    };
+
+    const handleGuideComplete = async () => {
+        await AsyncStorage.setItem('hasSeenShootingGuide', 'true');
+        setShowGuide(false);
     };
 
     const handlePressCameraButton = () => {
         permissionCheck();
+        handleGuideComplete();
     }
 
     const handlePressImgPicker = async () => {
@@ -55,6 +71,12 @@ const SearchImage = ({ route }: any): JSX.Element => {
     }
 
     useEffect(() => {
+        const checkGuideShown = async () => {
+            const hasShown = await AsyncStorage.getItem('hasSeenShootingGuide');
+            setShowGuide(hasShown !== 'true'); // 처음이면 true 반환
+        };
+        checkGuideShown();
+
         nav.addListener('focus', () => handleSetScreen());
         return () => {
             nav.removeListener('focus', () => handleSetScreen());
@@ -183,7 +205,8 @@ const SearchImage = ({ route }: any): JSX.Element => {
             alignItems: 'center',
             flexDirection: "row",
             display: "flex",
-            gap: 10
+            gap: 10,
+            width: "100%"
         },
         question: {
             display: "flex",
@@ -226,7 +249,7 @@ const SearchImage = ({ route }: any): JSX.Element => {
                         <Text style={styles.note}>하나의 알약만 보이도록 촬영해주세요</Text>
                         <TouchableOpacity
                           style={styles.guideTextWrapper}
-                          onPress={() => {
+                          onPress={async () => {
                               nav.navigate('촬영 가이드');
                               setScreen('촬영 가이드');
                           }}
