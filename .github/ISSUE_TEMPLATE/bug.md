@@ -3,6 +3,7 @@ name: bug
 about: 버그에 대한 내용 정리
 title: '[BUG]'
 labels: 'bug'
+type: 'Bug'
 ---
 
 # 개요

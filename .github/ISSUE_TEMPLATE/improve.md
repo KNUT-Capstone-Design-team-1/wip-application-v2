@@ -3,6 +3,7 @@ name: improve
 about: 기능 개선
 title: '[IMPROVE]'
 labels: 'imporve'
+type: 'Task'
 ---
 
 # 개요
