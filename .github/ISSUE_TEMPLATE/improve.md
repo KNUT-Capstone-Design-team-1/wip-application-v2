@@ -1,8 +1,8 @@
 ---
-name: feature
-about: 기능 개발
-title: '[FEATURE]'
-labels: 'feature'
+name: improve
+about: 기능 개선
+title: '[IMPROVE]'
+labels: 'imporve'
 ---
 
 # 개요
