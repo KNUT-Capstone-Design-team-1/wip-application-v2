@@ -18,7 +18,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.658.0",
     "@craftzdog/react-native-buffer": "^6.0.5",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/image-editor": "^4.2.0",
     "@react-native-masked-view/masked-view": "^0.3.1",
     "@react-native/gradle-plugin": "^0.73.4",
