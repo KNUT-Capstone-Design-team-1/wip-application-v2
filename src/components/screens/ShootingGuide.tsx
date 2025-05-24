@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
-import { StyleSheet, Text, View, Dimensions, Platform, FlatList, Image, Animated, Button, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, View, Dimensions, Platform, FlatList, Image, Animated, TouchableOpacity } from "react-native";
+import Button from "@/components/atoms/Button";
 import Layout from "@/components/organisms/Layout";
 import NoteSvg from "@assets/svgs/note.svg";
 import { font, os } from "@/style/font.ts";
@@ -7,12 +8,18 @@ import CameraSvg from "@assets/svgs/camera.svg";
 import { requestCameraPermission } from "@/utils/permission";
 import { useNavigation } from "@react-navigation/native";
 import { shootingGuideData } from "@/constants/guide";
+import { useRecoilState } from "recoil";
+import { screenState } from "@/atoms/screen.ts";
+import ElbumSvg from "@assets/svgs/elbum.svg";
+import { imgFileState } from "@/atoms/file.ts";
 
 const { width } = Dimensions.get('window');
 
 const ShootingGuide = () => {
   const nav: any = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [screen, setScreen] = useRecoilState(screenState);
+  const [imgFile, setImgFile] = useRecoilState(imgFileState);
   const [isAnimating, setIsAnimating] = useState(false);
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 10 }).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -50,10 +57,23 @@ const ShootingGuide = () => {
     requestCameraPermission(true, () => nav.navigate('카메라'));
   }
 
+  const handlePressImgPicker = () => {
+    setImgFile({ front: null, back: null })
+    nav.navigate('알약 촬영');
+  }
+
+  const handleSetScreen = () => {
+    setScreen('촬영 가이드');
+  }
+
+  useEffect(() => {
+    handleSetScreen();
+  }, []);
+
   return (
     <Layout.default>
       {/* 타이틀*/}
-      <View style={styles.ShootingGuideWrapper}>
+      <View style={styles.shootingGuideWrapper}>
         <View style={styles.noteHeadWrapper}>
           <NoteSvg width={18} height={18} />
           <Text style={styles.noteHead}>알약 사진을 찍을 때는 이렇게 찍어주세요!</Text>
@@ -67,8 +87,11 @@ const ShootingGuide = () => {
           keyExtractor={(_, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.slideImageWrapper}>
-              <Image source={item.mainImage} resizeMode="cover" />
-              <Image source={item.subImage} resizeMode="cover" />
+              <Image source={item.mainImage} resizeMode="contain" style={styles.slideImg} />
+              <Image source={item.subImage} resizeMode="contain" style={[
+                styles.slideImg, // 태그로 지정한 스타일
+                { top: -30 } // 인라인 스타일 추가
+              ]}/>
             </View>
           )}
           onViewableItemsChanged={onViewableItemsChanged}
@@ -79,21 +102,29 @@ const ShootingGuide = () => {
         {/* Animated을 사용해서 텍스트 자연스럽게 변하도록 수정 */}
         <Animated.View style={[styles.ShootingGuideBottom, { opacity: fadeAnim }]}>
           <Text style={styles.mainDescription}>{shootingGuideData[currentIndex].title}</Text>
-          {
-            currentIndex === 2
-              ?
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  permissionCheck();
-                }}
-              >
-                <CameraSvg width={18} height={18} />
-                <Text style={styles.buttonText}>촬영하기</Text>
-              </TouchableOpacity>
-              : <Text style={styles.subDescription}>{shootingGuideData[currentIndex].description}</Text>
-          }
+          <Text style={styles.subDescription}>{shootingGuideData[currentIndex].description}</Text>
         </Animated.View>
+
+        <Button.scale
+          onPress={() => {
+            permissionCheck();
+          }}
+        >
+          <View style={styles.button}>
+            <CameraSvg width={18} height={18} />
+            <Text style={styles.buttonText}>촬영하기</Text>
+          </View>
+        </Button.scale>
+        <Button.scale
+          onPress={handlePressImgPicker}
+        >
+          <View
+            style={styles.albumSelect}
+          >
+            <ElbumSvg width={18} height={18} color={'#fff'} />
+            <Text style={styles.buttonText}>앨범에서 선택</Text>
+          </View>
+        </Button.scale>
 
         <View style={styles.indicatorContainer}>
           {shootingGuideData.map((_, index) => (
@@ -112,7 +143,7 @@ const ShootingGuide = () => {
 };
 
 const styles = StyleSheet.create({
-  ShootingGuideWrapper: {
+  shootingGuideWrapper: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -158,12 +189,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#7472EB',
   },
 
+  slideImg: {
+    width: '50%',       // 슬라이드 너비를 기준으로
+    height: undefined,   // 높이 자동 계산
+    aspectRatio: 1,      // 또는 원본 비율 (예: 16/9)
+  },
+
   // 하단 텍스트
   ShootingGuideBottom: {
     position: "relative",
     alignItems: "center",
     gap: 10,
     fontFamily: os.font(500, 500),
+    top: -20
   },
   mainDescription: {
     textAlign: "center",
@@ -185,9 +223,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
-    height: 34,
+    height: 40,
     borderRadius: 8,
     backgroundColor: '#7472EB',
+    top: -10
   },
   buttonText: {
     textAlign: 'center',
@@ -196,6 +235,17 @@ const styles = StyleSheet.create({
     fontFamily: os.font(500, 500),
     includeFontPadding: false,
   },
+
+  albumSelect: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    width: 300,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: '#95937E',
+  }
 })
 
 export default ShootingGuide;
