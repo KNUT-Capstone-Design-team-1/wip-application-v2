@@ -5,14 +5,14 @@ import { useNavigation } from "@react-navigation/native"
 import { Shadow } from "react-native-shadow-2";
 
 const SearchButtonList = () => {
-  const nav: any = useNavigation()
+  const nav: any = useNavigation();
 
   const handlePressSearchIdButton = () => {
-    nav.navigate('알약 식별 검색')
+    nav.navigate('알약 식별 검색');
   }
 
   const handlePressSearchImageButton = () => {
-    nav.navigate('알약 이미지 검색')
+    nav.navigate('촬영 가이드');
   }
 
   return (
