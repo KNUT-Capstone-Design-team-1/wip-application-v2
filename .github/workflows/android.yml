@@ -51,13 +51,13 @@ jobs:
         run: |
           pushd ./android
           ./gradlew assembleRelease
-          mv ./app/build/outputs/apk/release/app-release.apk ./app/build/outputs/apk/release/wip-$VERSION-${{ github.run_number }}.apk
+          mv ./app/build/outputs/apk/product/release/app-product-release.apk ./app/build/outputs/apk/product/release/wip-$VERSION-${{ github.run_number }}.apk
           ./gradlew bundleRelease
-          mv ./app/build/outputs/bundle/release/app-release.aab ./app/build/outputs/bundle/release/wip-$VERSION-${{ github.run_number }}.aab
+          mv ./app/build/outputs/bundle/productRelease/app-product-release.aab ./app/build/outputs/bundle/productRelease/wip-$VERSION-${{ github.run_number }}.aab
           popd
       - uses: actions/upload-artifact@v4
         with:
           name: wip-${{ env.VERSION  }}-${{ github.run_number }}
           path: |
-            ./android/app/build/outputs/apk/release/wip-${{ env.VERSION  }}-${{ github.run_number }}.apk
-            ./android/app/build/outputs/bundle/release/wip-${{ env.VERSION  }}-${{ github.run_number }}.aab
+            ./android/app/build/outputs/apk/product/release/wip-${{ env.VERSION  }}-${{ github.run_number }}.apk
+            ./android/app/build/outputs/bundle/productRelease/wip-${{ env.VERSION  }}-${{ github.run_number }}.aab
