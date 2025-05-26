@@ -1,7 +1,7 @@
 {
   "name": "whatispill",
-  "version": "0.0.1",
-  "private": true,
+  "version": "2.1.0",
+  "repository": "https://github.com/KNUT-Capstone-Design-team-1/wip-application-v2",
   "scripts": {
     "android": "react-native run-android --mode=productdebug -- --reset-cache",
     "ios": "react-native run-ios --scheme whatispill_production -- --reset-cache",

@@ -1,6 +1,6 @@
-name: wip-ios-build-test
+name: wip-ios
 
-run-name: ${{ github.actor }}-ios-build-test
+run-name: wip-ios-build
 
 on:
   workflow_dispatch:
@@ -41,8 +41,15 @@ jobs:
         run: |
           yarn set version berry
           yarn install
-          cd ios
+          pushd ios
           pod install
+          popd
+
+      - name: versioning
+        run: |
+          apt install -y jq
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up Sigining
         env:
@@ -76,8 +83,10 @@ jobs:
             -exportOptionsPlist ios/exportOptions.plist \
             -exportPath build/
 
+          mv build/whatispill.ipa build/whatispill-$VERSION-${{ github.run_number }}.ipa
+
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: whatispill.ipa
-          path: build/whatispill.ipa
+          name: wip-${{ env.VERSION  }}-${{ github.run_number }}
+          path: build/whatispill.ipa build/whatispill-${{ env.VERSION  }}-${{ github.run_number }}.ipa
