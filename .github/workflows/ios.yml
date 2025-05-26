@@ -47,7 +47,7 @@ jobs:
 
       - name: versioning
         run: |
-          apt install -y jq
+          sudo apt install -y jq
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
