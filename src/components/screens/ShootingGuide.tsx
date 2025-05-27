@@ -84,6 +84,7 @@ const ShootingGuide = () => {
           data={shootingGuideData}
           horizontal
           pagingEnabled
+          style={{height: 500}}
           keyExtractor={(_, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.slideImageWrapper}>
@@ -148,15 +149,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
-    flex: 1,
-    top: -5
+    top: -5,
+    width:Dimensions.get('window').width,
+    height: "100%"
   },
 
   // header
   noteHead: {
     paddingBottom: 2,
     color: '#000',
-    fontSize: font(14),
+    fontSize: font(16),
     fontFamily: os.font(600, 700),
     includeFontPadding: false,
   },
@@ -171,7 +173,8 @@ const styles = StyleSheet.create({
   slideImageWrapper: {
     alignItems: "center",
     width: width,
-    marginTop: 10
+    height: "100%",
+    marginTop: 10,
   },
   indicatorContainer: {
     flexDirection: 'row',
@@ -190,22 +193,27 @@ const styles = StyleSheet.create({
   },
 
   slideImg: {
-    width: '50%',       // 슬라이드 너비를 기준으로
-    height: undefined,   // 높이 자동 계산
-    aspectRatio: 1,      // 또는 원본 비율 (예: 16/9)
+    width: width * 0.5,
+    height: "50%",   // 높이 자동 계산
+    aspectRatio: 1,               // 정사각형
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
 
   // 하단 텍스트
   ShootingGuideBottom: {
     position: "relative",
     alignItems: "center",
+    justifyContent: "center",
+    height: "10%",
     gap: 10,
     fontFamily: os.font(500, 500),
-    top: -20
+    top: -30
   },
   mainDescription: {
     textAlign: "center",
     fontWeight: "700",
+    color: "#333",
     fontSize: font(16),
     fontFamily: os.font(500, 500),
   },
