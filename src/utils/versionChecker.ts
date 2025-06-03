@@ -53,13 +53,8 @@ export const checkAppVersion = async () => {
     if (isVersionChanged(saved, current)) {
       Alert.alert(
         '업데이트 안내',
-        `앱이 업데이트되었습니다.\n\n이전 버전: ${savedVersion}\n현재 버전: ${currentVersion}`,
-        [
-          {
-            text: '닫기',
-            style: 'cancel',
-          },
-          {
+        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${currentVersion}`,
+        [{
             text: '업데이트 하러 가기',
             onPress: openStore,
           },
