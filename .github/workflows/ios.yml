@@ -1,0 +1,92 @@
+name: wip-ios
+
+run-name: wip-ios-build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-ios:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: get-config
+        run: |
+          mkdir ./env
+          cat <<EOL > .env
+          REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
+
+          GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"
+          GOOGLE_CLOUD_INIT_INFO_URL="${{ secrets.GOOGLE_CLOUD_INIT_INFO_URL }}"
+          GOOGLE_CLOUD_DL_SERVER_URL="${{ secrets.GOOGLE_CLOUD_DL_SERVER_URL }}"
+          GOOGLE_CLOUD_DRUG_DETAIL_URL="${{ secrets.GOOGLE_CLOUD_DRUG_DETAIL_URL }}"
+
+          CLOUD_FLARE_RESOURCE_DOWNLOAD_URL="${{ secrets.CLOUD_FLARE_RESOURCE_DOWNLOAD_URL }}"
+          CLOUD_FLARE_RESOURCE_BUCKET="${{ secrets.CLOUD_FLARE_RESOURCE_BUCKET }}"
+          CLOUD_FLARE_TOKEN_VALUE="${{ secrets.CLOUD_FLARE_TOKEN_VALUE }}"
+          CLOUD_FLARE_ACCESS_KEY_ID="${{ secrets.CLOUD_FLARE_ACCESS_KEY_ID }}"
+          CLOUD_FLARE_SECRET_ACCESS_KEY="${{ secrets.CLOUD_FLARE_SECRET_ACCESS_KEY }}"
+          EOL
+
+      - name: Install dependencies
+        run: |
+          yarn set version berry
+          yarn install
+          pushd ios
+          pod install
+          popd
+
+      - name: versioning
+        run: |
+          sudo apt install -y jq
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Set up Sigining
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE }}
+        run: |
+          echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+          security import certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" -A
+          security create-keychain -p "temp_keychain" build.keychain
+          security list-keychains -s build.keychain
+          echo "$APPLE_PROVISIONING_PROFILE" | base64 --decode > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          mv profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Build IPA
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_BUNDLE_ID: ${{ secrets.APPLE_BUNDLE_ID }}
+        run: |
+          xcodebuild \
+            -workspace ios/whatispill.xcworkspace \
+            -scheme whatispill_production \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/whatispill.xcarchive archive
+
+          xcodebuild \
+            -exportArchive \
+            -archivePath build/whatispill.xcarchive \
+            -exportOptionsPlist ios/exportOptions.plist \
+            -exportPath build/
+
+          mv build/whatispill.ipa build/whatispill-$VERSION-${{ github.run_number }}.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: wip-${{ env.VERSION  }}-${{ github.run_number }}
+          path: build/whatispill.ipa build/whatispill-${{ env.VERSION  }}-${{ github.run_number }}.ipa

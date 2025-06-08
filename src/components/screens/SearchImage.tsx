@@ -1,56 +1,52 @@
 import { screenState } from "@/atoms/screen";
 import Button from "@/components/atoms/Button";
-import Layout, { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
+import Layout from "@/components/organisms/Layout";
 import { font, os } from "@/style/font";
 import { gstyles } from "@/style/globalStyle";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import { View, StyleSheet, Text, Platform, Image, Alert, Linking, PermissionsAndroid } from "react-native";
-import { PERMISSIONS, RESULTS, check, request } from "react-native-permissions";
-import { SvgXml } from "react-native-svg";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { View, StyleSheet, Text, Platform, Image, TouchableOpacity } from "react-native";
 import { useRecoilState } from "recoil";
 import CameraSvg from '@assets/svgs/camera.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import NoteSvg from '@assets/svgs/note.svg';
 import GuideFrameSvg from '@assets/svgs/guideFrame.svg';
-import { ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker";
 import { imgFileState } from "@/atoms/file";
 import { requestCameraPermission } from "@/utils/permission";
-import { imgPickerOption } from "@/constants/options";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SvgXml } from "react-native-svg";
+import { svgData } from "@/constants/svgDatas.tsx";
 
 const SearchImage = ({ route }: any): JSX.Element => {
     const nav: any = useNavigation();
     const [screen, setScreen] = useRecoilState(screenState);
     const [imgFile, setImgFile] = useRecoilState(imgFileState);
-
-    /* 샘플 사진 프레임 xml */
-    const GUIDE_FRAME = `
-    <svg width="233" height="269" viewBox="0 0 233 269" fill="none">
-        <path d="M27.5954 1H9C4.58172 1 1 4.58172 1 9V27.5483" stroke="black" stroke-width="2.5"/>
-        <path d="M232 27.5483L232 9C232 4.58172 228.418 1 224 1L205.405 0.999999" stroke="black" stroke-width="2.5"/>
-        <path d="M205.405 268L224 268C228.418 268 232 264.418 232 260L232 241.452" stroke="black" stroke-width="2.5"/>
-        <path d="M1 241.452L1 260C1 264.418 4.58172 268 9 268L27.5954 268" stroke="black" stroke-width="2.5"/>
-    </svg>
-    `
-    /* 물음표 아이콘 xml */
-    const GUIDE_ICON = `
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 15C11.6421 15 15 11.6421 15 7.5C15 3.35786 11.6421 0 7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15ZM7.69729 2.74998C6.3329 2.74998 5.17512 3.64058 4.78493 4.87373C4.65998 5.26864 4.87882 5.69008 5.27374 5.81504C5.66865 5.94 6.09009 5.72116 6.21505 5.32624C6.41171 4.70471 6.99952 4.24998 7.69729 4.24998C8.56004 4.24998 9.24999 4.94279 9.24999 5.7857C9.24999 6.11879 9.16198 6.29099 9.05624 6.4222C8.93229 6.576 8.77279 6.69413 8.5112 6.88788C8.47626 6.91375 8.43951 6.94098 8.40077 6.96982C8.10311 7.19142 7.71874 7.49178 7.42431 7.9545C7.12062 8.4318 6.94729 9.02272 6.94729 9.78566C6.94729 10.1999 7.28307 10.5357 7.69729 10.5357C8.1115 10.5357 8.44729 10.1999 8.44729 9.78566C8.44729 9.26292 8.56179 8.96101 8.68985 8.75974C8.82719 8.54391 9.01849 8.37998 9.29651 8.173C9.32711 8.15022 9.3599 8.1262 9.39442 8.10092C9.63844 7.92218 9.969 7.68005 10.2241 7.36347C10.5502 6.95895 10.75 6.45259 10.75 5.7857C10.75 4.10389 9.37795 2.74998 7.69729 2.74998ZM8.44729 11.9943C8.44729 11.5801 8.1115 11.2443 7.69729 11.2443C7.28307 11.2443 6.94729 11.5801 6.94729 11.9943V12C6.94729 12.4142 7.28307 12.75 7.69729 12.75C8.1115 12.75 8.44729 12.4142 8.44729 12V11.9943Z" fill="#A5A5A5"/>
-    </svg>
-    `
+    const [showGuide, setShowGuide] = useState<boolean | null>(null);
 
     const handleSetScreen = () => {
         setScreen('알약 검색');
     }
 
     /** 카메라 권한 확인 */
-    const permissionCheck = () => {
-        if (Platform.OS !== "ios" && Platform.OS !== "android") return;
-        requestCameraPermission(true, () => nav.navigate('카메라'));
+    const permissionCheck = async () => {
+        const seen = await AsyncStorage.getItem('hasSeenShootingGuide');
+
+        if (seen === "true") {
+            if (Platform.OS !== "ios" && Platform.OS !== "android") return;
+            requestCameraPermission(true, () => nav.navigate('카메라'));
+        } else {
+            nav.navigate('촬영 가이드');
+        }
+    };
+
+    const handleGuideComplete = async () => {
+        await AsyncStorage.setItem('hasSeenShootingGuide', 'true');
+        setShowGuide(false);
     };
 
     const handlePressCameraButton = () => {
         permissionCheck();
+        handleGuideComplete();
     }
 
     const handlePressImgPicker = async () => {
@@ -59,6 +55,12 @@ const SearchImage = ({ route }: any): JSX.Element => {
     }
 
     useEffect(() => {
+        const checkGuideShown = async () => {
+            const hasShown = await AsyncStorage.getItem('hasSeenShootingGuide');
+            setShowGuide(hasShown !== 'true'); // 처음이면 true 반환
+        };
+        checkGuideShown();
+
         nav.addListener('focus', () => handleSetScreen());
         return () => {
             nav.removeListener('focus', () => handleSetScreen());
@@ -75,9 +77,10 @@ const SearchImage = ({ route }: any): JSX.Element => {
             flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
-            overflow: 'hidden',
+            // overflow: 'hidden',
             paddingHorizontal: 15,
-            paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
+            // paddingBottom: 15 + (Platform.OS === 'ios' ? 0 : 0),
+            paddingBottom: 15,
             backgroundColor: '#fff',
         },
         guideFrameWrapper: {
@@ -89,9 +92,8 @@ const SearchImage = ({ route }: any): JSX.Element => {
             marginBottom: 30,
         },
         sampleImage: {
-            top: '-8%',
-            height: '180%',
-            resizeMode: 'contain',
+            top: '10%',
+            height: '150%',
         },
         button: {
             flexDirection: 'row',
@@ -127,6 +129,7 @@ const SearchImage = ({ route }: any): JSX.Element => {
             alignItems: 'center',
         },
         noteHeadWrapper: {
+            marginTop: 30,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 7,
@@ -146,11 +149,6 @@ const SearchImage = ({ route }: any): JSX.Element => {
             fontSize: font(14),
             fontFamily: os.font(400, 500),
             includeFontPadding: false,
-        },
-        warnTextWrapper: {
-            marginVertical: 8,
-            justifyContent: 'center',
-            alignItems: 'center'
         },
         warnText: {
             paddingLeft: 4,
@@ -182,6 +180,32 @@ const SearchImage = ({ route }: any): JSX.Element => {
         buttonImg: {
             width: 20,
             height: 20
+        },
+        guideTextWrapper: {
+            marginVertical: 8,
+            marginTop: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: "row",
+            display: "flex",
+            gap: 10,
+            width: "100%"
+        },
+        question: {
+            display: "flex",
+            backgroundColor: "#A5A5A5",
+            color: "#fff",
+            textAlign: "center",
+            borderRadius: 50,
+        },
+        questionText: {
+            width: 20,
+            height: 20,
+            textAlign: "center",
+            color: "#fff"
+        },
+        guideText: {
+            color: "#A5A5A5"
         }
     });
 
@@ -196,7 +220,6 @@ const SearchImage = ({ route }: any): JSX.Element => {
                             style={styles.sampleImage}
                             source={require('@assets/images/sampleGuide.png')}  // header에 들어갈 로고이미지.
                         />
-                        <GuideFrameSvg style={{ position: 'absolute' }} width={233} height={269} preserveAspectRatio="xMinYMax" />
                     </View>
                     <View style={styles.noteWrapper} >
                         <View style={styles.noteHeadWrapper}>
@@ -206,10 +229,21 @@ const SearchImage = ({ route }: any): JSX.Element => {
                         <Text style={styles.note}>네모칸 안에 알약이 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>알약에 글자가 선명히 보이도록 촬영해주세요</Text>
                         <Text style={styles.note}>하나의 알약만 보이도록 촬영해주세요</Text>
-                        <View style={styles.warnTextWrapper}>
-                            <Text style={styles.warnText}>현재 개발 중인 기능으로</Text>
-                            <Text style={styles.warnText}>결과가 정확하지 않을 수 있습니다.</Text>
-                        </View>
+                        <TouchableOpacity
+                          style={styles.guideTextWrapper}
+                          onPress={async () => {
+                              nav.navigate('촬영 가이드');
+                              setScreen('촬영 가이드');
+
+                              await AsyncStorage.clear();
+                          }}
+                        >
+                            <View style={styles.question}>
+                                {/*<Text style={styles.questionText}>?</Text>*/}
+                                <SvgXml xml={svgData.QUESTION_ICON} width={20} height={20} />
+                            </View>
+                            <Text style={styles.guideText}>촬영 가이드</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 

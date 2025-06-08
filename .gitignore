@@ -168,8 +168,10 @@ vendor/
 *.jks
 *.pem
 
-# etc
+# Environment
 .env
-.env.*
-/env/.env*
-/env/*.json
+
+# yarn
+.yarn/*.gz
+.pnp.cjs
+.pnp.loader.mjs

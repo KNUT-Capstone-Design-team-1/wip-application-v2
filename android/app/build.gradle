@@ -3,11 +3,9 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 project.ext.envConfigFiles = [
-    debug: "env/.env",
-    release: "env/.env",
-    developdebug: "env/.env",
-    productdebug: "env/.env",
-    anothercustombuild: ".env",
+    debug: ".env",
+    release: ".env",
+    productdebug: ".env",
 ]
 
 /**

@@ -1,20 +1,27 @@
 ---
 name: feature
-about: 새로 개발할 기능에 대한 필요성과 설계에 대한 내용 정리
-title: "[FEATURE]"
-labels: ''
-assignees: ''
-
+about: 기능 개발
+title: '[FEATURE]'
+labels: 'feature'
+type: 'Feature'
 ---
 
-### 1. 개요 (한 줄로 간단하게 작성)
-- 
+# 개요
 
-### 2. AS-IS (현재 상황 / 필요한 이유를 목록으로 작성)
-- 
+-
 
-### 3. TO-BE (목표에 대해 목록으로 작성)
-- 
+# AS-IS
 
-### 4. 비고 (기타 사항)
- -
+-
+
+# TO-BE
+
+-
+
+# 연관 이슈
+
+-
+
+# 비고
+
+-

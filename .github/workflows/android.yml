@@ -1,6 +1,6 @@
 name: wip-android
 
-run-name: ${{ github.actor }}-android
+run-name: wip-android-build
 
 on:
   workflow_dispatch:
@@ -14,7 +14,9 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
 
       - name: install-library
-        run: npm install
+        run: |
+          yarn set version berry
+          yarn install
 
       - name: get-key-store
         run: |
@@ -24,7 +26,7 @@ jobs:
       - name: get-config
         run: |
           mkdir ./env
-          cat <<EOL > ./env/.env
+          cat <<EOL > .env
           REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
 
           GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"
@@ -39,16 +41,23 @@ jobs:
           CLOUD_FLARE_SECRET_ACCESS_KEY="${{ secrets.CLOUD_FLARE_SECRET_ACCESS_KEY }}"
           EOL
 
-      - name: build-apk
-        run: npm run apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: "wip-${{ github.ref_name }}-${{ github.run_number }}-apk"
-          path: ./android/app/build/outputs/apk/product/release
+      - name: versioning
+        run: |
+          sudo apt install -y jq
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: build-aab
-        run: npm run aab
+      - name: build
+        run: |
+          pushd ./android
+          ./gradlew assembleRelease
+          mv ./app/build/outputs/apk/product/release/app-product-release.apk ./app/build/outputs/apk/product/release/wip-$VERSION-${{ github.run_number }}.apk
+          ./gradlew bundleRelease
+          mv ./app/build/outputs/bundle/productRelease/app-product-release.aab ./app/build/outputs/bundle/productRelease/wip-$VERSION-${{ github.run_number }}.aab
+          popd
       - uses: actions/upload-artifact@v4
         with:
-          name: "wip-${{ github.ref_name }}-${{ github.run_number }}-aab"
-          path: ./android/app/build/outputs/bundle/productRelease
+          name: wip-${{ env.VERSION  }}-${{ github.run_number }}
+          path: |
+            ./android/app/build/outputs/apk/product/release/wip-${{ env.VERSION  }}-${{ github.run_number }}.apk
+            ./android/app/build/outputs/bundle/productRelease/wip-${{ env.VERSION  }}-${{ github.run_number }}.aab
