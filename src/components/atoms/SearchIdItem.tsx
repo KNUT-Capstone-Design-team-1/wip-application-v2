@@ -1,32 +1,35 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React, { ReactNode } from 'react'
+import { View, Text, StyleSheet, GestureResponderEvent } from 'react-native'
 import { Shadow } from 'react-native-shadow-2'
 
 import Button from '@/components/atoms/Button'
 import { font, os } from '@/style/font'
-import { TItemData } from '@/constants/data'
 
 const SearchIdItem = React.memo(({
-  item,
+  children,
+  text,
   handlePressItem,
-  shapeSelected,
-  colorSelected
+  backgroundColor,
+  defaultColor = '#00000020',
+  selectColor,
+  isSelected,
 }: {
-  item: TItemData,
-  handlePressItem: (item: TItemData) => void,
-  shapeSelected: string[],
-  colorSelected: string[]
+  children: ReactNode,
+  text: string,
+  handlePressItem: (e: GestureResponderEvent) => void,
+  backgroundColor?: string,
+  defaultColor?: string,
+  selectColor: string,
+  isSelected: boolean
 }): JSX.Element => {
   return (
-    <Button.scaleFast style={styles.itemButtonWrapper} onPress={() => handlePressItem(item)}>
-      <Shadow startColor={shapeSelected.includes(item.category + item.key) || colorSelected.includes(item.category + item.key) ? '#7472EB' : '#00000020'} distance={6} style={styles.itemButton}>
-        {item.icon ?
-          <View style={styles.itemIconWrapper}>
-            {item.icon}
-          </View> :
-          null}
+    <Button.scaleFast style={styles.itemButtonWrapper} onPress={handlePressItem}>
+      <Shadow startColor={isSelected ? selectColor : defaultColor} distance={6} style={styles.itemButton}>
+        <View style={{ ...styles.itemIconWrapper, backgroundColor: backgroundColor ? backgroundColor : '#fff' }}>
+          {children}
+        </View>
         <View style={styles.itemTextWrapper}>
-          <Text style={styles.itemText}>{item.name}</Text>
+          <Text style={styles.itemText}>{text}</Text>
         </View>
       </Shadow>
     </Button.scaleFast>
@@ -41,18 +44,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 70,
     borderRadius: 8,
-    paddingVertical: 10,
   },
   itemIconWrapper: {
-    flex: 1,
+    flex: 3,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 8,
+    justifyContent: 'center',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
   },
   itemTextWrapper: {
-    flex: 1,
+    flex: 2,
     width: '100%',
+    borderTopColor: '#00000020',
+    borderTopWidth: 1.5,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   itemText: {
     fontSize: font(14),

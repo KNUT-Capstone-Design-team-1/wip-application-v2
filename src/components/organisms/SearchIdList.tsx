@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform, TextInput } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import { SectionGrid } from "react-native-super-grid";
 import { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
 import { idSelectData } from "@/constants/data";
@@ -7,11 +7,13 @@ import { font, os } from "@/style/font";
 import SearchSvg from "@/assets/svgs/search.svg"
 import { useSelectSearchId } from "@/hooks/useSelectSearchId";
 import SearchIdItem from "../atoms/SearchIdItem";
+import SearchIdInput from "@/components/organisms/SearchIdInput";
 
 const SearchIdList = (): JSX.Element => {
   const {
     btnState,
-    idText,
+    idFrontText,
+    idBackText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
@@ -30,32 +32,38 @@ const SearchIdList = (): JSX.Element => {
         keyExtractor={(item, index) => `${item.key} - ${index}`}
         renderItem={({ item }) =>
           <SearchIdItem
-            item={item}
-            handlePressItem={handlePressItem}
-            shapeSelected={shapeSelected}
-            colorSelected={colorSelected}
-          />
+            text={item.name}
+            handlePressItem={() => handlePressItem(item)}
+            backgroundColor={item.color}
+            selectColor='#7472EB'
+            isSelected={shapeSelected.includes(item.category + item.key) || colorSelected.includes(item.category + item.key) ? true : false}
+          >{item.icon ? item.icon : null}</SearchIdItem>
         }
         renderSectionHeader={({ section }) =>
           <View style={styles.sectionHeaderWrapper}>
             <Text style={styles.sectionHeaderText}>{section.title}</Text>
             {section.data.length ? null :
-              <View style={styles.sectionTextInputWrapper}>
-                <Text style={styles.sectionTextInputLabel}>앞면 또는 뒷면 식별 문자</Text>
-                <TextInput
-                  placeholder="식별 문자 (선택)"
-                  placeholderTextColor={"#cacaca"}
-                  onChangeText={handleSetIdText}
-                  value={idText}
-                  autoCapitalize="none"
-                  maxLength={15}
-                  autoComplete="off"
-                  inputMode="text"
-                  style={[styles.sectionTextInput, btnState && styles.error]} />
-                <View style={styles.sectionErrorWrapper}>
-                  {btnState ? <Text style={styles.sectionTextInputError}>'*' 또는 '?'를 제외하고 입력하세요</Text> : null}
-                </View>
-              </View>
+              <SearchIdInput
+                label="앞면 또는 뒷면 식별 문자 (선택)"
+                textInputs={
+                  [
+                    {
+                      placeholder: "앞면 문자",
+                      placeholderTextColor: "#cacaca",
+                      onChangeText: (val) => handleSetIdText({ text: val, direction: "front" }),
+                      value: idFrontText,
+                    },
+                    {
+                      placeholder: "뒷면 문자",
+                      placeholderTextColor: "#cacaca",
+                      onChangeText: (val) => handleSetIdText({ text: val, direction: "back" }),
+                      value: idBackText,
+                    }
+                  ]
+                }
+                errorState={btnState}
+                errorLabel="'*' 또는 '?'를 제외하고 입력하세요"
+              />
             }
           </View>
         }
@@ -98,43 +106,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     includeFontPadding: false,
     color: '#000'
-  },
-  sectionTextInputWrapper: {
-    width: "100%",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  sectionTextInputLabel: {
-    paddingLeft: 4,
-    paddingBottom: 4,
-    fontSize: font(14),
-    fontFamily: os.font(600, 700),
-    color: "#7472EB",
-    includeFontPadding: false
-  },
-  sectionTextInput: {
-    paddingVertical: 8,
-    paddingStart: 16,
-    borderWidth: 2,
-    borderRadius: 8,
-    borderColor: '#858585',
-    fontSize: font(16),
-    fontFamily: os.font(700, 800),
-    includeFontPadding: false,
-    maxHeight: font(16 * 3),
-    color: "#000",
-    backgroundColor: '#fff'
-  },
-  sectionErrorWrapper: {
-    minHeight: 21
-  },
-  sectionTextInputError: {
-    alignSelf: 'flex-end',
-    paddingRight: 4,
-    fontSize: font(13),
-    fontFamily: os.font(600, 700),
-    color: "#f00",
-    includeFontPadding: false
   },
   buttonWrapper: {
     position: 'absolute',
