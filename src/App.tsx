@@ -48,6 +48,10 @@ const App = (): React.JSX.Element => {
   };
 
   useEffect(() => {
+    // AsyncStorage.setItem('app_version', '0.0.1'); // 버전 낮추기 테스트용
+    // 앱 버전 체크
+    checkAppVersion();
+
     const checkDB = async () => {
       const result = await updateCheck();
       if (result) {
