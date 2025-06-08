@@ -118,7 +118,10 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
     params.push(param.PRINT_BACK)
   }
 
-  filters.push("(" + printFilter.join(' OR ') + ")")
+  if (printFilter.length > 0) {
+    filters.push("(" + printFilter.join(' OR ') + ")")
+  }
+
 
   if (param.COLOR_CLASS1.length != 0) {
     filters.push(`(COLOR_CLASS1 CONTAINS[c] {${param.COLOR_CLASS1.map((v) => {

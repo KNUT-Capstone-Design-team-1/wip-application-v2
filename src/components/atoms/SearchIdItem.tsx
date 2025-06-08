@@ -4,7 +4,6 @@ import { Shadow } from 'react-native-shadow-2'
 
 import Button from '@/components/atoms/Button'
 import { font, os } from '@/style/font'
-import { TItemData } from '@/constants/data'
 
 const SearchIdItem = React.memo(({
   children,
