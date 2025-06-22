@@ -23,12 +23,21 @@ export const useGetSearchData = () => {
   const getImageData = async () => {
     await postImageServer(imageBase64)
       .then((res: any) => {
-        if (res.data.success) {
-          const data: TPillSearchImageParam = { ITEM_SEQ: [] }
-          for (const d of res.data.data) {
-            data.ITEM_SEQ.push(d.ITEM_SEQ as string)
+        if (res.status === 200) {
+          const data: TPillSearchImageParam = res.data
+          console.log(data)
+
+          if (data.PRINT.length === 0 && data.SHAPE.length === 0 && data.COLOR.length === 0) {
+            nav.goBack();
+            Toast.show({
+              type: 'errorToast',
+              text1: '검색된 알약 정보가 없습니다.',
+            });
+            return;
           }
+
           setSearchData({ data, mode })
+          return;
         } else {
           nav.goBack();
           Toast.show({

@@ -21,7 +21,9 @@ type TPillSearchIdParam = {
 }
 
 type TPillSearchImageParam = {
-  ITEM_SEQ: string[]
+  PRINT: string[],
+  SHAPE: string[],
+  COLOR: string[],
 }
 
 /**
@@ -109,12 +111,14 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
   const params: string[] = []
 
   if (param.PRINT_FRONT != '') {
-    printFilter.push(`PRINT_FRONT LIKE[c] $${index++}`)
+    printFilter.push(`PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++}`)
+    params.push(param.PRINT_FRONT)
     params.push(param.PRINT_FRONT)
   }
 
   if (param.PRINT_BACK != '') {
-    printFilter.push(`PRINT_BACK LIKE[c] $${index++}`)
+    printFilter.push(`PRINT_BACK LIKE[c] $${index++} OR PRINT_FRONT LIKE[c] $${index++}`)
+    params.push(param.PRINT_BACK)
     params.push(param.PRINT_BACK)
   }
 
@@ -147,8 +151,56 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
 
 function getQueryForSearchImage(param: TPillSearchImageParam) {
 
-  const filter = `ITEM_SEQ CONTAINS[c] {${param.ITEM_SEQ.map((v, idx) => `$${idx}`).join(',')}}`
-  const params = param.ITEM_SEQ
+  let [PRINT_FRONT, PRINT_BACK] = param.PRINT
+  if (PRINT_FRONT != undefined && PRINT_FRONT.length > 0) {
+    PRINT_FRONT = '*' + PRINT_FRONT.replace(/(?<=.)|(?=.)/g, "*")
+  }
+
+  if (PRINT_BACK != undefined && PRINT_BACK.length > 0) {
+    PRINT_BACK = '*' + PRINT_BACK.replace(/(?<=.)|(?=.)/g, "*")
+  }
+
+  let filter = '';
+  let index = 0;
+  const printFilter: string[] = []
+  const filters: string[] = []
+  const params: string[] = []
+
+  if (PRINT_FRONT != undefined && PRINT_FRONT.length > 0) {
+    printFilter.push(`PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++}`)
+    params.push(PRINT_FRONT)
+    params.push(PRINT_FRONT)
+  }
+
+  if (PRINT_BACK != undefined && PRINT_BACK.length > 0) {
+    printFilter.push(`PRINT_BACK LIKE[c] $${index++} OR PRINT_FRONT LIKE[c] $${index++}`)
+    params.push(PRINT_BACK)
+    params.push(PRINT_BACK)
+  }
+
+  if (printFilter.length > 0) {
+    filters.push("(" + printFilter.join(' OR ') + ")")
+  }
+
+
+  if (param.COLOR.length != 0) {
+    filters.push(`(COLOR_CLASS1 CONTAINS[c] {${param.COLOR.map((v) => {
+      params.push(v)
+      return `$${index++}`
+    }).join(', ')}} OR COLOR_CLASS2 CONTAINS[c] {${param.COLOR.map((v) => {
+      params.push(v)
+      return `$${index++}`
+    }).join(', ')}})`)
+  }
+
+  if (param.SHAPE.length != 0) {
+    filters.push(`DRUG_SHAPE LIKE[c] {${param.SHAPE.map((v) => {
+      params.push(v)
+      return `$${index++}`
+    }).join(', ')}}`)
+  }
+
+  filter = filters.join(' AND ')
 
   return { filter, params }
 }
