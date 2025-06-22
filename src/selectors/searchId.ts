@@ -1,4 +1,4 @@
-import { TPillSearchIdParam } from "@/api/db/query";
+import { TPillSearchParam } from "@/api/db/query";
 import { searchIdBackState, searchIdColorState, searchIdFrontState, searchIdShapeState } from "@/atoms/searchId";
 import { idSelectData } from "@/constants/data";
 import _ from "lodash";
@@ -35,7 +35,7 @@ export const searchIdItems = selector({
     const searchIdFront = get(searchIdFrontState)
     const searchIdBack = get(searchIdBackState)
 
-    const data: TPillSearchIdParam = {
+    const data: TPillSearchParam = {
       PRINT_FRONT: '',
       PRINT_BACK: '',
       DRUG_SHAPE: [],

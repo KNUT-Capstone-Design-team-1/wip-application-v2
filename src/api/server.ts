@@ -10,6 +10,7 @@ const postImageServer = (base64: string | undefined) => {
       headers: {
         Authorization: `Bearer ${getToken()}`,
         "Content-Type": "application/json",
+        apiVersion: 2,
       },
       timeout: 1000 * 150
     }

@@ -1,34 +1,68 @@
 import { postImageServer } from "@/api/server";
-import { convertImgUriToBase64, getResizeImgUri } from "@/utils/image";
 import { handleError } from "@/utils/error";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Toast from "react-native-toast-message";
-import { TPillSearchImageParam } from "@/api/db/query";
-import { useRecoilRefresher_UNSTABLE, useResetRecoilState, useSetRecoilState } from "recoil";
+import { TPillSearchParam } from "@/api/db/query";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { searchDataState } from "@/atoms/query";
 import { searchFilterParams } from "@/selectors/query";
+import { searchImageBase64State } from "@/selectors/searchImage";
+import { searchImageAtom } from "@/atoms/searchImage";
+
+type TResImageData = {
+  PRINT: string[],
+  SHAPE: string[],
+  COLOR: string[],
+}
 
 export const useGetSearchData = () => {
   const route: any = useRoute();
   const mode = route.params.mode ?? 0;
   const initData = route.params.data
   const nav: any = useNavigation();
-  const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
   const setSearchData = useSetRecoilState(searchDataState)
   const resetSearchData = useResetRecoilState(searchDataState)
   const refreshFilter = useRecoilRefresher_UNSTABLE(searchFilterParams)
+  const imageBase64 = useRecoilValue(searchImageBase64State)
+  const resetSearchImage = useResetRecoilState(searchImageAtom)
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
     await postImageServer(imageBase64)
       .then((res: any) => {
-        if (res.data.success) {
-          const data: TPillSearchImageParam = { ITEM_SEQ: [] }
-          for (const d of res.data.data) {
-            data.ITEM_SEQ.push(d.ITEM_SEQ as string)
+        if (res.status === 200) {
+          const resData: TResImageData = res.data
+          console.log(resData)
+
+          if (resData.PRINT.length === 0 && resData.SHAPE.length === 0 && resData.COLOR.length === 0) {
+            nav.goBack();
+            Toast.show({
+              type: 'errorToast',
+              text1: '검색된 알약 정보가 없습니다.',
+            });
+            return;
           }
+
+          const data: TPillSearchParam = {
+            PRINT_FRONT: '',
+            PRINT_BACK: '',
+            DRUG_SHAPE: resData.SHAPE,
+            COLOR_CLASS1: resData.COLOR,
+            COLOR_CLASS2: resData.COLOR,
+          }
+
+          const [resPRINT_FRONT = '', resPRINT_BACK = ''] = resData.PRINT
+          if (resPRINT_FRONT.length > 0) {
+            data['PRINT_FRONT'] = '*' + resPRINT_FRONT.replace(/(?<=.)|(?=.)/g, "*")
+          }
+
+          if (resPRINT_BACK.length > 0) {
+            data['PRINT_BACK'] = '*' + resPRINT_BACK.replace(/(?<=.)|(?=.)/g, "*")
+          }
+
           setSearchData({ data, mode })
+          return;
         } else {
           nav.goBack();
           Toast.show({
@@ -53,18 +87,9 @@ export const useGetSearchData = () => {
       setSearchData({ data: initData, mode })
     }
 
-    if (initData && mode == 1) {
-      getResizeImgUri(initData).then((resized: string) => {
-        convertImgUriToBase64(resized).then((base64String: any) => {
-          setImageBase64(base64String);
-        })
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
-    }
-
     return (() => {
       resetSearchData()
+      resetSearchImage()
       refreshFilter()
     })
 

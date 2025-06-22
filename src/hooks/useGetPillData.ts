@@ -28,19 +28,6 @@ export const useGetPillData = (pageSize: number) => {
     const recogFilter = params.length == 0 ? queryRecog : queryRecog.filtered(filter, ...params)
     let recogArr
 
-    if ('ITEM_SEQ' in initData) {
-      const orderInitData: Record<string, number> = initData.ITEM_SEQ.reduce((acc: Record<string, number>, item: string, index: number) => {
-        acc[item] = index;
-        return acc
-      }, {} as Record<string, number>)
-
-      recogArr = recogFilter
-        .slice()
-        .sort((a: PillData, b: PillData) => {
-          return orderInitData[a.ITEM_SEQ] - orderInitData[b.ITEM_SEQ]
-        })
-    }
-
     if ((initData.PRINT_FRONT + initData.PRINT_BACK) != "") {
       const initVector = textToVector(initData.PRINT_FRONT + initData.PRINT_BACK)
 
