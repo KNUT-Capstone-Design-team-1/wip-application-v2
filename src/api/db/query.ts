@@ -1,18 +1,4 @@
 type TPillSearchParam = {
-  ITEM_SEQ?: string;
-  ITEM_NAME?: string;
-  ENTP_NAME?: string;
-  COLOR_CLASS1?: string;
-  COLOR_CLASS2?: string;
-  PRINT_FRONT?: string;
-  PRINT_BACK?: string;
-  LINE_FRONT?: string;
-  LINE_BACK?: string;
-  CHARTIN?: string;
-  DRUG_SHAPE?: string[];
-};
-
-type TPillSearchIdParam = {
   COLOR_CLASS1: string[];
   COLOR_CLASS2: string[];
   PRINT_FRONT: string;
@@ -20,89 +6,12 @@ type TPillSearchIdParam = {
   DRUG_SHAPE: string[];
 }
 
-type TPillSearchImageParam = {
-  PRINT: string[],
-  SHAPE: string[],
-  COLOR: string[],
-}
-
-/**
- *
- * @returns
- */
-function getColumnOfOperator() {
-  return {
-    andCols: ['ITEM_SEQ', 'ITEM_NAME', 'ENTP_NAME'],
-    orCols: [
-      'COLOR_CLASS1',
-      'COLOR_CLASS2',
-      'PRINT_FRONT',
-      'PRINT_BACK',
-      'LINE_FRONT',
-      'LINE_BACK',
-      'CHARTIN',
-    ],
-    inCols: ['DRUG_SHAPE'],
-  };
-}
-
 /**
  * 알약 검색을 위한 쿼리 필터 생성
  * @param param 검색 속성
  * @returns
  */
-function getQueryByType(param: TPillSearchParam) {
-  const { andCols, orCols, inCols } = getColumnOfOperator();
-
-  let andQuery = '';
-  let orQuery = '';
-  let inQuery = '';
-  const params: string[] = [];
-
-  let index = 0;
-
-  for (const [column, value] of Object.entries(param)) {
-    if (andCols.includes(column)) {
-      const queryStr = `${column} CONTAINS[c] $${index}`;
-
-      andQuery += !andQuery ? queryStr : ` AND ${queryStr}`;
-      params.push(value as string);
-
-      index += 1;
-    }
-
-    if (orCols.includes(column)) {
-      const queryStr = `${column} CONTAINS[c] $${index}`;
-
-      orQuery += !orQuery ? queryStr : ` OR ${queryStr}`;
-      params.push(value as string);
-
-      index += 1;
-    }
-
-    if (inCols.includes(column)) {
-      (value as string[]).forEach((v) => {
-        const queryStr = `${column} == $${index}`;
-
-        inQuery += !inQuery ? queryStr : ` OR ${queryStr}`;
-        params.push(v);
-
-        index += 1;
-      });
-    }
-  }
-
-  let filter = '';
-  [andQuery, orQuery, inQuery].forEach((query) => {
-    if (query) {
-      filter += filter ? ` OR (${query})` : `(${query})`;
-    }
-  });
-
-  return { filter, params };
-}
-
-function getQueryForSearchId(param: TPillSearchIdParam) {
+function getQueryForSearch(param: TPillSearchParam) {
 
   let filter = '';
   let index = 0;
@@ -149,69 +58,10 @@ function getQueryForSearchId(param: TPillSearchIdParam) {
   return { filter, params }
 }
 
-function getQueryForSearchImage(param: TPillSearchImageParam) {
-
-  let [PRINT_FRONT, PRINT_BACK] = param.PRINT
-  if (PRINT_FRONT != undefined && PRINT_FRONT.length > 0) {
-    PRINT_FRONT = '*' + PRINT_FRONT.replace(/(?<=.)|(?=.)/g, "*")
-  }
-
-  if (PRINT_BACK != undefined && PRINT_BACK.length > 0) {
-    PRINT_BACK = '*' + PRINT_BACK.replace(/(?<=.)|(?=.)/g, "*")
-  }
-
-  let filter = '';
-  let index = 0;
-  const printFilter: string[] = []
-  const filters: string[] = []
-  const params: string[] = []
-
-  if (PRINT_FRONT != undefined && PRINT_FRONT.length > 0) {
-    printFilter.push(`PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++}`)
-    params.push(PRINT_FRONT)
-    params.push(PRINT_FRONT)
-  }
-
-  if (PRINT_BACK != undefined && PRINT_BACK.length > 0) {
-    printFilter.push(`PRINT_BACK LIKE[c] $${index++} OR PRINT_FRONT LIKE[c] $${index++}`)
-    params.push(PRINT_BACK)
-    params.push(PRINT_BACK)
-  }
-
-  if (printFilter.length > 0) {
-    filters.push("(" + printFilter.join(' OR ') + ")")
-  }
-
-
-  if (param.COLOR.length != 0) {
-    filters.push(`(COLOR_CLASS1 CONTAINS[c] {${param.COLOR.map((v) => {
-      params.push(v)
-      return `$${index++}`
-    }).join(', ')}} OR COLOR_CLASS2 CONTAINS[c] {${param.COLOR.map((v) => {
-      params.push(v)
-      return `$${index++}`
-    }).join(', ')}})`)
-  }
-
-  if (param.SHAPE.length != 0) {
-    filters.push(`DRUG_SHAPE LIKE[c] {${param.SHAPE.map((v) => {
-      params.push(v)
-      return `$${index++}`
-    }).join(', ')}}`)
-  }
-
-  filter = filters.join(' AND ')
-
-  return { filter, params }
-}
-
 export type {
-  TPillSearchImageParam,
-  TPillSearchIdParam
+  TPillSearchParam
 }
 
 export {
-  getQueryByType,
-  getQueryForSearchImage,
-  getQueryForSearchId
+  getQueryForSearch
 }

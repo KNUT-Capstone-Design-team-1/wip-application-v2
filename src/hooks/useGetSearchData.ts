@@ -3,12 +3,18 @@ import { handleError } from "@/utils/error";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
-import { TPillSearchImageParam } from "@/api/db/query";
+import { TPillSearchParam } from "@/api/db/query";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { searchDataState } from "@/atoms/query";
 import { searchFilterParams } from "@/selectors/query";
 import { searchImageBase64State } from "@/selectors/searchImage";
 import { searchImageAtom } from "@/atoms/searchImage";
+
+type TResImageData = {
+  PRINT: string[],
+  SHAPE: string[],
+  COLOR: string[],
+}
 
 export const useGetSearchData = () => {
   const route: any = useRoute();
@@ -23,20 +29,36 @@ export const useGetSearchData = () => {
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
-    console.log(imageBase64)
     await postImageServer(imageBase64)
       .then((res: any) => {
         if (res.status === 200) {
-          const data: TPillSearchImageParam = res.data
-          console.log(data)
+          const resData: TResImageData = res.data
+          console.log(resData)
 
-          if (data.PRINT.length === 0 && data.SHAPE.length === 0 && data.COLOR.length === 0) {
+          if (resData.PRINT.length === 0 && resData.SHAPE.length === 0 && resData.COLOR.length === 0) {
             nav.goBack();
             Toast.show({
               type: 'errorToast',
               text1: '검색된 알약 정보가 없습니다.',
             });
             return;
+          }
+
+          const data: TPillSearchParam = {
+            PRINT_FRONT: '',
+            PRINT_BACK: '',
+            DRUG_SHAPE: resData.SHAPE,
+            COLOR_CLASS1: resData.COLOR,
+            COLOR_CLASS2: resData.COLOR,
+          }
+
+          const [resPRINT_FRONT = '', resPRINT_BACK = ''] = resData.PRINT
+          if (resPRINT_FRONT.length > 0) {
+            data['PRINT_FRONT'] = '*' + resPRINT_FRONT.replace(/(?<=.)|(?=.)/g, "*")
+          }
+
+          if (resPRINT_BACK.length > 0) {
+            data['PRINT_BACK'] = '*' + resPRINT_BACK.replace(/(?<=.)|(?=.)/g, "*")
           }
 
           setSearchData({ data, mode })
