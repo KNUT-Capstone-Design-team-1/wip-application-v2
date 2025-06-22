@@ -6,7 +6,7 @@ import { font, os } from "@/style/font";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef } from "react";
 import { View, StyleSheet, Platform, Image, Text, Alert, Animated, Easing } from "react-native";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { getCropImage, getImgPath } from "@/utils/image";
 import { launchImageLibrary } from "react-native-image-picker";
 import { imgPickerOption } from "@/constants/options";
@@ -18,6 +18,7 @@ import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Toast from "react-native-toast-message";
 import { requestCameraPermission } from "@/utils/permission";
+import { searchImageAtom } from "@/atoms/searchImage";
 
 const SearchCrop = (): JSX.Element => {
     const nav: any = useNavigation();
@@ -27,6 +28,7 @@ const SearchCrop = (): JSX.Element => {
     const viewShotRef = useRef<any>(null);
     const [screen, setScreen]: any = useRecoilState(screenState);
     const [imgFile, setImgFile]: any = useRecoilState(imgFileState);
+    const setSearchImage = useSetRecoilState(searchImageAtom)
 
     /** 화살표 반복 애니메이션 */
     const downArrowAni = () => {
@@ -114,6 +116,7 @@ const SearchCrop = (): JSX.Element => {
     const mergeImages = async () => {
         if (viewShotRef.current) {
             viewShotRef.current.capture().then((uri: any) => {
+                setSearchImage(uri)
                 nav.replace('알약 검색 결과', { data: uri, mode: 1 });
             });
         }

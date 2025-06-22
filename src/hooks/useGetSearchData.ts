@@ -1,26 +1,29 @@
 import { postImageServer } from "@/api/server";
-import { convertImgUriToBase64, getResizeImgUri } from "@/utils/image";
 import { handleError } from "@/utils/error";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { TPillSearchImageParam } from "@/api/db/query";
-import { useRecoilRefresher_UNSTABLE, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { searchDataState } from "@/atoms/query";
 import { searchFilterParams } from "@/selectors/query";
+import { searchImageBase64State } from "@/selectors/searchImage";
+import { searchImageAtom } from "@/atoms/searchImage";
 
 export const useGetSearchData = () => {
   const route: any = useRoute();
   const mode = route.params.mode ?? 0;
   const initData = route.params.data
   const nav: any = useNavigation();
-  const [imageBase64, setImageBase64] = useState<string | undefined>(undefined);
   const setSearchData = useSetRecoilState(searchDataState)
   const resetSearchData = useResetRecoilState(searchDataState)
   const refreshFilter = useRecoilRefresher_UNSTABLE(searchFilterParams)
+  const imageBase64 = useRecoilValue(searchImageBase64State)
+  const resetSearchImage = useResetRecoilState(searchImageAtom)
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
+    console.log(imageBase64)
     await postImageServer(imageBase64)
       .then((res: any) => {
         if (res.status === 200) {
@@ -62,18 +65,9 @@ export const useGetSearchData = () => {
       setSearchData({ data: initData, mode })
     }
 
-    if (initData && mode == 1) {
-      getResizeImgUri(initData).then((resized: string) => {
-        convertImgUriToBase64(resized).then((base64String: any) => {
-          setImageBase64(base64String);
-        })
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
-    }
-
     return (() => {
       resetSearchData()
+      resetSearchImage()
       refreshFilter()
     })
 
