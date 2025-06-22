@@ -9972,6 +9972,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-device-info@npm:^14.0.4":
+  version: 14.0.4
+  resolution: "react-native-device-info@npm:14.0.4"
+  peerDependencies:
+    react-native: "*"
+  checksum: 10c0/3d89519b4e9f9f130b352f5243282f8b807aba0f55ccc0e1dc9f15b285215949751491ef2f11f1984a55f0f5e0ae76cd16620d2cdfcc118e2ca5f39d300d5524
+  languageName: node
+  linkType: hard
+
 "react-native-exit-app@npm:^2.0.0":
   version: 2.0.0
   resolution: "react-native-exit-app@npm:2.0.0"
@@ -10045,6 +10054,13 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/0da1133e1ea2474577ebb91ba8af2f567d131489781ba2a73af0198f100c1ba5390cc9479e492abd7dd217c8bedc6f41794e961c7125aced9068ced07f2d96f5
+  languageName: node
+  linkType: hard
+
+"react-native-in-app-review@npm:^4.3.5":
+  version: 4.3.5
+  resolution: "react-native-in-app-review@npm:4.3.5"
+  checksum: 10c0/7adbfd91f6ad7a84f2148728c5387bf8d80f0bf4cb5229bf4d8ea728051c90bda297ecc1c8564921622667bf9cdc1c288b4e57ab30c090d6397f01d55d349247
   languageName: node
   linkType: hard
 
@@ -12080,6 +12096,7 @@ __metadata:
     react-native: "npm:0.73.6"
     react-native-canvas: "npm:^0.1.39"
     react-native-config: "npm:^1.5.1"
+    react-native-device-info: "npm:^14.0.4"
     react-native-exit-app: "npm:^2.0.0"
     react-native-fs: "npm:^2.20.0"
     react-native-gesture-handler: "npm:2.15.0"
@@ -12087,6 +12104,7 @@ __metadata:
     react-native-gradle-plugin: "npm:^0.71.19"
     react-native-haptic-feedback: "npm:^2.2.0"
     react-native-image-picker: "npm:^7.2.3"
+    react-native-in-app-review: "npm:^4.3.5"
     react-native-linear-gradient: "npm:^2.8.3"
     react-native-navigation-bar-color: "npm:^2.0.2"
     react-native-permissions: "npm:^4.1.5"
