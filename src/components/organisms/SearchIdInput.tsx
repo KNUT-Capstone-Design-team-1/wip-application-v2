@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     fontSize: font(14),
     fontFamily: os.font(600, 700),
-    color: "#7472EB",
+    color: "#4D4DAD",
     includeFontPadding: false
   },
   sectionTextInputSplitWrapper: {
@@ -68,12 +68,12 @@ const styles = StyleSheet.create({
     paddingStart: 16,
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: '#858585',
+    borderColor: '#444',
     fontSize: font(16),
     fontFamily: os.font(700, 800),
     includeFontPadding: false,
     maxHeight: font(16 * 3),
-    color: "#000",
+    color: "#444",
     backgroundColor: '#fff'
   },
   sectionErrorWrapper: {

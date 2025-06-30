@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
     },
     subText: {
-        color: '#aaa',
+        color: '#444',
     },
     rightArrow: {
     },

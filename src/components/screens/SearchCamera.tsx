@@ -455,7 +455,7 @@ const SearchCamera = (): JSX.Element => {
             color: '#FF6868',
         },
         noteBack: {
-            color: '#8598FF',
+            color: '#75a3ec',
         },
         noteComplete: {
             color: '#fffa5f',
