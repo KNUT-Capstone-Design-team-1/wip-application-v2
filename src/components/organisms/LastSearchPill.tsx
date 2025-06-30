@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   noListText: {
-    color: '#969696',
+    color: '#444',
     fontSize: font(14),
     fontFamily: os.font(400, 400),
     includeFontPadding: false,

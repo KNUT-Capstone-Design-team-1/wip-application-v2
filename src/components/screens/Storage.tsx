@@ -55,7 +55,7 @@ const Storage = (): JSX.Element => {
         numberText: {
             fontSize: font(14),
             fontFamily: os.font(500, 500),
-            color: '#848484',
+            color: '#444',
             includeFontPadding: false,
             paddingBottom: 0,
         },

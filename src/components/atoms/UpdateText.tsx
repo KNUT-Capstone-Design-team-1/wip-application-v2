@@ -29,7 +29,7 @@ const UpdateText = () => {
     updateText: {
       fontFamily: os.font(400, 400),
       fontSize: font(14),
-      color: '#777',
+      color: '#444',
       includeFontPadding: false,
     },
   });

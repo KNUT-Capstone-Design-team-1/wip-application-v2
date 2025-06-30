@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     fontSize: font(12),
     fontFamily: os.font(500, 500),
     textAlign: 'right',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 25,
     paddingRight: 16,

@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: '#7472EB',
-    backgroundColor: '#7472EB'
+    borderColor: '#6563ed',
+    backgroundColor: '#6563ed'
   },
   buttonText: {
     fontSize: font(16),
