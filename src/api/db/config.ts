@@ -13,18 +13,7 @@ const dbConfig: Realm.Configuration = {
   schemaVersion,
   encryptionKey: stringToInt8Array(Config.REALM_ENCRYPTION_KEY as string),
   path: RNFS.DocumentDirectoryPath + "/default.realm",
-  onMigration: (oldRealm, newRealm) => {
-    if (oldRealm.schemaVersion < 2) {
-      const oldObjects = oldRealm.objects('PillData');
-      const newObjects = newRealm.objects('PillData');
-
-      for (let i = 0; i < oldObjects.length; i += 1) {
-        newObjects[i].MARK_CODE_FRONT = null;
-        newObjects[i].MARK_CODE_BACK = null;
-        newObjects[i].FORM_CODE = null;
-      }
-    }
-  }
+  onMigration: (oldRealm, newRealm) => {}
 }
 
 const updateDBConfig: Realm.Configuration = {
