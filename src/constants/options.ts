@@ -1,11 +1,20 @@
-import { ImageLibraryOptions } from "react-native-image-picker";
+import { Options } from "react-native-image-crop-picker";
 import { DeviceFilter } from "react-native-vision-camera";
 
-export const imgPickerOption: ImageLibraryOptions = {
+export const imgPickerOption: Options = {
   mediaType: "photo",
-  selectionLimit: 1,
-  maxHeight: 640,
-  maxWidth: 640,
+  cropping: true,
+  height: 640,
+  width: 640,
+  cropperToolbarTitle: '',
+  // For Android
+  cropperActiveWidgetColor: '#7472EB',
+  cropperStatusBarColor: '#000000',
+  cropperToolbarColor: '#000000',
+  cropperToolbarWidgetColor: '#7472EB',
+  // For iOS
+  cropperChooseText: '선택',
+  cropperCancelText: '취소',
 }
 
 export const cameraDeviceOption: DeviceFilter = {
