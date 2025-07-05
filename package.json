@@ -106,5 +106,8 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.9.1",
+  "config": {
+    "databaseResourceVersion": "2_20250705"
+  }
 }

@@ -6,6 +6,7 @@ import 'react-native-get-random-values'
 import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { updateDBConfig } from "@api/db/config";
 import pLimit from "p-limit"
+import packageJSON from "../../../package.json";
 
 type TRangeAndLength = {
   start: number,
@@ -17,6 +18,7 @@ export class DBResClient {
   private readonly client: S3Client
   private tenMB = 1024 * 1024 * 10
   private contents: any = null;
+  private resourceVersion: string;
   public resSize: number = 0;
   public resCount: number = 0;
 
@@ -29,6 +31,7 @@ export class DBResClient {
         secretAccessKey: Config.CLOUD_FLARE_SECRET_ACCESS_KEY as string
       }
     })
+    this.resourceVersion = packageJSON?.config?.databaseResourceVersion;
     console.log("create DBResClient")
   }
 
@@ -110,7 +113,7 @@ export class DBResClient {
     }
   }
 
-  public async getResourceList(mode: string = 'initial') {
+  public async getResourceList(mode: string = `initial_${this.resourceVersion}`) {
     this.resSize = 0;
     const command = new ListObjectsV2Command({
       Bucket: Config.CLOUD_FLARE_RESOURCE_BUCKET,

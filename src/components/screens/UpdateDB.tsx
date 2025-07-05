@@ -11,6 +11,9 @@ import { upsertDB } from "@/api/update";
 import { getItem, setItem } from "@/utils/storage";
 import Toast from "react-native-toast-message";
 import { useAlert } from "@/hooks/useAlert";
+import packageJSON from '../../../package.json';
+
+const resourceVersion = packageJSON?.config?.databaseResourceVersion;
 
 const resClient = DBResClient.getInstance();
 let isExitApp = false
@@ -70,7 +73,11 @@ const UpdateDB = (): JSX.Element => {
 
     const getResourceInfo = async () => {
       const lastUpdateDate = await getItem('lastUpdateDate');
-      await resClient.getResourceList(lastUpdateDate !== '' ? 'update' : 'initial');
+
+      const resourceType = lastUpdateDate !== '' ? 'update' : 'initial';
+      const resourceFileName = `${resourceType}_${resourceVersion}`;
+
+      await resClient.getResourceList(resourceFileName);
       showAlert(
         "DB 업데이트",
         'DB 업데이트가 필요합니다' + `\n` + '다운로드 용량:' + formatBytes(resClient.resSize) + `\n` + '(wifi 사용권장)',
