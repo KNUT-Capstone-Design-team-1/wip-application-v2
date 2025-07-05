@@ -13,7 +13,7 @@ import Toast from "react-native-toast-message";
 import { useAlert } from "@/hooks/useAlert";
 import packageJSON from '../../../package.json';
 
-const resourceVersion = packageJSON?.config?.databaseResourceVersion;
+const resourceVersion = packageJSON.config.databaseResourceVersion;
 
 const resClient = DBResClient.getInstance();
 let isExitApp = false

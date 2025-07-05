@@ -31,7 +31,7 @@ export class DBResClient {
         secretAccessKey: Config.CLOUD_FLARE_SECRET_ACCESS_KEY as string
       }
     })
-    this.resourceVersion = packageJSON?.config?.databaseResourceVersion;
+    this.resourceVersion = packageJSON.config.databaseResourceVersion;
     console.log("create DBResClient")
   }
 
