@@ -7,8 +7,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef } from "react";
 import { View, StyleSheet, Platform, Image, Text, Alert, Animated, Easing } from "react-native";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { getCropImage, getImgPath } from "@/utils/image";
-import { launchImageLibrary } from "react-native-image-picker";
+import { getImgPath } from "@/utils/image";
+import { openPicker, clean as cleanPicker, type Image as ImageType } from 'react-native-image-crop-picker'
 import { imgPickerOption } from "@/constants/options";
 import ArrowLeftSvg from '@assets/svgs/arrow_left.svg';
 import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
@@ -83,7 +83,12 @@ const SearchCrop = (): JSX.Element => {
     }
 
     const handlePressRePick = async (direction: string) => {
-        const response = await launchImageLibrary(imgPickerOption);
+        const response: ImageType | null = await openPicker(imgPickerOption)
+            .catch((err) => {
+                // when user cancel picker
+                return null;
+            });
+
         let result;
         if (imgFile) {
             result = { ...imgFile };
@@ -91,13 +96,8 @@ const SearchCrop = (): JSX.Element => {
             result = { front: null, back: null };
         }
 
-        if (response.didCancel) { }
-        else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage)
-        else {
-            const uris: any[] = [];
-
-            response.assets?.forEach((value) => uris.push(value));
-            result[direction] = await getCropImage(uris[0], 1);
+        if (response) {
+            result[direction] = response;
             setImgFile(result);
         }
     }
@@ -133,145 +133,8 @@ const SearchCrop = (): JSX.Element => {
         downArrowAni();
         noteUpAni();
         noteOpacityAni();
+        cleanPicker();
     }, [])
-
-    const styles = StyleSheet.create({
-        scrollViewWrapper: {
-            flex: 1,
-            backgroundColor: '#fff',
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-        },
-        viewWrapper: {
-            flex: 1,
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            overflow: 'hidden',
-            paddingHorizontal: 15,
-            paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
-            backgroundColor: '#ffffff',
-        },
-        imgViewWrapper: {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-        },
-        cropImgList: {
-            flexDirection: 'row',
-            gap: 12,
-            position: 'relative',
-            width: '100%',
-            marginTop: 30,
-            borderColor: '#000000',
-        },
-        cropImgWrapper: {
-            alignItems: 'center',
-            position: 'relative',
-            flex: 1,
-        },
-        cropImg: {
-            width: '100%',
-            aspectRatio: '1/1',
-            borderRadius: 10,
-        },
-        emptyImg: {
-            padding: 14,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-            aspectRatio: '1/1',
-            borderRadius: 10,
-            backgroundColor: '#efeff7',
-        },
-        emptyImgText: {
-            width: '100%',
-            textAlign: 'center',
-            color: '#a1a1a1',
-            fontSize: font(14),
-            fontFamily: os.font(400, 400),
-            includeFontPadding: false,
-            paddingBottom: 0,
-        },
-        btnWrapper: {
-            flexDirection: 'row',
-            gap: 8,
-            height: 54,
-        },
-        reTryBtn: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-            height: '100%',
-            paddingHorizontal: 32,
-            backgroundColor: '#6A6A93',
-            borderRadius: 8,
-            overflow: 'hidden',
-        },
-        searchBtnWrapper: {
-            flex: 1,
-        },
-        searchBtn: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            gap: 8,
-            height: '100%',
-            alignItems: 'center',
-            paddingHorizontal: 18,
-            backgroundColor: '#7472EB',
-            borderRadius: 8,
-            overflow: 'hidden',
-        },
-        btnText: {
-            textAlign: 'center',
-            color: '#fff',
-            fontSize: font(15),
-            fontFamily: os.font(500, 600),
-            paddingBottom: 2,
-            includeFontPadding: false,
-        },
-        noteTextWrapper: {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            marginBottom: 60,
-            opacity: noteOpacityAnimation,
-            transform: [{ translateY: noteUpAnimation }],
-        },
-        noteText: {
-            textAlign: 'center',
-            color: '#000',
-            fontSize: font(16),
-            fontFamily: os.font(500, 500),
-            includeFontPadding: false,
-            paddingBottom: 22,
-        },
-        pickButtonWrapper: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 6,
-            marginTop: 6,
-            paddingVertical: 16,
-            paddingHorizontal: 16,
-        },
-        labelText: {
-            color: '#000',
-            fontSize: font(14),
-            fontFamily: os.font(500, 500),
-            includeFontPadding: false,
-            paddingBottom: 10,
-        },
-        pickButton: {
-            color: '#A5A5A5',
-            fontSize: font(14),
-            fontFamily: os.font(500, 500),
-            includeFontPadding: false,
-            paddingBottom: 1,
-        },
-        downArrow: {
-            transform: [{ translateY: downArrowInterpolated }],
-        }
-    });
 
     return (
         <Layout.default>
@@ -282,7 +145,6 @@ const SearchCrop = (): JSX.Element => {
             <View style={styles.viewWrapper}>
                 <View style={styles.imgViewWrapper}>
                     <View style={styles.cropImgList}>
-
                         <View style={styles.cropImgWrapper}>
                             <Text style={styles.labelText}>앞면</Text>
                             <Button.scale onPress={() => handlePressRePick('front')}>
@@ -321,9 +183,9 @@ const SearchCrop = (): JSX.Element => {
                         </View>
                     </View>
 
-                    <Animated.View style={styles.noteTextWrapper}>
+                    <Animated.View style={[styles.noteTextWrapper, { opacity: noteOpacityAnimation, transform: [{ translateY: noteUpAnimation }] }]}>
                         <Text style={styles.noteText}>{`위 알약 사진이 제대로 나왔다면,\n아래 검색 버튼을 눌러주세요!`}</Text>
-                        <Animated.View style={styles.downArrow}>
+                        <Animated.View style={{ transform: [{ translateY: downArrowInterpolated }] }}>
                             <ArrowDownSvg />
                             <ArrowDownSvg />
                         </Animated.View>
@@ -346,5 +208,138 @@ const SearchCrop = (): JSX.Element => {
         </Layout.default>
     )
 }
+
+const styles = StyleSheet.create({
+    scrollViewWrapper: {
+        flex: 1,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+    },
+    viewWrapper: {
+        flex: 1,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: 'hidden',
+        paddingHorizontal: 15,
+        paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
+        backgroundColor: '#ffffff',
+    },
+    imgViewWrapper: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    cropImgList: {
+        flexDirection: 'row',
+        gap: 12,
+        position: 'relative',
+        width: '100%',
+        marginTop: 30,
+        borderColor: '#000000',
+    },
+    cropImgWrapper: {
+        alignItems: 'center',
+        position: 'relative',
+        flex: 1,
+    },
+    cropImg: {
+        width: '100%',
+        aspectRatio: '1/1',
+        borderRadius: 10,
+    },
+    emptyImg: {
+        padding: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        aspectRatio: '1/1',
+        borderRadius: 10,
+        backgroundColor: '#efeff7',
+    },
+    emptyImgText: {
+        width: '100%',
+        textAlign: 'center',
+        color: '#a1a1a1',
+        fontSize: font(14),
+        fontFamily: os.font(400, 400),
+        includeFontPadding: false,
+        paddingBottom: 0,
+    },
+    btnWrapper: {
+        flexDirection: 'row',
+        gap: 8,
+        height: 54,
+    },
+    reTryBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        height: '100%',
+        paddingHorizontal: 32,
+        backgroundColor: '#6A6A93',
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    searchBtnWrapper: {
+        flex: 1,
+    },
+    searchBtn: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 8,
+        height: '100%',
+        alignItems: 'center',
+        paddingHorizontal: 18,
+        backgroundColor: '#7472EB',
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    btnText: {
+        textAlign: 'center',
+        color: '#fff',
+        fontSize: font(15),
+        fontFamily: os.font(500, 600),
+        paddingBottom: 2,
+        includeFontPadding: false,
+    },
+    noteTextWrapper: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        marginBottom: 60,
+    },
+    noteText: {
+        textAlign: 'center',
+        color: '#000',
+        fontSize: font(16),
+        fontFamily: os.font(500, 500),
+        includeFontPadding: false,
+        paddingBottom: 22,
+    },
+    pickButtonWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        marginTop: 6,
+        paddingVertical: 16,
+        paddingHorizontal: 16,
+    },
+    labelText: {
+        color: '#000',
+        fontSize: font(14),
+        fontFamily: os.font(500, 500),
+        includeFontPadding: false,
+        paddingBottom: 10,
+    },
+    pickButton: {
+        color: '#A5A5A5',
+        fontSize: font(14),
+        fontFamily: os.font(500, 500),
+        includeFontPadding: false,
+        paddingBottom: 1,
+    },
+});
 
 export default SearchCrop;
