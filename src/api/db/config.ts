@@ -3,10 +3,10 @@ import { PillData } from "@/api/db/models/pillData";
 import { PillBox } from "@/api/db/models/pillBox";
 import Config from "react-native-config";
 import RNFS from "react-native-fs";
-import packageJSON from "../../../package.json";
+import wipConfig from '../../../wip_config.json';
+import {GLOBAL_STATE} from '@/global_state';
 
-const resourceVersion = packageJSON.config.databaseResourceVersion;
-const schemaVersion = parseInt(resourceVersion.split('_')[0]);
+const {schemaVersion} = wipConfig.database;
 
 const dbConfig: Realm.Configuration = {
   schema: [PillData, PillBox],
@@ -31,8 +31,9 @@ const updateDBConfig: Realm.Configuration = {
   schema: [PillData],
   schemaVersion,
   encryptionKey: stringToInt8Array(Config.REALM_ENCRYPTION_KEY as string),
-  path: RNFS.DocumentDirectoryPath + `/res/update_${resourceVersion}.realm`
-}
+  path:
+    RNFS.DocumentDirectoryPath + `/res/update_${GLOBAL_STATE.dbResourceVersion}.realm`,
+};
 
 export {
   dbConfig,

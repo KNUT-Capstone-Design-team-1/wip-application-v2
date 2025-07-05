@@ -11,9 +11,7 @@ import { upsertDB } from "@/api/update";
 import { getItem, setItem } from "@/utils/storage";
 import Toast from "react-native-toast-message";
 import { useAlert } from "@/hooks/useAlert";
-import packageJSON from '../../../package.json';
-
-const resourceVersion = packageJSON.config.databaseResourceVersion;
+import {GLOBAL_STATE} from '@/global_state';
 
 const resClient = DBResClient.getInstance();
 let isExitApp = false
@@ -75,7 +73,7 @@ const UpdateDB = (): JSX.Element => {
       const lastUpdateDate = await getItem('lastUpdateDate');
 
       const resourceType = lastUpdateDate !== '' ? 'update' : 'initial';
-      const resourceFileName = `${resourceType}_${resourceVersion}`;
+      const resourceFileName = `${resourceType}_${GLOBAL_STATE.dbResourceVersion}`;
 
       await resClient.getResourceList(resourceFileName);
       showAlert(
