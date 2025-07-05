@@ -3,7 +3,7 @@ import { getItem } from '@/utils/storage'
 import { getDBInfo } from './client/dbInfo'
 import { dbConfig, updateDBConfig } from './db/config'
 import { TPillData } from './db/models/pillData'
-
+import { GLOBAL_STATE } from '@/global_state'
 
 // TODO: 업데이트 progress 표시
 const upsertDB = async (callback: (idx: number, total: number) => void | undefined) => {
@@ -44,6 +44,8 @@ const upsertDB = async (callback: (idx: number, total: number) => void | undefin
 const updateCheck = async () => {
   const lastUpdateDate = await getItem('lastUpdateDate').then((res) => new Date(res == '' ? 0 : res))
   const curDBdate = await getDBInfo().then((res) => new Date(res.resourceDate))
+
+  GLOBAL_STATE.curDBdate = curDBdate
 
   return lastUpdateDate < curDBdate ? true : false
 }

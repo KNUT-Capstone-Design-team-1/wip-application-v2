@@ -6,6 +6,7 @@ import 'react-native-get-random-values'
 import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { updateDBConfig } from "@api/db/config";
 import pLimit from "p-limit"
+import { GLOBAL_STATE } from "@/global_state";
 
 type TRangeAndLength = {
   start: number,
@@ -110,7 +111,7 @@ export class DBResClient {
     }
   }
 
-  public async getResourceList(mode: string = 'initial') {
+  public async getResourceList(mode: string = `initial_${GLOBAL_STATE.dbResourceVersion}`) {
     this.resSize = 0;
     const command = new ListObjectsV2Command({
       Bucket: Config.CLOUD_FLARE_RESOURCE_BUCKET,

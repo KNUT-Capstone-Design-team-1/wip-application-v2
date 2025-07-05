@@ -17,6 +17,9 @@ export type TPillData = {
   CLASS_NAME?: string // 분류명
   ETC_OTC_CODE?: string // 전문/일반
   ITEM_PERMIT_DATE?: string // 품목 허가 일자
+  MARK_CODE_FRONT?: string; // 표기코드앞
+  MARK_CODE_BACK?: string; // 표기코드뒤
+  FORM_CODE?: string; // 제형코드
   // Finished Medicine Permission Detail Schema
   CHART?: string // 성상
   BAR_CODE?: string // 표준코드
@@ -48,6 +51,9 @@ export class PillData extends Realm.Object<PillData> {
   CLASS_NAME?: string // 분류명
   ETC_OTC_CODE?: string // 전문/일반
   ITEM_PERMIT_DATE?: string // 품목 허가 일자
+  MARK_CODE_FRONT?: string; // 표기코드앞
+  MARK_CODE_BACK?: string; // 표기코드뒤
+  FORM_CODE?: string; // 제형코드
   // Finished Medicine Permission Detail Schema
   CHART?: string // 성상
   BAR_CODE?: string // 표준코드
@@ -79,6 +85,9 @@ export class PillData extends Realm.Object<PillData> {
       CLASS_NAME: 'string?', // 분류명
       ETC_OTC_CODE: 'string?', // 전문/일반
       ITEM_PERMIT_DATE: 'string?', // 품목 허가 일자
+      MARK_CODE_FRONT: 'string?', // 표기코드앞
+      MARK_CODE_BACK: 'string?', // 표기코드뒤
+      FORM_CODE: 'string?', // 제형코드
       // Finished Medicine Permission Detail Schema
       CHART: 'string?', // 성상
       BAR_CODE: 'string?', // 표준코드
