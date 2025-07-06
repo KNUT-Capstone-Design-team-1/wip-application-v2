@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { toastConfig } from '@/constants/toast';
 import { clearLogBoxLogs, ignoreSpecificLogs } from '@/utils/logBox';
 import Navigation from '@navigation/Navigation';
@@ -13,6 +14,8 @@ import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
 import { checkAppVersion } from "@/utils/versionChecker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import wipConfig from '../wip_config.json';
+import { GLOBAL_STATE } from './global_state';
 
 // TODO: android 구버전 권한 및 사용 테스트 필요 target < android 13
 
@@ -54,6 +57,10 @@ const App = (): React.JSX.Element => {
 
     const checkDB = async () => {
       const result = await updateCheck();
+
+      const {schemaVersion, minorVersion} = wipConfig.database;
+      GLOBAL_STATE.dbResourceVersion = `${schemaVersion}_${dayjs(GLOBAL_STATE.curDBdate).format('YYYYMMDD')}_${minorVersion}`;
+      
       if (result) {
         setUpdateDB(true)
       }
