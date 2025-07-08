@@ -30,8 +30,8 @@ export const convertImgUriToBase64 = async (imageUri: any) => {
 /** 이미지파일의 전체 경로 추출 */
 export const getImgPath = (img: any) => {
   let result: string = '';
-  if (img.uri) result = img.uri
-  if (img.path) result = img.path
+  if (img.uri) result = img.uri;
+  if (img.path) result = img.path;
 
   if (!result.includes('file://')) {
     if (!result.includes('data:image/')) {
@@ -40,7 +40,7 @@ export const getImgPath = (img: any) => {
   }
 
   return result;
-}
+};
 
 /** 이미지파일 가운데 per 만큼 크롭 */
 export const getCropImage = async (img: any, per: number) => {
@@ -66,7 +66,9 @@ export const getCropImage = async (img: any, per: number) => {
 
     // 이미지를 크롭
     const cropedImg = await ImageEditor.cropImage(uri, cropData);
-    const result = !!img.uri ? { ...img, uri: cropedImg.uri } : { ...img, path: cropedImg.path }
+    const result = img.uri
+      ? { ...img, uri: cropedImg.uri }
+      : { ...img, path: cropedImg.path };
     return result;
   } catch (error) {
     console.error('Error cropping image:', error);
@@ -75,7 +77,11 @@ export const getCropImage = async (img: any, per: number) => {
 
 export const getResizeImgUri = async (uri: string) => {
   const { width, height }: any = await new Promise((resolve, reject) => {
-    Image.getSize('file://' + uri, (width, height) => resolve({ width, height }), reject);
+    Image.getSize(
+      'file://' + uri,
+      (width, height) => resolve({ width, height }),
+      reject,
+    );
   });
   const cropData: any = {
     offset: { x: 0, y: 0 },
@@ -87,4 +93,4 @@ export const getResizeImgUri = async (uri: string) => {
   const cropedImg = await ImageEditor.cropImage('file://' + uri, cropData);
 
   return cropedImg.uri;
-}
+};

@@ -5,45 +5,42 @@ const dotProduct = (x: number[], y: number[]) => {
     sum += x[i] * y[i];
   }
 
-  return sum
-}
+  return sum;
+};
 
 const magnitude = (x: number[], y: number[]) => {
-  let xSum: number = 0
-  let ySum: number = 0
+  let xSum: number = 0;
+  let ySum: number = 0;
 
   for (let i = 0; i < x.length; i++) {
     xSum += x[i] * x[i];
     ySum += y[i] * y[i];
   }
 
-  return {
-    magX: Math.sqrt(xSum),
-    magY: Math.sqrt(ySum)
-  }
-}
+  return { magX: Math.sqrt(xSum), magY: Math.sqrt(ySum) };
+};
 
 const calcCosineSimilarity = (xVector: number[], yVector: number[]) => {
   if (xVector.length !== yVector.length) {
-    throw new Error('입련된 두 배열의 길이가 같아야 합니다')
+    throw new Error('입련된 두 배열의 길이가 같아야 합니다');
   }
 
-  const dotProd = dotProduct(xVector, yVector)
-  const { magX, magY } = magnitude(xVector, yVector)
+  const dotProd = dotProduct(xVector, yVector);
+  const { magX, magY } = magnitude(xVector, yVector);
 
-  return dotProd / (magX * magY)
-}
+  return dotProd / (magX * magY);
+};
 
-const maxTextLength = 29
+const maxTextLength = 29;
 
 const textToVector = (text: string) => {
-  const vector = new Array<number>(maxTextLength).fill(0)
+  const vector = new Array<number>(maxTextLength).fill(0);
 
   for (let i = 0; i < text.length; i++) {
-    vector[i] = text.charCodeAt(i)
+    vector[i] = text.charCodeAt(i);
   }
 
-  return vector
-}
+  return vector;
+};
 
-export { calcCosineSimilarity, textToVector }
+export { calcCosineSimilarity, textToVector };

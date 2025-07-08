@@ -12,6 +12,8 @@ export const clearLogBoxLogs = () => {
 
 export const ignoreSpecificLogs = () => {
   if (__DEV__) {
-    LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered.']);
+    LogBox.ignoreLogs([
+      'Sending `onAnimatedValueUpdate` with no listeners registered.',
+    ]);
   }
 };

@@ -1,33 +1,33 @@
-import { screenState } from "@/atoms/screen";
-import Button from "@/components/atoms/Button";
-import { font, os } from "@/style/font";
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
-import { DimensionValue, StyleSheet, Text, View } from "react-native";
-import { SvgXml } from "react-native-svg";
-import { useRecoilValue } from "recoil";
+import { screenState } from '@/atoms/screen';
+import Button from '@/components/atoms/Button';
+import { font, os } from '@/style/font';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { DimensionValue, StyleSheet, Text, View } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import { useRecoilValue } from 'recoil';
 
 interface INavWrapperProps {
-  iconXML: INavIcon,
-  name: string,
-  navName: string,
-  tabName?: string,
+  iconXML: INavIcon;
+  name: string;
+  navName: string;
+  tabName?: string;
 }
 
 interface INavIcon {
-  ACTIVE: INavIconInfo,
-  INACTIVE: INavIconInfo,
+  ACTIVE: INavIconInfo;
+  INACTIVE: INavIconInfo;
 }
 interface INavIconInfo {
-  XML: string,
-  SIZE: INavIconSize,
-  TOP?: number,
+  XML: string;
+  SIZE: INavIconSize;
+  TOP?: number;
 }
 
 interface INavIconSize {
-  width: DimensionValue | undefined,
-  height: DimensionValue | undefined,
-  top?: number,
+  width: DimensionValue | undefined;
+  height: DimensionValue | undefined;
+  top?: number;
 }
 
 const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
@@ -36,22 +36,22 @@ const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
   const [currentScreen, setCurrentScreen] = useState<string | null>(null);
 
   const getIconSize = () => {
-    let result: INavIconSize = { width: 25, height: 25, top: 0 }
+    let result: INavIconSize = { width: 25, height: 25, top: 0 };
 
     if (navName === currentScreen) {
       result.width = iconXML.ACTIVE.SIZE.width;
       result.height = iconXML.ACTIVE.SIZE.height;
-      if (!!iconXML.ACTIVE.TOP) {
+      if (iconXML.ACTIVE.TOP) {
         result.top = iconXML.ACTIVE.TOP;
       }
     } else {
-      if (!!iconXML.INACTIVE.TOP) {
+      if (iconXML.INACTIVE.TOP) {
         result.top = iconXML.INACTIVE.TOP;
       }
     }
 
     return result;
-  }
+  };
 
   const handlePressTab = () => {
     if (tabName) {
@@ -59,47 +59,46 @@ const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
     } else {
       nav.navigate(navName);
     }
-  }
+  };
 
   const styles = StyleSheet.create({
-    tab: {
-      position: 'relative',
-      flex: 1,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingTop: 12,
-      paddingBottom: 10,
-    },
-    iconWrapper: {
-      width: '100%',
-      alignItems: 'center',
-      //marginBottom: 6,
-    },
     icon: {
-      width: getIconSize().width,
       height: getIconSize().height,
       top: getIconSize().top,
+      width: getIconSize().width,
+    },
+    iconWrapper: {
+      alignItems: 'center',
+      width: '100%',
+      //marginBottom: 6,
     },
     label: {
-      position: 'absolute',
-      width: '100%',
-      top: 28,
       color: '#000',
-      fontSize: font(13),
       fontFamily: os.font(400, 500),
-      textAlign: 'center',
-      paddingBottom: 0,
+      fontSize: font(13),
       includeFontPadding: false,
-    }
+      paddingBottom: 0,
+      position: 'absolute',
+      textAlign: 'center',
+      top: 28,
+      width: '100%',
+    },
+    tab: {
+      alignItems: 'center',
+      flex: 1,
+      height: 50,
+      justifyContent: 'center',
+      paddingBottom: 10,
+      paddingTop: 12,
+      position: 'relative',
+    },
   });
 
   useEffect(() => {
     if (screen) {
       setCurrentScreen(screen);
-
     }
-  }, [screen])
+  }, [screen]);
 
   return (
     <Button.scale
@@ -112,7 +111,7 @@ const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
           <View style={styles.icon}>
             <SvgXml
               xml={
-                (currentScreen && currentScreen === navName)
+                currentScreen && currentScreen === navName
                   ? iconXML.ACTIVE.XML
                   : iconXML.INACTIVE.XML
               }
@@ -124,7 +123,7 @@ const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
         <Text style={styles.label}>{name}</Text>
       </View>
     </Button.scale>
-  )
-}
+  );
+};
 
 export default NavButton;

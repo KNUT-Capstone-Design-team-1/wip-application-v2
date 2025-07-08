@@ -1,27 +1,27 @@
-import { View, Text, TextInput, StyleSheet, ColorValue } from "react-native"
-import { font, os } from "@/style/font"
+import { View, Text, TextInput, StyleSheet, ColorValue } from 'react-native';
+import { font, os } from '@/style/font';
 
 const SearchIdInput = ({
   label,
   textInputs,
   errorLabel,
-  errorState
+  errorState,
 }: {
-  label?: string,
+  label?: string;
   textInputs: {
-    placeholder?: string,
-    placeholderTextColor?: ColorValue,
-    onChangeText: (val: string) => void,
-    value?: string
-  }[],
-  errorLabel?: string,
-  errorState: boolean
+    placeholder?: string;
+    placeholderTextColor?: ColorValue;
+    onChangeText: (val: string) => void;
+    value?: string;
+  }[];
+  errorLabel?: string;
+  errorState: boolean;
 }): JSX.Element => {
   return (
     <View style={styles.sectionTextInputWrapper}>
       <Text style={styles.sectionTextInputLabel}>{label}</Text>
       <View style={styles.sectionTextInputSplitWrapper}>
-        {textInputs.map((textInput) =>
+        {textInputs.map((textInput) => (
           <TextInput
             key={textInput.placeholder}
             placeholder={textInput.placeholder}
@@ -33,63 +33,62 @@ const SearchIdInput = ({
             autoComplete="off"
             inputMode="text"
             style={[styles.sectionTextInput, errorState && styles.error]}
-          />)}
+          />
+        ))}
       </View>
       <View style={styles.sectionErrorWrapper}>
-        {errorState ? <Text style={styles.sectionTextInputError}>{errorLabel}</Text> : null}
+        {errorState ? (
+          <Text style={styles.sectionTextInputError}>{errorLabel}</Text>
+        ) : null}
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  sectionTextInputWrapper: {
-    width: "100%",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  sectionTextInputLabel: {
-    paddingLeft: 4,
-    paddingBottom: 4,
-    fontSize: font(14),
-    fontFamily: os.font(600, 700),
-    color: "#4D4DAD",
-    includeFontPadding: false
-  },
-  sectionTextInputSplitWrapper: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-    width: '100%',
-  },
+  error: { borderColor: '#f00' },
+  sectionErrorWrapper: { minHeight: 21 },
   sectionTextInput: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingStart: 16,
-    borderWidth: 2,
-    borderRadius: 8,
+    backgroundColor: '#fff',
     borderColor: '#444',
-    fontSize: font(16),
+    borderRadius: 8,
+    borderWidth: 2,
+    color: '#444',
+    flex: 1,
     fontFamily: os.font(700, 800),
+    fontSize: font(16),
     includeFontPadding: false,
     maxHeight: font(16 * 3),
-    color: "#444",
-    backgroundColor: '#fff'
-  },
-  sectionErrorWrapper: {
-    minHeight: 21
+    paddingStart: 16,
+    paddingVertical: 8,
   },
   sectionTextInputError: {
     alignSelf: 'flex-end',
-    paddingRight: 4,
-    fontSize: font(13),
+    color: '#f00',
     fontFamily: os.font(600, 700),
-    color: "#f00",
-    includeFontPadding: false
+    fontSize: font(13),
+    includeFontPadding: false,
+    paddingRight: 4,
   },
-  error: {
-    borderColor: '#f00'
+  sectionTextInputLabel: {
+    color: '#4D4DAD',
+    fontFamily: os.font(600, 700),
+    fontSize: font(14),
+    includeFontPadding: false,
+    paddingBottom: 4,
+    paddingLeft: 4,
   },
-})
+  sectionTextInputSplitWrapper: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
+  },
+  sectionTextInputWrapper: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    width: '100%',
+  },
+});
 
-export default SearchIdInput
+export default SearchIdInput;

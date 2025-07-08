@@ -12,7 +12,7 @@ import UpdateDB from '@/components/screens/UpdateDB';
 import { RealmProvider } from '@realm/react';
 import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
-import { checkAppVersion } from "@/utils/versionChecker";
+import { checkAppVersion } from '@/utils/versionChecker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import wipConfig from '../wip_config.json';
 import { GLOBAL_STATE } from './global_state';
@@ -25,7 +25,7 @@ import { GLOBAL_STATE } from './global_state';
 // TODO: initDB 표시 로직 확인
 // TODO: 전체 코드 jsdoc 작성
 const App = (): React.JSX.Element => {
-  const [updateDB, setUpdateDB] = useState(false)
+  const [updateDB, setUpdateDB] = useState(false);
 
   useEffect(() => {
     // 테스트로 앱 버전 바꿔보기
@@ -37,7 +37,10 @@ const App = (): React.JSX.Element => {
 
     ignoreSpecificLogs();
 
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
 
     return () => {
       subscription.remove();
@@ -58,13 +61,13 @@ const App = (): React.JSX.Element => {
     const checkDB = async () => {
       const result = await updateCheck();
 
-      const {schemaVersion, minorVersion} = wipConfig.database;
+      const { schemaVersion, minorVersion } = wipConfig.database;
       GLOBAL_STATE.dbResourceVersion = `${schemaVersion}_${dayjs(GLOBAL_STATE.curDBdate).format('YYYYMMDD')}_${minorVersion}`;
-      
+
       if (result) {
-        setUpdateDB(true)
+        setUpdateDB(true);
       }
-    }
+    };
     checkDB();
     SplashScreen.hide();
   }, []);
@@ -73,18 +76,12 @@ const App = (): React.JSX.Element => {
     <RealmProvider {...dbConfig}>
       <AlertProvider>
         <RecoilRoot>
-          {updateDB ? <UpdateDB /> :
-            <Navigation />
-          }
-          <Toast
-            config={toastConfig}
-            position='bottom'
-            bottomOffset={130}
-          />
+          {updateDB ? <UpdateDB /> : <Navigation />}
+          <Toast config={toastConfig} position="bottom" bottomOffset={130} />
         </RecoilRoot>
       </AlertProvider>
     </RealmProvider>
   );
-}
+};
 
 export default App;

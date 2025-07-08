@@ -1,11 +1,11 @@
 const stringToInt8Array = (data: string): Int8Array => {
-  const res = data.match(/-?\d+/g)?.map(Number)
-  return new Int8Array(res ?? [])
-}
+  const res = data.match(/-?\d+/g)?.map(Number);
+  return new Int8Array(res ?? []);
+};
 
 const deepCopyRealmObj = <T extends object>(data: T): T => {
-  return JSON.parse(JSON.stringify(data))
-}
+  return JSON.parse(JSON.stringify(data));
+};
 
 /* 객체 복사 재귀 사용
 import { Dictionary } from "realm"
@@ -56,8 +56,4 @@ const deepCopyRealmObj = <T extends object>(data: T): T => {
 }
 */
 
-
-export {
-  stringToInt8Array,
-  deepCopyRealmObj
-}
+export { stringToInt8Array, deepCopyRealmObj };

@@ -1,13 +1,17 @@
-import { View, Text, StyleSheet, Platform } from "react-native";
-import { SectionGrid } from "react-native-super-grid";
-import { StatusBarHeight, defaultHeaderHeight, windowHeight } from "@/components/organisms/Layout";
-import { idSelectData } from "@/constants/data";
-import Button from "@/components/atoms/Button";
-import { font, os } from "@/style/font";
-import SearchSvg from "@/assets/svgs/search.svg"
-import { useSelectSearchId } from "@/hooks/useSelectSearchId";
-import SearchIdItem from "../atoms/SearchIdItem";
-import SearchIdInput from "@/components/organisms/SearchIdInput";
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { SectionGrid } from 'react-native-super-grid';
+import {
+  StatusBarHeight,
+  defaultHeaderHeight,
+  windowHeight,
+} from '@/components/organisms/Layout';
+import { idSelectData } from '@/constants/data';
+import Button from '@/components/atoms/Button';
+import { font, os } from '@/style/font';
+import SearchSvg from '@/assets/svgs/search.svg';
+import { useSelectSearchId } from '@/hooks/useSelectSearchId';
+import SearchIdItem from '../atoms/SearchIdItem';
+import SearchIdInput from '@/components/organisms/SearchIdInput';
 
 const SearchIdList = (): JSX.Element => {
   const {
@@ -19,7 +23,7 @@ const SearchIdList = (): JSX.Element => {
     colorSelected,
     handlePressItem,
     handlePressInit,
-    handlePressSearch
+    handlePressSearch,
   } = useSelectSearchId();
 
   return (
@@ -30,43 +34,50 @@ const SearchIdList = (): JSX.Element => {
         spacing={16}
         sections={idSelectData}
         keyExtractor={(item, index) => `${item.key} - ${index}`}
-        renderItem={({ item }) =>
+        renderItem={({ item }) => (
           <SearchIdItem
             text={item.name}
             handlePressItem={() => handlePressItem(item)}
             backgroundColor={item.color}
-            selectColor='#7472EB'
-            isSelected={shapeSelected.includes(item.category + item.key) || colorSelected.includes(item.category + item.key) ? true : false}
-          >{item.icon ? item.icon : null}</SearchIdItem>
-        }
-        renderSectionHeader={({ section }) =>
+            selectColor="#7472EB"
+            isSelected={
+              shapeSelected.includes(item.category + item.key) ||
+              colorSelected.includes(item.category + item.key)
+                ? true
+                : false
+            }
+          >
+            {item.icon ? item.icon : null}
+          </SearchIdItem>
+        )}
+        renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeaderWrapper}>
             <Text style={styles.sectionHeaderText}>{section.title}</Text>
-            {section.data.length ? null :
+            {section.data.length ? null : (
               <SearchIdInput
                 label="앞면 또는 뒷면 식별 문자 (선택)"
-                textInputs={
-                  [
-                    {
-                      placeholder: "앞면 문자",
-                      placeholderTextColor: "#cacaca",
-                      onChangeText: (val) => handleSetIdText({ text: val, direction: "front" }),
-                      value: idFrontText,
-                    },
-                    {
-                      placeholder: "뒷면 문자",
-                      placeholderTextColor: "#cacaca",
-                      onChangeText: (val) => handleSetIdText({ text: val, direction: "back" }),
-                      value: idBackText,
-                    }
-                  ]
-                }
+                textInputs={[
+                  {
+                    placeholder: '앞면 문자',
+                    placeholderTextColor: '#cacaca',
+                    onChangeText: (val) =>
+                      handleSetIdText({ text: val, direction: 'front' }),
+                    value: idFrontText,
+                  },
+                  {
+                    placeholder: '뒷면 문자',
+                    placeholderTextColor: '#cacaca',
+                    onChangeText: (val) =>
+                      handleSetIdText({ text: val, direction: 'back' }),
+                    value: idBackText,
+                  },
+                ]}
                 errorState={btnState}
                 errorLabel="'*' 또는 '?'를 제외하고 입력하세요"
               />
-            }
+            )}
           </View>
-        }
+        )}
         renderSectionFooter={() => <View style={{ marginBottom: 21 }} />}
         contentContainerStyle={{ paddingBottom: 48 }}
       />
@@ -79,78 +90,73 @@ const SearchIdList = (): JSX.Element => {
         <Button.scale onPress={handlePressSearch} disabled={btnState}>
           <View style={[styles.searchButton, btnState && styles.btnDisabled]}>
             <SearchSvg width={14} height={14} color={'#fff'} />
-            <Text style={{ color: '#fff', ...styles.buttonText }}>알약 검색하기</Text>
+            <Text style={{ color: '#fff', ...styles.buttonText }}>
+              알약 검색하기
+            </Text>
           </View>
         </Button.scale>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  viewWrapper: {
-    minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    overflow: 'hidden',
-    paddingTop: 21,
-    paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
-    backgroundColor: '#ffffff',
-  },
-  sectionHeaderWrapper: {
-    width: '100%'
-  },
-  sectionHeaderText: {
-    fontSize: font(18),
+  btnDisabled: { backgroundColor: '#cacaca', borderColor: '#cacaca' },
+  buttonText: {
     fontFamily: os.font(700, 800),
-    textAlign: 'center',
+    fontSize: font(16),
     includeFontPadding: false,
-    color: '#000'
+    textAlign: 'center',
   },
   buttonWrapper: {
-    position: 'absolute',
-    width: '100%',
-    height: 54,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.8)',
     bottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
     flexDirection: 'row',
+    height: 54,
     justifyContent: 'space-evenly',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)'
+    position: 'absolute',
+    width: '100%',
   },
+  error: { borderColor: '#f00' },
   resetButton: {
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    justifyContent: 'center',
-    borderWidth: 1.5,
+    backgroundColor: '#fff',
     borderColor: '#cacaca',
-    backgroundColor: '#fff'
+    borderRadius: 8,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 12,
   },
   searchButton: {
-    flexDirection: 'row',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    borderWidth: 1.5,
+    backgroundColor: '#6563ed',
     borderColor: '#6563ed',
-    backgroundColor: '#6563ed'
+    borderRadius: 8,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 12,
   },
-  buttonText: {
-    fontSize: font(16),
+  sectionHeaderText: {
+    color: '#000',
     fontFamily: os.font(700, 800),
+    fontSize: font(18),
     includeFontPadding: false,
     textAlign: 'center',
   },
-  error: {
-    borderColor: '#f00'
+  sectionHeaderWrapper: { width: '100%' },
+  viewWrapper: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
+    overflow: 'hidden',
+    paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
+    paddingTop: 21,
   },
-  btnDisabled: {
-    borderColor: '#cacaca',
-    backgroundColor: '#cacaca'
-  }
-})
+});
 
 export default SearchIdList;

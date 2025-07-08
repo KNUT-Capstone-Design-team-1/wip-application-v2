@@ -1,23 +1,28 @@
-import { font, os } from "@/style/font";
-import { StyleSheet, Text, View } from "react-native";
-import CustomChip from "./CustomChip";
+import { font, os } from '@/style/font';
+import { StyleSheet, Text, View } from 'react-native';
+import CustomChip from './CustomChip';
 
 interface IProps {
-  label: string,
-  ct: string,
-  searchValue?: string,
-  replaceValue?: string
+  label: string;
+  ct: string;
+  searchValue?: string;
+  replaceValue?: string;
 }
 
 interface IPropsChips {
-  label: string,
-  ct: string[],
-  searchValue?: string,
-  replaceValue?: string
+  label: string;
+  ct: string[];
+  searchValue?: string;
+  replaceValue?: string;
 }
 
 const PillInfo = {
-  default: ({ label, ct, searchValue = "|", replaceValue = "\n" }: IProps): JSX.Element => {
+  default: ({
+    label,
+    ct,
+    searchValue = '|',
+    replaceValue = '\n',
+  }: IProps): JSX.Element => {
     let _ct = '-';
 
     if (ct) {
@@ -29,58 +34,67 @@ const PillInfo = {
         <Text style={styles.infoHeadText}>{label}</Text>
         <Text style={styles.infoContentsText}>{_ct ?? '-'}</Text>
       </View>
-    )
+    );
   },
-  chip: ({ label, ct, searchValue = "", replaceValue = "" }: IPropsChips): JSX.Element => {
+  chip: ({
+    label,
+    ct,
+    searchValue = '',
+    replaceValue = '',
+  }: IPropsChips): JSX.Element => {
     let _ct: string[] = [];
 
     if (ct) {
-      _ct = ct.map((item) => item.replaceAll(searchValue, replaceValue).replaceAll(/\[.*?\]/g, ''))
+      _ct = ct.map((item) =>
+        item.replaceAll(searchValue, replaceValue).replaceAll(/\[.*?\]/g, ''),
+      );
     }
 
     return (
       <View style={styles.info}>
         <Text style={styles.infoHeadText}>{label}</Text>
         <View style={styles.infoChipsWrapper}>
-          {ct.map((item, index) => (
-            (item != '') && <CustomChip key={index} text={item} textStyle={styles.infoChipsText} />
-          ))}
+          {ct.map(
+            (item, index) =>
+              item != '' && (
+                <CustomChip
+                  key={index}
+                  text={item}
+                  textStyle={styles.infoChipsText}
+                />
+              ),
+          )}
         </View>
       </View>
-    )
+    );
   },
 };
 
 const styles = StyleSheet.create({
-  info: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  infoHeadText: {
-    color: '#000',
-    fontSize: font(16),
-    fontFamily: os.font(500, 500),
-    includeFontPadding: false,
-    paddingBottom: 0,
-    minWidth: 70,
-  },
-  infoContentsText: {
-    flex: 1,
-    color: '#000',
-    fontSize: font(16),
-    fontFamily: os.font(400, 400),
-    includeFontPadding: false,
-    paddingBottom: 0,
-  },
+  info: { flexDirection: 'row', gap: 12 },
+  infoChipsText: { fontSize: font(14) },
   infoChipsWrapper: {
     flex: 1,
     flexDirection: 'row',
+    gap: 8,
     justifyContent: 'flex-start',
-    gap: 8
   },
-  infoChipsText: {
-    fontSize: font(14),
-  }
-})
+  infoContentsText: {
+    color: '#000',
+    flex: 1,
+    fontFamily: os.font(400, 400),
+    fontSize: font(16),
+    includeFontPadding: false,
+    paddingBottom: 0,
+  },
+  infoHeadText: {
+    color: '#000',
+    fontFamily: os.font(500, 500),
+    fontSize: font(16),
+    includeFontPadding: false,
+    minWidth: 70,
+    paddingBottom: 0,
+  },
+});
 
 export default PillInfo;

@@ -1,8 +1,8 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 interface IProps {
-  size?: number | "large" | "small" | undefined,
-  color?: string,
+  size?: number | 'large' | 'small' | undefined;
+  color?: string;
 }
 
 const LoadingCircle = ({ size = 'large', color = '#0000ff' }: IProps) => {
@@ -14,11 +14,7 @@ const LoadingCircle = ({ size = 'large', color = '#0000ff' }: IProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: { alignItems: 'center', flex: 1, justifyContent: 'center' },
 });
 
 export default LoadingCircle;

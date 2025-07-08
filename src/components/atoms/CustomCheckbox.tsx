@@ -1,5 +1,5 @@
-import { os, font } from "@/style/font";
-import { useState } from "react";
+import { os, font } from '@/style/font';
+import { useState } from 'react';
 import {
   Animated,
   TouchableOpacity,
@@ -7,17 +7,17 @@ import {
   Text,
   StyleSheet,
   ViewStyle,
-  TextStyle
-} from "react-native";
+  TextStyle,
+} from 'react-native';
 
 interface CheckboxProps {
-  size?: number
-  fillColor?: string
-  unFillColor?: string
-  style?: ViewStyle
-  boxStyle?: ViewStyle
-  text?: string
-  textStyle?: TextStyle
+  size?: number;
+  fillColor?: string;
+  unFillColor?: string;
+  style?: ViewStyle;
+  boxStyle?: ViewStyle;
+  text?: string;
+  textStyle?: TextStyle;
   onPress?: (isChecked: boolean) => void;
 }
 
@@ -47,19 +47,23 @@ const CustomCheckbox = ({
         useNativeDriver: true,
       }),
     ]).start();
-  }
+  };
 
   const handlePress = () => {
     setIsChecked(!isChecked);
-    animateBounce()
+    animateBounce();
     if (onPress) {
-      onPress(!isChecked)
+      onPress(!isChecked);
     }
   };
 
   return (
     <TouchableOpacity
-      style={[styles.container, style, { flexDirection: text ? 'row' : 'column' }]}
+      style={[
+        styles.container,
+        style,
+        { flexDirection: text ? 'row' : 'column' },
+      ]}
       onPress={handlePress}
       activeOpacity={0.6}
     >
@@ -75,17 +79,14 @@ const CustomCheckbox = ({
           boxStyle,
         ]}
       >
-        {
-          isChecked && (
-            <View
-              style={[
-                styles.checkmark,
-                { width: size * 0.2, height: size * 0.2 }
-              ]}
-            />
-          )
-        }
-
+        {isChecked && (
+          <View
+            style={[
+              styles.checkmark,
+              { width: size * 0.2, height: size * 0.2 },
+            ]}
+          />
+        )}
       </Animated.View>
       {text ? <Text style={[styles.label, textStyle]}>{text}</Text> : null}
     </TouchableOpacity>
@@ -93,29 +94,23 @@ const CustomCheckbox = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   checkbox: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4
+    borderColor: 'gray',
+    borderRadius: 4,
+    borderWidth: 1,
+    justifyContent: 'center',
   },
-  checkmark: {
-    backgroundColor: 'white',
-    borderRadius: 2
-  },
+  checkmark: { backgroundColor: 'white', borderRadius: 2 },
+  container: { alignItems: 'center', justifyContent: 'center' },
   label: {
-    marginLeft: 8,
-    fontSize: font(16),
-    fontFamily: os.font(500, 500),
     color: '#000',
+    fontFamily: os.font(500, 500),
+    fontSize: font(16),
     includeFontPadding: false,
-    textAlign: 'center'
-  }
-})
+    marginLeft: 8,
+    textAlign: 'center',
+  },
+});
 
-export default CustomCheckbox
+export default CustomCheckbox;

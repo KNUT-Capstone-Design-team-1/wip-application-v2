@@ -1,26 +1,23 @@
-import Skeleton from "@/components/atoms/Skeleton";
-import SkeletonResultItem from "@/components/atoms/SkeletonResultItem";
-import { font } from "@/style/font";
-import { StyleSheet, View } from "react-native";
+import Skeleton from '@/components/atoms/Skeleton';
+import SkeletonResultItem from '@/components/atoms/SkeletonResultItem';
+import { font } from '@/style/font';
+import { StyleSheet, View } from 'react-native';
 
 const SkeletoneSearchResult = (): JSX.Element => {
-
   const styles = StyleSheet.create({
     noteWrapper: {
-      position: 'absolute',
+      alignItems: 'center',
+      backgroundColor: '#fff',
       flexDirection: 'row',
       justifyContent: 'center',
-      width: '100%',
-      alignItems: 'center',
-      paddingTop: 20,
       paddingBottom: 12,
-      backgroundColor: '#fff',
+      paddingTop: 20,
+      position: 'absolute',
+      width: '100%',
       zIndex: 10,
     },
-    skeletonList: {
-      paddingTop: 50,
-    },
-  })
+    skeletonList: { paddingTop: 50 },
+  });
 
   return (
     <View style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
@@ -36,7 +33,7 @@ const SkeletoneSearchResult = (): JSX.Element => {
         <SkeletonResultItem />
       </View>
     </View>
-  )
+  );
 };
 
 export default SkeletoneSearchResult;
