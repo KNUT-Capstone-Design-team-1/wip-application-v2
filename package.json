@@ -5,7 +5,6 @@
   "scripts": {
     "android": "react-native run-android --mode=productdebug -- --reset-cache",
     "ios": "react-native run-ios --scheme whatispill_production -- --reset-cache",
-    "lint": "eslint .",
     "start": "react-native start -- --reset-cache",
     "pod": "cd ios && pod deintegrate && pod install && cd ..",
     "podstart": "cd ios && pod deintegrate && pod install && cd .. && react-native start -- --reset-cache",
@@ -13,7 +12,10 @@
     "aab": "cd android && ./gradlew bundleRelease && cd ..",
     "ipa": "xcodebuild -workspace ios/whatispill.xcworkspace -scheme whatispill_production -sdk iphoneos -configuration Release -archivePath build/whatispill.xcarchive archive && xcodebuild -exportArchive -archivePath build/whatispill.xcarchive -exportOptionsPlist ios/exportOptions.plist -exportPath build/",
     "reset:android": "bash ./reset_build_cache.sh android",
-    "reset:ios": "bash ./reset_build_cache.sh ios"
+    "reset:ios": "bash ./reset_build_cache.sh ios",
+    "prepare": "husky install",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.658.0",
@@ -30,7 +32,6 @@
     "@react-navigation/stack": "^6.3.28",
     "@realm/react": "^0.9.0",
     "@shopify/flash-list": "^1.7.2",
-    "@types/lodash": "^4.17.13",
     "axios": "^1.7.1",
     "dayjs": "^1.11.13",
     "fast-xml-parser": "^4.5.1",
@@ -84,21 +85,31 @@
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
     "@babel/runtime": "^7.24.5",
+    "@react-native-community/eslint-config": "^3.2.0",
     "@react-native/babel-preset": "0.73.21",
     "@react-native/eslint-config": "0.73.2",
     "@react-native/metro-config": "0.73.5",
     "@react-native/typescript-config": "0.74.0",
+    "@types/lodash": "^4.17.13",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.21",
     "@types/react-native-canvas": "^0.1.13",
     "@types/react-native-version-check": "^3.4.8",
     "@types/react-test-renderer": "^18.0.7",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
     "babel-plugin-module-resolver": "^5.0.0",
-    "eslint": "^8.19.0",
+    "eslint": "^9.30.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-native": "^5.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^16.1.2",
     "metro-react-native-babel-preset": "0.77.0",
-    "prettier": "3.2.5",
+    "prettier": "^3.6.2",
     "react-test-renderer": "18.2.0",
-    "typescript": "5.4.2"
+    "typescript": "^5.8.3"
   },
   "reactNativePermissionsIOS": [
     "Camera",
@@ -107,5 +118,11 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.9.1",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
 }
