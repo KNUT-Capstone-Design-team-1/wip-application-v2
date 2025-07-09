@@ -12,36 +12,39 @@ export const font = (size: number) => {
 /** OS에 따라 반환값 구분
  * 첫번째 인자 : IOS,
  * 두번쪠 인자 : Android
- * 
+ *
  * os.default : 그대로 반환,
- * 
+ *
  * os.font : fontWeight 반환
-*/
+ */
 export const os = {
   default: (a: any, b: any) => {
-    return (Platform.OS === 'ios' ? a : b) ?? ''
+    return (Platform.OS === 'ios' ? a : b) ?? '';
   },
   font: (a: number, b: number) => {
     const revertFontWeight = (weight: number) => {
       switch (weight) {
         case 300:
-          return 'NotoSansKR-Light'
+          return 'NotoSansKR-Light';
         case 400:
-          return 'NotoSansKR-Regular'
+          return 'NotoSansKR-Regular';
         case 500:
-          return 'NotoSansKR-Medium'
+          return 'NotoSansKR-Medium';
         case 600:
-          return 'NotoSansKR-SemiBold'
+          return 'NotoSansKR-SemiBold';
         case 700:
-          return 'NotoSansKR-Bold'
+          return 'NotoSansKR-Bold';
         case 800:
-          return 'NotoSansKR-ExtraBold'
+          return 'NotoSansKR-ExtraBold';
         case 900:
-          return 'NotoSansKR-Black'
+          return 'NotoSansKR-Black';
         default:
-          return 'NotoSansKR-Medium'
+          return 'NotoSansKR-Medium';
       }
-    }
-    return (Platform.OS === 'ios' ? revertFontWeight(a) : revertFontWeight(b)) ?? 'NotoSansKR-Medium'
-  }
+    };
+    return (
+      (Platform.OS === 'ios' ? revertFontWeight(a) : revertFontWeight(b)) ??
+      'NotoSansKR-Medium'
+    );
+  },
 };

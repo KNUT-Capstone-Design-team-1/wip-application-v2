@@ -1,5 +1,7 @@
-import { View } from "react-native";
-import TouchableScale, { TouchableScaleProps } from "react-native-touchable-scale";
+import { View } from 'react-native';
+import TouchableScale, {
+  TouchableScaleProps,
+} from 'react-native-touchable-scale';
 
 const Button = {
   scale: ({ children, ...props }: TouchableScaleProps) => {
@@ -16,7 +18,7 @@ const Button = {
           {children}
         </TouchableScale>
       </View>
-    )
+    );
   },
   scaleFast: ({ children, ...props }: TouchableScaleProps) => {
     return (
@@ -34,9 +36,8 @@ const Button = {
           {children}
         </TouchableScale>
       </View>
-    )
-  }
-}
-
+    );
+  },
+};
 
 export default Button;

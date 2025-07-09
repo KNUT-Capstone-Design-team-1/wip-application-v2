@@ -1,39 +1,35 @@
-import { font, os } from '@/style/font'
-import { memo } from 'react'
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native'
+import { font, os } from '@/style/font';
+import { memo } from 'react';
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
-type TCustomChip = {
-  text: string
-  style?: ViewStyle
-  textStyle?: TextStyle
-}
+type TCustomChip = { text: string; style?: ViewStyle; textStyle?: TextStyle };
 
 const CustomChip = ({ text, style, textStyle }: TCustomChip): JSX.Element => {
   return (
     <View style={[styles.chipTextWrapper, style]}>
       <Text style={[styles.chipText, textStyle]}>{text}</Text>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  chipTextWrapper: {
-    borderRadius: 4,
-    borderWidth: 0.5,
-    borderColor: '#858585',
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   chipText: {
     color: '#000',
-    fontSize: font(12),
     fontFamily: os.font(500, 500),
+    fontSize: font(12),
     includeFontPadding: false,
-    paddingTop: 0,
     paddingBottom: 1,
     paddingHorizontal: 8,
-  }
-})
+    paddingTop: 0,
+  },
+  chipTextWrapper: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#858585',
+    borderRadius: 4,
+    borderWidth: 0.5,
+    justifyContent: 'center',
+  },
+});
 
-export default memo(CustomChip)
+export default memo(CustomChip);

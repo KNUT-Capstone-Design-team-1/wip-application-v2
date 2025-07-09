@@ -1,6 +1,1 @@
-{
-  "database": {
-    "schemaVersion": 2,
-    "minorVersion": "main"
-  }
-}
+{ "database": { "schemaVersion": 2, "minorVersion": "main" } }

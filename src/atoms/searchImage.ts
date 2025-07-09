@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from 'recoil';
 
-export const searchImageAtom = atom({
-  key: "searchImageAtom",
-  default: '',
-})
+export const searchImageAtom = atom({ key: 'searchImageAtom', default: '' });

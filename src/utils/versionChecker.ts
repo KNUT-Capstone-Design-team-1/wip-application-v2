@@ -30,7 +30,7 @@ const openStore = () => {
   const androidUrl = 'market://details?id=com.mbm.whatispill';
 
   Linking.openURL(Platform.OS === 'ios' ? iosUrl : androidUrl).catch((err) =>
-    console.error('스토어 열기 실패:', err)
+    console.error('스토어 열기 실패:', err),
   );
 
   // 스토어 열렸을 때 앱 강제 종료
@@ -40,7 +40,7 @@ const openStore = () => {
 // 앱 버전 체크하는 함수
 export const checkAppVersion = async () => {
   // ios 일 땐 return 시켜주기
-  if(Platform.OS === "ios") return;
+  if (Platform.OS === 'ios') return;
 
   try {
     // ex: "1.2.3"
@@ -61,16 +61,11 @@ export const checkAppVersion = async () => {
       Alert.alert(
         '업데이트 안내',
         `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${currentVersion}`,
-        [{
-          text: '업데이트 하러 가기',
-          onPress: openStore,
-        },
-        ]
+        [{ text: '업데이트 하러 가기', onPress: openStore }],
       );
 
       await AsyncStorage.setItem(VERSION_KEY, currentVersion);
     }
-
   } catch (e) {
     console.error('버전 체크 중 오류:', e);
   }

@@ -25,7 +25,12 @@ const SkeletonPlaceholder = (style: any) => {
 
   return (
     <View style={[styles.container, style]}>
-      <Animated.View style={{ ...StyleSheet.absoluteFillObject, transform: [{ translateX }] }}>
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          transform: [{ translateX }],
+        }}
+      >
         <LinearGradient
           colors={['#fafdfe00', '#fafdfe', '#fafdfe00']}
           start={{ x: 0, y: 0 }}
@@ -39,11 +44,11 @@ const SkeletonPlaceholder = (style: any) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ebf1f5',
+    borderRadius: 4,
+    height: 100,
     overflow: 'hidden',
     width: 100,
-    height: 100,
-    borderRadius: 4,
-    backgroundColor: '#ebf1f5',
   },
 });
 

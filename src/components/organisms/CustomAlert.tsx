@@ -1,30 +1,40 @@
-import React from "react";
-import { toastConfig } from "@/constants/toast";
-import { font, os } from "@/style/font";
-import { Modal, StyleSheet, Platform, View, Text, TouchableOpacity, StyleProp, ViewStyle, GestureResponderEvent } from "react-native";
-import Toast from "react-native-toast-message";
-import { Fragment } from "react/jsx-runtime";
-import CustomCheckbox from "../atoms/CustomCheckbox";
+import React from 'react';
+import { toastConfig } from '@/constants/toast';
+import { font, os } from '@/style/font';
+import {
+  Modal,
+  StyleSheet,
+  Platform,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleProp,
+  ViewStyle,
+  GestureResponderEvent,
+} from 'react-native';
+import Toast from 'react-native-toast-message';
+import { Fragment } from 'react/jsx-runtime';
+import CustomCheckbox from '../atoms/CustomCheckbox';
 
 //TODO: 제목 가로선이 사라지는 문제 확인
 export type TCustomAlertButtons = {
-  text: string
+  text: string;
   onPress?: ((event?: GestureResponderEvent) => void) | undefined;
-  style?: StyleProp<ViewStyle>
-}
+  style?: StyleProp<ViewStyle>;
+};
 
-export type TCustomModalType = 'default' | 'exit' | 'checkbox'
+export type TCustomModalType = 'default' | 'exit' | 'checkbox';
 
 type CustomAlertProps = {
-  visible: boolean
-  onRequestClose: (() => void) | undefined
-  title: string
-  message: string
-  buttons?: TCustomAlertButtons[],
-  modalType?: TCustomModalType,
-  checkboxLabel?: string,
-  onCheckboxChange?: (isChecked: boolean) => void,
-}
+  visible: boolean;
+  onRequestClose: (() => void) | undefined;
+  title: string;
+  message: string;
+  buttons?: TCustomAlertButtons[];
+  modalType?: TCustomModalType;
+  checkboxLabel?: string;
+  onCheckboxChange?: (isChecked: boolean) => void;
+};
 
 const CustomAlert = React.memo(
   ({
@@ -35,9 +45,8 @@ const CustomAlert = React.memo(
     buttons,
     modalType = 'default',
     checkboxLabel,
-    onCheckboxChange
+    onCheckboxChange,
   }: CustomAlertProps): JSX.Element => {
-
     const handleCheckboxChange = (isChecked: boolean) => {
       if (onCheckboxChange) {
         onCheckboxChange(isChecked);
@@ -56,121 +65,106 @@ const CustomAlert = React.memo(
             <Text style={styles.modalTitleText}>{title}</Text>
             <View style={styles.rowLine} />
             <Text style={styles.modalMessageText}>{message}</Text>
-            {
-              buttons && (<View style={styles.bottomButtonsWrapper}>
-                {
-                  buttons.map((button: TCustomAlertButtons, idx) => {
-                    return (
-                      <Fragment key={idx}>
-                        {idx > 0 ? <View style={styles.colLine} /> : null}
-                        <TouchableOpacity
-                          style={[styles.bottomButton, button.style]}
-                          onPress={button.onPress}
-                        >
-                          <Text style={styles.buttonText}>{button.text}</Text>
-                        </TouchableOpacity>
-                      </Fragment>
-                    )
-                  })
-                }
-              </View>)
-            }
+            {buttons && (
+              <View style={styles.bottomButtonsWrapper}>
+                {buttons.map((button: TCustomAlertButtons, idx) => {
+                  return (
+                    <Fragment key={idx}>
+                      {idx > 0 ? <View style={styles.colLine} /> : null}
+                      <TouchableOpacity
+                        style={[styles.bottomButton, button.style]}
+                        onPress={button.onPress}
+                      >
+                        <Text style={styles.buttonText}>{button.text}</Text>
+                      </TouchableOpacity>
+                    </Fragment>
+                  );
+                })}
+              </View>
+            )}
           </View>
           <View style={styles.modalCheckboxWrapper}>
-            {modalType == 'checkbox' && <CustomCheckbox
-              size={18}
-              fillColor="#7472EB"
-              boxStyle={{ borderWidth: 2, borderColor: '#000' }}
-              text={checkboxLabel}
-              textStyle={{ fontSize: font(16), color: '#000' }}
-              onPress={(isChecked) => handleCheckboxChange(isChecked)}
-            />}
+            {modalType == 'checkbox' && (
+              <CustomCheckbox
+                size={18}
+                fillColor="#7472EB"
+                boxStyle={{ borderWidth: 2, borderColor: '#000' }}
+                text={checkboxLabel}
+                textStyle={{ fontSize: font(16), color: '#000' }}
+                onPress={(isChecked) => handleCheckboxChange(isChecked)}
+              />
+            )}
           </View>
         </View>
-        <Toast
-          config={toastConfig}
-          position='bottom'
-          bottomOffset={130}
-        />
+        <Toast config={toastConfig} position="bottom" bottomOffset={130} />
       </Modal>
-    )
-  })
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   backgroundViewWrapper: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)'
   },
-  modalViewWrapper: {
-    maxWidth: '90%',
-    minHeight: '10%',
-    maxHeight: '80%',
+  bottomButton: {
+    alignItems: 'center',
     borderRadius: 8,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOpacity: 0.4,
-      },
-      android: {
-        elevation: 5,
-      },
-    })
-  },
-  modalCheckboxWrapper: {
-    width: '90%',
-    alignItems: 'flex-start'
-  },
-  modalTitleText: {
-    fontSize: font(18),
-    fontFamily: os.font(700, 800),
-    color: "#000",
-    marginTop: 16,
-    includeFontPadding: false
-  },
-  modalMessageText: {
-    fontSize: font(16),
-    fontFamily: os.font(600, 700),
-    color: "#000",
-    includeFontPadding: false,
-    paddingHorizontal: 16,
-    textAlign: 'center'
+    flex: 1,
+    justifyContent: 'center',
   },
   bottomButtonsWrapper: {
-    width: '100%',
     alignSelf: 'flex-end',
+    borderTopColor: '#7472EB',
+    borderTopWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginTop: 16,
-    borderTopColor: '#7472EB',
-    borderTopWidth: 1,
-  },
-  bottomButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8
+    width: '100%',
   },
   buttonText: {
-    fontSize: font(16),
+    color: '#000',
     fontFamily: os.font(500, 500),
-    color: '#000'
+    fontSize: font(16),
+  },
+  colLine: { backgroundColor: '#7472EB', height: '100%', width: 1 },
+  modalCheckboxWrapper: { alignItems: 'flex-start', width: '90%' },
+  modalMessageText: {
+    color: '#000',
+    fontFamily: os.font(600, 700),
+    fontSize: font(16),
+    includeFontPadding: false,
+    paddingHorizontal: 16,
+    textAlign: 'center',
+  },
+  modalTitleText: {
+    color: '#000',
+    fontFamily: os.font(700, 800),
+    fontSize: font(18),
+    includeFontPadding: false,
+    marginTop: 16,
+  },
+  modalViewWrapper: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    maxHeight: '80%',
+    maxWidth: '90%',
+    minHeight: '10%',
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.4 },
+      android: { elevation: 5 },
+    }),
   },
   rowLine: {
-    width: '100%',
+    backgroundColor: '#7472EB',
     height: 4,
-    backgroundColor: '#7472EB',
+    marginBottom: 4,
     marginTop: 4,
-    marginBottom: 4
+    width: '100%',
   },
-  colLine: {
-    height: '100%',
-    width: 1,
-    backgroundColor: '#7472EB',
-  }
-})
+});
 
-export default CustomAlert
+export default CustomAlert;

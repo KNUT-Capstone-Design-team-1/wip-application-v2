@@ -1,71 +1,70 @@
-import Button from "@/components/atoms/Button";
-import { font, os } from "@/style/font";
-import { useNavigation } from "@react-navigation/native";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { Shadow } from "react-native-shadow-2";
+import Button from '@/components/atoms/Button';
+import { font, os } from '@/style/font';
+import { useNavigation } from '@react-navigation/native';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { Shadow } from 'react-native-shadow-2';
 
 const SearchIdButton = (): JSX.Element => {
   const nav: any = useNavigation();
 
   const styles = StyleSheet.create({
-    searchPillButtonWrapper: {
-      width: '100%',
-      paddingTop: 16,
+    backgroundImage: {
+      height: '110%',
+      position: 'absolute',
+      right: '-10%',
+      top: '-40%',
+      transform: [{ translateY: 50 }],
+      width: '110%',
     },
+    fill: { height: '100%', width: '100%' },
     searchPillButton: {
-      width: '100%',
-      height: 140,
       borderRadius: 20,
-      overflow: 'hidden'
-    },
-    searchPillTextWrapper: {
-      flex: 1,
+      height: 140,
+      overflow: 'hidden',
       width: '100%',
-      height: '100%',
-      justifyContent: 'center',
     },
+    searchPillButtonWrapper: { paddingTop: 16, width: '100%' },
     searchPillMainText: {
       color: 'white',
-      fontSize: font(32),
       fontFamily: os.font(600, 700),
-      textAlign: 'right',
+      fontSize: font(32),
+      includeFontPadding: false,
       paddingRight: 32,
+      textAlign: 'right',
       textShadowColor: 'rgba(0, 0, 0, 0.5)',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 25,
-      includeFontPadding: false,
     },
     searchPillSubText: {
       color: 'white',
-      fontSize: 16,
       fontFamily: os.font(400, 400),
-      textAlign: 'right',
+      fontSize: 16,
+      includeFontPadding: false,
       paddingRight: 32,
+      textAlign: 'right',
       textShadowColor: 'rgba(0, 0, 0, 0.5)',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 25,
-      includeFontPadding: false,
     },
-    fill: {
-      width: '100%',
+    searchPillTextWrapper: {
+      flex: 1,
       height: '100%',
+      justifyContent: 'center',
+      width: '100%',
     },
-    backgroundImage: {
-      position: 'absolute',
-      top: '-40%',
-      right: '-10%',
-      width: '110%',
-      height: '110%',
-      transform: [{ translateY: 50 }],
-    },
-  })
+  });
 
   return (
     <Button.scale
       style={styles.searchPillButtonWrapper}
       onPress={() => nav.navigate('알약 식별 검색')}
     >
-      <Shadow distance={13} offset={[2, 4]} startColor='#00000015' style={styles.searchPillButton}>
+      <Shadow
+        distance={13}
+        offset={[2, 4]}
+        startColor="#00000015"
+        style={styles.searchPillButton}
+      >
         <View style={styles.fill}>
           <Image
             style={styles.backgroundImage}
@@ -78,7 +77,7 @@ const SearchIdButton = (): JSX.Element => {
         </View>
       </Shadow>
     </Button.scale>
-  )
+  );
 };
 
-export default SearchIdButton
+export default SearchIdButton;

@@ -1,28 +1,32 @@
-import { Suspense, useEffect, lazy } from "react"
-import { Platform, StyleSheet, View } from "react-native"
-import { useNavigation } from "@react-navigation/native"
-import { useRecoilState, useResetRecoilState } from "recoil"
-import Layout, { defaultHeaderHeight, StatusBarHeight, windowHeight } from "@/components/organisms/Layout"
-import { screenState } from "@/atoms/screen"
-import { searchIdStates } from "@/selectors/searchId"
+import { Suspense, useEffect, lazy } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useRecoilState, useResetRecoilState } from 'recoil';
+import Layout, {
+  defaultHeaderHeight,
+  StatusBarHeight,
+  windowHeight,
+} from '@/components/organisms/Layout';
+import { screenState } from '@/atoms/screen';
+import { searchIdStates } from '@/selectors/searchId';
 
-const SearchIdList = lazy(() => import("@/components/organisms/SearchIdList"))
+const SearchIdList = lazy(() => import('@/components/organisms/SearchIdList'));
 
 const SearchId = (): JSX.Element => {
   const nav: any = useNavigation();
   const [screen, setScreen] = useRecoilState(screenState);
-  const resetIdStates = useResetRecoilState(searchIdStates)
+  const resetIdStates = useResetRecoilState(searchIdStates);
 
   const handleSetScreen = () => {
     setScreen('식별 검색');
-  }
+  };
 
   useEffect(() => {
     nav.addListener('focus', () => handleSetScreen());
     return () => {
-      resetIdStates()
+      resetIdStates();
       nav.removeListener('focus', () => handleSetScreen());
-    }
+    };
   }, []);
 
   return (
@@ -31,19 +35,19 @@ const SearchId = (): JSX.Element => {
         <SearchIdList />
       </Suspense>
     </Layout.default>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   viewWrapper: {
-    minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    minHeight: windowHeight - (defaultHeaderHeight + StatusBarHeight),
     overflow: 'hidden',
-    paddingTop: 21,
     paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
-    backgroundColor: '#ffffff',
+    paddingTop: 21,
   },
-})
+});
 
-export default SearchId
+export default SearchId;
