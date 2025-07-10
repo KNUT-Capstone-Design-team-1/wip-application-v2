@@ -1,8 +1,11 @@
 // utils/versionChecker.ts
-import VersionCheck from 'react-native-version-check';
 import { Alert } from 'react-native';
 import { Linking, Platform } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
+import { getToken } from "@api/client/auth.ts";
+import axios from "axios";
+import Config from "react-native-config";
+import DeviceInfo from "react-native-device-info";
 
 // 버전 업데이트 버튼 클릭 시 이동될 url
 const openStore = () => {
@@ -19,26 +22,40 @@ const openStore = () => {
   RNExitApp.exitApp();
 };
 
+const versionToNumber = (version: string) => {
+  const parts = version.split('.').map(Number);
+  const [major = 0, minor = 0, patch = 0] = parts;
+
+  return major * 10000 + minor * 100 + patch;
+};
+
 // 앱 버전 체크하는 함수
 export const checkAppVersion = async () => {
   // ios 일 땐 return 시켜주기
   if (Platform.OS === 'ios') return;
 
-  const latestVersion = await VersionCheck.getLatestVersion();
-  const currentVersion = VersionCheck.getCurrentVersion();
+  const token = getToken();
+
+  const initInfoData = await axios.get(
+    Config.GOOGLE_CLOUD_INIT_INFO_URL as string,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  const latestVersion = versionToNumber(
+    String(initInfoData.data.playStoreVersion),
+  );
+
+  const currentVersion = versionToNumber(String(DeviceInfo.getVersion()));
 
   try {
-    // ex: "1.2.3"
-    // 버전 확인
-    const versionState = await VersionCheck.needUpdate({
-      currentVersion,
-      latestVersion,
-    });
-
-    if (versionState) {
+    if (latestVersion !== currentVersion) {
       Alert.alert(
         '업데이트 안내',
-        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${currentVersion}`,
+        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${initInfoData.data.playStoreVersion}`,
         [{ text: '업데이트 하러 가기', onPress: openStore }],
       );
     }
