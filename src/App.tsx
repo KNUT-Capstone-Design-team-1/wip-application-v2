@@ -13,7 +13,6 @@ import { RealmProvider } from '@realm/react';
 import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
 import { checkAppVersion } from '@/utils/versionChecker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import wipConfig from '../wip_config.json';
 import { GLOBAL_STATE } from './global_state';
 
