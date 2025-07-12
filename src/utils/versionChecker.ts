@@ -1,26 +1,12 @@
 // utils/versionChecker.ts
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DeviceInfo from 'react-native-device-info';
 import { Alert } from 'react-native';
 import { Linking, Platform } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
-
-// AsyncStorage 앱 버전 저장한 데이터의 key 값
-const VERSION_KEY = 'app_version';
-
-const parseVersion = (version: string) => {
-  const [major, minor, patch] = version.split('.').map(Number);
-  return { major, minor, patch };
-};
-
-// 버전 변경 감지 기준
-const isVersionChanged = (saved: any, current: any) => {
-  return (
-    saved.major !== current.major ||
-    saved.minor !== current.minor ||
-    saved.patch !== current.patch
-  );
-};
+import { getToken } from "@api/client/auth.ts";
+import axios from "axios";
+import Config from "react-native-config";
+import DeviceInfo from "react-native-device-info";
+import { isIos } from "@/utils/checker.ts";
 
 // 버전 업데이트 버튼 클릭 시 이동될 url
 const openStore = () => {
@@ -37,34 +23,45 @@ const openStore = () => {
   RNExitApp.exitApp();
 };
 
+const versionToNumber = (version: string) => {
+  const parts = version.split('.').map(Number);
+  const [major = 0, minor = 0, patch = 0] = parts;
+
+  return major * 10000 + minor * 100 + patch;
+};
+
+const fetchLatestVersion = async () => {
+  const token = getToken();
+  const response = await axios.get(
+    Config.GOOGLE_CLOUD_INIT_INFO_URL as string,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  // ios, android 각각 버전 가져오기
+  return isIos
+    ? String(response.data.appStoreVersion)
+    : String(response.data.playStoreVersion);
+};
+
 // 앱 버전 체크하는 함수
 export const checkAppVersion = async () => {
-  // ios 일 땐 return 시켜주기
-  if (Platform.OS === 'ios') return;
+  // ios 일 땐 return 시켜주기 ios 배포되면 주석 해제
+  if (isIos) return;
+
+  const latestVersion = versionToNumber(await fetchLatestVersion());
+  const currentVersion = versionToNumber(String(DeviceInfo.getVersion()));
 
   try {
-    // ex: "1.2.3"
-    const currentVersion = DeviceInfo.getVersion();
-    // AsyncStorage에서 저장한 앱 버전 가져오기
-    const savedVersion = await AsyncStorage.getItem(VERSION_KEY);
-
-    if (!savedVersion) {
-      await AsyncStorage.setItem(VERSION_KEY, currentVersion);
-      return;
-    }
-
-    const saved = parseVersion(savedVersion);
-    const current = parseVersion(currentVersion);
-
-    // 버전 확인
-    if (isVersionChanged(saved, current)) {
+    if (latestVersion !== currentVersion) {
       Alert.alert(
         '업데이트 안내',
-        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${currentVersion}`,
+        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${latestVersion}`,
         [{ text: '업데이트 하러 가기', onPress: openStore }],
       );
-
-      await AsyncStorage.setItem(VERSION_KEY, currentVersion);
     }
   } catch (e) {
     console.error('버전 체크 중 오류:', e);
