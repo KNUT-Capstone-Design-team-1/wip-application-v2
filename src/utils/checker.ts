@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { Platform } from "react-native";
+import { Platform } from 'react-native';
 
 const regexPattern = /[*?]/;
 
-export const isIos = Platform.OS === 'ios';
+export const isIos: boolean = Platform.OS === 'ios';
 
 export const disableWord = (text: string) => {
   return regexPattern.test(text);
