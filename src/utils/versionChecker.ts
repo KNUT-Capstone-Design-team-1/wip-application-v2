@@ -1,12 +1,18 @@
+interface IAppVersion {
+  appStoreVersion: string;
+  playStoreVersion: string;
+}
+
 // utils/versionChecker.ts
 import { Alert } from 'react-native';
 import { Linking, Platform } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
-import { getToken } from "@api/client/auth.ts";
-import axios from "axios";
-import Config from "react-native-config";
-import DeviceInfo from "react-native-device-info";
-import { isIos } from "@/utils/checker.ts";
+import Config from 'react-native-config';
+import DeviceInfo from 'react-native-device-info';
+import { isIos } from '@/utils/checker.ts';
+import { apiClient } from '@api/apiClient.ts';
+
+let originVersion = '';
 
 // 버전 업데이트 버튼 클릭 시 이동될 url
 const openStore = () => {
@@ -31,20 +37,12 @@ const versionToNumber = (version: string) => {
 };
 
 const fetchLatestVersion = async () => {
-  const token = getToken();
-  const response = await axios.get(
-    Config.GOOGLE_CLOUD_INIT_INFO_URL as string,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
+  const { appStoreVersion, playStoreVersion }: IAppVersion =
+    await apiClient.get(Config.GOOGLE_CLOUD_INIT_INFO_URL as string);
 
   // ios, android 각각 버전 가져오기
-  return isIos
-    ? String(response.data.appStoreVersion)
-    : String(response.data.playStoreVersion);
+  originVersion = isIos ? String(appStoreVersion) : String(playStoreVersion);
+  return originVersion;
 };
 
 // 앱 버전 체크하는 함수
@@ -59,7 +57,7 @@ export const checkAppVersion = async () => {
     if (latestVersion !== currentVersion) {
       Alert.alert(
         '업데이트 안내',
-        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${latestVersion}`,
+        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${originVersion}`,
         [{ text: '업데이트 하러 가기', onPress: openStore }],
       );
     }
