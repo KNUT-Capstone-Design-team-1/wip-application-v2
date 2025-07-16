@@ -73,26 +73,25 @@ const PillDetail = ({ route }: any): JSX.Element => {
   const getDetailData = async () => {
     const URL = `${Config.GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
     const itemSeq = data.ITEM_SEQ;
-    await getDrugDetail(URL, itemSeq)
-      .then((val) => {
-        const parsedData = {
-          EE: parseXML(val.data.EE_DOC_DATA),
-          UD: parseXML(val.data.UD_DOC_DATA),
-          NB: parseXML(val.data.NB_DOC_DATA),
-        };
+    const val: any = await getDrugDetail(URL, itemSeq);
 
-        setInfoData(parsedData);
-      })
-      .catch((err) => {
-        console.error(err);
-        Toast.show({
-          type: 'errorToast',
-          text1: '상세정보를 가져오는데 문제가 생겼습니다.',
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      const parsedData = {
+        EE: parseXML(val.EE_DOC_DATA),
+        UD: parseXML(val.UD_DOC_DATA),
+        NB: parseXML(val.NB_DOC_DATA),
+      };
+
+      setInfoData(parsedData);
+    } catch (err) {
+      console.error(err);
+      Toast.show({
+        type: 'errorToast',
+        text1: '상세정보를 가져오는데 문제가 생겼습니다.',
       });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // [임시] 테스트를 위한 MockData

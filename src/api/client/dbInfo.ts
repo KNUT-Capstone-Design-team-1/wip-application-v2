@@ -1,15 +1,16 @@
-import axios from 'axios';
 import Config from 'react-native-config';
-import { getToken } from './auth';
+import { apiClient } from '@api/apiClient.ts';
+
+interface IInitInfo {
+  appStoreVersion: null | string;
+  playStoreVersion: null | string;
+  resourceDate: string;
+}
 
 const getDBInfo = async () => {
-  const token = getToken();
-
-  const res = await axios.get(Config.GOOGLE_CLOUD_INIT_INFO_URL as string, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return res.data;
+  return await apiClient.get<IInitInfo>(
+    Config.GOOGLE_CLOUD_INIT_INFO_URL as string,
+  );
 };
 
 export { getDBInfo };

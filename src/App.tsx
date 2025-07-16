@@ -13,7 +13,6 @@ import { RealmProvider } from '@realm/react';
 import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
 import { checkAppVersion } from '@/utils/versionChecker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import wipConfig from '../wip_config.json';
 import { GLOBAL_STATE } from './global_state';
 
@@ -28,13 +27,6 @@ const App = (): React.JSX.Element => {
   const [updateDB, setUpdateDB] = useState(false);
 
   useEffect(() => {
-    // 테스트로 앱 버전 바꿔보기
-    // AsyncStorage.setItem('app_version', '0.0.1'); // 현재보다 낮은 값
-    // 앱 버전 체크 (ios 는 아직 출시 안돼서 버전 검사하는 로직 실행 안되도록 분기처리)
-    if (Platform.OS !== 'ios') {
-      checkAppVersion();
-    }
-
     ignoreSpecificLogs();
 
     const subscription = AppState.addEventListener(
@@ -54,7 +46,6 @@ const App = (): React.JSX.Element => {
   };
 
   useEffect(() => {
-    // AsyncStorage.setItem('app_version', '0.0.1'); // 버전 낮추기 테스트용
     // 앱 버전 체크
     checkAppVersion();
 

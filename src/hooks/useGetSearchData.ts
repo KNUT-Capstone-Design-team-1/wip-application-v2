@@ -17,6 +17,12 @@ import { searchImageAtom } from '@/atoms/searchImage';
 
 type TResImageData = { PRINT: string[]; SHAPE: string[]; COLOR: string[] };
 
+interface ITResImageData {
+  res: TResImageData;
+  status: number;
+  message: string;
+}
+
 export const useGetSearchData = () => {
   const route: any = useRoute();
   const mode = route.params.mode ?? 0;
@@ -30,63 +36,63 @@ export const useGetSearchData = () => {
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
-    await postImageServer(imageBase64)
-      .then((res: any) => {
-        if (res.status === 200) {
-          const resData: TResImageData = res.data;
-          console.log(resData);
+    const { res, status, message } = (await postImageServer(
+      imageBase64,
+    )) as ITResImageData;
 
-          if (
-            resData.PRINT.length === 0 &&
-            resData.SHAPE.length === 0 &&
-            resData.COLOR.length === 0
-          ) {
-            nav.goBack();
-            Toast.show({
-              type: 'errorToast',
-              text1: '검색된 알약 정보가 없습니다.',
-            });
-            return;
-          }
-
-          const data: TPillSearchParam = {
-            PRINT_FRONT: '',
-            PRINT_BACK: '',
-            DRUG_SHAPE: resData.SHAPE,
-            COLOR_CLASS1: resData.COLOR,
-            COLOR_CLASS2: resData.COLOR,
-          };
-
-          const [resPRINT_FRONT = '', resPRINT_BACK = ''] = resData.PRINT;
-          if (resPRINT_FRONT.length > 0) {
-            data['PRINT_FRONT'] =
-              '*' + resPRINT_FRONT.replace(/(?<=.)|(?=.)/g, '*');
-          }
-
-          if (resPRINT_BACK.length > 0) {
-            data['PRINT_BACK'] =
-              '*' + resPRINT_BACK.replace(/(?<=.)|(?=.)/g, '*');
-          }
-
-          setSearchData({ data, mode });
-          return;
-        } else {
-          nav.goBack();
-          Toast.show({
-            type: 'errorToast',
-            text1: res.data.message ?? '알약검색에 실패했습니다. (Unknown)',
-          });
-        }
-      })
-      .catch((error) => {
-        const text = handleError(error);
-
+    try {
+      if (status !== 200) {
         nav.goBack();
         Toast.show({
           type: 'errorToast',
-          text1: `알약검색에 실패했습니다.${text}`,
+          text1: message ?? '알약검색에 실패했습니다. (Unknown)',
         });
+        return;
+      }
+
+      const isEmpty =
+        res.PRINT.length === 0 &&
+        res.SHAPE.length === 0 &&
+        res.COLOR.length === 0;
+
+      if (isEmpty) {
+        nav.goBack();
+        Toast.show({
+          type: 'errorToast',
+          text1: '검색된 알약 정보가 없습니다.',
+        });
+        return;
+      }
+
+      const data: TPillSearchParam = {
+        PRINT_FRONT: '',
+        PRINT_BACK: '',
+        DRUG_SHAPE: res.SHAPE,
+        COLOR_CLASS1: res.COLOR,
+        COLOR_CLASS2: res.COLOR,
+      };
+
+      const [resPRINT_FRONT = '', resPRINT_BACK = ''] = res.PRINT;
+      if (resPRINT_FRONT.length > 0) {
+        data['PRINT_FRONT'] =
+          '*' + resPRINT_FRONT.replace(/(?<=.)|(?=.)/g, '*');
+      }
+
+      if (resPRINT_BACK.length > 0) {
+        data['PRINT_BACK'] = '*' + resPRINT_BACK.replace(/(?<=.)|(?=.)/g, '*');
+      }
+
+      setSearchData({ data, mode });
+      return;
+    } catch (error) {
+      const text = handleError(error);
+
+      nav.goBack();
+      Toast.show({
+        type: 'errorToast',
+        text1: `알약검색에 실패했습니다.${text}`,
       });
+    }
   };
 
   useEffect(() => {
