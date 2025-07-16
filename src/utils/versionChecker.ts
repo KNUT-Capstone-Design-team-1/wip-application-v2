@@ -29,6 +29,7 @@ const openStore = () => {
   RNExitApp.exitApp();
 };
 
+// 애플리케이션의 OS 별 최신 버전 조회
 const fetchLatestVersion = async () => {
   const { appStoreVersion, playStoreVersion }: IAppVersion =
     await apiClient.get(Config.GOOGLE_CLOUD_INIT_INFO_URL as string);
@@ -38,13 +39,26 @@ const fetchLatestVersion = async () => {
   return fetchedVersion;
 };
 
+// 시맨틱 버저닝을 기준으로 각 버전 자리에 가중치를 곱한 값 반환
+const getVersionNumber = (version: string) => {
+  if (!/^\d+\.\d+\.\d+$/.test(version)) {
+    return 0;
+  }
+
+  const [major, minor, patch] = version
+    .split('.')
+    .map((v) => parseInt(v, 10) || 0);
+
+  return major * 10000000 + minor * 10000 + patch;
+};
+
 // 앱 버전 체크하는 함수
 export const checkAppVersion = async () => {
   const latestVersion = await fetchLatestVersion();
   const currentVersion = String(DeviceInfo.getVersion());
 
   try {
-    if (latestVersion !== currentVersion) {
+    if (getVersionNumber(latestVersion) > getVersionNumber(currentVersion)) {
       Alert.alert(
         '업데이트 안내',
         `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요.\n\n현재 버전: ${currentVersion} \n새로운 버전: ${latestVersion}`,

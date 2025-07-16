@@ -175,3 +175,6 @@ vendor/
 .yarn/*.gz
 .pnp.cjs
 .pnp.loader.mjs
+
+# etc
+tmp
