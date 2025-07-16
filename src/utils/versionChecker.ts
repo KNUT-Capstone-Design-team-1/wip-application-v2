@@ -44,7 +44,7 @@ export const checkAppVersion = async () => {
   const currentVersionNumber = String(DeviceInfo.getVersion());
 
   try {
-    if (latestVersionNumber !== currentVersionNumber) {
+    if (latestVersionNumber > currentVersionNumber) {
       Alert.alert(
         '업데이트 안내',
         `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요.\n\n현재 버전: ${currentVersionNumber} \n새로운 버전: ${latestVersionNumber}`,
