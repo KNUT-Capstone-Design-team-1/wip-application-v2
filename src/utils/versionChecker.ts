@@ -41,13 +41,13 @@ const fetchLatestVersion = async () => {
 // 앱 버전 체크하는 함수
 export const checkAppVersion = async () => {
   const latestVersion = await fetchLatestVersion();
-  const currentVersionNumber = String(DeviceInfo.getVersion());
+  const currentVersion = String(DeviceInfo.getVersion());
 
   try {
-    if (latestVersion !== currentVersionNumber) {
+    if (latestVersion !== currentVersion) {
       Alert.alert(
         '업데이트 안내',
-        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요.\n\n현재 버전: ${currentVersionNumber} \n새로운 버전: ${latestVersion}`,
+        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요.\n\n현재 버전: ${currentVersion} \n새로운 버전: ${latestVersion}`,
         [{ text: '업데이트 하러 가기', onPress: openStore }],
       );
     }
