@@ -12,7 +12,7 @@ import DeviceInfo from 'react-native-device-info';
 import { isIos } from '@/utils/checker.ts';
 import { apiClient } from '@api/apiClient.ts';
 
-let originVersion = '';
+let fetchedVersion = '';
 
 // 버전 업데이트 버튼 클릭 시 이동될 url
 const openStore = () => {
@@ -29,35 +29,25 @@ const openStore = () => {
   RNExitApp.exitApp();
 };
 
-const versionToNumber = (version: string) => {
-  const parts = version.split('.').map(Number);
-  const [major = 0, minor = 0, patch = 0] = parts;
-
-  return major * 10000 + minor * 100 + patch;
-};
-
 const fetchLatestVersion = async () => {
   const { appStoreVersion, playStoreVersion }: IAppVersion =
     await apiClient.get(Config.GOOGLE_CLOUD_INIT_INFO_URL as string);
 
   // ios, android 각각 버전 가져오기
-  originVersion = isIos ? String(appStoreVersion) : String(playStoreVersion);
-  return originVersion;
+  fetchedVersion = isIos ? String(appStoreVersion) : String(playStoreVersion);
+  return fetchedVersion;
 };
 
 // 앱 버전 체크하는 함수
 export const checkAppVersion = async () => {
-  // ios 일 땐 return 시켜주기 ios 배포되면 주석 해제
-  if (isIos) return;
-
-  const latestVersion = versionToNumber(await fetchLatestVersion());
-  const currentVersion = versionToNumber(String(DeviceInfo.getVersion()));
+  const latestVersionNumber = await fetchLatestVersion();
+  const currentVersionNumber = String(DeviceInfo.getVersion());
 
   try {
-    if (latestVersion !== currentVersion) {
+    if (latestVersionNumber !== currentVersionNumber) {
       Alert.alert(
         '업데이트 안내',
-        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요. 새로운 버전: ${originVersion}`,
+        `앱이 업데이트되었습니다.\n업데이트 후 사용해주세요.\n\n현재 버전: ${currentVersionNumber} \n새로운 버전: ${latestVersionNumber}`,
         [{ text: '업데이트 하러 가기', onPress: openStore }],
       );
     }
