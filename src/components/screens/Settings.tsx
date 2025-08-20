@@ -1,4 +1,3 @@
-import { screenState } from '@/atoms/screen';
 import Layout from '@/components/organisms/Layout';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
@@ -9,17 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useRecoilState } from 'recoil';
-import VersionCheck from 'react-native-version-check';
+import VersionCheck from 'react-native-version-check-expo';
 import ArrowRightSvg from '@assets/svgs/arrow_right_bold.svg';
 import { font, os } from '@/style/font';
 import { setItem } from '@/utils/storage';
 import { useAlert } from '@/hooks/useAlert';
 import { usePillBox } from '@/hooks/usePillBox';
+import { useScreenStore } from '@/store/screen';
 
-const Settings = (): JSX.Element => {
+const Settings = (): React.JSX.Element => {
   const nav: any = useNavigation();
-  const [screen, setScreen]: any = useRecoilState(screenState);
+  const setScreen = useScreenStore((state) => state.setScreen);
   const { showAlert } = useAlert();
   const { getPillSize, delPillList } = usePillBox();
 

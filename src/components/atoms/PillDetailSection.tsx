@@ -5,7 +5,7 @@ export const PillDetailSection = ({
   parsedData,
 }: {
   parsedData: string[] | null | undefined;
-}): JSX.Element => {
+}): React.JSX.Element => {
   return (
     <View style={styles.detailInfoContents}>
       {!parsedData || parsedData.length === 0 ? (

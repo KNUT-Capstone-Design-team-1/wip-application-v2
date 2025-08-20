@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from '@api/client/auth.ts';
+import { getToken } from '@api/client/auth';
 
 const token = getToken();
 

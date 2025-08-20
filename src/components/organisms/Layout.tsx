@@ -1,7 +1,7 @@
-import { screenState } from '@/atoms/screen';
 import HeaderBackground from '@/components/atoms/HeaderBackground';
 import HeaderLogo from '@/components/atoms/HeaderLogo';
 import BottomNavagation from '@/components/organisms/BottomNavigation';
+import { useScreenStore } from '@/store/screen';
 import { font, os } from '@/style/font';
 import { gstyles } from '@/style/globalStyle';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Platform,
-  StatusBar,
+  StatusBar as RNStatusBar,
   StyleSheet,
   View,
   Text,
@@ -17,17 +17,16 @@ import {
   Easing,
   Dimensions,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import { SvgXml } from 'react-native-svg';
-import { useRecoilValue } from 'recoil';
 
 /* 기기 별 상태바 높이 계산 */
 export const StatusBarHeight: number =
   (Platform.OS === 'ios'
     ? getStatusBarHeight(true)
-    : StatusBar.currentHeight) ?? 0;
+    : RNStatusBar.currentHeight) ?? 0;
 /* 화면 전체 높이 */
 export const windowWidth: number = Dimensions.get('window').width;
 /* 화면 전체 높이 */
@@ -89,7 +88,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: -1,
   },
   headerTitleWrapper: {
     alignItems: 'center',
@@ -125,7 +123,7 @@ const styles = StyleSheet.create({
 const Layout = {
   default: ({ children }: any) => {
     const nav: any = useNavigation();
-    const screen: any = useRecoilValue(screenState);
+    const screen = useScreenStore((state) => state.screen);
     const heightAnimation = useRef(
       new Animated.Value(defaultHeaderHeight),
     ).current;
@@ -243,7 +241,7 @@ const Layout = {
     }, [screen]);
 
     return (
-      <View style={styles.fill} onTouchStart={() => {}}>
+      <View style={styles.fill} onTouchStart={() => { }}>
         <HeaderBackground />
         <Animated.View
           style={[styles.headerTitleWrapper, { height: heightAnimation }]}
@@ -303,12 +301,14 @@ const Layout = {
     changeNavigationBarColor('black', false);
 
     return (
-      <View style={[styles.fill, { backgroundColor: '#000' }]}>{children}</View>
+      <View style={[styles.fill, { backgroundColor: '#000' }]}>
+        {children}
+      </View>
     );
   },
   initscreen: ({ children }: any) => {
     return (
-      <View style={[styles.fill, { backgroundColor: '#fff' }]}>
+      <View style={[styles.fill, { backgroundColor: '#222' }]}>
         <LinearGradient
           colors={['#6060dd', '#4545a7', '#4545a7', '#ffffff', '#ffffff']}
           style={styles.headerBackground}

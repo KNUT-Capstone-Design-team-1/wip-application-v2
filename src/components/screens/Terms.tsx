@@ -1,4 +1,3 @@
-import { screenState } from '@/atoms/screen';
 import Layout from '@/components/organisms/Layout';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
@@ -9,15 +8,15 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { useRecoilState } from 'recoil';
 import ArrowRightSvg from '@assets/svgs/arrow_right_bold.svg';
 import { font, os } from '@/style/font';
 import { getItem, setItem } from '@/utils/storage';
 import { TERMS } from '@/constants/terms';
+import { useScreenStore } from '@/store/screen';
 
-const Terms = (): JSX.Element => {
+const Terms = (): React.JSX.Element => {
   const nav: any = useNavigation();
-  const [screen, setScreen]: any = useRecoilState(screenState);
+  const setScreen = useScreenStore((state) => state.setScreen);
 
   const handleSetScreen = () => {
     setScreen('이용 약관');

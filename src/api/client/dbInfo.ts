@@ -1,5 +1,4 @@
-import Config from 'react-native-config';
-import { apiClient } from '@api/apiClient.ts';
+import { apiClient } from '@api/apiClient';
 
 interface IInitInfo {
   appStoreVersion: null | string;
@@ -9,7 +8,7 @@ interface IInitInfo {
 
 const getDBInfo = async () => {
   return await apiClient.get<IInitInfo>(
-    Config.GOOGLE_CLOUD_INIT_INFO_URL as string,
+    process.env.EXPO_PUBLIC_GOOGLE_CLOUD_INIT_INFO_URL as string,
   );
 };
 

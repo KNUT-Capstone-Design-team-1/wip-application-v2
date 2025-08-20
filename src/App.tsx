@@ -1,12 +1,13 @@
+import 'react-native-url-polyfill/auto';
+import 'react-native-get-random-values';
 import dayjs from 'dayjs';
 import { toastConfig } from '@/constants/toast';
 import { clearLogBoxLogs, ignoreSpecificLogs } from '@/utils/logBox';
 import Navigation from '@navigation/Navigation';
 import { useEffect, useState } from 'react';
 import { AppState, LogBox, Platform } from 'react-native';
-import SplashScreen from 'react-native-splash-screen';
+import * as SplashScreen from 'expo-splash-screen';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { RecoilRoot } from 'recoil';
 import { updateCheck } from '@/api/update';
 import UpdateDB from '@/components/screens/UpdateDB';
 import { RealmProvider } from '@realm/react';
@@ -15,6 +16,8 @@ import { AlertProvider } from '@/provider/AlertProvider';
 import { checkAppVersion } from '@/utils/versionChecker';
 import wipConfig from '../wip_config.json';
 import { GLOBAL_STATE } from './global_state';
+
+SplashScreen.preventAutoHideAsync();
 
 // TODO: android 구버전 권한 및 사용 테스트 필요 target < android 13
 
@@ -25,6 +28,7 @@ import { GLOBAL_STATE } from './global_state';
 // TODO: 전체 코드 jsdoc 작성
 const App = (): React.JSX.Element => {
   const [updateDB, setUpdateDB] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     ignoreSpecificLogs();
@@ -58,18 +62,22 @@ const App = (): React.JSX.Element => {
       if (result) {
         setUpdateDB(true);
       }
+      setIsReady(true);
     };
     checkDB();
-    SplashScreen.hide();
   }, []);
+
+  useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [isReady]);
 
   return (
     <RealmProvider {...dbConfig}>
       <AlertProvider>
-        <RecoilRoot>
-          {updateDB ? <UpdateDB /> : <Navigation />}
-          <Toast config={toastConfig} position="bottom" bottomOffset={130} />
-        </RecoilRoot>
+        {updateDB ? <UpdateDB /> : <Navigation />}
+        <Toast config={toastConfig} position="bottom" bottomOffset={130} />
       </AlertProvider>
     </RealmProvider>
   );

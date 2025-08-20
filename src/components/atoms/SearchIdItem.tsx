@@ -1,11 +1,11 @@
-import React, { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 import { View, Text, StyleSheet, GestureResponderEvent } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 
 import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 
-const SearchIdItem = React.memo(
+const SearchIdItem = memo(
   ({
     children,
     text,
@@ -22,7 +22,7 @@ const SearchIdItem = React.memo(
     defaultColor?: string;
     selectColor: string;
     isSelected: boolean;
-  }): JSX.Element => {
+  }): React.JSX.Element => {
     return (
       <Button.scaleFast
         style={styles.itemButtonWrapper}

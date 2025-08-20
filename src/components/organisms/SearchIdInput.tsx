@@ -16,7 +16,7 @@ const SearchIdInput = ({
   }[];
   errorLabel?: string;
   errorState: boolean;
-}): JSX.Element => {
+}): React.JSX.Element => {
   return (
     <View style={styles.sectionTextInputWrapper}>
       <Text style={styles.sectionTextInputLabel}>{label}</Text>

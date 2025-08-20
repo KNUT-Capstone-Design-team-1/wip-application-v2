@@ -10,11 +10,11 @@ import PentagonSvg from '@assets/svgs/shape/pentagon.svg';
 import HexagonSvg from '@assets/svgs/shape/hexagon.svg';
 import OctagonSvg from '@assets/svgs/shape/octagon.svg';
 
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 type TItemData = {
   name: string;
-  icon?: JSX.Element;
+  icon?: React.JSX.Element;
   color?: string;
   category: string;
   key: string;

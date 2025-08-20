@@ -1,4 +1,4 @@
-import axiosInstance from '@api/index.ts';
+import axiosInstance from '@api/index';
 
 export const apiClient = {
   get: async <T>(url: string, params?: object): Promise<T> => {

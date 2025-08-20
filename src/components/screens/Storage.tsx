@@ -12,7 +12,7 @@ import { useCallback, useState } from 'react';
 import { View, ScrollView, StyleSheet, Platform, Text } from 'react-native';
 import { PillBox } from '@/api/db/models/pillBox';
 
-const Storage = (): JSX.Element => {
+const Storage = (): React.JSX.Element => {
   useSetScreen('보관함');
   const { getPillList } = usePillBox();
   const [data, setData] = useState<any[]>([]);

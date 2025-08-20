@@ -13,23 +13,22 @@ import {
 import Button from '@/components/atoms/Button';
 import Layout from '@/components/organisms/Layout';
 import NoteSvg from '@assets/svgs/note.svg';
-import { font, os } from '@/style/font.ts';
+import { font, os } from '@/style/font';
 import CameraSvg from '@assets/svgs/camera.svg';
 import { requestCameraPermission } from '@/utils/permission';
 import { useNavigation } from '@react-navigation/native';
 import { shootingGuideData } from '@/constants/guide';
-import { useRecoilState } from 'recoil';
-import { screenState } from '@/atoms/screen.ts';
 import ElbumSvg from '@assets/svgs/elbum.svg';
-import { imgFileState } from '@/atoms/file.ts';
+import { useScreenStore } from '@/store/screen';
+import { useImgFileStore } from '@/store/imgFileStore';
 
 const { width } = Dimensions.get('window');
 
 const ShootingGuide = () => {
   const nav: any = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [screen, setScreen] = useRecoilState(screenState);
-  const [imgFile, setImgFile] = useRecoilState(imgFileState);
+  const setScreen = useScreenStore((state) => state.setScreen);
+  const setImgFile = useImgFileStore((state) => state.setImgFile);
   const [isAnimating, setIsAnimating] = useState(false);
   const viewabilityConfig = useRef({
     viewAreaCoveragePercentThreshold: 10,

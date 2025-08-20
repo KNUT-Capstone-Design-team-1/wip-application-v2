@@ -1,0 +1,23 @@
+{
+  "build": {
+    "base": {
+      "node": "20.18.3",
+      "yarn": "4.9.1"
+    },
+    "production": {
+      "extends": "base",
+      "credentialsSource": "remote"
+    },
+    "development": {
+      "extends": "base",
+      "developmentClient": true,
+      "distribution": "internal",
+      "withoutCredentials": true
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "credentialsSource": "remote"
+    }
+  }
+}

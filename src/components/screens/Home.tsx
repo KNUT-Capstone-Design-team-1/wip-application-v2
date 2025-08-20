@@ -1,5 +1,4 @@
-import { screenState } from '@/atoms/screen';
-import { useRecoilState } from 'recoil';
+import { useEffect } from 'react';
 import UpdateText from '@/components/atoms/UpdateText';
 import SearchButtonList from '@/components/organisms/SearchButtonList';
 import LastSearchPill from '@/components/organisms/LastSearchPill';
@@ -7,14 +6,14 @@ import MenuList from '@/components/organisms/MenuList';
 import TakeGuide from '@/components/organisms/TakeGuide';
 import { View, StyleSheet, BackHandler } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
 import { gstyles } from '@/style/globalStyle';
 import Layout from '@/components/organisms/Layout';
 import RNExitApp from 'react-native-exit-app';
+import { useScreenStore } from '@/store/screen';
 
-const Home = (): JSX.Element => {
+const Home = (): React.JSX.Element => {
   const nav: any = useNavigation();
-  const [screen, setScreen] = useRecoilState(screenState);
+  const setScreen = useScreenStore((state) => state.setScreen);
 
   const handleSetScreen = () => {
     setScreen('홈');

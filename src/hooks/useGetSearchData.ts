@@ -4,16 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import { TPillSearchParam } from '@/api/db/query';
-import {
-  useRecoilRefresher_UNSTABLE,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from 'recoil';
-import { searchDataState } from '@/atoms/query';
-import { searchFilterParams } from '@/selectors/query';
-import { searchImageBase64State } from '@/selectors/searchImage';
-import { searchImageAtom } from '@/atoms/searchImage';
+import { useSearchQueryStore } from '@/store/searchQueryStore';
+import { useSearchImgStore } from '@/store/searchImgStore';
 
 type TResImageData = { PRINT: string[]; SHAPE: string[]; COLOR: string[] };
 
@@ -28,11 +20,12 @@ export const useGetSearchData = () => {
   const mode = route.params.mode ?? 0;
   const initData = route.params.data;
   const nav: any = useNavigation();
-  const setSearchData = useSetRecoilState(searchDataState);
-  const resetSearchData = useResetRecoilState(searchDataState);
-  const refreshFilter = useRecoilRefresher_UNSTABLE(searchFilterParams);
-  const imageBase64 = useRecoilValue(searchImageBase64State);
-  const resetSearchImage = useResetRecoilState(searchImageAtom);
+  const setSearchData = useSearchQueryStore((state) => state.setSearchQuery);
+  const resetSearchData = useSearchQueryStore(
+    (state) => state.resetSearchQuery,
+  );
+  const imageBase64 = useSearchImgStore((state) => state.searchImgBase64);
+  const resetSearchImage = useSearchImgStore((state) => state.resetSearchImg);
 
   /** 검색 데이터 요청 - 초기 데이터 */
   const getImageData = async () => {
@@ -103,7 +96,6 @@ export const useGetSearchData = () => {
     return () => {
       resetSearchData();
       resetSearchImage();
-      refreshFilter();
     };
   }, []);
 

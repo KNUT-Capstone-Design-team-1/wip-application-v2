@@ -4,7 +4,11 @@ import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 type TCustomChip = { text: string; style?: ViewStyle; textStyle?: TextStyle };
 
-const CustomChip = ({ text, style, textStyle }: TCustomChip): JSX.Element => {
+const CustomChip = ({
+  text,
+  style,
+  textStyle,
+}: TCustomChip): React.JSX.Element => {
   return (
     <View style={[styles.chipTextWrapper, style]}>
       <Text style={[styles.chipText, textStyle]}>{text}</Text>

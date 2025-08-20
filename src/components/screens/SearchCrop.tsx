@@ -1,5 +1,3 @@
-import { imgFileState } from '@/atoms/file';
-import { screenState } from '@/atoms/screen';
 import Button from '@/components/atoms/Button';
 import Layout, {
   StatusBarHeight,
@@ -19,7 +17,6 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { getImgPath } from '@/utils/image';
 import {
   openPicker,
@@ -35,17 +32,20 @@ import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import Toast from 'react-native-toast-message';
 import { requestCameraPermission } from '@/utils/permission';
-import { searchImageAtom } from '@/atoms/searchImage';
+import { useScreenStore } from '@/store/screen';
+import { TImgFile, useImgFileStore } from '@/store/imgFileStore';
+import { useSearchImgStore } from '@/store/searchImgStore';
 
-const SearchCrop = (): JSX.Element => {
+const SearchCrop = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const downArrowAnimation = useRef(new Animated.Value(0)).current;
   const noteOpacityAnimation = useRef(new Animated.Value(0)).current;
   const noteUpAnimation = useRef(new Animated.Value(10)).current;
   const viewShotRef = useRef<any>(null);
-  const [screen, setScreen]: any = useRecoilState(screenState);
-  const [imgFile, setImgFile]: any = useRecoilState(imgFileState);
-  const setSearchImage = useSetRecoilState(searchImageAtom);
+  const setScreen = useScreenStore((state) => state.setScreen);
+  const imgFile = useImgFileStore((state) => state.imgFile);
+  const setImgFile = useImgFileStore((state) => state.setImgFile);
+  const setSearchImage = useSearchImgStore((state) => state.setSearchImg);
 
   /** 화살표 반복 애니메이션 */
   const downArrowAni = () => {
@@ -107,7 +107,7 @@ const SearchCrop = (): JSX.Element => {
       },
     );
 
-    let result;
+    let result: TImgFile;
     if (imgFile) {
       result = { ...imgFile };
     } else {
@@ -115,7 +115,7 @@ const SearchCrop = (): JSX.Element => {
     }
 
     if (response) {
-      result[direction] = response;
+      result[direction as keyof TImgFile] = response;
       setImgFile(result);
     }
   };

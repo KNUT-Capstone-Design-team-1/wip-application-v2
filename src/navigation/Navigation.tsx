@@ -9,7 +9,7 @@ import HomeStack from '@/navigation/HomeStack';
 import StorageStack from '@/navigation/StorageStack';
 import SettingsStack from '@/navigation/SettingsStack';
 
-const Navigation = (): JSX.Element => {
+const Navigation = (): React.JSX.Element => {
   const Tab = createBottomTabNavigator();
 
   const theme = {

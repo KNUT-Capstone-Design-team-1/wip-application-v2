@@ -1,11 +1,10 @@
-import { screenState } from '@/atoms/screen';
 import Button from '@/components/atoms/Button';
+import { useScreenStore } from '@/store/screen';
 import { font, os } from '@/style/font';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { DimensionValue, StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { useRecoilValue } from 'recoil';
 
 interface INavWrapperProps {
   iconXML: INavIcon;
@@ -32,7 +31,7 @@ interface INavIconSize {
 
 const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
   const nav: any = useNavigation();
-  const screen: any = useRecoilValue(screenState);
+  const screen = useScreenStore((state) => state.screen);
   const [currentScreen, setCurrentScreen] = useState<string | null>(null);
 
   const getIconSize = () => {

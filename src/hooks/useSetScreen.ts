@@ -1,11 +1,10 @@
-import { screenState } from '@/atoms/screen';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useScreenStore } from '@/store/screen';
 
 export const useSetScreen = (screenName: string) => {
   const nav: any = useNavigation();
-  const [, setScreen] = useRecoilState(screenState);
+  const setScreen = useScreenStore((state) => state.setScreen);
 
   const handleSetScreen = () => {
     setScreen(screenName);

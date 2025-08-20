@@ -1,4 +1,3 @@
-import { screenState } from '@/atoms/screen';
 import Button from '@/components/atoms/Button';
 import Layout from '@/components/organisms/Layout';
 import { font, os } from '@/style/font';
@@ -13,21 +12,21 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { useRecoilState } from 'recoil';
 import CameraSvg from '@assets/svgs/camera.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import NoteSvg from '@assets/svgs/note.svg';
 import GuideFrameSvg from '@assets/svgs/guideFrame.svg';
-import { imgFileState } from '@/atoms/file';
 import { requestCameraPermission } from '@/utils/permission';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SvgXml } from 'react-native-svg';
-import { svgData } from '@/constants/svgDatas.tsx';
+import { useScreenStore } from '@/store/screen';
+import { useImgFileStore } from '@/store/imgFileStore';
+import { svgData } from '@/constants/svgDatas';
 
-const SearchImage = ({ route }: any): JSX.Element => {
+const SearchImage = ({ route }: any): React.JSX.Element => {
   const nav: any = useNavigation();
-  const [screen, setScreen] = useRecoilState(screenState);
-  const [imgFile, setImgFile] = useRecoilState(imgFileState);
+  const setScreen = useScreenStore((state) => state.setScreen);
+  const setImgFile = useImgFileStore((state) => state.setImgFile);
   const [showGuide, setShowGuide] = useState<boolean | null>(null);
 
   const handleSetScreen = () => {

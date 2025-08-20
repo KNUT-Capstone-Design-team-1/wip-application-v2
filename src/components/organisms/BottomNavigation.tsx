@@ -1,9 +1,7 @@
-import { screenState } from '@/atoms/screen';
 import NavButton from '@/components/atoms/NavButton';
+import { useScreenStore } from '@/store/screen';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
-import { useRecoilValue } from 'recoil';
-
 interface INavWrapperProps {
   iconXML: string;
   name: string;
@@ -16,12 +14,12 @@ const HomeIndicatorHeight = 34;
 export const BottomNavHeight: number =
   Platform.OS === 'ios'
     ? // ios
-      65 + HomeIndicatorHeight
+    65 + HomeIndicatorHeight
     : // android
-      42 + HomeIndicatorHeight;
+    42 + HomeIndicatorHeight;
 
-const BottomNavagation = (): JSX.Element | null => {
-  const screen: any = useRecoilValue(screenState);
+const BottomNavagation = (): React.JSX.Element | null => {
+  const screen = useScreenStore((state) => state.screen);
 
   const visibleList: string[] = ['홈', '보관함', '설정'];
 

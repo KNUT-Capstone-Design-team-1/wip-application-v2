@@ -1,21 +1,20 @@
 import { Suspense, useEffect, lazy } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilState, useResetRecoilState } from 'recoil';
 import Layout, {
   defaultHeaderHeight,
   StatusBarHeight,
   windowHeight,
 } from '@/components/organisms/Layout';
-import { screenState } from '@/atoms/screen';
-import { searchIdStates } from '@/selectors/searchId';
+import { useScreenStore } from '@/store/screen';
+import { useSearchIdStore } from '@/store/searchIdStore';
 
 const SearchIdList = lazy(() => import('@/components/organisms/SearchIdList'));
 
-const SearchId = (): JSX.Element => {
+const SearchId = (): React.JSX.Element => {
   const nav: any = useNavigation();
-  const [screen, setScreen] = useRecoilState(screenState);
-  const resetIdStates = useResetRecoilState(searchIdStates);
+  const setScreen = useScreenStore((state) => state.setScreen);
+  const resetSearchId = useSearchIdStore((state) => state.resetSearchId);
 
   const handleSetScreen = () => {
     setScreen('식별 검색');
@@ -24,7 +23,7 @@ const SearchId = (): JSX.Element => {
   useEffect(() => {
     nav.addListener('focus', () => handleSetScreen());
     return () => {
-      resetIdStates();
+      resetSearchId();
       nav.removeListener('focus', () => handleSetScreen());
     };
   }, []);

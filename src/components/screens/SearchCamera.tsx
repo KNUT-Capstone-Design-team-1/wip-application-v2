@@ -1,4 +1,3 @@
-import { screenState } from '@/atoms/screen';
 import Button from '@/components/atoms/Button';
 import Layout, {
   StatusBarHeight,
@@ -24,7 +23,6 @@ import {
   useCameraDevice,
   useCameraFormat,
 } from 'react-native-vision-camera';
-import { useRecoilState } from 'recoil';
 import CameraMaskFrame from '@assets/svgs/cameraMaskFrame.svg';
 import FlashOnSvg from '@assets/svgs/flash_on.svg';
 import FlashOffSvg from '@assets/svgs/flash_off.svg';
@@ -34,9 +32,10 @@ import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { trigger } from 'react-native-haptic-feedback';
-import { imgFileState } from '@/atoms/file';
 import { cameraDeviceOption } from '@/constants/options';
 import { getCropImage, getImgPath } from '@/utils/image';
+import { useImgFileStore } from '@/store/imgFileStore';
+import { useScreenStore } from '@/store/screen';
 
 interface ICameraImg {
   front: any;
@@ -57,7 +56,7 @@ const options = {
   ignoreAndroidSystemSettings: true,
 };
 
-const SearchCamera = (): JSX.Element => {
+const SearchCamera = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const cameraDevice = useCameraDevice('back', cameraDeviceOption);
   const cameraRef = useRef<Camera>(null);
@@ -70,8 +69,8 @@ const SearchCamera = (): JSX.Element => {
   const guideCompleteTopAnimation = useRef(new Animated.Value(-100)).current;
   const arrowLoopAnimation = useRef(new Animated.Value(0)).current;
 
-  const [screen, setScreen]: any = useRecoilState(screenState);
-  const [imgFile, setImgFile] = useRecoilState<any>(imgFileState);
+  const setScreen = useScreenStore((state) => state.setScreen);
+  const setImgFile = useImgFileStore((state) => state.setImgFile);
   const [cameraLoading, setCameraLoading] = useState<boolean>(true);
   const [cameraImage, setCameraImage] = useState<null | ICameraImg>(null);
   const [currentDirection, setCurrentDirection] = useState<
@@ -530,7 +529,9 @@ const SearchCamera = (): JSX.Element => {
     },
     noteBack: { color: '#75a3ec' },
     noteBackWrapper: { top: guideBackTopAnimation },
-    noteBold: { fontFamily: os.font(800, 800) },
+    noteBold: {
+      fontFamily: os.font(800, 800),
+    },
     noteComplete: { color: '#fffa5f' },
     noteCompleteWrapper: { top: guideCompleteTopAnimation },
     noteFront: { color: '#FF6868' },

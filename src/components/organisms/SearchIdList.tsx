@@ -10,10 +10,10 @@ import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 import SearchSvg from '@/assets/svgs/search.svg';
 import { useSelectSearchId } from '@/hooks/useSelectSearchId';
-import SearchIdItem from '../atoms/SearchIdItem';
 import SearchIdInput from '@/components/organisms/SearchIdInput';
+import SearchIdItem from '@/components/atoms/SearchIdItem';
 
-const SearchIdList = (): JSX.Element => {
+const SearchIdList = (): React.JSX.Element => {
   const {
     btnState,
     idFrontText,
@@ -42,7 +42,7 @@ const SearchIdList = (): JSX.Element => {
             selectColor="#7472EB"
             isSelected={
               shapeSelected.includes(item.category + item.key) ||
-              colorSelected.includes(item.category + item.key)
+                colorSelected.includes(item.category + item.key)
                 ? true
                 : false
             }
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.8)',
-    bottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
+    bottom: 15 + (Platform.OS === 'ios' ? 28 : 10),
     flexDirection: 'row',
     height: 54,
     justifyContent: 'space-evenly',
