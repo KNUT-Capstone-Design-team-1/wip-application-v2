@@ -1,4 +1,4 @@
-# Edit at https://github.com/facebook/react-native/blob/main/.gitignore
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # Xcode
 !**/*.xcodeproj
@@ -79,12 +79,9 @@ ios/Pods/*
 ios/build/*
 
 # Node
-node_modules
+node_modules/
 *.log
 .nvm
-
-# OS X
-.DS_Store
 
 # Test generated files
 /packages/react-native/ReactAndroid/src/androidTest/assets/AndroidTestBundle.js
@@ -170,6 +167,7 @@ vendor/
 
 # Environment
 .env
+.env.*
 
 # yarn
 .yarn/*.gz
@@ -178,3 +176,38 @@ vendor/
 
 # etc
 tmp
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+*.apk
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# typescript
+*.tsbuildinfo
+
+# eas
+credentials.json
+
+# expo prebuild
+/android
+/ios
