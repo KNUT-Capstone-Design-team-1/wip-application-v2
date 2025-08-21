@@ -51,7 +51,9 @@ DESCRIPTION
 
 # app.json
 
-[Expo app.json Props](https://docs.expo.dev/versions/latest/config/app/)
+- 프로젝트 관련 설정 파일
+- expo 모듈 설정
+  [Expo app.json Props](https://docs.expo.dev/versions/latest/config/app/)
 
 # EAS
 
@@ -61,7 +63,8 @@ DESCRIPTION
 
 ## eas.json
 
-[EAS eas.json Props](https://docs.expo.dev/eas/json/)
+- eas 관련 설정 파일
+  [EAS eas.json Props](https://docs.expo.dev/eas/json/)
 
 # credentials.json
 

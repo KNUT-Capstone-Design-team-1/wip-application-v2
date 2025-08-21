@@ -91,7 +91,7 @@ yarn reset:ios
 
 # TroubleShooting
 
-### 만능
+## 만능
 
 ```bash
 rm -rf android
@@ -103,7 +103,7 @@ yarn run prebuild
 # 이후 빌드 진행
 ```
 
-### 빌드 중 expo 모듈 관련 에러
+## 빌드 중 expo 모듈 관련 에러
 
 [Expo Docs](https://docs.expo.dev/)
 
@@ -115,13 +115,13 @@ yarn run prebuild
 - 충돌 부분 수정 방법
   - expo-doctor 또는 디버깅 후 충돌 부분(의존 관계 라이브러리)을 수정
 
-### yarn run rebuild 또는 npx expo prebuild --clean 관련 에러
+## yarn run rebuild 또는 npx expo prebuild --clean 관련 에러
 
-#### Failed to delete android, ios code: ENOTEMPTY: directory not empty, rmdir
+### Failed to delete android, ios code: ENOTEMPTY: directory not empty, rmdir
 
 - 한번 더 실행 시 해결됨
 
-### eas 서버에서 빌드 중 yarn install 부분 Error: Couldn't allocate enough memory 발생
+## eas 서버에서 빌드 중 yarn install 부분 Error: Couldn't allocate enough memory 발생
 
 - yarn fetch 중 nodejs에 설정된 메모리의 부족으로 인해 발생하는 문제
 - yarn.lock이나 yarn cache에 관련된 수정이 발생한 이후 첫 빌드에서 발생 종종 발생 예정
