@@ -18,15 +18,29 @@ jobs:
         with:
           node-version: 20
 
+      - name: cache-yarn
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: install-dependencies
         run: |
           npm install -g eas-cli
-          yarn install --immutable-cache
+          echo "NODE_OPTIONS=--max_old_space_size=4096" >> $GITHUB_ENV
+          echo "YARN_ENABLE_IMMUTABLE_INSTALLS=true" >> $GITHUB_ENV
+          yarn install --immutable --immutable-cache
+        shell: bash
 
       - name: versioning
         run: |
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+        shell: bash
 
       - name: build
         env:
