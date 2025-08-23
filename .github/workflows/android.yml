@@ -18,17 +18,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: install-dependencies
-        run: |
-          sudo apt install -y jq
-          npm install -g eas-cli
-          yarn install
-
-      - name: get-key-store
-        run: |
-          echo "${{ secrets.KEY_STORE }}" > ./android/app/wip240524.jks.bs64
-          base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
-
       - name: versioning
         run: |
           VERSION=$(jq -r '.version' package.json)
