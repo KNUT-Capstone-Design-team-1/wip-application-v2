@@ -1,6 +1,6 @@
-name: eas-android
+name: wip-android
 
-run-name: eas-android-build
+run-name: wip-android-build
 
 on:
   workflow_dispatch:
