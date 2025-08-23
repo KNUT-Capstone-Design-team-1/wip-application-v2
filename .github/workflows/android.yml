@@ -39,11 +39,12 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: build
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           yarn run rebuild
-          yarn apk
+          eas build -p android --profile production
           mv ./android/app/build/outputs/apk/product/release/app-product-release.apk ./app/build/outputs/apk/product/release/wip-$VERSION-${{ github.run_number }}.apk
-          yarn aab
           mv ./android/app/build/outputs/bundle/productRelease/app-product-release.aab ./app/build/outputs/bundle/productRelease/wip-$VERSION-${{ github.run_number }}.aab
 
       - uses: actions/upload-artifact@v4
