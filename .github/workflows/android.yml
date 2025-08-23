@@ -21,15 +21,12 @@ jobs:
       - name: install-dependencies
         run: |
           npm install -g eas-cli
-          echo "NODE_OPTIONS=--max_old_space_size=4096" >> $GITHUB_ENV
           yarn install
-        shell: bash
 
       - name: versioning
         run: |
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-        shell: bash
 
       - name: build
         env:
