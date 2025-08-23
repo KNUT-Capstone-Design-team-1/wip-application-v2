@@ -43,13 +43,11 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           yarn run rebuild
-          eas build -p android --profile production
-          mv ./android/app/build/outputs/apk/product/release/app-product-release.apk ./app/build/outputs/apk/product/release/wip-$VERSION-${{ github.run_number }}.apk
-          mv ./android/app/build/outputs/bundle/productRelease/app-product-release.aab ./app/build/outputs/bundle/productRelease/wip-$VERSION-${{ github.run_number }}.aab
+          eas build -p android --profile production --non-interactive --json > build.json
+          BUILD_URL=$(jq -r '.artifacts.buildUrl' build.json)
+          curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.aab "$BUILD_URL"
 
       - uses: actions/upload-artifact@v4
         with:
           name: wip-${{ env.VERSION  }}-${{ github.run_number }}
-          path: |
-            ./android/app/build/outputs/apk/product/release/wip-${{ env.VERSION  }}-${{ github.run_number }}.apk
-            ./android/app/build/outputs/bundle/productRelease/wip-${{ env.VERSION  }}-${{ github.run_number }}.aab
+          path: wip-${{ env.VERSION }}-${{ github.run_number }}.aab
