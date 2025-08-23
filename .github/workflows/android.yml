@@ -20,9 +20,7 @@ jobs:
 
       - name: install-dependencies
         run: |
-          sudo apt install -y jq
           npm install -g eas-cli
-          echo "NODE_OPTIONS=--max_old_space_size=4096" >> $GITHUB_ENV
           yarn install --immutable --immutable-cache
 
       - name: versioning
