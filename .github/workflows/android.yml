@@ -21,7 +21,7 @@ jobs:
       - name: install-dependencies
         run: |
           npm install -g eas-cli
-          yarn install --immutable --immutable-cache
+          yarn install --immutable-cache
 
       - name: versioning
         run: |
