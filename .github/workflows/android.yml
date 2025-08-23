@@ -18,6 +18,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: install-dependencies
+        run: |
+          sudo apt install -y jq
+          npm install -g eas-cli
+
       - name: versioning
         run: |
           VERSION=$(jq -r '.version' package.json)
