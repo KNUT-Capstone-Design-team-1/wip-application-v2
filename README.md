@@ -1,11 +1,12 @@
 # 이게뭐약
 
-- 알약 촬영 검색 애플리케이션
+- AI를 활용한 알약 검색 애플리케이션
 
 # Requirement
 
 - node 20 이상
 - JDK11
+- eas-cli (npm install -g eas-cli)
 - (ios) ruby 2.7.6 이상
 - (ios) cocoapods 1.13 이상 1.15 미만
 - (ios) activesupport 6.1.7.5 이상 7.1.0 미만
@@ -21,14 +22,19 @@ yarn install
 #### development build setting
 
 ```bash
-yarn run prebuild
 # npx expo prebuild와 동일
+yarn run prebuild
 ```
 
 #### add env
 
 - .env.local을 root에 다운로드
   - 배포된 파일을 다운로드 또는 [EAS 활용](./HowToSetting.md#download-env-from-eas-servers)
+
+```bash
+eas login
+eas env:pull
+```
 
 #### add new library
 
@@ -76,6 +82,10 @@ yarn run ios
 # Build
 
 [How to build](./HowToBuild.md)
+
+```
+
+```
 
 # Reset Cache
 

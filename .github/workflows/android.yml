@@ -13,48 +13,39 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
 
-      - name: install-library
+      - name: setup-nodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: install-dependencies
         run: |
-          yarn set version berry
+          sudo apt install -y jq
+          npm install -g eas-cli
           yarn install
+
+      - name: authenticate-expo
+        run: |
+          eas whoami || eas login --token ${{ secrets.EXPO_TOKEN }}
 
       - name: get-key-store
         run: |
           echo "${{ secrets.KEY_STORE }}" > ./android/app/wip240524.jks.bs64
           base64 -d ./android/app/wip240524.jks.bs64 > ./android/app/wip240524.jks
 
-      - name: get-config
-        run: |
-          mkdir ./env
-          cat <<EOL > .env
-          REALM_ENCRYPTION_KEY="${{ secrets.REALM_ENCRYPTION_KEY }}"
-
-          GOOGLE_CLOUD_RSA_PUB_KEY="${{ secrets.GOOGLE_CLOUD_RSA_PUB_KEY }}"
-          GOOGLE_CLOUD_INIT_INFO_URL="${{ secrets.GOOGLE_CLOUD_INIT_INFO_URL }}"
-          GOOGLE_CLOUD_DL_SERVER_URL="${{ secrets.GOOGLE_CLOUD_DL_SERVER_URL }}"
-          GOOGLE_CLOUD_DRUG_DETAIL_URL="${{ secrets.GOOGLE_CLOUD_DRUG_DETAIL_URL }}"
-
-          CLOUD_FLARE_RESOURCE_DOWNLOAD_URL="${{ secrets.CLOUD_FLARE_RESOURCE_DOWNLOAD_URL }}"
-          CLOUD_FLARE_RESOURCE_BUCKET="${{ secrets.CLOUD_FLARE_RESOURCE_BUCKET }}"
-          CLOUD_FLARE_TOKEN_VALUE="${{ secrets.CLOUD_FLARE_TOKEN_VALUE }}"
-          CLOUD_FLARE_ACCESS_KEY_ID="${{ secrets.CLOUD_FLARE_ACCESS_KEY_ID }}"
-          CLOUD_FLARE_SECRET_ACCESS_KEY="${{ secrets.CLOUD_FLARE_SECRET_ACCESS_KEY }}"
-          EOL
-
       - name: versioning
         run: |
-          sudo apt install -y jq
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: build
         run: |
-          pushd ./android
-          ./gradlew assembleRelease
-          mv ./app/build/outputs/apk/product/release/app-product-release.apk ./app/build/outputs/apk/product/release/wip-$VERSION-${{ github.run_number }}.apk
-          ./gradlew bundleRelease
-          mv ./app/build/outputs/bundle/productRelease/app-product-release.aab ./app/build/outputs/bundle/productRelease/wip-$VERSION-${{ github.run_number }}.aab
-          popd
+          yarn run rebuild
+          yarn apk
+          mv ./android/app/build/outputs/apk/product/release/app-product-release.apk ./app/build/outputs/apk/product/release/wip-$VERSION-${{ github.run_number }}.apk
+          yarn aab
+          mv ./android/app/build/outputs/bundle/productRelease/app-product-release.aab ./app/build/outputs/bundle/productRelease/wip-$VERSION-${{ github.run_number }}.aab
+
       - uses: actions/upload-artifact@v4
         with:
           name: wip-${{ env.VERSION  }}-${{ github.run_number }}
