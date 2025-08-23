@@ -5,36 +5,18 @@
     },
     "production": {
       "extends": "base",
-      "credentialsSource": "remote",
-      "android": {
-        "image": "ubuntu-22.04-android-ndk-r25c"
-      },
-      "ios": {
-        "image": "macos-13.4-xcode-15.1"
-      }
+      "credentialsSource": "remote"
     },
     "development": {
       "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
-      "withoutCredentials": true,
-      "android": {
-        "image": "ubuntu-22.04-android-ndk-r25c"
-      },
-      "ios": {
-        "image": "macos-13.4-xcode-15.1"
-      }
+      "withoutCredentials": true
     },
     "preview": {
       "extends": "base",
       "distribution": "internal",
-      "credentialsSource": "remote",
-      "android": {
-        "image": "ubuntu-22.04-android-ndk-r25c"
-      },
-      "ios": {
-        "image": "macos-13.4-xcode-15.1"
-      }
+      "credentialsSource": "remote"
     }
   }
 }
