@@ -11,7 +11,10 @@ type TPillSearchParam = {
  * @param param 검색 속성
  * @returns
  */
-function getQueryForSearch(param: TPillSearchParam) {
+function getQueryForSearch(param: TPillSearchParam | null) {
+  if (!param) {
+    return { filter: '', params: [] };
+  }
   let filter = '';
   let index = 0;
   const printFilter: string[] = [];

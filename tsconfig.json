@@ -1,9 +1,7 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "module": "ES2020",
-    "target": "esnext",
-    "jsx": "react-jsx",
+    "strict": true,
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"],
@@ -12,7 +10,10 @@
       "@assets/*": ["assets/*"],
       "@navigation/*": ["navigation/*"],
       "@styles/*": ["styles/*"],
-      "@api/*": ["api/*"]
+      "@api/*": ["api/*"],
+      "@store/*": ["store/*"],
+      "@utils/*": ["utils/*"],
+      "@constants/*": ["constants/*"]
     }
   },
   "include": ["src", "**/*.tsx", "declarations.d.ts"]

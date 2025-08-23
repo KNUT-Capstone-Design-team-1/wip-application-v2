@@ -22,7 +22,7 @@ const PillInfo = {
     ct,
     searchValue = '|',
     replaceValue = '\n',
-  }: IProps): JSX.Element => {
+  }: IProps): React.JSX.Element => {
     let _ct = '-';
 
     if (ct) {
@@ -41,7 +41,7 @@ const PillInfo = {
     ct,
     searchValue = '',
     replaceValue = '',
-  }: IPropsChips): JSX.Element => {
+  }: IPropsChips): React.JSX.Element => {
     let _ct: string[] = [];
 
     if (ct) {

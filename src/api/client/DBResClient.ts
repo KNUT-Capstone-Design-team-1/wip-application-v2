@@ -1,8 +1,5 @@
-import Config from 'react-native-config';
 import RNFS from 'react-native-fs';
 import { Buffer } from '@craftzdog/react-native-buffer';
-import 'react-native-url-polyfill/auto';
-import 'react-native-get-random-values';
 import {
   GetObjectCommand,
   ListObjectsV2Command,
@@ -24,11 +21,13 @@ export class DBResClient {
 
   constructor() {
     this.client = new S3Client({
-      endpoint: Config.CLOUD_FLARE_RESOURCE_DOWNLOAD_URL,
+      endpoint: process.env.EXPO_PUBLIC_CLOUD_FLARE_RESOURCE_DOWNLOAD_URL,
       region: 'auto',
       credentials: {
-        accessKeyId: Config.CLOUD_FLARE_ACCESS_KEY_ID as string,
-        secretAccessKey: Config.CLOUD_FLARE_SECRET_ACCESS_KEY as string,
+        accessKeyId: process.env
+          .EXPO_PUBLIC_CLOUD_FLARE_ACCESS_KEY_ID as string,
+        secretAccessKey: process.env
+          .EXPO_PUBLIC_CLOUD_FLARE_SECRET_ACCESS_KEY as string,
       },
     });
     console.log('create DBResClient');
@@ -51,7 +50,7 @@ export class DBResClient {
     end: number;
   }) => {
     const command = new GetObjectCommand({
-      Bucket: Config.CLOUD_FLARE_RESOURCE_BUCKET,
+      Bucket: process.env.EXPO_PUBLIC_CLOUD_FLARE_RESOURCE_BUCKET,
       Key: key,
       Range: `bytes=${start}-${end}`,
     });
@@ -129,7 +128,7 @@ export class DBResClient {
   ) {
     this.resSize = 0;
     const command = new ListObjectsV2Command({
-      Bucket: Config.CLOUD_FLARE_RESOURCE_BUCKET,
+      Bucket: process.env.EXPO_PUBLIC_CLOUD_FLARE_RESOURCE_BUCKET,
     });
 
     this.contents = await this.client

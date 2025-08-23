@@ -11,7 +11,7 @@ import { useGetPillData } from '@/hooks/useGetPillData';
 import SkeletoneSearchResult from '@/components/organisms/SkeletoneSearchResult';
 
 //TODO: flatlist 메모리 최적화 필요
-const SearchResultList = (): JSX.Element => {
+const SearchResultList = (): React.JSX.Element => {
   const { paginatedData, totalSize, loadData, isLoading } = useGetPillData(20);
 
   return (

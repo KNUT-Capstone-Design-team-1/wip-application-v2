@@ -1,25 +1,21 @@
 import { useState } from 'react';
-import _ from 'lodash';
 import { TItemData } from '@/constants/data';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import {
-  searchIdBackState,
-  searchIdColorState,
-  searchIdFrontState,
-  searchIdShapeState,
-} from '@/atoms/searchId';
 import { disableWord, makeNewList } from '@/utils/checker';
-import { searchIdItems, searchIdStates } from '@/selectors/searchId';
+import { useSearchIdStore } from '@/store/searchIdStore';
 
 export const useSelectSearchId = () => {
   const [btnState, setBtnState] = useState<boolean>(false);
-  const [idFrontText, setIdFrontText] = useRecoilState(searchIdFrontState);
-  const [idBackText, setIdBackText] = useRecoilState(searchIdBackState);
-  const [shapeSelected, setShapeSelected] = useRecoilState(searchIdShapeState);
-  const [colorSelected, setColorSelected] = useRecoilState(searchIdColorState);
-  const data = useRecoilValue(searchIdItems);
-  const handlePressInit = useResetRecoilState(searchIdStates);
+  const idFrontText = useSearchIdStore((state) => state.searchIdFront);
+  const idBackText = useSearchIdStore((state) => state.searchIdBack);
+  const shapeSelected = useSearchIdStore((state) => state.searchIdShapes);
+  const colorSelected = useSearchIdStore((state) => state.searchIdColors);
+  const setIdFrontText = useSearchIdStore((state) => state.setSearchIdFront);
+  const setIdBackText = useSearchIdStore((state) => state.setSearchIdBack);
+  const setShapeSelected = useSearchIdStore((state) => state.setSearchIdShapes);
+  const setColorSelected = useSearchIdStore((state) => state.setSearchIdColors);
+  const getSearchIdItems = useSearchIdStore((state) => state.getSearchIdItems);
+  const handlePressInit = useSearchIdStore((state) => state.resetSearchId);
 
   const setIdText = { front: setIdFrontText, back: setIdBackText };
 
@@ -51,7 +47,8 @@ export const useSelectSearchId = () => {
   };
 
   const handlePressSearch = () => {
-    nav.navigate('알약 검색 결과', { data: data, mode: 0 });
+    const data = getSearchIdItems();
+    nav.navigate('알약 검색 결과', { data, mode: 0 });
   };
 
   return {

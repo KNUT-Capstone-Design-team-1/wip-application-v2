@@ -3,13 +3,14 @@ import { useQuery } from '@realm/react';
 import { PillData, TPillData } from '@/api/db/models/pillData';
 import { calcCosineSimilarity, textToVector } from '@/utils/similarity';
 import { deepCopyRealmObj } from '@/utils/converter';
-import { useRecoilValue } from 'recoil';
-import { searchFilterParams } from '@/selectors/query';
+import { useSearchQueryStore } from '@/store/searchQueryStore';
 
 //TODO: 데이터를 가져오는 과정을 비동기로 처리하기
 export const useGetPillData = (pageSize: number) => {
   const queryRecog = useQuery(PillData);
-  const { filter, params, initData } = useRecoilValue(searchFilterParams);
+  const { filter, params, initData } = useSearchQueryStore(
+    (state) => state.searchFilterParams,
+  );
 
   const [page, setPage] = useState(1);
   const [totalSize, setTotalSize] = useState(0);
@@ -28,7 +29,7 @@ export const useGetPillData = (pageSize: number) => {
       params.length == 0 ? queryRecog : queryRecog.filtered(filter, ...params);
     let recogArr;
 
-    if (initData.PRINT_FRONT + initData.PRINT_BACK != '') {
+    if (initData && initData.PRINT_FRONT + initData.PRINT_BACK != '') {
       const initVector = textToVector(
         initData.PRINT_FRONT + initData.PRINT_BACK,
       );

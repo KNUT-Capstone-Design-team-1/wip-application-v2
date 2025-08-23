@@ -16,7 +16,7 @@ type TPillDetailJsonObj = {
 
 export const parseXML = (xmlString: string) => {
   const paragraphs: any[] = [];
-  const xml = XmlParser.entityDecode(xmlString);
+  const xml = XmlParser.entityDecode(XmlParser.entityDecode(xmlString));
   const xmlParser = XmlParser.getInstance();
 
   const jsonObj: TPillDetailJsonObj = xmlParser.parse(xml);

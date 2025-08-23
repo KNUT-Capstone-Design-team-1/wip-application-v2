@@ -7,13 +7,12 @@ import DeleteSvg from '@assets/svgs/exit.svg';
 import { useNavigation } from '@react-navigation/native';
 import { useAlert } from '@/hooks/useAlert';
 import { usePillBox } from '@/hooks/usePillBox';
-
 interface IProps {
   data: any;
   refresh: any;
 }
 
-const StorageItem = ({ data, refresh }: IProps): JSX.Element => {
+const StorageItem = ({ data, refresh }: IProps): React.JSX.Element => {
   const nav: any = useNavigation();
   const { showAlert } = useAlert();
   const { delPill } = usePillBox();

@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { toastConfig } from '@/constants/toast';
 import { font, os } from '@/style/font';
 import {
@@ -36,7 +36,7 @@ type CustomAlertProps = {
   onCheckboxChange?: (isChecked: boolean) => void;
 };
 
-const CustomAlert = React.memo(
+const CustomAlert = memo(
   ({
     visible,
     onRequestClose,
@@ -46,7 +46,7 @@ const CustomAlert = React.memo(
     modalType = 'default',
     checkboxLabel,
     onCheckboxChange,
-  }: CustomAlertProps): JSX.Element => {
+  }: CustomAlertProps): React.JSX.Element => {
     const handleCheckboxChange = (isChecked: boolean) => {
       if (onCheckboxChange) {
         onCheckboxChange(isChecked);

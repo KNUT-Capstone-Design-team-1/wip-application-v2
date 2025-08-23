@@ -1,1 +1,96 @@
-{ "name": "whatispill", "displayName": "이게뭐약" }
+{
+  "expo": {
+    "name": "이게뭐약",
+    "slug": "whatispill",
+    "owner": "mustbemadness",
+    "version": "2.1.2",
+    "orientation": "portrait",
+    "icon": "./assets/icons/icon.png",
+    "newArchEnabled": true,
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mbm.whatispill",
+      "icon": {
+        "light": "./assets/icons/ios-icon.png",
+        "dark": "./assets/icons/ios-icon.png",
+        "tinted": "./assets/icons/ios-icon.png"
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다",
+        "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME)에서 알약 검색에 필요한 이미지를 가져오기 위해 사진 권한이 필요합니다"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "monochromeImage": "./assets/icons/adaptive-icon.png",
+        "backgroundColor": "#3b3b90"
+      },
+      "edgeToEdgeEnabled": false,
+      "package": "com.mbm.whatispill",
+      "versionCode": 13,
+      "softwareKeyboardLayoutMode": "resize",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.CAMERA"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#3b3b90",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24,
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0",
+            "useLegacyPackaging": true,
+            "enableProguardInReleaseBuilds": true,
+            "extraProguardRules": "-keep class io.realm.** { *; }\n-keep class io.realm.react.** { *; }\n-dontwarn java.beans.**\n-dontwarn javax.xml.bind.**"
+          }
+        }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/NotoSansKR-Black.ttf",
+            "./assets/fonts/NotoSansKR-Bold.ttf",
+            "./assets/fonts/NotoSansKR-ExtraBold.ttf",
+            "./assets/fonts/NotoSansKR-Light.ttf",
+            "./assets/fonts/NotoSansKR-Medium.ttf",
+            "./assets/fonts/NotoSansKR-Regular.ttf",
+            "./assets/fonts/NotoSansKR-SemiBold.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-localization"
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "8120ae66-d8a3-4e4a-885e-a76c3477b881"
+      }
+    }
+  }
+}

@@ -28,7 +28,7 @@ const resClient = DBResClient.getInstance();
 let isExitApp = false;
 let timeout: NodeJS.Timeout;
 
-const UpdateDB = (): JSX.Element => {
+const UpdateDB = (): React.JSX.Element => {
   const [status, setStatus] = useState('DB 업데이트 확인');
   const [progress, setProgress] = useState(0);
   const { showAlert } = useAlert();
@@ -87,11 +87,11 @@ const UpdateDB = (): JSX.Element => {
       showAlert(
         'DB 업데이트',
         'DB 업데이트가 필요합니다' +
-          `\n` +
-          '다운로드 용량:' +
-          formatBytes(resClient.resSize) +
-          `\n` +
-          '(wifi 사용권장)',
+        `\n` +
+        '다운로드 용량:' +
+        formatBytes(resClient.resSize) +
+        `\n` +
+        '(wifi 사용권장)',
         [
           {
             text: '취소',

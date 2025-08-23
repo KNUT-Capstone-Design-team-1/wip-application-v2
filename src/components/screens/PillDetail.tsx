@@ -1,4 +1,3 @@
-import Config from 'react-native-config';
 import { font, os } from '@/style/font';
 import { useEffect, useRef, useState } from 'react';
 import { View, ScrollView, StyleSheet, Image, Text } from 'react-native';
@@ -24,10 +23,10 @@ interface InfoData {
   NB?: string[] | null | undefined;
 }
 
-const PillDetail = ({ route }: any): JSX.Element => {
+const PillDetail = ({ route }: any): React.JSX.Element => {
   useSetScreen('알약 정보');
   const { addPill, getPill, delPill } = usePillBox();
-  const infoRef = useRef<any>();
+  const infoRef = useRef<any>(null);
   const [isStorage, setIsStorage] = useState(false);
   const [infoData, setInfoData] = useState<InfoData>({
     EE: null,
@@ -71,7 +70,7 @@ const PillDetail = ({ route }: any): JSX.Element => {
   };
 
   const getDetailData = async () => {
-    const URL = `${Config.GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
+    const URL = `${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
     const itemSeq = data.ITEM_SEQ;
     const val: any = await getDrugDetail(URL, itemSeq);
 

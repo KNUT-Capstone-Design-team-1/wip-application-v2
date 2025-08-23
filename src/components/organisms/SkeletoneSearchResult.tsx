@@ -3,7 +3,7 @@ import SkeletonResultItem from '@/components/atoms/SkeletonResultItem';
 import { font } from '@/style/font';
 import { StyleSheet, View } from 'react-native';
 
-const SkeletoneSearchResult = (): JSX.Element => {
+const SkeletoneSearchResult = (): React.JSX.Element => {
   const styles = StyleSheet.create({
     noteWrapper: {
       alignItems: 'center',

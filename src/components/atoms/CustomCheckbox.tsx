@@ -30,7 +30,7 @@ const CustomCheckbox = ({
   text = '',
   textStyle,
   onPress,
-}: CheckboxProps): JSX.Element => {
+}: CheckboxProps): React.JSX.Element => {
   const [isChecked, setIsChecked] = useState(false);
   const scaleValue = new Animated.Value(1);
 

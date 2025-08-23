@@ -7,10 +7,9 @@ interface IAppVersion {
 import { Alert } from 'react-native';
 import { Linking, Platform } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
-import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
-import { isIos } from '@/utils/checker.ts';
-import { apiClient } from '@api/apiClient.ts';
+import { isIos } from '@/utils/checker';
+import { apiClient } from '@api/apiClient';
 
 let fetchedVersion = '';
 
@@ -32,7 +31,9 @@ const openStore = () => {
 // 애플리케이션의 OS 별 최신 버전 조회
 const fetchLatestVersion = async () => {
   const { appStoreVersion, playStoreVersion }: IAppVersion =
-    await apiClient.get(Config.GOOGLE_CLOUD_INIT_INFO_URL as string);
+    await apiClient.get(
+      process.env.EXPO_PUBLIC_GOOGLE_CLOUD_INIT_INFO_URL as string,
+    );
 
   // ios, android 각각 버전 가져오기
   fetchedVersion = isIos ? String(appStoreVersion) : String(playStoreVersion);

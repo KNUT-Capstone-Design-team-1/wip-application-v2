@@ -1,19 +1,30 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import Config from 'react-native-config';
-import QuickCrypto from 'react-native-quick-crypto';
-import { Buffer } from '@craftzdog/react-native-buffer';
+import forge from 'node-forge';
 
 const getToken = () => {
-  const rsaPubKey = Config.GOOGLE_CLOUD_RSA_PUB_KEY?.replace(/\\n/g, '\n');
+  const rsaPubKey = process.env.EXPO_PUBLIC_GOOGLE_CLOUD_RSA_PUB_KEY?.replace(
+    /\\n/g,
+    '\n',
+  );
 
   dayjs.extend(utc);
   const now = dayjs.utc().format();
 
-  return QuickCrypto.publicEncrypt(
-    { key: rsaPubKey },
-    Buffer.from(now),
-  ).toString('base64');
+  try {
+    const publicKey = forge.pki.publicKeyFromPem(rsaPubKey as string);
+    const encrypted = publicKey.encrypt(now, 'RSA-OAEP', {
+      md: forge.md.sha1.create(),
+      mgf1: {
+        md: forge.md.sha1.create(),
+      },
+    });
+
+    return forge.util.encode64(encrypted);
+  } catch (error) {
+    console.error('Error encrypting token:', error);
+    return '';
+  }
 };
 
 export { getToken };
