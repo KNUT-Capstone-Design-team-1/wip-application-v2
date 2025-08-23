@@ -24,10 +24,6 @@ jobs:
           npm install -g eas-cli
           yarn install
 
-      - name: authenticate-expo
-        run: |
-          eas whoami || eas login --token ${{ secrets.EXPO_TOKEN }}
-
       - name: get-key-store
         run: |
           echo "${{ secrets.KEY_STORE }}" > ./android/app/wip240524.jks.bs64
