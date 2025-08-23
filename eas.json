@@ -1,23 +1,40 @@
 {
   "build": {
     "base": {
-      "node": "20.18.3",
-      "yarn": "4.9.1"
+      "node": "20.18.3"
     },
     "production": {
       "extends": "base",
-      "credentialsSource": "remote"
+      "credentialsSource": "remote",
+      "android": {
+        "image": "ubuntu-22.04-android-ndk-r25c"
+      },
+      "ios": {
+        "image": "macos-13.4-xcode-15.1"
+      }
     },
     "development": {
       "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
-      "withoutCredentials": true
+      "withoutCredentials": true,
+      "android": {
+        "image": "ubuntu-22.04-android-ndk-r25c"
+      },
+      "ios": {
+        "image": "macos-13.4-xcode-15.1"
+      }
     },
     "preview": {
       "extends": "base",
       "distribution": "internal",
-      "credentialsSource": "remote"
+      "credentialsSource": "remote",
+      "android": {
+        "image": "ubuntu-22.04-android-ndk-r25c"
+      },
+      "ios": {
+        "image": "macos-13.4-xcode-15.1"
+      }
     }
   }
 }
