@@ -207,6 +207,7 @@ yarn-error.*
 
 # eas
 credentials.json
+credentials
 
 # expo prebuild
 android

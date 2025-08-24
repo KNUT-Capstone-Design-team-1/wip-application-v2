@@ -69,10 +69,10 @@ eas credentials
 # credentials.json의 keystore path도 자동으로 변경되어 있음
 # Go back and Exit
 
-# apk build for dev
+# apk build for dev (linux 혹은 macos 에서만 사용가능)
 yarn apk
 
-# ipa build for deploy
+# ipa build for deploy (linux 혹은 macos 에서만 사용가능)
 yarn ios
 ```
 

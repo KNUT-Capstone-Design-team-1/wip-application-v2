@@ -6,7 +6,7 @@
     "start": "expo start --clear",
     "android": "expo run:android",
     "android:gradle-clean": "cd android && ./gradlew clean && cd ..",
-    "apk": "eas build --platform android --profile development --local --output-type apk",
+    "apk": "eas build --platform android --profile development --local",
     "ios": "expo run:ios",
     "ipa": "eas build --platform ios --profile development --local",
     "eas-build-pre-install": "corepack enable",
