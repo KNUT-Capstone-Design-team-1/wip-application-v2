@@ -209,5 +209,5 @@ yarn-error.*
 credentials.json
 
 # expo prebuild
-/android
-/ios
+android
+ios
