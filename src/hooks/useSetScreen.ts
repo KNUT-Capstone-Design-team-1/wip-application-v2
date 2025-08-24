@@ -1,19 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useScreenStore } from '@/store/screen';
 
 export const useSetScreen = (screenName: string) => {
   const nav: any = useNavigation();
   const setScreen = useScreenStore((state) => state.setScreen);
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen(screenName);
-  };
+  }, [setScreen, screenName]);
 
   useEffect(() => {
-    nav.addListener('focus', () => handleSetScreen());
+    const unsubscribe = nav.addListener('focus', handleSetScreen);
     return () => {
-      nav.removeListener('focus', () => handleSetScreen());
+      unsubscribe();
     };
-  }, []);
+  }, [handleSetScreen, nav]);
 };

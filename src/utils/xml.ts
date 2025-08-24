@@ -22,7 +22,7 @@ export const parseXML = (xmlString: string) => {
   const jsonObj: TPillDetailJsonObj = xmlParser.parse(xml);
 
   for (const section of jsonObj['DOC']['SECTION']) {
-    if (section['@_title'] && section['@_title'] != '') {
+    if (section['@_title'] && section['@_title'] !== '') {
       paragraphs.push(section['@_title']);
     }
     for (const article of section['ARTICLE']) {

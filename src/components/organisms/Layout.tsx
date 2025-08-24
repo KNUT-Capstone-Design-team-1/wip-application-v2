@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import HeaderBackground from '@/components/atoms/HeaderBackground';
 import HeaderLogo from '@/components/atoms/HeaderLogo';
 import BottomNavagation from '@/components/organisms/BottomNavigation';
@@ -5,7 +6,7 @@ import { useScreenStore } from '@/store/screen';
 import { font, os } from '@/style/font';
 import { gstyles } from '@/style/globalStyle';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Platform,
@@ -146,63 +147,57 @@ const Layout = {
     changeNavigationBarColor('black', false);
 
     /** 로고 나타나는 애니메이션 */
-    const logoFadeInAni = () => {
+    const logoFadeInAni = useCallback(() => {
       Animated.timing(heightAnimation, {
         toValue: totalHeaderHeight,
-        delay: 0,
         duration: 200,
         easing: Easing.bezier(0.33, 1, 0.68, 1),
         useNativeDriver: false,
       }).start();
       Animated.timing(marginTopAnimation, {
         toValue: totalHeaderHeight + StatusBarHeight,
-        delay: 0,
         duration: 200,
         easing: Easing.bezier(0.33, 1, 0.68, 1),
         useNativeDriver: false,
       }).start();
       Animated.timing(logoAnimation, {
         toValue: 1,
-        delay: 0,
         duration: 200,
         useNativeDriver: true,
       }).start();
       Animated.timing(titleAnimation, {
         toValue: 0,
-        delay: 0,
         duration: 0,
         useNativeDriver: true,
       }).start();
-    };
+    }, [heightAnimation, marginTopAnimation, logoAnimation, titleAnimation]);
+
     /** 로고 사라지는 애니메이션 & 화면 타이틀 나타나는 애니메이션 */
-    const logoFadeOutAni = () => {
+    const logoFadeOutAni = useCallback(() => {
       Animated.timing(heightAnimation, {
         toValue: defaultHeaderHeight,
-        delay: 0,
         duration: 200,
-        useNativeDriver: false,
         easing: Easing.bezier(0.33, 1, 0.68, 1),
+        useNativeDriver: false,
       }).start();
       Animated.timing(marginTopAnimation, {
         toValue: defaultHeaderHeight + StatusBarHeight,
-        delay: 0,
         duration: 200,
-        useNativeDriver: false,
         easing: Easing.bezier(0.33, 1, 0.68, 1),
+        useNativeDriver: false,
       }).start();
       Animated.timing(logoAnimation, {
         toValue: 0,
-        delay: 0,
         duration: 100,
         useNativeDriver: true,
       }).start();
       Animated.timing(titleAnimation, {
         toValue: 1,
-        delay: 0,
         duration: 100,
         useNativeDriver: true,
       }).start();
-    };
+    }, [heightAnimation, marginTopAnimation, logoAnimation, titleAnimation]);
+
     /** 뒤로가기 버튼 press 애니메이션 */
     const pressAni = () => {
       Animated.timing(pressAnimation, {
@@ -238,10 +233,10 @@ const Layout = {
       } else {
         logoFadeInAni();
       }
-    }, [screen]);
+    }, [logoFadeInAni, logoFadeOutAni, screen]);
 
     return (
-      <View style={styles.fill} onTouchStart={() => { }}>
+      <View style={styles.fill} onTouchStart={() => {}}>
         <HeaderBackground />
         <Animated.View
           style={[styles.headerTitleWrapper, { height: heightAnimation }]}
@@ -301,9 +296,7 @@ const Layout = {
     changeNavigationBarColor('black', false);
 
     return (
-      <View style={[styles.fill, { backgroundColor: '#000' }]}>
-        {children}
-      </View>
+      <View style={[styles.fill, { backgroundColor: '#000' }]}>{children}</View>
     );
   },
   initscreen: ({ children }: any) => {

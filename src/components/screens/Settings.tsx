@@ -1,6 +1,6 @@
 import Layout from '@/components/organisms/Layout';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -22,9 +22,9 @@ const Settings = (): React.JSX.Element => {
   const { showAlert } = useAlert();
   const { getPillSize, delPillList } = usePillBox();
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('설정');
-  };
+  }, [setScreen]);
 
   const handlePressTerm = () => {
     nav.push('이용약관');
@@ -57,7 +57,7 @@ const Settings = (): React.JSX.Element => {
     return () => {
       nav.removeListener('focus', () => handleSetScreen());
     };
-  }, []);
+  }, [handleSetScreen, nav]);
 
   return (
     <Layout.default>

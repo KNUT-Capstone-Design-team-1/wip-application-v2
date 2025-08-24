@@ -14,7 +14,7 @@ const dbConfig: Realm.Configuration = {
     process.env.EXPO_PUBLIC_REALM_ENCRYPTION_KEY as string,
   ),
   path: RNFS.DocumentDirectoryPath + '/default.realm',
-  onMigration: (oldRealm, newRealm) => { },
+  onMigration: () => {},
 };
 
 const updateDBConfig: Realm.Configuration = {

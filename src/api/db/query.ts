@@ -21,7 +21,7 @@ function getQueryForSearch(param: TPillSearchParam | null) {
   const filters: string[] = [];
   const params: string[] = [];
 
-  if (param.PRINT_FRONT != '') {
+  if (param.PRINT_FRONT !== '') {
     printFilter.push(
       `PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++}`,
     );
@@ -29,7 +29,7 @@ function getQueryForSearch(param: TPillSearchParam | null) {
     params.push(param.PRINT_FRONT);
   }
 
-  if (param.PRINT_BACK != '') {
+  if (param.PRINT_BACK !== '') {
     printFilter.push(
       `PRINT_BACK LIKE[c] $${index++} OR PRINT_FRONT LIKE[c] $${index++}`,
     );
@@ -41,7 +41,7 @@ function getQueryForSearch(param: TPillSearchParam | null) {
     filters.push('(' + printFilter.join(' OR ') + ')');
   }
 
-  if (param.COLOR_CLASS1.length != 0) {
+  if (param.COLOR_CLASS1.length !== 0) {
     filters.push(
       `(COLOR_CLASS1 CONTAINS[c] {${param.COLOR_CLASS1.map((v) => {
         params.push(v);
@@ -55,7 +55,7 @@ function getQueryForSearch(param: TPillSearchParam | null) {
     );
   }
 
-  if (param.DRUG_SHAPE.length != 0) {
+  if (param.DRUG_SHAPE.length !== 0) {
     filters.push(
       `DRUG_SHAPE LIKE[c] {${param.DRUG_SHAPE.map((v) => {
         params.push(v);

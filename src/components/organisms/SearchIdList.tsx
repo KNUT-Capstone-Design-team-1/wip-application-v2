@@ -38,7 +38,7 @@ const SearchIdList = (): React.JSX.Element => {
               selectColor="#7472EB"
               isSelected={
                 shapeSelected.includes(item.category + item.key) ||
-                  colorSelected.includes(item.category + item.key)
+                colorSelected.includes(item.category + item.key)
                   ? true
                   : false
               }

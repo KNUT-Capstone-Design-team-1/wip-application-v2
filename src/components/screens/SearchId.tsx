@@ -1,4 +1,4 @@
-import { Suspense, useEffect, lazy } from 'react';
+import { Suspense, useEffect, lazy, useCallback } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Layout, {
@@ -16,9 +16,9 @@ const SearchId = (): React.JSX.Element => {
   const setScreen = useScreenStore((state) => state.setScreen);
   const resetSearchId = useSearchIdStore((state) => state.resetSearchId);
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('식별 검색');
-  };
+  }, [setScreen]);
 
   useEffect(() => {
     nav.addListener('focus', () => handleSetScreen());
@@ -26,7 +26,7 @@ const SearchId = (): React.JSX.Element => {
       resetSearchId();
       nav.removeListener('focus', () => handleSetScreen());
     };
-  }, []);
+  }, [handleSetScreen, nav, resetSearchId]);
 
   return (
     <Layout.default>

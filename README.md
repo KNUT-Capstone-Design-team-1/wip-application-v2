@@ -25,8 +25,6 @@ yarn run prebuild
 # add env
 eas login
 eas env:pull
-
-
 ```
 
 # Execution
@@ -78,12 +76,18 @@ yarn ios
 
 # Development
 
-#### add new library
+#### Add new library
 
 ```bash
 # recommend (사용시 expo와 호환되는 라이브러리 버전 설치 없으면 자동으로 yarn add 진행)
 npx expo install {library}
 # yarn add {library}
+```
+
+#### Check lint (문법 검사)
+
+```bash
+npx expo lint
 ```
 
 # TroubleShooting

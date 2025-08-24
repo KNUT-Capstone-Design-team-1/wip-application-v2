@@ -46,10 +46,10 @@ const ResultItem = ({ data }: { data: TPillData }) => {
             {data.CLASS_NAME}
           </Text>
           <View style={styles.chipWrapper}>
-            {(data.PRINT_FRONT as string) != '' && (
+            {(data.PRINT_FRONT as string) !== '' && (
               <CustomChip text={data.PRINT_FRONT as string} />
             )}
-            {(data.PRINT_BACK as string) != '' && (
+            {(data.PRINT_BACK as string) !== '' && (
               <CustomChip text={data.PRINT_BACK as string} />
             )}
           </View>

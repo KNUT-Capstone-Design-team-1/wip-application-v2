@@ -36,71 +36,71 @@ type CustomAlertProps = {
   onCheckboxChange?: (isChecked: boolean) => void;
 };
 
-const CustomAlert = memo(
-  ({
-    visible,
-    onRequestClose,
-    title,
-    message,
-    buttons,
-    modalType = 'default',
-    checkboxLabel,
-    onCheckboxChange,
-  }: CustomAlertProps): React.JSX.Element => {
-    const handleCheckboxChange = (isChecked: boolean) => {
-      if (onCheckboxChange) {
-        onCheckboxChange(isChecked);
-      }
-    };
+const CustomAlertComponent = ({
+  visible,
+  onRequestClose,
+  title,
+  message,
+  buttons,
+  modalType = 'default',
+  checkboxLabel,
+  onCheckboxChange,
+}: CustomAlertProps): React.JSX.Element => {
+  const handleCheckboxChange = (isChecked: boolean) => {
+    if (onCheckboxChange) {
+      onCheckboxChange(isChecked);
+    }
+  };
 
-    return (
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onRequestClose}
-      >
-        <View style={styles.backgroundViewWrapper}>
-          <View style={styles.modalViewWrapper}>
-            <Text style={styles.modalTitleText}>{title}</Text>
-            <View style={styles.rowLine} />
-            <Text style={styles.modalMessageText}>{message}</Text>
-            {buttons && (
-              <View style={styles.bottomButtonsWrapper}>
-                {buttons.map((button: TCustomAlertButtons, idx) => {
-                  return (
-                    <Fragment key={idx}>
-                      {idx > 0 ? <View style={styles.colLine} /> : null}
-                      <TouchableOpacity
-                        style={[styles.bottomButton, button.style]}
-                        onPress={button.onPress}
-                      >
-                        <Text style={styles.buttonText}>{button.text}</Text>
-                      </TouchableOpacity>
-                    </Fragment>
-                  );
-                })}
-              </View>
-            )}
-          </View>
-          <View style={styles.modalCheckboxWrapper}>
-            {modalType == 'checkbox' && (
-              <CustomCheckbox
-                size={18}
-                fillColor="#7472EB"
-                boxStyle={{ borderWidth: 2, borderColor: '#000' }}
-                text={checkboxLabel}
-                textStyle={{ fontSize: font(16), color: '#000' }}
-                onPress={(isChecked) => handleCheckboxChange(isChecked)}
-              />
-            )}
-          </View>
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onRequestClose}
+    >
+      <View style={styles.backgroundViewWrapper}>
+        <View style={styles.modalViewWrapper}>
+          <Text style={styles.modalTitleText}>{title}</Text>
+          <View style={styles.rowLine} />
+          <Text style={styles.modalMessageText}>{message}</Text>
+          {buttons && (
+            <View style={styles.bottomButtonsWrapper}>
+              {buttons.map((button: TCustomAlertButtons, idx) => {
+                return (
+                  <Fragment key={idx}>
+                    {idx > 0 ? <View style={styles.colLine} /> : null}
+                    <TouchableOpacity
+                      style={[styles.bottomButton, button.style]}
+                      onPress={button.onPress}
+                    >
+                      <Text style={styles.buttonText}>{button.text}</Text>
+                    </TouchableOpacity>
+                  </Fragment>
+                );
+              })}
+            </View>
+          )}
         </View>
-        <Toast config={toastConfig} position="bottom" bottomOffset={130} />
-      </Modal>
-    );
-  },
-);
+        <View style={styles.modalCheckboxWrapper}>
+          {modalType === 'checkbox' && (
+            <CustomCheckbox
+              size={18}
+              fillColor="#7472EB"
+              boxStyle={{ borderWidth: 2, borderColor: '#000' }}
+              text={checkboxLabel}
+              textStyle={{ fontSize: font(16), color: '#000' }}
+              onPress={(isChecked) => handleCheckboxChange(isChecked)}
+            />
+          )}
+        </View>
+      </View>
+      <Toast config={toastConfig} position="bottom" bottomOffset={130} />
+    </Modal>
+  );
+};
+
+const CustomAlert = memo(CustomAlertComponent);
 
 const styles = StyleSheet.create({
   backgroundViewWrapper: {

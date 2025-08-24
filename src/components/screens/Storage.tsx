@@ -19,7 +19,7 @@ const Storage = (): React.JSX.Element => {
 
   const getStorage = useCallback(() => {
     setData(getPillList());
-  }, []);
+  }, [getPillList]);
 
   useFocusEffect(
     useCallback(() => {

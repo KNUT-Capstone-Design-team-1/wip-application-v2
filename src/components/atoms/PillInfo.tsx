@@ -45,6 +45,7 @@ const PillInfo = {
     let _ct: string[] = [];
 
     if (ct) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _ct = ct.map((item) =>
         item.replaceAll(searchValue, replaceValue).replaceAll(/\[.*?\]/g, ''),
       );
@@ -56,7 +57,7 @@ const PillInfo = {
         <View style={styles.infoChipsWrapper}>
           {ct.map(
             (item, index) =>
-              item != '' && (
+              item !== '' && (
                 <CustomChip
                   key={index}
                   text={item}

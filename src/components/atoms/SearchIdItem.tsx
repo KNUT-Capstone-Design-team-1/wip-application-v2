@@ -5,50 +5,50 @@ import { Shadow } from 'react-native-shadow-2';
 import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 
-const SearchIdItem = memo(
-  ({
-    children,
-    text,
-    handlePressItem,
-    backgroundColor,
-    defaultColor = '#00000020',
-    selectColor,
-    isSelected,
-  }: {
-    children: ReactNode;
-    text: string;
-    handlePressItem: (e: GestureResponderEvent) => void;
-    backgroundColor?: string;
-    defaultColor?: string;
-    selectColor: string;
-    isSelected: boolean;
-  }): React.JSX.Element => {
-    return (
-      <Button.scaleFast
-        style={styles.itemButtonWrapper}
-        onPress={handlePressItem}
+const SearchIdItemComponent = ({
+  children,
+  text,
+  handlePressItem,
+  backgroundColor,
+  defaultColor = '#00000020',
+  selectColor,
+  isSelected,
+}: {
+  children: ReactNode;
+  text: string;
+  handlePressItem: (e: GestureResponderEvent) => void;
+  backgroundColor?: string;
+  defaultColor?: string;
+  selectColor: string;
+  isSelected: boolean;
+}): React.JSX.Element => {
+  return (
+    <Button.scaleFast
+      style={styles.itemButtonWrapper}
+      onPress={handlePressItem}
+    >
+      <Shadow
+        startColor={isSelected ? selectColor : defaultColor}
+        distance={6}
+        style={styles.itemButton}
       >
-        <Shadow
-          startColor={isSelected ? selectColor : defaultColor}
-          distance={6}
-          style={styles.itemButton}
+        <View
+          style={{
+            ...styles.itemIconWrapper,
+            backgroundColor: backgroundColor ? backgroundColor : '#fff',
+          }}
         >
-          <View
-            style={{
-              ...styles.itemIconWrapper,
-              backgroundColor: backgroundColor ? backgroundColor : '#fff',
-            }}
-          >
-            {children}
-          </View>
-          <View style={styles.itemTextWrapper}>
-            <Text style={styles.itemText}>{text}</Text>
-          </View>
-        </Shadow>
-      </Button.scaleFast>
-    );
-  },
-);
+          {children}
+        </View>
+        <View style={styles.itemTextWrapper}>
+          <Text style={styles.itemText}>{text}</Text>
+        </View>
+      </Shadow>
+    </Button.scaleFast>
+  );
+};
+
+const SearchIdItem = memo(SearchIdItemComponent);
 
 const styles = StyleSheet.create({
   itemButton: { borderRadius: 8, height: 70, width: '100%' },

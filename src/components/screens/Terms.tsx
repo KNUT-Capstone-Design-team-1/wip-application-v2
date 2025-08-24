@@ -1,16 +1,8 @@
 import Layout from '@/components/organisms/Layout';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import ArrowRightSvg from '@assets/svgs/arrow_right_bold.svg';
+import { useCallback, useEffect } from 'react';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import { font, os } from '@/style/font';
-import { getItem, setItem } from '@/utils/storage';
 import { TERMS } from '@/constants/terms';
 import { useScreenStore } from '@/store/screen';
 
@@ -18,16 +10,16 @@ const Terms = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const setScreen = useScreenStore((state) => state.setScreen);
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('이용 약관');
-  };
+  }, [setScreen]);
 
   useEffect(() => {
     nav.addListener('focus', () => handleSetScreen());
     return () => {
       nav.removeListener('focus', () => handleSetScreen());
     };
-  }, []);
+  }, [handleSetScreen, nav]);
 
   const styles = StyleSheet.create({
     scrollViewWrapper: {

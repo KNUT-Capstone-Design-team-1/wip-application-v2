@@ -1,7 +1,7 @@
 import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 import { useNavigation } from '@react-navigation/native';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 import Toast from 'react-native-toast-message';
 

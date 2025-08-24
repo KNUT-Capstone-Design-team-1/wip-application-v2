@@ -30,7 +30,6 @@ import FocusLockSvg from '@assets/svgs/lock.svg';
 import ExitSvg from '@assets/svgs/exit.svg';
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { runOnJS } from 'react-native-reanimated';
 import { trigger } from 'react-native-haptic-feedback';
 import { cameraDeviceOption } from '@/constants/options';
 import { getCropImage, getImgPath } from '@/utils/image';
@@ -40,11 +39,6 @@ import { useScreenStore } from '@/store/screen';
 interface ICameraImg {
   front: any;
   back: any;
-}
-
-interface ImageInfo {
-  width: number;
-  height: number;
 }
 
 // 포커스 UI 가로,세로 크기
@@ -83,14 +77,13 @@ const SearchCamera = (): React.JSX.Element => {
     cameraDevice?.neutralZoom,
   );
   const [longFocus, setLongFocus] = useState<boolean>(false);
-  const [isCameraActive, setIsCameraActvie] = useState<boolean>(false);
 
   const cameraFormat = useCameraFormat(cameraDevice, [
     { photoResolution: { width: 1280, height: 1280 } },
   ]);
 
   /** 포커스 크기 축소 애니메이션 */
-  const focusScaleAni = () => {
+  const focusScaleAni = useCallback(() => {
     Animated.timing(focusScaleAnimation, {
       toValue: 1,
       delay: 0,
@@ -98,7 +91,7 @@ const SearchCamera = (): React.JSX.Element => {
       easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
       useNativeDriver: false,
     }).start();
-  };
+  }, [focusScaleAnimation]);
 
   /** 포커스 반투명 애니메이션 */
   const focusOpacityAni = () => {
@@ -112,7 +105,7 @@ const SearchCamera = (): React.JSX.Element => {
   };
 
   /** 뒷면 이미지 박스 이동 애니메이션 */
-  const boxGapAni = () => {
+  const boxGapAni = useCallback(() => {
     Animated.timing(boxGapAnimation, {
       toValue: 24,
       delay: 0,
@@ -120,10 +113,10 @@ const SearchCamera = (): React.JSX.Element => {
       easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
       useNativeDriver: false,
     }).start();
-  };
+  }, [boxGapAnimation]);
 
   /** 뒷면 이미지 박스 나타나는 애니메이션 */
-  const boxOpacityAni = () => {
+  const boxOpacityAni = useCallback(() => {
     Animated.timing(boxOpacityAnimation, {
       toValue: 1,
       delay: 0,
@@ -131,10 +124,10 @@ const SearchCamera = (): React.JSX.Element => {
       easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
       useNativeDriver: false,
     }).start();
-  };
+  }, [boxOpacityAnimation]);
 
   /** 가이드 나타나는 애니메이션 */
-  const guideFrontTopAni = () => {
+  const guideFrontTopAni = useCallback(() => {
     Animated.timing(guideFrontTopAnimation, {
       toValue: 14,
       delay: 0,
@@ -142,10 +135,10 @@ const SearchCamera = (): React.JSX.Element => {
       easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
       useNativeDriver: false,
     }).start();
-  };
+  }, [guideFrontTopAnimation]);
 
   /** 가이드 나타나는 애니메이션 */
-  const guideBackTopAni = () => {
+  const guideBackTopAni = useCallback(() => {
     Animated.timing(guideBackTopAnimation, {
       toValue: 14,
       delay: 0,
@@ -153,10 +146,10 @@ const SearchCamera = (): React.JSX.Element => {
       easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
       useNativeDriver: false,
     }).start();
-  };
+  }, [guideBackTopAnimation]);
 
   /** 가이드 나타나는 애니메이션 */
-  const guideCompleteTopAni = () => {
+  const guideCompleteTopAni = useCallback(() => {
     Animated.timing(guideCompleteTopAnimation, {
       toValue: 14,
       delay: 0,
@@ -164,10 +157,10 @@ const SearchCamera = (): React.JSX.Element => {
       easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
       useNativeDriver: false,
     }).start();
-  };
+  }, [guideCompleteTopAnimation]);
 
   /** 화살표 반복 애니메이션 */
-  const downArrowAni = () => {
+  const downArrowAni = useCallback(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(arrowLoopAnimation, {
@@ -182,63 +175,73 @@ const SearchCamera = (): React.JSX.Element => {
         }),
       ]),
     ).start();
-  };
+  }, [arrowLoopAnimation]);
 
   /** 수동 포커스 실행 */
-  const focusOn = useCallback((point: Point) => {
-    const c = cameraRef.current;
-    if (c == null) return;
-    c.focus(point);
-    focusScaleAnimation.setValue(1.2);
-    focusOpacityAnimation.setValue(1);
-    setFocusXY({ x: point.x, y: point.y });
-    setLongFocus(false);
-    focusScaleAni();
-  }, []);
-
-  /** 수동 포커스 중지 */
-  const focusOff = useCallback((bool: boolean) => {
-    const focusInterval = setTimeout(() => {
+  const focusOn = useCallback(
+    (point: Point) => {
       const c = cameraRef.current;
       if (c == null) return;
-      setFocusXY({ x: 0, y: 0 });
-      c.focus({ x: windowWidth / 2, y: windowHeight / 2 });
-    }, 4000);
+      c.focus(point);
+      focusScaleAnimation.setValue(1.2);
+      focusOpacityAnimation.setValue(1);
+      setFocusXY({ x: point.x, y: point.y });
+      setLongFocus(false);
+      focusScaleAni();
+    },
+    [focusOpacityAnimation, focusScaleAni, focusScaleAnimation],
+  );
 
-    if (bool) for (let i = 0; i < Number(focusInterval); i++) clearTimeout(i);
-    else for (let i = 0; i <= Number(focusInterval); i++) clearTimeout(i);
+  /** 수동 포커스 중지 */
+  const focusOff = useCallback(
+    (bool: boolean) => {
+      const focusInterval = setTimeout(() => {
+        const c = cameraRef.current;
+        if (c == null) return;
+        setFocusXY({ x: 0, y: 0 });
+        c.focus({ x: windowWidth / 2, y: windowHeight / 2 });
+      }, 4000);
 
-    focusScaleAni();
-  }, []);
+      if (bool) for (let i = 0; i < Number(focusInterval); i++) clearTimeout(i);
+      else for (let i = 0; i <= Number(focusInterval); i++) clearTimeout(i);
+
+      focusScaleAni();
+    },
+    [focusScaleAni],
+  );
 
   /** 카메라 제스처 관리 */
   const gesture = Gesture.Simultaneous(
     Gesture.Tap()
       .onBegin(({ x, y }) => {
+        'worklet';
         if (longFocus) {
-          runOnJS(setFocusXY)({ x: 0, y: 0 });
-          runOnJS(setLongFocus)(false);
+          setFocusXY({ x: 0, y: 0 });
+          setLongFocus(false);
         } else {
-          runOnJS(focusOn)({ x, y });
+          focusOn({ x, y });
         }
       })
       .onEnd(() => {
-        runOnJS(focusOpacityAni)();
-        runOnJS(focusOff)(true);
+        'worklet';
+        focusOpacityAni();
+        focusOff(true);
       }),
     Gesture.LongPress()
       .onStart(() => {
-        runOnJS(setLongFocus)(true);
-        runOnJS(focusOff)(false);
+        'worklet';
+        setLongFocus(true);
+        focusOff(false);
       })
       .onFinalize(() => {
-        runOnJS(focusOpacityAni)();
+        'worklet';
+        focusOpacityAni();
       }),
   );
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('알약 검색');
-  };
+  }, [setScreen]);
 
   /** 카메라 촬영 */
   const handleTakePic = async () => {
@@ -342,7 +345,7 @@ const SearchCamera = (): React.JSX.Element => {
     if (cameraImage?.front && cameraImage.back) {
       trigger('impactLight', options);
     }
-  }, [cameraImage]);
+  }, [boxGapAni, boxOpacityAni, cameraImage]);
 
   useEffect(() => {
     trigger('impactLight', options);
@@ -358,11 +361,19 @@ const SearchCamera = (): React.JSX.Element => {
     if (currentDirection === 'complete') {
       guideCompleteTopAni();
     }
-  }, [currentDirection]);
+  }, [
+    currentDirection,
+    guideBackTopAni,
+    guideBackTopAnimation,
+    guideCompleteTopAni,
+    guideCompleteTopAnimation,
+    guideFrontTopAni,
+    guideFrontTopAnimation,
+  ]);
 
   useEffect(() => {
     downArrowAni();
-  }, []);
+  }, [downArrowAni]);
 
   const styles = StyleSheet.create({
     LineBottom: {

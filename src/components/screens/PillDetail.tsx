@@ -1,11 +1,10 @@
 import { font, os } from '@/style/font';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, ScrollView, StyleSheet, Image, Text } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 import AddStorageSvg from '@assets/svgs/addStorage.svg';
 import ArrowDownSvg from '@assets/svgs/dropdown.svg';
-import { DETAIL_DATA } from '@/constants/mock';
 import { useSetScreen } from '@/hooks/useSetScreen';
 import { usePillBox } from '@/hooks/usePillBox';
 import { getDrugDetail } from '@/api/server';
@@ -54,22 +53,7 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
     }
   };
 
-  /** 알약 보관함에 해당 알약이 있는지 확인 */
-  const getDataFromPillBox = () => {
-    const pill = getPill(data.ITEM_SEQ);
-    if (pill) {
-      if (pill.infoData) {
-        const parsedData = deepCopyRealmObj(pill.infoData);
-        setInfoData(parsedData);
-      }
-      setIsStorage(true);
-      setLoading(false);
-    } else {
-      getDetailData();
-    }
-  };
-
-  const getDetailData = async () => {
+  const getDetailData = useCallback(async () => {
     const URL = `${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_DRUG_DETAIL_URL}`;
     const itemSeq = data.ITEM_SEQ;
     const val: any = await getDrugDetail(URL, itemSeq);
@@ -91,19 +75,22 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [data.ITEM_SEQ, setInfoData, setLoading]);
 
-  // [임시] 테스트를 위한 MockData
-  const getMockData = () => {
-    const data = DETAIL_DATA.data[0];
-    let parsedData = {
-      EE: parseXML(data.EE_DOC_DATA),
-      UD: parseXML(data.UD_DOC_DATA),
-      NB: parseXML(data.NB_DOC_DATA),
-    };
-
-    return parsedData;
-  };
+  /** 알약 보관함에 해당 알약이 있는지 확인 */
+  const getDataFromPillBox = useCallback(() => {
+    const pill = getPill(data.ITEM_SEQ);
+    if (pill) {
+      if (pill.infoData) {
+        const parsedData = deepCopyRealmObj(pill.infoData);
+        setInfoData(parsedData);
+      }
+      setIsStorage(true);
+      setLoading(false);
+    } else {
+      getDetailData();
+    }
+  }, [data.ITEM_SEQ, getPill, getDetailData]); // 필요한 deps 포함
 
   const handlePressMoreInfo = () => {
     setMoreInfo(!moreInfo);
@@ -115,7 +102,7 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
 
   useEffect(() => {
     getDataFromPillBox();
-  }, [route]);
+  }, [getDataFromPillBox, route]);
 
   return (
     <Layout.default>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import UpdateText from '@/components/atoms/UpdateText';
 import SearchButtonList from '@/components/organisms/SearchButtonList';
 import LastSearchPill from '@/components/organisms/LastSearchPill';
@@ -15,9 +15,9 @@ const Home = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const setScreen = useScreenStore((state) => state.setScreen);
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('홈');
-  };
+  }, [setScreen]);
 
   useEffect(() => {
     nav.addListener('focus', () => handleSetScreen());
@@ -32,7 +32,7 @@ const Home = (): React.JSX.Element => {
       nav.removeListener('focus', () => handleSetScreen());
       backHandler.remove();
     };
-  }, []);
+  }, [handleSetScreen, nav]);
 
   return (
     <Layout.default>

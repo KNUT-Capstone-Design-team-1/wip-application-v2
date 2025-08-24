@@ -1,8 +1,7 @@
-// App.jsx
 import { font, os } from '@/style/font';
 import { StyleSheet, Text, View } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
-import { BaseToast, ErrorToast } from 'react-native-toast-message';
+import { BaseToast } from 'react-native-toast-message';
 
 const styles = StyleSheet.create({
   errorText: {
