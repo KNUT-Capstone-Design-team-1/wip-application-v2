@@ -122,5 +122,6 @@
       "prettier --write"
     ]
   },
-  "private": true
+  "private": true,
+  "version": "0.0.0"
 }

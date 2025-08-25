@@ -3,7 +3,13 @@ type TPillSearchParam = {
   COLOR_CLASS2: string[];
   PRINT_FRONT: string;
   PRINT_BACK: string;
+  PRODUCT: string;
+  COMPANY: string;
   DRUG_SHAPE: string[];
+  LINE_FRONT: string[];
+  LINE_BACK: string[];
+  CHART: string[];
+  MARK: string;
 };
 
 /**
