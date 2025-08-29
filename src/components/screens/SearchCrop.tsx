@@ -1,21 +1,15 @@
 import Button from '@/components/atoms/Button';
-import Layout, {
-  StatusBarHeight,
-  defaultHeaderHeight,
-  windowHeight,
-} from '@/components/organisms/Layout';
+import Layout from '@/components/organisms/Layout';
 import { font, os } from '@/style/font';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
   Platform,
   Image,
   Text,
-  Alert,
   Animated,
-  Easing,
 } from 'react-native';
 import { getImgPath } from '@/utils/image';
 import {
@@ -24,12 +18,11 @@ import {
   type Image as ImageType,
 } from 'react-native-image-crop-picker';
 import { imgPickerOption } from '@/constants/options';
-import ArrowLeftSvg from '@assets/svgs/arrow_left.svg';
 import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import CameraSvg from '@assets/svgs/camera.svg';
 import SearchSvg from '@assets/svgs/search.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
-import ViewShot, { captureRef } from 'react-native-view-shot';
+import ViewShot from 'react-native-view-shot';
 import Toast from 'react-native-toast-message';
 import { requestCameraPermission } from '@/utils/permission';
 import { useScreenStore } from '@/store/screen';
@@ -48,7 +41,7 @@ const SearchCrop = (): React.JSX.Element => {
   const setSearchImage = useSearchImgStore((state) => state.setSearchImg);
 
   /** 화살표 반복 애니메이션 */
-  const downArrowAni = () => {
+  const downArrowAni = useCallback(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(downArrowAnimation, {
@@ -63,36 +56,35 @@ const SearchCrop = (): React.JSX.Element => {
         }),
       ]),
     ).start();
-  };
-
+  }, [downArrowAnimation]);
   /** 문구 올라오기 애니메이션 */
-  const noteUpAni = () => {
+  const noteUpAni = useCallback(() => {
     Animated.timing(noteUpAnimation, {
       toValue: 0,
       delay: 600,
       duration: 400,
       useNativeDriver: true,
     }).start();
-  };
+  }, [noteUpAnimation]);
 
   /** 문구 나타나기 애니메이션 */
-  const noteOpacityAni = () => {
+  const noteOpacityAni = useCallback(() => {
     Animated.timing(noteOpacityAnimation, {
       toValue: 1,
       delay: 600,
       duration: 400,
       useNativeDriver: true,
     }).start();
-  };
+  }, [noteOpacityAnimation]);
 
   const downArrowInterpolated = downArrowAnimation.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 8],
   });
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('알약 검색');
-  };
+  }, [setScreen]);
 
   const handlePressRetry = () => {
     if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
@@ -145,14 +137,14 @@ const SearchCrop = (): React.JSX.Element => {
     return () => {
       nav.removeListener('focus', () => handleSetScreen());
     };
-  }, []);
+  }, [handleSetScreen, nav]);
 
   useEffect(() => {
     downArrowAni();
     noteUpAni();
     noteOpacityAni();
     cleanPicker();
-  }, []);
+  }, [downArrowAni, noteOpacityAni, noteUpAni]);
 
   return (
     <Layout.default>

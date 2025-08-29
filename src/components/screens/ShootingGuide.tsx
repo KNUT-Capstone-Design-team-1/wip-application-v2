@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,7 +8,6 @@ import {
   FlatList,
   Image,
   Animated,
-  TouchableOpacity,
 } from 'react-native';
 import Button from '@/components/atoms/Button';
 import Layout from '@/components/organisms/Layout';
@@ -73,13 +72,13 @@ const ShootingGuide = () => {
     nav.navigate('알약 촬영');
   };
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('촬영 가이드');
-  };
+  }, [setScreen]);
 
   useEffect(() => {
     handleSetScreen();
-  }, []);
+  }, [handleSetScreen]);
 
   return (
     <Layout.default>

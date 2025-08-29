@@ -5,7 +5,7 @@ import { toastConfig } from '@/constants/toast';
 import { clearLogBoxLogs, ignoreSpecificLogs } from '@/utils/logBox';
 import Navigation from '@navigation/Navigation';
 import { useEffect, useState } from 'react';
-import { AppState, LogBox, Platform } from 'react-native';
+import { AppState } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { updateCheck } from '@/api/update';

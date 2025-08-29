@@ -6,12 +6,11 @@ import { TPillData } from './db/models/pillData';
 import { GLOBAL_STATE } from '@/global_state';
 
 // TODO: 업데이트 progress 표시
-const upsertDB = async (
-  callback: (idx: number, total: number) => void | undefined,
-) => {
+// (callback: (idx: number, total: number) => void | undefined) => {}
+const upsertDB = async () => {
   const realm = await Realm.open(dbConfig);
   const updateRealm = await Realm.open(updateDBConfig);
-  const batchSize = 1000;
+  // const batchSize = 1000;
 
   try {
     for (const schema of updateDBConfig.schema ?? []) {
@@ -51,7 +50,7 @@ const upsertDB = async (
 
 const updateCheck = async () => {
   const lastUpdateDate = await getItem('lastUpdateDate').then(
-    (res) => new Date(res == '' ? 0 : res),
+    (res) => new Date(res === '' ? 0 : res),
   );
   const curDBdate = await getDBInfo().then((res) => new Date(res.resourceDate));
 

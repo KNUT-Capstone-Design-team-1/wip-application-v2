@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { type TPillSearchParam } from '@api/db/query';
 import { idSelectData } from '@constants/data';
-import _ from 'lodash';
 
 interface ISearchIdStore {
   searchIdShapes: string[];
@@ -59,7 +58,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       item.data.forEach((val) => {
         switch (val.category) {
           case 'shape':
-            if (val.category + val.key == 'shape0') {
+            if (val.category + val.key === 'shape0') {
               break;
             }
 
@@ -68,7 +67,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
             }
             break;
           case 'color':
-            if (val.category + val.key == 'color0') {
+            if (val.category + val.key === 'color0') {
               break;
             }
 

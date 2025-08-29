@@ -1,13 +1,6 @@
 import Layout from '@/components/organisms/Layout';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  BackHandler,
-  AppState,
-} from 'react-native';
+import { Image, StyleSheet, Text, View, BackHandler } from 'react-native';
 import { font, os } from '@/style/font';
 import * as Progress from 'react-native-progress';
 import { DBResClient } from '@/api/client/DBResClient';
@@ -32,6 +25,29 @@ const UpdateDB = (): React.JSX.Element => {
   const [status, setStatus] = useState('DB 업데이트 확인');
   const [progress, setProgress] = useState(0);
   const { showAlert } = useAlert();
+
+  const handleReset = async () => {
+    setProgress(0);
+    await resClient.clearRes();
+  };
+
+  const runUpdate = useCallback(async () => {
+    setStatus('DB 초기화 중');
+    await handleReset();
+    setStatus('리소스 다운로드 중');
+    console.log('start update:', new Date().toISOString());
+    await resClient.getResourceChunk(() => {
+      setProgress((prev) => prev + 1);
+    });
+    setStatus('DB 업데이트 적용 중');
+    // await upsertDB((idx, total) => { setProgress((prev) => prev + idx / total) });
+    await upsertDB();
+    setProgress((prev) => prev + 1);
+    await resClient.clearRes();
+    await setItem('lastUpdateDate', formatDateToString(new Date()));
+    console.log('end update:', new Date().toISOString());
+    RNRestart.restart();
+  }, []);
 
   const handleClose = () => {
     if (!isExitApp) {
@@ -84,14 +100,15 @@ const UpdateDB = (): React.JSX.Element => {
       const resourceFileName = `${resourceType}_${GLOBAL_STATE.dbResourceVersion}`;
 
       await resClient.getResourceList(resourceFileName);
+
       showAlert(
         'DB 업데이트',
         'DB 업데이트가 필요합니다' +
-        `\n` +
-        '다운로드 용량:' +
-        formatBytes(resClient.resSize) +
-        `\n` +
-        '(wifi 사용권장)',
+          `\n` +
+          '다운로드 용량:' +
+          formatBytes(resClient.resSize) +
+          `\n` +
+          '(wifi 사용권장)',
         [
           {
             text: '취소',
@@ -117,31 +134,7 @@ const UpdateDB = (): React.JSX.Element => {
     return () => {
       backHandler.remove();
     };
-  }, []);
-
-  const handleReset = async () => {
-    setProgress(0);
-    await resClient.clearRes();
-  };
-
-  const runUpdate = async () => {
-    setStatus('DB 초기화 중');
-    await handleReset();
-    setStatus('리소스 다운로드 중');
-    console.log('start update:', new Date().toISOString());
-    await resClient.getResourceChunk(() => {
-      setProgress((prev) => prev + 1);
-    });
-    setStatus('DB 업데이트 적용 중');
-    await upsertDB((idx, total) => {
-      setProgress((prev) => prev + idx / total);
-    });
-    setProgress((prev) => prev + 1);
-    await resClient.clearRes();
-    await setItem('lastUpdateDate', formatDateToString(new Date()));
-    console.log('end update:', new Date().toISOString());
-    RNRestart.restart();
-  };
+  }, [runUpdate, showAlert]);
 
   return (
     <Layout.initscreen>

@@ -2,21 +2,14 @@ import NavButton from '@/components/atoms/NavButton';
 import { useScreenStore } from '@/store/screen';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
-interface INavWrapperProps {
-  iconXML: string;
-  name: string;
-  navName: string;
-}
 
 const HomeIndicatorHeight = 34;
 
 /* 기기 별 상태바 높이 계산 */
 export const BottomNavHeight: number =
   Platform.OS === 'ios'
-    ? // ios
-    65 + HomeIndicatorHeight
-    : // android
-    42 + HomeIndicatorHeight;
+    ? 65 + HomeIndicatorHeight // ios
+    : 42 + HomeIndicatorHeight; // android
 
 const BottomNavagation = (): React.JSX.Element | null => {
   const screen = useScreenStore((state) => state.screen);

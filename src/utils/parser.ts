@@ -1,5 +1,5 @@
 import { X2jOptions, XMLParser } from 'fast-xml-parser';
-const heDecode = require('he').decode;
+import heDecode from 'he';
 
 export class XmlParser {
   private static instance: XMLParser;
@@ -25,7 +25,7 @@ export class XmlParser {
    * @param text xml 데이터
    * @returns
    */
-  public static entityDecode = (text: string): string => heDecode(text);
+  public static entityDecode = (text: string): string => heDecode.decode(text);
 
   public static hasHtmlTags = (text: string) => /<\/?[a-z][\s\S]*>/i.test(text);
 }

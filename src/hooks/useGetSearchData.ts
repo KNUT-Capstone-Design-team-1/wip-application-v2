@@ -1,7 +1,7 @@
 import { postImageServer } from '@/api/server';
 import { handleError } from '@/utils/error';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import { TPillSearchParam } from '@/api/db/query';
 import { useSearchQueryStore } from '@/store/searchQueryStore';
@@ -28,7 +28,7 @@ export const useGetSearchData = () => {
   const resetSearchImage = useSearchImgStore((state) => state.resetSearchImg);
 
   /** 검색 데이터 요청 - 초기 데이터 */
-  const getImageData = async () => {
+  const getImageData = useCallback(async () => {
     const { res, status, message } = (await postImageServer(
       imageBase64,
     )) as ITResImageData;
@@ -86,10 +86,10 @@ export const useGetSearchData = () => {
         text1: `알약검색에 실패했습니다.${text}`,
       });
     }
-  };
+  }, [imageBase64, nav, setSearchData, mode]);
 
   useEffect(() => {
-    if (initData && mode == 0) {
+    if (initData && mode === 0) {
       setSearchData({ data: initData, mode });
     }
 
@@ -97,11 +97,11 @@ export const useGetSearchData = () => {
       resetSearchData();
       resetSearchImage();
     };
-  }, []);
+  }, [initData, mode, resetSearchData, resetSearchImage, setSearchData]);
 
   useEffect(() => {
     if (imageBase64) {
       getImageData();
     }
-  }, [imageBase64]);
+  }, [getImageData, imageBase64]);
 };

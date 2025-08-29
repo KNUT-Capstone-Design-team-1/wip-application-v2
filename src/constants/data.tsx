@@ -10,8 +10,6 @@ import PentagonSvg from '@assets/svgs/shape/pentagon.svg';
 import HexagonSvg from '@assets/svgs/shape/hexagon.svg';
 import OctagonSvg from '@assets/svgs/shape/octagon.svg';
 
-import { StyleSheet } from 'react-native';
-
 type TItemData = {
   name: string;
   icon?: React.JSX.Element;
@@ -22,16 +20,6 @@ type TItemData = {
 };
 
 type TSectionData = { title: string; data: TItemData[] };
-
-const styles = StyleSheet.create({
-  rectangle: {
-    borderColor: '#cacaca',
-    borderRadius: 4,
-    borderWidth: 1.5,
-    height: 24,
-    width: 24,
-  },
-});
 
 export type { TItemData };
 

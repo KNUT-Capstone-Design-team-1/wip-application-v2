@@ -1,24 +1,20 @@
-interface IAppVersion {
-  appStoreVersion: string;
-  playStoreVersion: string;
-}
-
-// utils/versionChecker.ts
-import { Alert } from 'react-native';
-import { Linking, Platform } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
 import DeviceInfo from 'react-native-device-info';
 import { isIos } from '@/utils/checker';
 import { apiClient } from '@api/apiClient';
 
+interface IAppVersion {
+  appStoreVersion: string;
+  playStoreVersion: string;
+}
+
 let fetchedVersion = '';
 
 // 버전 업데이트 버튼 클릭 시 이동될 url
 const openStore = () => {
-  // app store url
-  const iosUrl = 'itms-apps://itunes.apple.com/app/id[whatispill]';
-  // play store url
-  const androidUrl = 'market://details?id=com.mbm.whatispill';
+  const iosUrl = 'itms-apps://itunes.apple.com/app/id[whatispill]'; // app store url
+  const androidUrl = 'market://details?id=com.mbm.whatispill'; // play store url
 
   Linking.openURL(Platform.OS === 'ios' ? iosUrl : androidUrl).catch((err) =>
     console.error('스토어 열기 실패:', err),

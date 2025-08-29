@@ -12,7 +12,7 @@ export const useSearchImgStore = create<ISearchImgStore>((set) => ({
   searchImg: '',
   searchImgBase64: '',
   setSearchImg: async (searchImg) => {
-    if (searchImg == '') {
+    if (searchImg === '') {
       set({ searchImg: '', searchImgBase64: '' });
       return;
     }

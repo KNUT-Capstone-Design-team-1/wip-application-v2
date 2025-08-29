@@ -5,7 +5,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const SkeletonPlaceholder = (style: any) => {
-  const translateX = new Animated.Value(-SCREEN_WIDTH * 2);
+  const translateX = React.useRef(
+    new Animated.Value(-SCREEN_WIDTH * 2),
+  ).current;
 
   React.useEffect(() => {
     const animate = () => {

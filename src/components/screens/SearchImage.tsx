@@ -3,7 +3,7 @@ import Layout from '@/components/organisms/Layout';
 import { font, os } from '@/style/font';
 import { gstyles } from '@/style/globalStyle';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -15,7 +15,6 @@ import {
 import CameraSvg from '@assets/svgs/camera.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import NoteSvg from '@assets/svgs/note.svg';
-import GuideFrameSvg from '@assets/svgs/guideFrame.svg';
 import { requestCameraPermission } from '@/utils/permission';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SvgXml } from 'react-native-svg';
@@ -23,15 +22,15 @@ import { useScreenStore } from '@/store/screen';
 import { useImgFileStore } from '@/store/imgFileStore';
 import { svgData } from '@/constants/svgDatas';
 
-const SearchImage = ({ route }: any): React.JSX.Element => {
+const SearchImage = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const setScreen = useScreenStore((state) => state.setScreen);
   const setImgFile = useImgFileStore((state) => state.setImgFile);
-  const [showGuide, setShowGuide] = useState<boolean | null>(null);
+  const setShowGuide = useState<boolean | null>(null)[1];
 
-  const handleSetScreen = () => {
+  const handleSetScreen = useCallback(() => {
     setScreen('알약 검색');
-  };
+  }, [setScreen]);
 
   /** 카메라 권한 확인 */
   const permissionCheck = async () => {
@@ -71,7 +70,7 @@ const SearchImage = ({ route }: any): React.JSX.Element => {
     return () => {
       nav.removeListener('focus', () => handleSetScreen());
     };
-  }, []);
+  }, [handleSetScreen, nav, setShowGuide]);
 
   const styles = StyleSheet.create({
     button: {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@realm/react';
 import { PillData, TPillData } from '@/api/db/models/pillData';
 import { calcCosineSimilarity, textToVector } from '@/utils/similarity';
@@ -18,7 +18,7 @@ export const useGetPillData = (pageSize: number) => {
   const [mergedData, setMergedData] = useState<TPillData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const mergeData = async () => {
+  const mergeData = useCallback(async () => {
     if (filter === undefined || params === undefined) {
       setMergedData([]);
       setTotalSize(0);
@@ -26,10 +26,10 @@ export const useGetPillData = (pageSize: number) => {
     }
 
     const recogFilter =
-      params.length == 0 ? queryRecog : queryRecog.filtered(filter, ...params);
+      params.length === 0 ? queryRecog : queryRecog.filtered(filter, ...params);
     let recogArr;
 
-    if (initData && initData.PRINT_FRONT + initData.PRINT_BACK != '') {
+    if (initData && initData.PRINT_FRONT + initData.PRINT_BACK !== '') {
       const initVector = textToVector(
         initData.PRINT_FRONT + initData.PRINT_BACK,
       );
@@ -39,7 +39,7 @@ export const useGetPillData = (pageSize: number) => {
           const recogObj = deepCopyRealmObj(val) as TPillData;
           recogObj.SIMILARITY =
             (((recogObj.PRINT_FRONT as string) +
-              recogObj.PRINT_BACK) as string) != ''
+              recogObj.PRINT_BACK) as string) !== ''
               ? calcCosineSimilarity(initVector, recogObj.VECTOR as number[])
               : 0;
           return recogObj;
@@ -57,7 +57,15 @@ export const useGetPillData = (pageSize: number) => {
     setMergedData(recogArr);
     setTotalSize(recogArr.length);
     setIsLoading(false);
-  };
+  }, [
+    filter,
+    params,
+    initData,
+    queryRecog,
+    setMergedData,
+    setTotalSize,
+    setIsLoading,
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,7 +79,7 @@ export const useGetPillData = (pageSize: number) => {
       setPaginatedData([]);
       setPage(1);
     };
-  }, [filter, params]);
+  }, [filter, mergeData, params]);
 
   useEffect(() => {
     const start = (page - 1) * pageSize;

@@ -65,7 +65,7 @@ export class DBResClient {
       await this.getResourceList();
     }
 
-    if (this.contents?.length == 0) {
+    if (this.contents?.length === 0) {
       return false;
     }
 
@@ -134,7 +134,7 @@ export class DBResClient {
     this.contents = await this.client
       .send(command)
       .then((val) =>
-        val.Contents?.filter((value) => value.Key == mode + '.realm'),
+        val.Contents?.filter((value) => value.Key === mode + '.realm'),
       );
 
     for (const content of this.contents) {
