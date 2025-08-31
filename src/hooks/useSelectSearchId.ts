@@ -1,53 +1,45 @@
-import { useEffect, useState } from "react";
-import _ from 'lodash';
+import { useState } from 'react';
 import { TItemData } from '@/constants/data';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import {
-  searchCompanyState,
-  searchProductState,
-  searchDividingLineState,
-  searchDosageState,
-  searchIdBackState,
-  searchIdColorState,
-  searchIdFrontState,
-  searchIdShapeState,
-  searchMarkState,
-} from "@/atoms/searchId";
 import { disableWord, makeNewList } from '@/utils/checker';
-import { searchIdItems, searchIdStates } from '@/selectors/searchId';
+import { useSearchIdStore } from '@/store/searchIdStore';
 
 export const useSelectSearchId = () => {
   const [btnState, setBtnState] = useState<boolean>(false);
-  // 앞 / 뒷면 문자
-  const [idFrontText, setIdFrontText] = useRecoilState(searchIdFrontState);
-  const [idBackText, setIdBackText] = useRecoilState(searchIdBackState);
-  // 제품명, 화사명
-  const [productName, setProductName] = useRecoilState(searchProductState);
-  const [companyName, setCompanyName] = useRecoilState(searchCompanyState);
+
+  const idFrontText = useSearchIdStore((state) => state.searchIdFront);
+  const idBackText = useSearchIdStore((state) => state.searchIdBack);
+  const productText = useSearchIdStore((state) => state.searchProductName);
+  const companyText = useSearchIdStore((state) => state.searchCompanyName);
+  const shapeSelected = useSearchIdStore((state) => state.searchIdShapes);
+  const colorSelected = useSearchIdStore((state) => state.searchIdColors);
+  const dividingSelected = useSearchIdStore((state) => state.searchIdDividings);
+  const dosageSelected = useSearchIdStore((state) => state.searchIdDosages);
+
+  const setIdFrontText = useSearchIdStore((state) => state.setSearchIdFront);
+  const setIdBackText = useSearchIdStore((state) => state.setSearchIdBack);
+  const setProductText = useSearchIdStore((state) => state.setProductName);
+  const setCompanyText = useSearchIdStore((state) => state.setCompanyName);
+  const setShapeSelected = useSearchIdStore((state) => state.setSearchIdShapes);
+  const setColorSelected = useSearchIdStore((state) => state.setSearchIdColors);
+
+  const getSearchIdItems = useSearchIdStore((state) => state.getSearchIdItems);
+  const handlePressInit = useSearchIdStore((state) => state.resetSearchId);
+
   // 제형
-  const [dosageNameSelected, setDosageNameSelected] = useRecoilState(searchDosageState);
+  const setDosageNameSelected = useSearchIdStore((state) => state.setDosageNames);
   // 분할선
-  const [dividingLineSelected, setDividingLineSelected] = useRecoilState(searchDividingLineState);
-  // 모양
-  const [shapeSelected, setShapeSelected] = useRecoilState(searchIdShapeState);
-  // 색상
-  const [colorSelected, setColorSelected] = useRecoilState(searchIdColorState);
-  // 마크
-  const [markSelected, setMarkSelected] = useRecoilState(searchMarkState);
+  const setDividingLineSelected = useSearchIdStore((state) => state.setDividingNames);
 
-  const data = useRecoilValue(searchIdItems);
-  const handlePressInit = useResetRecoilState(searchIdStates);
-
-  // 문자정보 데이터
   const setIdText = {
     front: setIdFrontText,
     back: setIdBackText,
-    product: setProductName,
-    company: setCompanyName,
+    product: setProductText,
+    company: setCompanyText,
   };
 
   const nav: any = useNavigation();
+
   const handleSetIdText = ({
     text,
     direction,
@@ -59,7 +51,7 @@ export const useSelectSearchId = () => {
     setIdText[direction](text);
   };
 
-  const handlePressItem = (item: TItemData, idx: number) => {
+  const handlePressItem = (item: TItemData) => {
     const k = item.category + item.key;
     switch (item.category) {
       case 'shape':
@@ -71,40 +63,34 @@ export const useSelectSearchId = () => {
         setColorSelected(newColorSelected);
         break;
       case 'dividing':
-        const newDividingSelected = makeNewList(dividingLineSelected, k, 'dividing0');
+        const newDividingSelected = makeNewList(dividingSelected, k, 'dividing0');
         setDividingLineSelected(newDividingSelected);
         break;
       case 'dosage':
-        const newDosageSelected = makeNewList(dosageNameSelected, k, 'dosage0');
+        const newDosageSelected = makeNewList(dosageSelected, k, 'dosage0');
         setDosageNameSelected(newDosageSelected);
         break;
     }
   };
 
-  const handlePressMarkData = (res: string) => {
-    setMarkSelected(res);
-  };
-
   const handlePressSearch = () => {
-    console.log('결과', data);
-    nav.navigate('알약 검색 결과', { data: data, mode: 0 });
+    const data = getSearchIdItems();
+    nav.navigate('알약 검색 결과', { data, mode: 0 });
   };
 
   return {
     btnState,
     idFrontText,
     idBackText,
+    productText,
+    companyText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
-    productName,
-    companyName,
-    dosageNameSelected,
-    dividingLineSelected,
-    markSelected,
+    dividingSelected,
+    dosageSelected,
     handlePressItem,
     handlePressInit,
     handlePressSearch,
-    handlePressMarkData,
   };
 };
