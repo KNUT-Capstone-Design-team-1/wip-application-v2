@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
-import SearchIdInput from '@components/organisms/SearchIdInput.tsx';
-import Button from '@components/atoms/Button.tsx';
+import SearchIdInput from '@components/organisms/SearchIdInput';
+import Button from '@components/atoms/Button';
 import { StyleSheet, Text, View } from 'react-native';
 import SearchSvg from '@assets/svgs/search.svg';
-import { font, os } from '@/style/font.ts';
+import { font, os } from '@/style/font';
 
 const SearchInputAndButton = ({
   textInputsObject,
@@ -11,11 +10,16 @@ const SearchInputAndButton = ({
 }: any) => {
   return (
     <View style={styles.modalSearchWrapper}>
-      <SearchIdInput textInputs={[textInputsObject]} errorState={false} />
+      {/* input이 가로 공간을 최대한 차지하도록 flex:1 추가 */}
+      <View style={{ flex: 1, marginLeft: -10 }}>
+        <SearchIdInput textInputs={[textInputsObject]} errorState={false} />
+      </View>
+
+      {/* 버튼은 내용에 맞는 크기만 차지 */}
       <Button.scale onPress={buttonClickHandler}>
-        <View style={{ ...styles.searchButton, paddingHorizontal: 10 }}>
-          <SearchSvg width={14} height={14} color={'#fff'} />
-          <Text style={{ color: '#fff', ...styles.buttonText }} />
+        <View style={styles.searchButton}>
+          <SearchSvg width={16} height={16} color={'#fff'} />
+          <Text style={styles.buttonText}>검색</Text>
         </View>
       </Button.scale>
     </View>
@@ -23,71 +27,30 @@ const SearchInputAndButton = ({
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // 검은 배경에 60% 투명도
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  // ✅ 실제 모달 UI 영역 (불투명)
-  modalBox: {
-    backgroundColor: '#fff', // 선명한 흰색 배경
-    padding: 24,
-    borderRadius: 12,
-    minWidth: '80%',
-    elevation: 4, // 안드로이드 그림자
-    shadowColor: '#000', // iOS 그림자
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-  },
-
-  text: {
-    fontSize: 16,
-    textAlign: 'center',
-    fontWeight: '600',
-    color: '#444',
-  },
-
   modalSearchWrapper: {
-    flexDirection: 'row', // 🔥 가로 배치
-    alignItems: 'center', // 세로 중앙 정렬
-    justifyContent: 'center',
-    width: '80%',
-    flex: 1,
-  },
-
-  marks: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'row', // 가로 배치
     alignItems: 'center',
-    gap: 10,
-  },
-
-  mark: {
-    padding: 20,
-    borderWidth: 1,
-    borderRadius: 10,
+    width: '100%',
+    height: 60,
+    marginTop: -10,
   },
 
   searchButton: {
-    alignItems: 'center',
-    backgroundColor: '#6563ed',
-    borderColor: '#6563ed',
-    borderRadius: 8,
-    borderWidth: 1.5,
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 120,
-    paddingVertical: 12,
+    backgroundColor: '#6563ed',
+    borderRadius: 8,
+    paddingHorizontal: 10, // ← 딱 필요한 만큼만
+    height: 43,
+    marginTop: 11,
   },
+
   buttonText: {
+    marginLeft: 6,
+    color: '#fff',
     fontFamily: os.font(700, 800),
-    fontSize: font(16),
-    includeFontPadding: false,
-    textAlign: 'center',
+    fontSize: font(12),
   },
 });
 
