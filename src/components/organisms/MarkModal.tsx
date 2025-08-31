@@ -8,51 +8,60 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
-
-import SearchInputAndButton from '@components/molecules/SearchInputAndButton.tsx';
-import Button from '@components/atoms/Button.tsx';
-
-import { useRecoilState, useRecoilValueLoadable } from 'recoil';
-import { markDataSelector } from '@/selectors/mark.ts';
-import { TMarkData } from '@/types/TApiType.ts';
-import { selectedMarkImage } from '@/atoms/searchMark.ts';
-
-import { useSelectSearchId } from '@/hooks/useSelectSearchId.ts';
+import SearchInputAndButton from '@components/molecules/SearchInputAndButton';
+import { TMarkData } from '@/types/TApiType';
+import getMarkData from '@api/client/mark';
+import { useSearchIdStore } from '@/store/searchIdStore';
+import { useMarkStore } from '@/store/markStore';
+import ModalPageNation from '@components/molecules/ModalPageNation';
+import ModalIconButton from '@components/atoms/ModalIconButton';
 
 const LIMIT = 20;
-const TOTAL_DATA_COUNT = 100; // 총 데이터 100개 가정
-const TOTAL_PAGES = Math.ceil(TOTAL_DATA_COUNT / LIMIT);
 
 const MarkModal = ({ onClose }: { onClose: () => void }) => {
   const searchText = useRef('');
   const [beforeSearchText, setBeforeSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [markDataList, setMarkDataList] = useState<TMarkData[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [selectedImage, setSelectedImage] = useRecoilState(selectedMarkImage);
+  const [loading, setLoading] = useState(false);
+  const [totalDataCount, setTotalDataCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  // 페이지 그룹 상태
+  const [currentGroup, setCurrentGroup] = useState(0); // 0 = 첫 그룹 (1~7), 1 = 두 번째 그룹 (8~14)...
 
-  const { handlePressMarkData } = useSelectSearchId();
+  const { setSearchMark } = useSearchIdStore();
+  const { setSelectedMarkBase64 } = useMarkStore();
 
-  const markDataLoadable = useRecoilValueLoadable(
-    markDataSelector({ title: searchText.current, page, limit: LIMIT }),
-  );
+  // 데이터 불러오기
+  const fetchMarkData = async (title: string, pageNum: number) => {
+    try {
+      setLoading(true);
 
+      const res = await getMarkData(title, LIMIT, pageNum);
+
+      setMarkDataList(res?.markData || []);
+      setTotalDataCount(res?.pages || 0);
+      setTotalPages(totalDataCount);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 처음 모달 열릴 때 & page 변경될 때
+  useEffect(() => {
+    fetchMarkData(beforeSearchText, page);
+  }, [page, totalDataCount]);
+
+  // 검색 버튼 클릭 시
   const handleSearch = () => {
-    if(beforeSearchText === searchText.current) return;
-
-    const markResearchObj = {
-      title: searchText.current,
-      page: 1,
-      limit: 50,
-    };
-
-    markDataSelector(markResearchObj);
+    if (beforeSearchText === searchText.current) return;
     setPage(1);
-    setMarkDataList([]);
-    setHasMore(true);
     setBeforeSearchText(searchText.current);
+    setCurrentGroup(0); // 검색 시 그룹 초기화
+    fetchMarkData(searchText.current, 1);
   };
 
   const textInputsObject = {
@@ -63,76 +72,20 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
     },
   };
 
-  const markSelected = (item) => {
-    setSelectedImage(item.base64);
-
-    // code? title??
-    handlePressMarkData(item.code);
+  const markSelected = (item: TMarkData) => {
+    setSearchMark(item.code);
+    setSelectedMarkBase64(item.base64);
     onClose();
   };
 
-  useEffect(() => {
-    if (markDataLoadable.state === 'hasValue') {
-      const newData = markDataLoadable.contents as TMarkData[];
-      setMarkDataList(newData);
-
-      if (newData.length < LIMIT) setHasMore(false);
-      else setHasMore(true);
-    }
-  }, [markDataLoadable.state, page, searchText]);
-
-  const renderMark = ({ item, index }: { item: TMarkData; index: number }) => (
-    <Button.imgInButton
-      style={styles.mark}
-      key={index}
-      onPress={() => markSelected(item)}
-      src={item.base64}
-    >
-      <Text style={{ color: '#444' }}>{item.code}</Text>
-    </Button.imgInButton>
-  );
-
-  // 페이지네이션 버튼 렌더링 함수
-  const renderPageButtons = () => {
-    const buttons = [];
-    for (let i = 1; i <= TOTAL_PAGES; i++) {
-      buttons.push(
-        <TouchableOpacity
-          key={i}
-          style={[
-            styles.pageButton,
-            i === page && styles.pageButtonActive,
-          ]}
-          onPress={() => setPage(i)}
-        >
-          <Text style={i === page ? styles.pageButtonTextActive : styles.pageButtonText}>
-            {i}
-          </Text>
-        </TouchableOpacity>,
-      );
-    }
-    return buttons;
-  };
-
   return (
-    // 바깥 검정 투명 영역만 터치 시 모달 닫기
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-        onClose();
-      }}
-    >
+    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); onClose(); }}>
       <View style={styles.overlay}>
-
-        {/* 모달 박스 영역 터치는 이벤트 전파 막기 */}
         <TouchableWithoutFeedback onPress={e => e.stopPropagation()}>
           <View style={styles.modalBox}>
             {/* 닫기 버튼 */}
             <TouchableOpacity
-              onPress={() => {
-                Keyboard.dismiss();
-                onClose();
-              }}
+              onPress={() => { Keyboard.dismiss(); onClose(); }}
               style={styles.closeButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
@@ -141,45 +94,39 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
 
             <Text style={styles.text}>마크 검색</Text>
 
-            <SearchInputAndButton
-              textInputsObject={textInputsObject}
-              buttonClickHandler={handleSearch}
-            />
+            <View style={{ marginTop: 30 }}>
+              <SearchInputAndButton
+                textInputsObject={textInputsObject}
+                buttonClickHandler={handleSearch}
+              />
+            </View>
 
-            {markDataLoadable.state === 'loading' ? (
-              <ActivityIndicator style={{ marginTop: 10, minHeight: '30%' }} />
+            {/* 로딩 중일 때 */}
+            {loading ? (
+              <ActivityIndicator size="large" color="#6563ed" style={{ height: '70%' }} />
             ) : (
               <FlatList
                 data={markDataList}
-                keyExtractor={(item, index) => item.code + index}
-                renderItem={renderMark}
-                contentContainerStyle={styles.markList}
+                keyExtractor={(item, index) => `${item.code}-${index}`}
+                renderItem={({ item }) => (
+                  <ModalIconButton item={item} markSelected={markSelected} />
+                )}
                 numColumns={5}
-                columnWrapperStyle={{
-                  justifyContent: 'space-between',
-                  marginBottom: 12,
-                }}
-                style={{ flexGrow: 0 }}
+                contentContainerStyle={[styles.markList, { minHeight: 300 }]}
                 ListEmptyComponent={
-                  <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, color: '#999' }}>검색 결과가 없습니다</Text>
+                  <View style={{ flex: 1, alignItems: 'center', marginTop: 40 }}>
+                    <Text style={{ color: '#999', fontSize: 16 }}>검색 결과 없음</Text>
                   </View>
                 }
               />
             )}
-            {/* 페이지네이션 버튼 UI */}
-            <View style={styles.paginationContainer}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                  flexGrow: 1,
-                  justifyContent: 'center',
-                }}
-              >
-                {renderPageButtons()}
-              </ScrollView>
-            </View>
+            <ModalPageNation
+              totalPages={totalPages}
+              page={page}
+              setPage={setPage}
+              currentGroup={currentGroup}
+              setCurrentGroup={setCurrentGroup}
+            />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -196,69 +143,46 @@ const styles = StyleSheet.create({
   },
   modalBox: {
     backgroundColor: '#fff',
-    padding: 24,
-    borderRadius: 12,
-    width: '90%',
-    height: '60%',
-    elevation: 4,
+    padding: 20,
+    borderRadius: 16,
+    width: '92%',
+    height: '65%',
+    elevation: 6,
   },
   text: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
-    fontWeight: '600',
-    color: '#444',
-    marginBottom: 12,
+    fontWeight: '700',
+    color: '#333',
   },
   markList: {
-    // gap: 15,
-    // paddingTop: 10,
-    // alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 2,
+    paddingVertical: '5%',
   },
-  mark: {
-    margin: 4,
-    padding: 10,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: 'transparent',
-  },
-  paginationContainer: {
-    flexDirection: 'row',
+  markCard: {
+    flex: 1,
+    margin: 6,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 12,
-  },
-  pageButton: {
-    borderWidth: 1,
-    borderColor: '#888',
-    borderRadius: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginHorizontal: 4,
-  },
-  pageButtonActive: {
-    backgroundColor: '#6563ed',
-    borderColor: '#6563ed',
-  },
-  pageButtonText: {
-    color: '#888',
-    fontWeight: '600',
-  },
-  pageButtonTextActive: {
-    color: '#fff',
-    fontWeight: '700',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
   },
   closeButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    padding: 4,
+    top: 14,
+    right: 14,
+    padding: 6,
     zIndex: 10,
   },
   closeButtonText: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#444',
+    color: '#666',
   },
 });
 
