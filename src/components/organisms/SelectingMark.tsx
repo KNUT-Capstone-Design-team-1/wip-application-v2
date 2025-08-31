@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Modal, Image } from 'react-native';
-import { font, os } from '@/style/font.ts';
-import Button from '@components/atoms/Button.tsx';
-import MarkModal from '@components/organisms/MarkModal.tsx';
-import { useRecoilValue } from 'recoil';
-import { selectedMarkImage } from '@/atoms/searchMark.ts';
-
+import { font, os } from '@/style/font';
+import Button from '@components/atoms/Button';
+import MarkModal from '@components/organisms/MarkModal';
+import { useMarkStore } from '@store/markStore';
 
 const SelectingMark = () => {
+  const { selectedMarkBase64 } = useMarkStore();
   const [modalState, setModalState] = useState(false);
-  const selectedImage = useRecoilValue(selectedMarkImage);
 
   const openMarkModal = (): void => {
     setModalState(true);
@@ -27,11 +25,11 @@ const SelectingMark = () => {
 
       <View style={styles.markResultContainer}>
         <Text style={styles.markResult}>선택된 마크 :</Text>
-        {selectedImage === '' ? (
+        {selectedMarkBase64 === '' ? (
           <Text style={styles.markResult}>선택 없음</Text>
         ) : (
           <Image
-            source={{ uri: selectedImage }}
+            source={{ uri: selectedMarkBase64 }}
             style={styles.markImage}
             resizeMode="contain"
           />
@@ -49,6 +47,7 @@ const SelectingMark = () => {
 
 const styles = StyleSheet.create({
   selectMarkContainer: {
+    marginTop: 20,
     alignItems: 'center',
     display: 'flex',
     width: '100%',
