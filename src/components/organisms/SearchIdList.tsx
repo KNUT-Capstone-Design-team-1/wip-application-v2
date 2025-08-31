@@ -1,36 +1,29 @@
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { SectionGrid } from 'react-native-super-grid';
-import {
-  StatusBarHeight,
-  defaultHeaderHeight,
-  windowHeight,
-} from '@/components/organisms/Layout';
-import { idSelectData, TItemData } from '@/constants/data';
+import { idSelectData } from '@/constants/data';
 import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 import SearchSvg from '@/assets/svgs/search.svg';
 import { useSelectSearchId } from '@/hooks/useSelectSearchId';
-import SearchIdItem from '../atoms/SearchIdItem';
 import SearchIdInput from '@/components/organisms/SearchIdInput';
-import SelectingMark from '@components/organisms/SelectingMark.tsx';
-import ComboBox from '@components/molecules/ComboBox.tsx';
+import SearchIdItem from '@/components/atoms/SearchIdItem';
+import SelectingMark from '@components/organisms/SelectingMark';
 
 const SearchIdList = (): React.JSX.Element => {
   const {
     btnState,
     idFrontText,
     idBackText,
-    productName,
-    companyName,
+    productText,
+    companyText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
-    dosageNameSelected,
-    dividingLineSelected,
+    dosageSelected,
+    dividingSelected,
     handlePressItem,
     handlePressInit,
     handlePressSearch,
-    handleSelectedComboBox,
   } = useSelectSearchId();
 
   // 조건에 따른 컴포넌트 생성 방법 분리
@@ -73,14 +66,14 @@ const SearchIdList = (): React.JSX.Element => {
               placeholderTextColor: '#cacaca',
               onChangeText: (val) =>
                 handleSetIdText({ text: val, direction: 'product' }),
-              value: productName,
+              value: productText,
             },
             {
               placeholder: section.placeholder[1],
               placeholderTextColor: '#cacaca',
               onChangeText: (val) =>
                 handleSetIdText({ text: val, direction: 'company' }),
-              value: companyName,
+              value: companyText,
             },
           ]}
           errorState={btnState}
@@ -102,15 +95,15 @@ const SearchIdList = (): React.JSX.Element => {
   };
 
   return (
-    <View style={styles.viewWrapper}>
-      <SectionGrid
-        itemDimension={70}
-        fixed={true}
-        spacing={16}
-        sections={idSelectData}
-        keyExtractor={(item, index) => `${item.key} - ${index}`}
-        renderItem={({ item, section }) => {
-          return (
+    <>
+      <View style={styles.viewWrapper}>
+        <SectionGrid
+          itemDimension={70}
+          fixed={true}
+          spacing={16}
+          sections={idSelectData}
+          keyExtractor={(item, index) => `${item.key} - ${index}`}
+          renderItem={({ item }) => (
             <SearchIdItem
               text={item.name}
               handlePressItem={() => handlePressItem(item)}
@@ -119,24 +112,25 @@ const SearchIdList = (): React.JSX.Element => {
               isSelected={
                 shapeSelected.includes(item.category + item.key) ||
                 colorSelected.includes(item.category + item.key) ||
-                dosageNameSelected.includes(item.category + item.key) ||
-                dividingLineSelected.includes(item.category + item.key)
+                dosageSelected.includes(item.category + item.key) ||
+                dividingSelected.includes(item.category + item.key)
+                  ? true
+                  : false
               }
             >
               {item.icon ? item.icon : null}
             </SearchIdItem>
-          );
-        }}
-        renderSectionHeader={({ section }) => (
-          <View style={styles.sectionHeaderWrapper}>
-            <Text style={styles.sectionHeaderText}>{section.title}</Text>
-            {section.data.length === 0 && renderInputByType(section)}
-            {/*{renderInputByType(section)}*/}
-          </View>
-        )}
-        renderSectionFooter={() => <View style={{ marginBottom: 21 }} />}
-        contentContainerStyle={{ paddingBottom: 48 }}
-      />
+          )}
+          renderSectionHeader={({ section }) => (
+            <View style={styles.sectionHeaderWrapper}>
+              <Text style={styles.sectionHeaderText}>{section.title}</Text>
+              {section.data.length === 0 && renderInputByType(section)}
+            </View>
+          )}
+          renderSectionFooter={() => <View style={{ marginBottom: 21 }} />}
+          contentContainerStyle={{ paddingBottom: 48 }}
+        />
+      </View>
       <View style={styles.buttonWrapper}>
         <Button.scale onPress={handlePressInit}>
           <View style={styles.resetButton}>
@@ -152,7 +146,7 @@ const SearchIdList = (): React.JSX.Element => {
           </View>
         </Button.scale>
       </View>
-    </View>
+    </>
   );
 };
 
