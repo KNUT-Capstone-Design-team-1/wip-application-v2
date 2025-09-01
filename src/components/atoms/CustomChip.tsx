@@ -1,8 +1,7 @@
 import { font, os } from '@/style/font';
+import { TCustomChip } from '@/types/atoms/type';
 import { memo } from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-
-type TCustomChip = { text: string; style?: ViewStyle; textStyle?: TextStyle };
 
 const CustomChip = ({
   text,
