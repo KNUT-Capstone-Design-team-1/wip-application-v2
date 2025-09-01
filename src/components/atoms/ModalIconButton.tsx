@@ -27,7 +27,8 @@ const ModalIconButton = ({ markSelected, item }: IModalIconButton) => {
 
 const styles = StyleSheet.create({
   markCard: {
-    flex: 1,
+    width: '15%',
+    height: 65,
     margin: 6,
     backgroundColor: '#f9f9f9',
     borderRadius: 5,
