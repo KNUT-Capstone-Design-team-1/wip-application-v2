@@ -1,14 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import ModalIconButton from '@components/atoms/ModalIconButton';
-import { TMarkData } from '@/types/TApiType';
+import { IMarkListProps } from '@/types/molecules/type';
 
-type MarkListProps = {
-  data: TMarkData[];
-  onSelect: (item: TMarkData) => void;
-};
-
-const MarkList = ({ data, onSelect }: MarkListProps) => {
+const MarkList = ({ data, onSelect }: IMarkListProps) => {
   if (!data || data.length === 0) {
     return (
       <View style={{ flex: 1, alignItems: 'center', marginTop: 40 }}>
@@ -16,7 +11,7 @@ const MarkList = ({ data, onSelect }: MarkListProps) => {
       </View>
     );
   }
-  
+
   return (
     <View style={styles.markList}>
       {data.map((item, idx) => (

@@ -1,18 +1,9 @@
 import SearchIdInput from '@components/organisms/SearchIdInput';
 import Button from '@components/atoms/Button';
-import { ColorValue, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import SearchSvg from '@assets/svgs/search.svg';
 import { font, os } from '@/style/font';
-
-interface ISearchInputAndButtonProps {
-  textInputsObject: {
-    placeholder?: string;
-    placeholderTextColor?: ColorValue;
-    onChangeText: (val: string) => void;
-    value?: string;
-  };
-  buttonClickHandler: () => void;
-}
+import { ISearchInputAndButtonProps } from '@/types/molecules/type';
 
 const SearchInputAndButton = ({
   textInputsObject,
