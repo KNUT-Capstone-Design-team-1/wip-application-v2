@@ -15,12 +15,7 @@ import LoadingCircle from '@/components/atoms/LoadingCircle';
 import PillInfo from '@/components/atoms/PillInfo';
 import { PillDetailSection } from '@/components/atoms/PillDetailSection';
 import Layout from '@/components/organisms/Layout';
-
-interface InfoData {
-  EE?: string[] | null | undefined;
-  UD?: string[] | null | undefined;
-  NB?: string[] | null | undefined;
-}
+import { InfoData } from '@/types/screens/type';
 
 const PillDetail = ({ route }: any): React.JSX.Element => {
   useSetScreen('알약 정보');
