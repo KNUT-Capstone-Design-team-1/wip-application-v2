@@ -87,11 +87,11 @@ const UpdateDB = (): React.JSX.Element => {
       showAlert(
         'DB 업데이트',
         'DB 업데이트가 필요합니다' +
-        `\n` +
-        '다운로드 용량:' +
-        formatBytes(resClient.resSize) +
-        `\n` +
-        '(wifi 사용권장)',
+          `\n` +
+          '다운로드 용량:' +
+          formatBytes(resClient.resSize) +
+          `\n` +
+          '(wifi 사용권장)',
         [
           {
             text: '취소',
