@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, Modal, Image } from 'react-native';
 import { font, os } from '@/style/font';
 import Button from '@components/atoms/Button';
-import MarkModal from '@components/organisms/MarkModal';
+import MarkModal from '@components/organisms/markModal/index';
 import { useMarkStore } from '@store/markStore';
 
 const SelectingMark = () => {

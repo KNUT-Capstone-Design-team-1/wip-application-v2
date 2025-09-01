@@ -24,7 +24,7 @@ const ModalPageNation = ({
   currentGroup,
   setCurrentGroup,
 }: IModalPageNationProps) => {
-  // ✅ 페이지네이션 버튼 (7개씩 그룹화)
+  // 페이지네이션 버튼 (7개씩 그룹화)
   const renderPageButtons = () => {
     const startPage = currentGroup * PAGE_GROUP_SIZE + 1;
     const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 14,
+    marginTop: 15,
   },
   pageNavButton: {
     borderWidth: 1,
