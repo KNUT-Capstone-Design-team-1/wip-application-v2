@@ -8,7 +8,6 @@ import {
   FlatList,
   Image,
   Animated,
-  TouchableOpacity,
 } from 'react-native';
 import Button from '@/components/atoms/Button';
 import Layout from '@/components/organisms/Layout';
