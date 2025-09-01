@@ -1,3 +1,4 @@
+import { IModalPageNationProps } from '@/types/molecules/type';
 import React from 'react';
 import {
   ScrollView,
@@ -6,14 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-interface IModalPageNationProps {
-  totalPages: number;
-  page: number;
-  setPage: any;
-  currentGroup: number;
-  setCurrentGroup: any;
-}
 
 const PAGE_GROUP_SIZE = 5; // 한 번에 보여줄 페이지 버튼 개수
 
