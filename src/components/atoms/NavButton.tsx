@@ -1,33 +1,11 @@
 import Button from '@/components/atoms/Button';
 import { useScreenStore } from '@/store/screen';
 import { font, os } from '@/style/font';
+import { INavIconSize, INavWrapperProps } from '@/types/atoms/type';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { DimensionValue, StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-
-interface INavWrapperProps {
-  iconXML: INavIcon;
-  name: string;
-  navName: string;
-  tabName?: string;
-}
-
-interface INavIcon {
-  ACTIVE: INavIconInfo;
-  INACTIVE: INavIconInfo;
-}
-interface INavIconInfo {
-  XML: string;
-  SIZE: INavIconSize;
-  TOP?: number;
-}
-
-interface INavIconSize {
-  width: DimensionValue | undefined;
-  height: DimensionValue | undefined;
-  top?: number;
-}
 
 const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {
   const nav: any = useNavigation();

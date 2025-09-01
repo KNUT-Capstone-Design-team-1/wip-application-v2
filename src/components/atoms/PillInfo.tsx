@@ -1,20 +1,7 @@
 import { font, os } from '@/style/font';
 import { StyleSheet, Text, View } from 'react-native';
 import CustomChip from './CustomChip';
-
-interface IProps {
-  label: string;
-  ct: string;
-  searchValue?: string;
-  replaceValue?: string;
-}
-
-interface IPropsChips {
-  label: string;
-  ct: string[];
-  searchValue?: string;
-  replaceValue?: string;
-}
+import { IPillInfoProps, IPropsChips } from '@/types/atoms/type';
 
 const PillInfo = {
   default: ({
@@ -22,7 +9,7 @@ const PillInfo = {
     ct,
     searchValue = '|',
     replaceValue = '\n',
-  }: IProps): React.JSX.Element => {
+  }: IPillInfoProps): React.JSX.Element => {
     let _ct = '-';
 
     if (ct) {

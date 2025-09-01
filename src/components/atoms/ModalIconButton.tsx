@@ -1,11 +1,6 @@
 import React from 'react';
 import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { TMarkData } from '@/types/TApiType';
-
-interface IModalIconButton {
-  markSelected: any;
-  item: TMarkData;
-}
+import { IModalIconButton } from '@/types/atoms/type';
 
 const ModalIconButton = ({ markSelected, item }: IModalIconButton) => {
   return (
