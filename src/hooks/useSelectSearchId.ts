@@ -14,7 +14,7 @@ export const useSelectSearchId = () => {
   const shapeSelected = useSearchIdStore((state) => state.searchIdShapes);
   const colorSelected = useSearchIdStore((state) => state.searchIdColors);
   const dividingSelected = useSearchIdStore((state) => state.searchIdDividings);
-  const dosageSelected = useSearchIdStore((state) => state.searchIdDosages);
+  const formCodeSelected = useSearchIdStore((state) => state.searchIdFormCodes);
 
   const setIdFrontText = useSearchIdStore((state) => state.setSearchIdFront);
   const setIdBackText = useSearchIdStore((state) => state.setSearchIdBack);
@@ -27,9 +27,13 @@ export const useSelectSearchId = () => {
   const handlePressInit = useSearchIdStore((state) => state.resetSearchId);
 
   // 제형
-  const setDosageNameSelected = useSearchIdStore((state) => state.setDosageNames);
+  const setFormCodeNameSelected = useSearchIdStore(
+    (state) => state.setFormCodeNames,
+  );
   // 분할선
-  const setDividingLineSelected = useSearchIdStore((state) => state.setDividingNames);
+  const setDividingLineSelected = useSearchIdStore(
+    (state) => state.setDividingNames,
+  );
 
   const setIdText = {
     front: setIdFrontText,
@@ -63,18 +67,28 @@ export const useSelectSearchId = () => {
         setColorSelected(newColorSelected);
         break;
       case 'dividing':
-        const newDividingSelected = makeNewList(dividingSelected, k, 'dividing0');
+        const newDividingSelected = makeNewList(
+          dividingSelected,
+          k,
+          'dividing0',
+        );
         setDividingLineSelected(newDividingSelected);
         break;
-      case 'dosage':
-        const newDosageSelected = makeNewList(dosageSelected, k, 'dosage0');
-        setDosageNameSelected(newDosageSelected);
+      case 'formCode':
+        const newFormCodeSelected = makeNewList(
+          formCodeSelected,
+          k,
+          'formCode0',
+        );
+        setFormCodeNameSelected(newFormCodeSelected);
         break;
     }
   };
 
   const handlePressSearch = () => {
     const data = getSearchIdItems();
+
+    console.log(data);
     nav.navigate('알약 검색 결과', { data, mode: 0 });
   };
 
@@ -88,7 +102,7 @@ export const useSelectSearchId = () => {
     shapeSelected,
     colorSelected,
     dividingSelected,
-    dosageSelected,
+    formCodeSelected,
     handlePressItem,
     handlePressInit,
     handlePressSearch,

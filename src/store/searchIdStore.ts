@@ -6,7 +6,7 @@ import { useMarkStore } from '@/store/markStore';
 interface ISearchIdStore {
   searchIdShapes: string[];
   searchIdColors: string[];
-  searchIdDosages: string[];
+  searchIdFormCodes: string[];
   searchIdDividings: string[];
   searchIdFront: string;
   searchIdBack: string;
@@ -22,7 +22,7 @@ interface ISearchIdStore {
   setSearchMark: (searchMarkName: string) => void;
   resetSearchId: () => void;
   getSearchIdItems: () => TPillSearchParam;
-  setDosageNames: (dosages: string[]) => void;
+  setFormCodeNames: (formCodes: string[]) => void;
   setDividingNames: (dividings: string[]) => void;
 }
 
@@ -34,7 +34,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   searchProductName: '',
   searchCompanyName: '',
   searchMark: '',
-  searchIdDosages: ['dosage0'],
+  searchIdFormCodes: ['formCode0'],
   searchIdDividings: ['dividing0'],
   setSearchIdShapes: (searchIdShapes) => set({ searchIdShapes }),
   setSearchIdColors: (searchIdColors) => set({ searchIdColors }),
@@ -43,7 +43,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   setProductName: (searchProductName) => set({ searchProductName }),
   setCompanyName: (searchCompanyName) => set({ searchCompanyName }),
   setSearchMark: (searchMark) => set({ searchMark }),
-  setDosageNames: (searchIdDosages) => set({ searchIdDosages }),
+  setFormCodeNames: (searchIdFormCodes) => set({ searchIdFormCodes }),
   setDividingNames: (searchIdDividings) => set({ searchIdDividings }),
   resetSearchId: () => {
     set({
@@ -53,8 +53,9 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       searchIdBack: '',
       searchProductName: '',
       searchCompanyName: '',
-      searchIdDosages: ['dosage0'],
+      searchIdFormCodes: ['formCode0'],
       searchIdDividings: ['dividing0'],
+      searchMark: '',
     });
 
     useMarkStore.getState().resetSelectedMarkBase64();
@@ -66,21 +67,23 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     const searchIdBack = get().searchIdBack;
     const searchProduct = get().searchProductName;
     const searchCompany = get().searchCompanyName;
+    const searchIdFormCodes = get().searchIdFormCodes;
     const searchIdDividings = get().searchIdDividings;
     const searchMark = get().searchMark;
 
     const data: TPillSearchParam = {
       PRINT_FRONT: '',
       PRINT_BACK: '',
-      PRODUCT: '',
-      COMPANY: '',
+      ITEM_NAME: '',
+      ENTP_NAME: '',
       DRUG_SHAPE: [],
       COLOR_CLASS1: [],
       COLOR_CLASS2: [],
       LINE_FRONT: [],
       LINE_BACK: [],
-      CHART: [],
-      MARK: '',
+      FORM_CODE: [],
+      MARK_CODE_FRONT: '',
+      MARK_CODE_BACK: '',
     };
 
     if (searchIdFront.length > 0) {
@@ -92,15 +95,16 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     }
 
     if (searchProduct.length > 0) {
-      data['PRODUCT'] = '*' + searchProduct.replace(/(?<=.)|(?=.)/g, '*');
+      data['ITEM_NAME'] = '*' + searchProduct.replace(/(?<=.)|(?=.)/g, '*');
     }
 
     if (searchCompany.length > 0) {
-      data['COMPANY'] = '*' + searchCompany.replace(/(?<=.)|(?=.)/g, '*');
+      data['ENTP_NAME'] = '*' + searchCompany.replace(/(?<=.)|(?=.)/g, '*');
     }
 
     if (searchMark.length > 0) {
-      data['MARK'] = '*' + searchMark.replace(/(?<=.)|(?=.)/g, '*');
+      data['MARK_CODE_FRONT'] = '*' + searchMark.replace(/(?<=.)|(?=.)/g, '*');
+      data['MARK_CODE_BACK'] = '*' + searchMark.replace(/(?<=.)|(?=.)/g, '*');
     }
 
     for (const item of idSelectData) {
@@ -126,24 +130,40 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
             }
             break;
 
-          case 'dosage':
-            if (val.category + val.key == 'dosage0') {
+          case 'formCode':
+            if (val.category + val.key === 'formCode0') {
               break;
             }
 
-            if (searchIdDividings.includes(val.category + val.key)) {
-              data['CHART']?.push(val.name);
+            if (searchIdFormCodes.includes(val.category + val.key)) {
+              const formCodeMap = {
+                연질캡슐: '연질',
+                경질캡슐: '경질',
+              };
+
+              const name = formCodeMap[val.name] ?? val.name; // 없으면 원래 이름 유지
+              data['FORM_CODE']?.push(name);
             }
             break;
 
           case 'dividing':
-            if (val.category + val.key == 'dividing0') {
+            if (val.category + val.key === 'dividing0') {
               break;
             }
 
             if (searchIdDividings.includes(val.category + val.key)) {
-              data['LINE_FRONT']?.push(val.name);
-              data['LINE_BACK']?.push(val.name);
+              // 분할선 값 변환: "없음" -> "", "+ 형" -> "+", "- 형" -> "-"
+              let lineValue = val.name;
+              if (val.name === '없음') {
+                lineValue = '';
+              } else if (val.name === '+ 형') {
+                lineValue = '+';
+              } else if (val.name === '- 형') {
+                lineValue = '-';
+              }
+
+              data['LINE_FRONT']?.push(lineValue);
+              data['LINE_BACK']?.push(lineValue);
             }
             break;
         }

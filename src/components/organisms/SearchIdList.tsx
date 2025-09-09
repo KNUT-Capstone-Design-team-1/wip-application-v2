@@ -19,7 +19,7 @@ const SearchIdList = (): React.JSX.Element => {
     handleSetIdText,
     shapeSelected,
     colorSelected,
-    dosageSelected,
+    formCodeSelected,
     dividingSelected,
     handlePressItem,
     handlePressInit,
@@ -112,7 +112,7 @@ const SearchIdList = (): React.JSX.Element => {
               isSelected={
                 shapeSelected.includes(item.category + item.key) ||
                 colorSelected.includes(item.category + item.key) ||
-                dosageSelected.includes(item.category + item.key) ||
+                formCodeSelected.includes(item.category + item.key) ||
                 dividingSelected.includes(item.category + item.key)
                   ? true
                   : false
