@@ -1,5 +1,5 @@
 import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
-import { TMarkData } from '../TApiType';
+import { TMarkData } from './TApiType';
 
 // markModal/MarkModalView.tsx
 export interface IMarkModalViewProps {

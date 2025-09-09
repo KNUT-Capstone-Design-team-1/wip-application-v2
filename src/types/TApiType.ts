@@ -2,6 +2,7 @@
 export interface TMarkData {
   code: string;
   base64: string;
+  title: string;
 }
 
 export interface TMarkDataResponse {

@@ -1,5 +1,5 @@
 import { ColorValue } from 'react-native';
-import { TMarkData } from '../TApiType';
+import { TMarkData } from './TApiType';
 
 // SelectingMark.tsx
 export interface IMarkListProps {
