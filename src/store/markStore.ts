@@ -11,6 +11,5 @@ interface MarkStore {
 export const useMarkStore = create<MarkStore>((set) => ({
   selectedMarkBase64: '',
   setSelectedMarkBase64: (img: string) => set({ selectedMarkBase64: img }),
-  resetSelectedMarkBase64: () =>
-    set({ selectedMarkBase64: '' }),
+  resetSelectedMarkBase64: () => set({ selectedMarkBase64: '' }),
 }));

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { IModalIconButton } from '@/types/atoms/type';
+import { IModalIconButton } from '@/types/atoms.type';
 
 const ModalIconButton = ({ markSelected, item }: IModalIconButton) => {
   return (
@@ -15,7 +15,9 @@ const ModalIconButton = ({ markSelected, item }: IModalIconButton) => {
           style={{ width: 40, height: 40, borderRadius: 8 }}
         />
       </View>
-      <Text style={styles.markCode}>{item.code}</Text>
+      <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+        {item.title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  markCode: {
+  title: {
     fontSize: 12,
     fontWeight: '600',
     color: '#444',
