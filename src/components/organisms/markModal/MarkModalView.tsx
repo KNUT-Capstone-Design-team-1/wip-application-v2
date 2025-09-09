@@ -12,21 +12,7 @@ import {
 import SearchInputAndButton from '@components/molecules/SearchInputAndButton';
 import ModalPageNation from '@components/molecules/ModalPageNation';
 import MarkList from '@components/molecules/MarkList';
-import { TMarkData } from '@/types/TApiType';
-
-type MarkModalViewProps = {
-  loading: boolean;
-  markDataList: TMarkData[];
-  page: number;
-  totalPages: number;
-  currentGroup: number;
-  setPage: (page: number) => void;
-  setCurrentGroup: (group: number) => void;
-  handleSearch: () => void;
-  markSelected: (item: TMarkData) => void;
-  onClose: () => void;
-  searchText: React.RefObject<string>;
-};
+import { IMarkModalViewProps } from '@/types/organisms.type';
 
 const MarkModalView = ({
   loading,
@@ -40,7 +26,7 @@ const MarkModalView = ({
   markSelected,
   onClose,
   searchText,
-}: MarkModalViewProps) => {
+}: IMarkModalViewProps) => {
   const textInputsObject = {
     placeholder: '예) A~Z, 꽃, 동물 등',
     placeholderTextColor: 'grey',

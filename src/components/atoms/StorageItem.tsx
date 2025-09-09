@@ -7,7 +7,7 @@ import DeleteSvg from '@assets/svgs/exit.svg';
 import { useNavigation } from '@react-navigation/native';
 import { useAlert } from '@/hooks/useAlert';
 import { usePillBox } from '@/hooks/usePillBox';
-import { IStorageItemProps } from '@/types/atoms/type';
+import { IStorageItemProps } from '@/types/atoms.type';
 
 const StorageItem = ({ data, refresh }: IStorageItemProps): React.JSX.Element => {
   const nav: any = useNavigation();

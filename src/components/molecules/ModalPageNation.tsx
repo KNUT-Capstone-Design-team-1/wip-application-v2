@@ -1,4 +1,4 @@
-import { IModalPageNationProps } from '@/types/molecules/type';
+import { IModalPageNationProps } from '@/types/molecules.type';
 import React from 'react';
 import {
   ScrollView,

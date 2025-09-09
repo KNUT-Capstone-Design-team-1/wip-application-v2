@@ -3,7 +3,7 @@ import Button from '@components/atoms/Button';
 import { StyleSheet, View } from 'react-native';
 import SearchSvg from '@assets/svgs/search.svg';
 import { font, os } from '@/style/font';
-import { ISearchInputAndButtonProps } from '@/types/molecules/type';
+import { ISearchInputAndButtonProps } from '@/types/molecules.type';
 
 const SearchInputAndButton = ({
   textInputsObject,

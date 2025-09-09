@@ -1,8 +1,8 @@
 // ButtonList.tsx
 import React from 'react';
-import Button from '@components/atoms/Button.tsx';
+import Button from '@components/atoms/Button';
 import { Text, View, StyleSheet } from 'react-native';
-import { TMarkData } from '@/types/TApiType.ts';
+import { TMarkData } from '@/types/TApiType';
 
 const ButtonList = ({
   buttonClickHandler,

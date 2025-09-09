@@ -1,5 +1,5 @@
 import { os, font } from '@/style/font';
-import { ICheckboxProps } from '@/types/atoms/type';
+import { ICheckboxProps } from '@/types/atoms.type';
 import { useState } from 'react';
 import {
   Animated,

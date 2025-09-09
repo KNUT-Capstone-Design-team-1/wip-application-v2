@@ -1,7 +1,7 @@
 import { font, os } from '@/style/font';
 import { StyleSheet, Text, View } from 'react-native';
 import CustomChip from './CustomChip';
-import { IPillInfoProps, IPropsChips } from '@/types/atoms/type';
+import { IPillInfoProps, IPropsChips } from '@/types/atoms.type';
 
 const PillInfo = {
   default: ({

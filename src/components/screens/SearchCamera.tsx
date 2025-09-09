@@ -35,7 +35,7 @@ import { cameraDeviceOption } from '@/constants/options';
 import { getCropImage, getImgPath } from '@/utils/image';
 import { useImgFileStore } from '@/store/imgFileStore';
 import { useScreenStore } from '@/store/screen';
-import { ICameraImg } from '@/types/screens/type';
+import { ICameraImg } from '@/types/screens.type';
 
 // 포커스 UI 가로,세로 크기
 const focusSize = 90;

@@ -1,3 +1,4 @@
+import React from 'react';
 import TotalSvg from '@assets/svgs/shape/total.svg';
 import CircleSvg from '@assets/svgs/shape/circle.svg';
 import EllipseSvg from '@assets/svgs/shape/ellipse.svg';
@@ -17,7 +18,7 @@ import HardCapsultSvg from '@assets/svgs/capsult/hardCapsult.svg';
 
 type TItemData = {
   name: string;
-  icon?: JSX.Element;
+  icon?: React.JSX.Element;
   color?: string;
   category: string;
   key: string;
@@ -52,23 +53,37 @@ export const idSelectData: TSectionData[] = [
   },
   {
     title: '제형',
-    type: 'buttons',
     data: [
       {
         name: '전체',
         icon: <TotalSvg />,
-        category: 'dosage',
+        category: 'formCode',
         key: '0',
         default: true,
       },
-      { name: '정제', icon: <CapsultSvg />, category: 'dosage', key: '1' },
-      { name: '연질캡슐', icon: <SoftCapsultSvg />, category: 'dosage', key: '2' },
-      { name: '경질캡슐', icon: <HardCapsultSvg />, category: 'dosage', key: '3' },
+      { name: '정제', icon: <CapsultSvg />, category: 'formCode', key: '1' },
+      {
+        name: '연질캡슐',
+        icon: <SoftCapsultSvg />,
+        category: 'formCode',
+        key: '2',
+      },
+      {
+        name: '경질캡슐',
+        icon: <HardCapsultSvg />,
+        category: 'formCode',
+        key: '3',
+      },
+      {
+        name: '기타',
+        icon: <TotalSvg />,
+        category: 'formCode',
+        key: '4',
+      },
     ],
   },
   {
     title: '분할선',
-    type: 'buttons',
     subTitle: ['앞면', '뒷면'],
     data: [
       {
@@ -85,7 +100,6 @@ export const idSelectData: TSectionData[] = [
   },
   {
     title: '모양',
-    type: 'buttons',
     data: [
       {
         name: '전체',
@@ -109,7 +123,6 @@ export const idSelectData: TSectionData[] = [
   },
   {
     title: '색상',
-    type: 'buttons',
     subTitle: ['색상1', '색상2'],
     data: [
       {

@@ -1,7 +1,7 @@
 import Button from '@/components/atoms/Button';
 import { useScreenStore } from '@/store/screen';
 import { font, os } from '@/style/font';
-import { INavIconSize, INavWrapperProps } from '@/types/atoms/type';
+import { INavIconSize, INavWrapperProps } from '@/types/atoms.type';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { DimensionValue, StyleSheet, Text, View } from 'react-native';

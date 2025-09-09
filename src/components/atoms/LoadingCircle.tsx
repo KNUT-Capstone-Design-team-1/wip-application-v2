@@ -1,4 +1,4 @@
-import { ILoadingCircleProps } from '@/types/atoms/type';
+import { ILoadingCircleProps } from '@/types/atoms.type';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 const LoadingCircle = ({ size = 'large', color = '#0000ff' }: ILoadingCircleProps) => {

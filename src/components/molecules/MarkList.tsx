@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import ModalIconButton from '@components/atoms/ModalIconButton';
-import { IMarkListProps } from '@/types/molecules/type';
+import { IMarkListProps } from '@/types/molecules.type';
 
 const MarkList = ({ data, onSelect }: IMarkListProps) => {
   if (!data || data.length === 0) {
