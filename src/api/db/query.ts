@@ -83,43 +83,29 @@ function getQueryForSearch(param: TPillSearchParam | null) {
     params.push(param.ENTP_NAME);
   }
 
-  /* 
-  params 배열 👉 실제 바인딩할 값들을 담는 배열.
-
-$0, $1, $2 … 👉 Realm 쿼리에서 파라미터를 치환하기 위해 쓰는 플레이스홀더.
-
-index 변수 👉 $ 뒤에 붙는 숫자를 자동 증가시켜서 고유한 자리 번호를 만들어 주는 카운터.
-
-즉 index는 쿼리 파라미터 번호를 관리하는 변수야.
-
-만약 param.FORM_CODE = ['정제', '연질'] 이라면:
-
-params.push('정제'), params.push('연질')
-👉 params = ['정제', '연질']
-
-index가 0부터 시작한다고 치면
-
-첫 번째 루프에서 "$0"
-
-두 번째 루프에서 "$1"
-  
-  */
   if (param.FORM_CODE.length > 0) {
-    if (param.FORM_CODE.includes('기타')) {
-      // "정제", "연질", "경질" 이 아닌 경우만
-      filters.push(
-        `NOT (FORM_CODE CONTAINS[c] $${index} OR FORM_CODE CONTAINS[c] $${index + 1} OR FORM_CODE CONTAINS[c] $${index + 2})`,
-      );
-      params.push('정제', '연질', '경질');
-      index += 3;
-    } else {
-      filters.push(
-        `FORM_CODE LIKE[c] {${param.FORM_CODE.map((v) => {
-          params.push(v);
-          return `$${index++}`;
-        }).join(', ')}}`,
-      );
-    }
+    const codes = param.FORM_CODE;
+    const codeFilters: string[] = [];
+
+    codes.forEach((code) => {
+      if (code === '기타') {
+        // "정제", "연질", "경질" 이 아닌 경우
+        codeFilters.push(
+          `NOT (ITEM_NAME CONTAINS[c] $${index} OR CHART CONTAINS[c] $${index} OR ITEM_NAME CONTAINS[c] $${index + 1} OR CHART CONTAINS[c] $${index + 1} OR ITEM_NAME CONTAINS[c] $${index + 2} OR CHART CONTAINS[c] $${index + 2})`
+        );
+        params.push('정제', '연질', '경질');
+        index += 3;
+      } else {
+        // 예: "연질" 포함된 데이터
+        codeFilters.push(
+          `(ITEM_NAME CONTAINS[c] $${index} OR CHART CONTAINS[c] $${index})`
+        );
+        params.push(code);
+        index += 1;
+      }
+    });
+
+    filters.push(codeFilters.join(' OR ')); // 여러 코드일 경우 OR 연결
   }
 
 
@@ -169,40 +155,28 @@ index가 0부터 시작한다고 치면
     }
   }
 
+  // 마크 데이터 기준 쿼리 작성
   if (param.MARK_CODE_FRONT !== '' || param.MARK_CODE_BACK !== '') {
     const markFilters: string[] = [];
 
-    if (param.MARK_CODE_FRONT !== '' && param.MARK_CODE_BACK !== '') {
-      // MARK_CODE_FRONT = 'A' AND MARK_CODE_BACK = 'B') OR (MARK_CODE_FRONT = 'B' AND MARK_CODE_BACK = 'A'
-      const frontParam = `$${index++}`;
-      const backParam = `$${index++}`;
-      params.push(param.MARK_CODE_FRONT);
-      params.push(param.MARK_CODE_BACK);
-      markFilters.push(
-        `(MARK_CODE_FRONT LIKE[c] ${frontParam} AND MARK_CODE_BACK LIKE[c] ${backParam})`,
-      );
-
-      // 역순도 추가
-      const backParam2 = `$${index++}`;
-      const frontParam2 = `$${index++}`;
-
-      params.push(param.MARK_CODE_BACK);
-      params.push(param.MARK_CODE_FRONT);
-      markFilters.push(
-        `(MARK_CODE_FRONT LIKE[c] ${frontParam2} AND MARK_CODE_BACK LIKE[c] ${backParam2})`,
-      );
-    } else if (param.MARK_CODE_FRONT !== '') {
+    // FRONT 값이 있으면 조건 추가
+    if (param.MARK_CODE_FRONT !== '') {
       markFilters.push(`MARK_CODE_FRONT LIKE[c] $${index++}`);
       params.push(param.MARK_CODE_FRONT);
-    } else if (param.MARK_CODE_BACK !== '') {
+    }
+
+    // BACK 값이 있으면 조건 추가
+    if (param.MARK_CODE_BACK !== '') {
       markFilters.push(`MARK_CODE_BACK LIKE[c] $${index++}`);
       params.push(param.MARK_CODE_BACK);
     }
 
+    // OR 조건으로 묶기
     if (markFilters.length > 0) {
       filters.push('(' + markFilters.join(' OR ') + ')');
     }
   }
+
 
   filter = filters.join(' AND ');
 
