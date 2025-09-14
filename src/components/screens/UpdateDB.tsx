@@ -9,7 +9,7 @@ import {
   formatDateToString,
   formatProgress,
 } from '@/utils/formatter';
-import RNExitApp from 'react-native-exit-app';
+import { exitApp } from '@logicwind/react-native-exit-app';
 import RNRestart from 'react-native-restart';
 import { upsertDB } from '@/api/update';
 import { getItem, setItem } from '@/utils/storage';
@@ -59,7 +59,7 @@ const UpdateDB = (): React.JSX.Element => {
       }, 2000);
     } else {
       clearTimeout(timeout);
-      RNExitApp.exitApp();
+      exitApp();
     }
   };
 
@@ -81,7 +81,7 @@ const UpdateDB = (): React.JSX.Element => {
             {
               text: '확인',
               onPress: () => {
-                RNExitApp.exitApp();
+                exitApp();
               },
               style: {},
             },
@@ -113,7 +113,7 @@ const UpdateDB = (): React.JSX.Element => {
           {
             text: '취소',
             onPress: () => {
-              RNExitApp.exitApp();
+              exitApp();
               return true;
             },
             style: {},

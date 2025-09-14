@@ -8,7 +8,7 @@ import { View, StyleSheet, BackHandler } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { gstyles } from '@/style/globalStyle';
 import Layout from '@/components/organisms/Layout';
-import RNExitApp from 'react-native-exit-app';
+import { exitApp } from '@logicwind/react-native-exit-app';
 import { useScreenStore } from '@/store/screen';
 
 const Home = (): React.JSX.Element => {
@@ -24,7 +24,7 @@ const Home = (): React.JSX.Element => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        RNExitApp.exitApp();
+        exitApp();
         return true;
       },
     );
