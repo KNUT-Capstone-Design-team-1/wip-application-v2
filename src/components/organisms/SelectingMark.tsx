@@ -29,7 +29,11 @@ const SelectingMark = () => {
           <Text style={styles.markResult}>선택 없음</Text>
         ) : (
           <Image
-            source={{ uri: selectedMarkBase64 }}
+            source={
+              selectedMarkBase64
+                ? { uri: selectedMarkBase64 }
+                : require('@/assets/images/noImage.png')
+            }
             style={styles.markImage}
             resizeMode="contain"
           />

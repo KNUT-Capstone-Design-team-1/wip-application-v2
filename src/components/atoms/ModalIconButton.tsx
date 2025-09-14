@@ -11,7 +11,11 @@ const ModalIconButton = ({ markSelected, item }: IModalIconButton) => {
     >
       <View style={styles.imageWrapper} pointerEvents="box-none">
         <Image
-          source={{ uri: item.base64 }}
+          source={
+            item.base64
+              ? { uri: item.base64 }
+              : require('@/assets/images/noImage.png')
+          }
           style={{ width: 40, height: 40, borderRadius: 8 }}
         />
       </View>
