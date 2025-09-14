@@ -1,10 +1,24 @@
 import Layout from '@/components/organisms/Layout';
 import SearchResultList from '@/components/organisms/SearchResultList';
 import { useGetSearchData } from '@/hooks/useGetSearchData';
-import { useSetScreen } from '@/hooks/useSetScreen';
+import { useNavigation } from '@react-navigation/native';
+import { useScreenStore } from '@/store/screen';
+import { useCallback, useEffect } from 'react';
 
 const SearchResult = (): React.JSX.Element => {
-  useSetScreen('검색 결과');
+  const nav: any = useNavigation();
+  const setScreen = useScreenStore((state) => state.setScreen);
+
+  const handleSetScreen = useCallback(() => {
+    setScreen('검색 결과');
+  }, [setScreen]);
+
+  useEffect(() => {
+    const unsubscribe = nav.addListener('focus', handleSetScreen);
+    return () => {
+      unsubscribe();
+    };
+  }, [handleSetScreen, nav]);
 
   useGetSearchData();
 
