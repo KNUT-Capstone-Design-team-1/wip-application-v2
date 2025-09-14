@@ -5,27 +5,37 @@ import Layout, {
   windowHeight,
 } from '@/components/organisms/Layout';
 import { usePillBox } from '@/hooks/usePillBox';
-import { useSetScreen } from '@/hooks/useSetScreen';
+import { useNavigation } from '@react-navigation/native';
+import { useScreenStore } from '@/store/screen';
 import { font, os } from '@/style/font';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, Platform, Text } from 'react-native';
 import { PillBox } from '@/api/db/models/pillBox';
 
 const Storage = (): React.JSX.Element => {
-  useSetScreen('보관함');
+  const nav: any = useNavigation();
+  const setScreen = useScreenStore((state) => state.setScreen);
+
   const { getPillList } = usePillBox();
   const [data, setData] = useState<any[]>([]);
+
+  const handleSetScreen = useCallback(() => {
+    setScreen('보관함');
+  }, [setScreen]);
 
   const getStorage = useCallback(() => {
     setData(getPillList());
   }, [getPillList]);
 
-  useFocusEffect(
-    useCallback(() => {
+  useEffect(() => {
+    const unsubscribe = nav.addListener('focus', () => {
+      handleSetScreen();
       getStorage();
-    }, [getStorage]),
-  );
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [handleSetScreen, nav, getStorage]);
 
   const styles = StyleSheet.create({
     noList: {

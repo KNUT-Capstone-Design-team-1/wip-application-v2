@@ -1,8 +1,8 @@
 import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 import { getItem } from '@/utils/storage';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
@@ -10,24 +10,27 @@ const LastSearchPill = () => {
   const nav: any = useNavigation();
   const [latestList, setLatestList] = useState<any[]>([]);
 
-  const getItemList = async () => {
+  const getItemList = useCallback(async () => {
     const LIST = await getItem('latestSearchPill');
     let list = [];
     if (LIST) {
       list = JSON.parse(LIST);
     }
     setLatestList(list);
-  };
+  }, []);
 
   const handlePressItem = (data: any) => {
     nav.navigate('알약 정보', { data: data });
   };
 
-  useFocusEffect(
-    useCallback(() => {
+  useEffect(() => {
+    const unsubscribe = nav.addListener('focus', () => {
       getItemList();
-    }, []),
-  );
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [getItemList]);
 
   const SEARCH_ICON = `
     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
