@@ -35,6 +35,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "~3.658.0",
     "@craftzdog/react-native-buffer": "^6.1.0",
+    "@logicwind/react-native-exit-app": "^0.2.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/image-editor": "^4.3.0",
     "@react-navigation/bottom-tabs": "^7.4.6",
@@ -63,7 +64,6 @@
     "react": "19.0.0",
     "react-native": "0.79.5",
     "react-native-device-info": "^14.0.4",
-    "react-native-exit-app": "^2.0.0",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-get-random-values": "~1.11.0",
