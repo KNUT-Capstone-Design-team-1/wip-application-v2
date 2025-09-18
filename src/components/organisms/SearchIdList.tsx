@@ -7,7 +7,7 @@ import SearchSvg from '@/assets/svgs/search.svg';
 import { useSelectSearchId } from '@/hooks/useSelectSearchId';
 import SearchIdInput from '@/components/organisms/SearchIdInput';
 import SearchIdItem from '@/components/atoms/SearchIdItem';
-import SelectingMark from '@components/organisms/SelectingMark';
+import SelectedMark from '@/components/organisms/SelectedMark';
 
 const SearchIdList = (): React.JSX.Element => {
   const {
@@ -86,7 +86,7 @@ const SearchIdList = (): React.JSX.Element => {
     if (section.type === 'mark') {
       return (
         <View style={{ marginTop: '-20%' }}>
-          <SelectingMark />
+          <SelectedMark />
         </View>
       );
     }
