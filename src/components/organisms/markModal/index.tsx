@@ -22,7 +22,7 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
   const fetchMarkData = async (title: string, pageNum: number) => {
     setLoading(true);
     try {
-      const res = await getMarkData(title, LIMIT, pageNum, 3, 10000);
+      const res = await getMarkData(title, LIMIT, pageNum);
       setMarkDataList(res?.markData || []);
       setTotalPages(res?.pages || 0);
     } finally {

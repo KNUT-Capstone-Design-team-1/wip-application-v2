@@ -88,7 +88,6 @@ export const useSelectSearchId = () => {
   const handlePressSearch = () => {
     const data = getSearchIdItems();
 
-    console.log(data);
     nav.navigate('알약 검색 결과', { data, mode: 0 });
   };
 
