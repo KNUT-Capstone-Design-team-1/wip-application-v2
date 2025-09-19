@@ -15,26 +15,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { Fragment } from 'react/jsx-runtime';
 import CustomCheckbox from '../atoms/CustomCheckbox';
-
-//TODO: 제목 가로선이 사라지는 문제 확인
-export type TCustomAlertButtons = {
-  text: string;
-  onPress?: ((event?: GestureResponderEvent) => void) | undefined;
-  style?: StyleProp<ViewStyle>;
-};
-
-export type TCustomModalType = 'default' | 'exit' | 'checkbox';
-
-type CustomAlertProps = {
-  visible: boolean;
-  onRequestClose: (() => void) | undefined;
-  title: string;
-  message: string;
-  buttons?: TCustomAlertButtons[];
-  modalType?: TCustomModalType;
-  checkboxLabel?: string;
-  onCheckboxChange?: (isChecked: boolean) => void;
-};
+import { CustomAlertProps } from '@/types/organisms.type';
 
 const CustomAlertComponent = ({
   visible,

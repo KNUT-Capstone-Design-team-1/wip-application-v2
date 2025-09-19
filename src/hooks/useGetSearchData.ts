@@ -7,7 +7,13 @@ import { TPillSearchParam } from '@/api/db/query';
 import { useSearchQueryStore } from '@/store/searchQueryStore';
 import { useSearchImgStore } from '@/store/searchImgStore';
 
-type TResImageData = { PRINT: string[]; SHAPE: string[]; COLOR: string[] };
+type TResImageData = {
+  PRINT: string[];
+  SHAPE: string[];
+  COLOR: string[];
+  FORM_CODE: string[];
+  DIVIDING: string[];
+};
 
 interface ITResImageData {
   res: TResImageData;
@@ -63,6 +69,15 @@ export const useGetSearchData = () => {
         DRUG_SHAPE: res.SHAPE,
         COLOR_CLASS1: res.COLOR,
         COLOR_CLASS2: res.COLOR,
+        FORM_CODE: res.FORM_CODE,
+        DIVIDING: res.DIVIDING,
+        MARK: '',
+        ITEM_NAME: '',
+        ENTP_NAME: '',
+        LINE_FRONT: [],
+        LINE_BACK: [],
+        MARK_CODE_FRONT: '',
+        MARK_CODE_BACK: '',
       };
 
       const [resPRINT_FRONT = '', resPRINT_BACK = ''] = res.PRINT;

@@ -1,4 +1,5 @@
 import { os, font } from '@/style/font';
+import { ICheckboxProps } from '@/types/atoms.type';
 import { useState } from 'react';
 import {
   Animated,
@@ -10,17 +11,6 @@ import {
   TextStyle,
 } from 'react-native';
 
-interface CheckboxProps {
-  size?: number;
-  fillColor?: string;
-  unFillColor?: string;
-  style?: ViewStyle;
-  boxStyle?: ViewStyle;
-  text?: string;
-  textStyle?: TextStyle;
-  onPress?: (isChecked: boolean) => void;
-}
-
 const CustomCheckbox = ({
   size = 24,
   fillColor = '#000',
@@ -30,7 +20,7 @@ const CustomCheckbox = ({
   text = '',
   textStyle,
   onPress,
-}: CheckboxProps): React.JSX.Element => {
+}: ICheckboxProps): React.JSX.Element => {
   const [isChecked, setIsChecked] = useState(false);
   const scaleValue = new Animated.Value(1);
 

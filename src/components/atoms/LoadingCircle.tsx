@@ -1,11 +1,7 @@
+import { ILoadingCircleProps } from '@/types/atoms.type';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-interface IProps {
-  size?: number | 'large' | 'small' | undefined;
-  color?: string;
-}
-
-const LoadingCircle = ({ size = 'large', color = '#0000ff' }: IProps) => {
+const LoadingCircle = ({ size = 'large', color = '#0000ff' }: ILoadingCircleProps) => {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={color} />

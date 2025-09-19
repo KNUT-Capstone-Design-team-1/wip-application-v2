@@ -1,74 +1,311 @@
-type TPillSearchParam = {
+export type TPillSearchParam = {
   COLOR_CLASS1: string[];
   COLOR_CLASS2: string[];
   PRINT_FRONT: string;
   PRINT_BACK: string;
+  ITEM_NAME: string;
+  ENTP_NAME: string;
   DRUG_SHAPE: string[];
+  DIVIDING: string[];
+  LINE_FRONT: string[];
+  LINE_BACK: string[];
+  FORM_CODE: string[];
+  MARK: string;
+  MARK_CODE_FRONT: string;
+  MARK_CODE_BACK: string;
 };
+
+type TFilterFuncRes = { filter: string; params: string[] };
+
+/**
+ * 앞면 문자 및 뒷면 문자 검색 필터 생성
+ * @param front 앞면 문자
+ * @param back 뒷면 문자
+ * @returns
+ */
+function generatePrintFilter(front: string, back: string): TFilterFuncRes {
+  if (!front && !back) {
+    return { filter: '', params: [] };
+  }
+
+  const printFilters: string[] = [];
+  const params: string[] = [];
+
+  if (front) {
+    printFilters.push(
+      `(PRINT_FRONT CONTAINS[c] ? OR PRINT_BACK CONTAINS[c] ?)`,
+    );
+    params.push(front, back);
+  }
+
+  if (back) {
+    printFilters.push(
+      `(PRINT_BACK CONTAINS[c] ? OR PRINT_FRONT CONTAINS[c] ?)`,
+    );
+    params.push(back, front);
+  }
+
+  return {
+    filter: `(${printFilters.join(' OR ')})`,
+    params,
+  };
+}
+
+/**
+ * 알약 색상 검색 필터 생성
+ * @param colorClass1 색상1
+ * @param colorClass2 색상2
+ * @returns
+ */
+function generateColorClassFilter(
+  colorClass1: string[],
+  colorClass2: string[],
+): TFilterFuncRes {
+  if (!colorClass1?.length && !colorClass2?.length) {
+    return { filter: '', params: [] };
+  }
+
+  const colorFilters: string[] = [];
+  const params: string[] = [];
+
+  if (colorClass1?.length) {
+    colorFilters.push(
+      `COLOR_CLASS1 CONTAINS[c] {${colorClass1.map(() => `?`).join(', ')}}`,
+    );
+    params.push(...colorClass1);
+  }
+
+  if (colorClass2?.length) {
+    colorFilters.push(
+      `COLOR_CLASS2 CONTAINS[c] {${colorClass2.map(() => `?`).join(', ')}}`,
+    );
+    params.push(...colorClass2);
+  }
+
+  return {
+    filter: `(${colorFilters.join(' OR ')})`,
+    params,
+  };
+}
+
+/**
+ * 제형 검색 필터 생성
+ * @param drugShape 제형
+ * @returns
+ */
+function generateDrugShapeFilter(drugShape: string[]): TFilterFuncRes {
+  return {
+    filter: `DRUG_SHAPE CONTAINS[c] {${drugShape.map(() => `?`).join(', ')}}`,
+    params: drugShape,
+  };
+}
+
+/**
+ * 제품명 검색 필터 생성
+ * @param itemName 제품명
+ * @returns
+ */
+function generateItemNameFilter(itemName: string): TFilterFuncRes {
+  return {
+    filter: itemName ? `ITEM_NAME CONTAINS[c] ?` : '',
+    params: itemName ? [itemName] : [],
+  };
+}
+
+/**
+ * 제조사명 검색 필터 생성
+ * @param entpName 제조사명
+ * @returns
+ */
+function generateEntpNameFilter(entpName: string): TFilterFuncRes {
+  return {
+    filter: entpName ? `ENTP_NAME CONTAINS[c] ?` : '',
+    params: entpName ? [entpName] : [],
+  };
+}
+
+/**
+ * 제형 검색 필터 생성
+ * @param formCode 제형
+ * @returns
+ */
+function generateFormCodeFilter(formCode: string[]): TFilterFuncRes {
+  if (!formCode?.length) {
+    return { filter: '', params: [] };
+  }
+
+  const nonETCFormCode = ['정제', '연질', '경질'];
+
+  const isEtcFormCode = formCode.every((v1) =>
+    nonETCFormCode.find((v2) => v1 === v2),
+  );
+  if (isEtcFormCode) {
+    return {
+      filter: `(${nonETCFormCode.map((v) => `NOT FORM_CODE CONTAINS[c] ?`).join(' OR ')})`,
+      params: nonETCFormCode,
+    };
+  }
+
+  return {
+    filter: `(${formCode.map((v) => `FORM_CODE CONTAINS[c] ?`).join(' OR ')})`,
+    params: formCode,
+  };
+}
+
+/**
+ * 분할선 검색 필터 생성
+ * @param lineFront 분할선 앞
+ * @param lineBack 분할선 뒤
+ * @returns
+ */
+function generateLineFilter(
+  lineFront: string[],
+  lineBack: string[],
+): TFilterFuncRes {
+  if (!lineFront?.length && !lineBack?.length) {
+    return { filter: '', params: [] };
+  }
+
+  const lineFilters: string[] = [];
+  const params: string[] = [];
+
+  if (lineFront?.length) {
+    lineFilters.push(
+      `LINE_FRONT CONTAINS[c] {${lineFront.map(() => `?`).join(',')}}`,
+    );
+    params.push(...lineFront);
+  }
+
+  if (lineBack?.length) {
+    lineFilters.push(
+      `LINE_BACK CONTAINS[c] {${lineBack.map(() => `?`).join(',')}}`,
+    );
+    params.push(...lineBack);
+  }
+
+  return {
+    filter: `(${lineFilters.join(' OR ')})`,
+    params,
+  };
+}
+
+/**
+ * 표기 코드 검색 필터 생성
+ * @param markCodeFront 표기코드 앞
+ * @param markCodeBack 표기코드 뒤
+ * @returns
+ */
+function generateMarkFilter(
+  markCodeFront: string,
+  markCodeBack: string,
+): TFilterFuncRes {
+  if (!markCodeFront && !markCodeBack) {
+    return { filter: '', params: [] };
+  }
+
+  const params: string[] = [];
+  const markFilters: string[] = [];
+
+  if (markCodeFront) {
+    markFilters.push(`MARK_CODE_FRONT = ?`);
+    params.push(markCodeFront);
+  }
+
+  if (markCodeBack !== '') {
+    markFilters.push(`MARK_CODE_BACK = ?`);
+    params.push(markCodeBack);
+  }
+
+  return {
+    filter: `(${markFilters.join(' OR ')})`,
+    params,
+  };
+}
+
+/**
+ * 검색 필터 병합
+ * @param filters 검색 필터 배열
+ * @treturns
+ */
+function mergeSearchFilter(filters: TFilterFuncRes[]): TFilterFuncRes {
+  if (!filters?.length) {
+    return { filter: '', params: [] };
+  }
+
+  const totalFilters: string[] = [];
+  const totalParams: string[] = [];
+
+  const validateFilters = filters.filter((v) => v.filter && v.params.length);
+  let paramsIndex = 0;
+
+  for (let i = 0; i < validateFilters.length; i += 1) {
+    const { filter, params } = validateFilters[i];
+
+    totalFilters.push(filter.replace(/\?/g, () => `$${String(paramsIndex++)}`));
+    totalParams.push(...params);
+  }
+
+  return {
+    filter: totalFilters.join(' AND '),
+    params: totalParams,
+  };
+}
 
 /**
  * 알약 검색을 위한 쿼리 필터 생성
  * @param param 검색 속성
  * @returns
  */
-function getQueryForSearch(param: TPillSearchParam | null) {
+export function getQueryForSearch(
+  param: TPillSearchParam | null,
+): TFilterFuncRes {
   if (!param) {
     return { filter: '', params: [] };
   }
-  let filter = '';
-  let index = 0;
-  const printFilter: string[] = [];
-  const filters: string[] = [];
-  const params: string[] = [];
 
-  if (param.PRINT_FRONT !== '') {
-    printFilter.push(
-      `PRINT_FRONT LIKE[c] $${index++} OR PRINT_BACK LIKE[c] $${index++}`,
-    );
-    params.push(param.PRINT_FRONT);
-    params.push(param.PRINT_FRONT);
-  }
+  const {
+    PRINT_FRONT,
+    PRINT_BACK,
+    COLOR_CLASS1,
+    COLOR_CLASS2,
+    DRUG_SHAPE,
+    ITEM_NAME,
+    ENTP_NAME,
+    FORM_CODE,
+    LINE_FRONT,
+    LINE_BACK,
+    MARK_CODE_FRONT,
+    MARK_CODE_BACK,
+  } = param;
 
-  if (param.PRINT_BACK !== '') {
-    printFilter.push(
-      `PRINT_BACK LIKE[c] $${index++} OR PRINT_FRONT LIKE[c] $${index++}`,
-    );
-    params.push(param.PRINT_BACK);
-    params.push(param.PRINT_BACK);
-  }
+  const filterResults: TFilterFuncRes[] = [];
 
-  if (printFilter.length > 0) {
-    filters.push('(' + printFilter.join(' OR ') + ')');
-  }
+  const printFilterRes = generatePrintFilter(PRINT_FRONT, PRINT_BACK);
+  filterResults.push(printFilterRes);
 
-  if (param.COLOR_CLASS1.length !== 0) {
-    filters.push(
-      `(COLOR_CLASS1 CONTAINS[c] {${param.COLOR_CLASS1.map((v) => {
-        params.push(v);
-        return `$${index++}`;
-      }).join(', ')}} OR COLOR_CLASS2 CONTAINS[c] {${param.COLOR_CLASS2.map(
-        (v) => {
-          params.push(v);
-          return `$${index++}`;
-        },
-      ).join(', ')}})`,
-    );
-  }
+  const colorClassFilterRes = generateColorClassFilter(
+    COLOR_CLASS1,
+    COLOR_CLASS2,
+  );
+  filterResults.push(colorClassFilterRes);
 
-  if (param.DRUG_SHAPE.length !== 0) {
-    filters.push(
-      `DRUG_SHAPE LIKE[c] {${param.DRUG_SHAPE.map((v) => {
-        params.push(v);
-        return `$${index++}`;
-      }).join(', ')}}`,
-    );
-  }
+  const drugShapeFilterRes = generateDrugShapeFilter(DRUG_SHAPE);
+  filterResults.push(drugShapeFilterRes);
 
-  filter = filters.join(' AND ');
+  const itemNameFilterRes = generateItemNameFilter(ITEM_NAME);
+  filterResults.push(itemNameFilterRes);
 
-  return { filter, params };
+  const entpNameFilterRes = generateEntpNameFilter(ENTP_NAME);
+  filterResults.push(entpNameFilterRes);
+
+  const formCodeFilterRes = generateFormCodeFilter(FORM_CODE);
+  filterResults.push(formCodeFilterRes);
+
+  const lineFilterRes = generateLineFilter(LINE_FRONT, LINE_BACK);
+  filterResults.push(lineFilterRes);
+
+  const markCodeFilterRes = generateMarkFilter(MARK_CODE_FRONT, MARK_CODE_BACK);
+  filterResults.push(markCodeFilterRes);
+
+  return mergeSearchFilter(filterResults);
 }
-
-export type { TPillSearchParam };
-
-export { getQueryForSearch };
