@@ -48,8 +48,8 @@ export const idSelectData: TSectionData[] = [
     title: '정보',
     data: [],
     type: 'info',
-    label: '제품명 또는 회사 정보',
-    placeholder: ['제품명', '회사 정보'],
+    label: '제품명 또는 제조사명',
+    placeholder: ['제품명', '제조사명'],
   },
   {
     title: '제형',

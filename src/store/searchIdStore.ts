@@ -21,7 +21,7 @@ interface ISearchIdStore {
   setCompanyName: (searchCompanyName: string) => void;
   setSearchMark: (searchMarkName: string) => void;
   resetSearchId: () => void;
-  getSearchIdItems: () => TPillSearchParam;
+  getSearchIdItems: () => Omit<TPillSearchParam, 'DIVIDING' | 'MARK'>;
   setFormCodeNames: (formCodes: string[]) => void;
   setDividingNames: (dividings: string[]) => void;
 }
@@ -71,7 +71,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     const searchIdDividings = get().searchIdDividings;
     const searchMark = get().searchMark;
 
-    const data: TPillSearchParam = {
+    const data: Omit<TPillSearchParam, 'DIVIDING' | 'MARK'> = {
       PRINT_FRONT: '',
       PRINT_BACK: '',
       ITEM_NAME: '',
@@ -87,24 +87,24 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     };
 
     if (searchIdFront.length > 0) {
-      data['PRINT_FRONT'] = '*' + searchIdFront.replace(/(?<=.)|(?=.)/g, '*');
+      data['PRINT_FRONT'] = searchIdFront;
     }
 
     if (searchIdBack.length > 0) {
-      data['PRINT_BACK'] = '*' + searchIdBack.replace(/(?<=.)|(?=.)/g, '*');
+      data['PRINT_BACK'] = searchIdBack;
     }
 
     if (searchProduct.length > 0) {
-      data['ITEM_NAME'] = '*' + searchProduct.replace(/(?<=.)|(?=.)/g, '*');
+      data['ITEM_NAME'] = searchProduct;
     }
 
     if (searchCompany.length > 0) {
-      data['ENTP_NAME'] = '*' + searchCompany.replace(/(?<=.)|(?=.)/g, '*');
+      data['ENTP_NAME'] = searchCompany;
     }
 
     if (searchMark.length > 0) {
-      data['MARK_CODE_FRONT'] = '*' + searchMark.replace(/(?<=.)|(?=.)/g, '*');
-      data['MARK_CODE_BACK'] = '*' + searchMark.replace(/(?<=.)|(?=.)/g, '*');
+      data['MARK_CODE_FRONT'] = searchMark;
+      data['MARK_CODE_BACK'] = searchMark;
     }
 
     for (const item of idSelectData) {
@@ -141,8 +141,9 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
                 경질캡슐: '경질',
               };
 
-              const name = formCodeMap[val.name] ?? val.name; // 없으면 원래 이름 유지
-              data['FORM_CODE']?.push(name);
+              const name =
+                formCodeMap[val.name as keyof typeof formCodeMap] ?? val.name; // 없으면 원래 이름 유지
+              data['FORM_CODE'].push(name);
             }
             break;
 
@@ -162,8 +163,8 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
                 lineValue = '-';
               }
 
-              data['LINE_FRONT']?.push(lineValue);
-              data['LINE_BACK']?.push(lineValue);
+              data['LINE_FRONT'].push(lineValue);
+              data['LINE_BACK'].push(lineValue);
             }
             break;
         }
