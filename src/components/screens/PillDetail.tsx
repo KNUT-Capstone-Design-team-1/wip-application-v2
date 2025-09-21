@@ -16,7 +16,7 @@ import PillInfo from '@/components/atoms/PillInfo';
 import { PillDetailSection } from '@/components/atoms/PillDetailSection';
 import Layout from '@/components/organisms/Layout';
 import { useNavigation } from '@react-navigation/native';
-import { InfoData } from '@/types/screens/type';
+import { InfoData } from '@/types/screens.type';
 
 const PillDetail = ({ route }: any): React.JSX.Element => {
   const nav: any = useNavigation();
