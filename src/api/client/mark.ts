@@ -1,24 +1,18 @@
 // @api/client/mark.ts
 import { apiClient } from '@api/apiClient';
-import { TMarkDataResponse } from '@/types/TApiType';
+import type { TMarkDataResponse } from '@/types/TApiType';
 import { ToastAndroid } from 'react-native';
 
 /*
-  title : 마크 이름
-  limit : 호출 개수
-  page : 선택된 pagination
-  retries : 남은 재시도 횟수
-  delay : 재시도 까지 기다릴 딜레이(ms)
-  attemptCounter : 현재 시도 횟수 (내부적으로만 사용)
+  - 재시도 로직 잠시 주석 처리 api 호출 실패 시 앱 다시 실행시키는 방향으로 수정
 */
 
-// 재시도 로직 잠시 주석 처리 api 호출 실패 시 앱 다시 실행시키는 방향으로 수정
 const getMarkData = async (
-  title: string,
-  limit: number,
-  page: number,
-  retries?: number,
-  delay?: number,
+  title: string, // 마크 이름
+  limit: number, // 호출 개수
+  page: number, // 선택된 pagination
+  retries?: number, // 남은 재시도 횟수
+  delay?: number, // 재시도 까지 기다릴 딜레이(ms)
   attemptCounter: number = 1, // 기본값 1부터 시작
 ) => {
   try {
