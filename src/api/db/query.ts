@@ -211,7 +211,7 @@ function generateMarkFilter(
     params.push(markCodeFront);
   }
 
-  if (markCodeBack !== '') {
+  if (markCodeBack) {
     markFilters.push(`MARK_CODE_BACK = ?`);
     params.push(markCodeBack);
   }
