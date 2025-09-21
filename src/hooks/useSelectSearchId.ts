@@ -6,18 +6,41 @@ import { useSearchIdStore } from '@/store/searchIdStore';
 
 export const useSelectSearchId = () => {
   const [btnState, setBtnState] = useState<boolean>(false);
+
   const idFrontText = useSearchIdStore((state) => state.searchIdFront);
   const idBackText = useSearchIdStore((state) => state.searchIdBack);
+  const productText = useSearchIdStore((state) => state.searchProductName);
+  const companyText = useSearchIdStore((state) => state.searchCompanyName);
   const shapeSelected = useSearchIdStore((state) => state.searchIdShapes);
   const colorSelected = useSearchIdStore((state) => state.searchIdColors);
+  const dividingSelected = useSearchIdStore((state) => state.searchIdDividings);
+  const formCodeSelected = useSearchIdStore((state) => state.searchIdFormCodes);
+
   const setIdFrontText = useSearchIdStore((state) => state.setSearchIdFront);
   const setIdBackText = useSearchIdStore((state) => state.setSearchIdBack);
+  const setProductText = useSearchIdStore((state) => state.setProductName);
+  const setCompanyText = useSearchIdStore((state) => state.setCompanyName);
   const setShapeSelected = useSearchIdStore((state) => state.setSearchIdShapes);
   const setColorSelected = useSearchIdStore((state) => state.setSearchIdColors);
+
   const getSearchIdItems = useSearchIdStore((state) => state.getSearchIdItems);
   const handlePressInit = useSearchIdStore((state) => state.resetSearchId);
 
-  const setIdText = { front: setIdFrontText, back: setIdBackText };
+  // 제형
+  const setFormCodeNameSelected = useSearchIdStore(
+    (state) => state.setFormCodeNames,
+  );
+  // 분할선
+  const setDividingLineSelected = useSearchIdStore(
+    (state) => state.setDividingNames,
+  );
+
+  const setIdText = {
+    front: setIdFrontText,
+    back: setIdBackText,
+    product: setProductText,
+    company: setCompanyText,
+  };
 
   const nav: any = useNavigation();
 
@@ -26,7 +49,7 @@ export const useSelectSearchId = () => {
     direction,
   }: {
     text: string;
-    direction: 'front' | 'back';
+    direction: 'front' | 'back' | 'product' | 'company';
   }) => {
     setBtnState(disableWord(text));
     setIdText[direction](text);
@@ -43,11 +66,28 @@ export const useSelectSearchId = () => {
         const newColorSelected = makeNewList(colorSelected, k, 'color0');
         setColorSelected(newColorSelected);
         break;
+      case 'dividing':
+        const newDividingSelected = makeNewList(
+          dividingSelected,
+          k,
+          'dividing0',
+        );
+        setDividingLineSelected(newDividingSelected);
+        break;
+      case 'formCode':
+        const newFormCodeSelected = makeNewList(
+          formCodeSelected,
+          k,
+          'formCode0',
+        );
+        setFormCodeNameSelected(newFormCodeSelected);
+        break;
     }
   };
 
   const handlePressSearch = () => {
     const data = getSearchIdItems();
+
     nav.navigate('알약 검색 결과', { data, mode: 0 });
   };
 
@@ -55,9 +95,13 @@ export const useSelectSearchId = () => {
     btnState,
     idFrontText,
     idBackText,
+    productText,
+    companyText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
+    dividingSelected,
+    formCodeSelected,
     handlePressItem,
     handlePressInit,
     handlePressSearch,

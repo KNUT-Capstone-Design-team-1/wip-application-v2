@@ -7,19 +7,92 @@ import SearchSvg from '@/assets/svgs/search.svg';
 import { useSelectSearchId } from '@/hooks/useSelectSearchId';
 import SearchIdInput from '@/components/organisms/SearchIdInput';
 import SearchIdItem from '@/components/atoms/SearchIdItem';
+import SelectedMark from '@/components/organisms/SelectedMark';
 
 const SearchIdList = (): React.JSX.Element => {
   const {
     btnState,
     idFrontText,
     idBackText,
+    productText,
+    companyText,
     handleSetIdText,
     shapeSelected,
     colorSelected,
+    formCodeSelected,
+    dividingSelected,
     handlePressItem,
     handlePressInit,
     handlePressSearch,
   } = useSelectSearchId();
+
+  // 조건에 따른 컴포넌트 생성 방법 분리
+  const renderInputByType = (section: any) => {
+    // 앞면, 뒷면 문자 input
+    if (section.type === 'char') {
+      return (
+        <SearchIdInput
+          label={section.label}
+          textInputs={[
+            {
+              placeholder: section.placeholder[0],
+              placeholderTextColor: '#cacaca',
+              onChangeText: (val) =>
+                handleSetIdText({ text: val, direction: 'front' }),
+              value: idFrontText,
+            },
+            {
+              placeholder: section.placeholder[1],
+              placeholderTextColor: '#cacaca',
+              onChangeText: (val) =>
+                handleSetIdText({ text: val, direction: 'back' }),
+              value: idBackText,
+            },
+          ]}
+          errorState={btnState}
+          errorLabel="'*' 또는 '?'를 제외하고 입력하세요"
+        />
+      );
+    }
+
+    // 알약 제품명, 회사 정보 input
+    if (section.type === 'info') {
+      return (
+        <SearchIdInput
+          label={section.label}
+          textInputs={[
+            {
+              placeholder: section.placeholder[0],
+              placeholderTextColor: '#cacaca',
+              onChangeText: (val) =>
+                handleSetIdText({ text: val, direction: 'product' }),
+              value: productText,
+            },
+            {
+              placeholder: section.placeholder[1],
+              placeholderTextColor: '#cacaca',
+              onChangeText: (val) =>
+                handleSetIdText({ text: val, direction: 'company' }),
+              value: companyText,
+            },
+          ]}
+          errorState={btnState}
+          errorLabel="'*' 또는 '?'를 제외하고 입력하세요"
+        />
+      );
+    }
+
+    // 알약 마크 ui
+    if (section.type === 'mark') {
+      return (
+        <View style={{ marginTop: '-20%' }}>
+          <SelectedMark />
+        </View>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <>
@@ -38,7 +111,9 @@ const SearchIdList = (): React.JSX.Element => {
               selectColor="#7472EB"
               isSelected={
                 shapeSelected.includes(item.category + item.key) ||
-                colorSelected.includes(item.category + item.key)
+                colorSelected.includes(item.category + item.key) ||
+                formCodeSelected.includes(item.category + item.key) ||
+                dividingSelected.includes(item.category + item.key)
                   ? true
                   : false
               }
@@ -49,29 +124,7 @@ const SearchIdList = (): React.JSX.Element => {
           renderSectionHeader={({ section }) => (
             <View style={styles.sectionHeaderWrapper}>
               <Text style={styles.sectionHeaderText}>{section.title}</Text>
-              {section.data.length ? null : (
-                <SearchIdInput
-                  label="앞면 또는 뒷면 식별 문자 (선택)"
-                  textInputs={[
-                    {
-                      placeholder: '앞면 문자',
-                      placeholderTextColor: '#cacaca',
-                      onChangeText: (val) =>
-                        handleSetIdText({ text: val, direction: 'front' }),
-                      value: idFrontText,
-                    },
-                    {
-                      placeholder: '뒷면 문자',
-                      placeholderTextColor: '#cacaca',
-                      onChangeText: (val) =>
-                        handleSetIdText({ text: val, direction: 'back' }),
-                      value: idBackText,
-                    },
-                  ]}
-                  errorState={btnState}
-                  errorLabel="'*' 또는 '?'를 제외하고 입력하세요"
-                />
-              )}
+              {section.data.length === 0 && renderInputByType(section)}
             </View>
           )}
           renderSectionFooter={() => <View style={{ marginBottom: 21 }} />}

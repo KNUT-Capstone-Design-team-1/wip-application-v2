@@ -1,3 +1,4 @@
+import React from 'react';
 import TotalSvg from '@assets/svgs/shape/total.svg';
 import CircleSvg from '@assets/svgs/shape/circle.svg';
 import EllipseSvg from '@assets/svgs/shape/ellipse.svg';
@@ -9,6 +10,11 @@ import DiamondSvg from '@assets/svgs/shape/diamond.svg';
 import PentagonSvg from '@assets/svgs/shape/pentagon.svg';
 import HexagonSvg from '@assets/svgs/shape/hexagon.svg';
 import OctagonSvg from '@assets/svgs/shape/octagon.svg';
+import StraightSvg from '@assets/svgs/shape/straight.svg';
+import CrossSvg from '@assets/svgs/shape/cross.svg';
+import CapsultSvg from '@assets/svgs/capsult/capsult.svg';
+import SoftCapsultSvg from '@assets/svgs/capsult/softCapsult.svg';
+import HardCapsultSvg from '@assets/svgs/capsult/hardCapsult.svg';
 
 type TItemData = {
   name: string;
@@ -19,14 +25,81 @@ type TItemData = {
   default?: boolean;
 };
 
-type TSectionData = { title: string; data: TItemData[] };
+type TSectionData = {
+  title: string;
+  subTitle?: string[];
+  data: TItemData[];
+  type?: string;
+  label?: string;
+  placeholder?: string[];
+};
 
 export type { TItemData };
 
 export const idSelectData: TSectionData[] = [
-  { title: '알약의 문자를 입력해주세요', data: [] },
   {
-    title: '알약의 모양을 선택해주세요',
+    title: '문자',
+    data: [],
+    type: 'char',
+    label: '앞면 또는 뒷면 식별 문자 (선택)',
+    placeholder: ['앞면 문자', '뒷면 문자'],
+  },
+  {
+    title: '정보',
+    data: [],
+    type: 'info',
+    label: '제품명 또는 제조사명',
+    placeholder: ['제품명', '제조사명'],
+  },
+  {
+    title: '제형',
+    data: [
+      {
+        name: '전체',
+        icon: <TotalSvg />,
+        category: 'formCode',
+        key: '0',
+        default: true,
+      },
+      { name: '정제', icon: <CapsultSvg />, category: 'formCode', key: '1' },
+      {
+        name: '연질캡슐',
+        icon: <SoftCapsultSvg />,
+        category: 'formCode',
+        key: '2',
+      },
+      {
+        name: '경질캡슐',
+        icon: <HardCapsultSvg />,
+        category: 'formCode',
+        key: '3',
+      },
+      {
+        name: '기타',
+        icon: <TotalSvg />,
+        category: 'formCode',
+        key: '4',
+      },
+    ],
+  },
+  {
+    title: '분할선',
+    subTitle: ['앞면', '뒷면'],
+    data: [
+      {
+        name: '전체',
+        icon: <TotalSvg />,
+        category: 'dividing',
+        key: '0',
+        default: true,
+      },
+      { name: '없음', icon: <CircleSvg />, category: 'dividing', key: '1' },
+      { name: '+ 형', icon: <CrossSvg />, category: 'dividing', key: '2' },
+      { name: '- 형', icon: <StraightSvg />, category: 'dividing', key: '3' },
+    ],
+  },
+  {
+    title: '모양',
     data: [
       {
         name: '전체',
@@ -49,7 +122,8 @@ export const idSelectData: TSectionData[] = [
     ],
   },
   {
-    title: '알약의 색상을 선택해주세요',
+    title: '색상',
+    subTitle: ['색상1', '색상2'],
     data: [
       {
         name: '전체',
@@ -76,4 +150,5 @@ export const idSelectData: TSectionData[] = [
       { name: '투명', color: '#e7e7e7', category: 'color', key: '16' },
     ],
   },
+  { title: '', data: [], type: 'mark' },
 ];

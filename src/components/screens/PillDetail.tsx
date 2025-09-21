@@ -15,12 +15,7 @@ import LoadingCircle from '@/components/atoms/LoadingCircle';
 import PillInfo from '@/components/atoms/PillInfo';
 import { PillDetailSection } from '@/components/atoms/PillDetailSection';
 import Layout from '@/components/organisms/Layout';
-
-interface InfoData {
-  EE?: string[] | null | undefined;
-  UD?: string[] | null | undefined;
-  NB?: string[] | null | undefined;
-}
+import { InfoData } from '@/types/screens/type';
 
 const PillDetail = ({ route }: any): React.JSX.Element => {
   useSetScreen('알약 정보');
@@ -148,7 +143,8 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
               <PillInfo.default label="제조사" ct={data.ENTP_NAME} />
               <PillInfo.default label="주성분" ct={data.MAIN_ITEM_INGR} />
               <PillInfo.default label="분류명" ct={data.CLASS_NAME} />
-              <PillInfo.default label="제형" ct={data.DRUG_SHAPE} />
+              <PillInfo.default label="모양" ct={data.DRUG_SHAPE} />
+              <PillInfo.default label="제형" ct={data.FORM_CODE} />
               <PillInfo.default label="성상" ct={data.CHART} />
               <PillInfo.chip
                 label="식별 문자"
