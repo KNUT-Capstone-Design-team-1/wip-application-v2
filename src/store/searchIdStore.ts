@@ -136,14 +136,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
             }
 
             if (searchIdFormCodes.includes(val.category + val.key)) {
-              const formCodeMap = {
-                연질캡슐: '연질',
-                경질캡슐: '경질',
-              };
-
-              const name =
-                formCodeMap[val.name as keyof typeof formCodeMap] ?? val.name; // 없으면 원래 이름 유지
-              data['FORM_CODE'].push(name);
+              data['FORM_CODE'].push(val.name);
             }
             break;
 

@@ -18,6 +18,35 @@ export type TPillSearchParam = {
 type TFilterFuncRes = { filter: string; params: string[] };
 
 /**
+ * 검색 필터 병합
+ * @param filters 검색 필터 배열
+ * @treturns
+ */
+function mergeSearchFilter(filters: TFilterFuncRes[]): TFilterFuncRes {
+  if (!filters?.length) {
+    return { filter: '', params: [] };
+  }
+
+  const totalFilters: string[] = [];
+  const totalParams: string[] = [];
+
+  const validateFilters = filters.filter((v) => v.filter && v.params.length);
+  let paramsIndex = 0;
+
+  for (let i = 0; i < validateFilters.length; i += 1) {
+    const { filter, params } = validateFilters[i];
+
+    totalFilters.push(filter.replace(/\?/g, () => `$${String(paramsIndex++)}`));
+    totalParams.push(...params);
+  }
+
+  return {
+    filter: totalFilters.join(' AND '),
+    params: totalParams,
+  };
+}
+
+/**
  * 앞면 문자 및 뒷면 문자 검색 필터 생성
  * @param front 앞면 문자
  * @param back 뒷면 문자
@@ -28,7 +57,7 @@ function generatePrintFilter(front: string, back: string): TFilterFuncRes {
     return { filter: '', params: [] };
   }
 
-  const generateParam = (print: string) => print.split('').join('*');
+  const generateParam = (param: string) => `*${param.split('').join('*')}`;
 
   const printFilters: string[] = [];
   const params: string[] = [];
@@ -89,8 +118,8 @@ function generateColorClassFilter(
 }
 
 /**
- * 제형 검색 필터 생성
- * @param drugShape 제형
+ * 모양 검색 필터 생성
+ * @param drugShape 모양
  * @returns
  */
 function generateDrugShapeFilter(drugShape: string[]): TFilterFuncRes {
@@ -134,21 +163,45 @@ function generateFormCodeFilter(formCode: string[]): TFilterFuncRes {
     return { filter: '', params: [] };
   }
 
-  const nonETCFormCode = ['정제', '연질', '경질'];
+  const generateParam = (param: string) => {
+    switch (param) {
+      // 정제의 경우 FORM_CODE에 *정으로 들어간다
+      case '정제':
+        return `*${param.replace(/제/, '')}`;
 
-  const isEtcFormCode = formCode.every((v1) =>
-    nonETCFormCode.find((v2) => v1 === v2),
-  );
-  if (isEtcFormCode) {
-    return {
-      filter: `(${nonETCFormCode.map((v) => `NOT FORM_CODE CONTAINS[c] ?`).join(' OR ')})`,
-      params: nonETCFormCode,
-    };
+      case '연질캡슐':
+      case '경질캡슐':
+        return `*${param.replace(/캡슐/, '')}*`;
+
+      default:
+        return `*${param}*`;
+    }
+  };
+  const etcFormCode = '기타';
+  const nonETCFormCode = ['정제', '연질캡슐', '경질캡슐'];
+
+  const formCodeFilters: string[] = [];
+  const params: string[] = [];
+
+  const hasETCFormCode = formCode.some((v) => v === etcFormCode);
+  if (hasETCFormCode) {
+    formCodeFilters.push(
+      `${nonETCFormCode.map(() => `NOT FORM_CODE LIKE[c] ?`).join(' AND ')}`,
+    );
+    params.push(...nonETCFormCode.map((v) => generateParam(v)));
+  }
+
+  const nonETCFormCodeParams = formCode.filter((v) => v !== etcFormCode);
+  if (nonETCFormCodeParams.length) {
+    formCodeFilters.push(
+      `${nonETCFormCodeParams.map(() => `FORM_CODE LIKE[c] ?`).join(' OR ')}`,
+    );
+    params.push(...nonETCFormCodeParams.map((v) => generateParam(v)));
   }
 
   return {
-    filter: `(${formCode.map((v) => `FORM_CODE CONTAINS[c] ?`).join(' OR ')})`,
-    params: formCode,
+    filter: `(${formCodeFilters.join(' OR ')})`,
+    params,
   };
 }
 
@@ -219,35 +272,6 @@ function generateMarkFilter(
   return {
     filter: `(${markFilters.join(' OR ')})`,
     params,
-  };
-}
-
-/**
- * 검색 필터 병합
- * @param filters 검색 필터 배열
- * @treturns
- */
-function mergeSearchFilter(filters: TFilterFuncRes[]): TFilterFuncRes {
-  if (!filters?.length) {
-    return { filter: '', params: [] };
-  }
-
-  const totalFilters: string[] = [];
-  const totalParams: string[] = [];
-
-  const validateFilters = filters.filter((v) => v.filter && v.params.length);
-  let paramsIndex = 0;
-
-  for (let i = 0; i < validateFilters.length; i += 1) {
-    const { filter, params } = validateFilters[i];
-
-    totalFilters.push(filter.replace(/\?/g, () => `$${String(paramsIndex++)}`));
-    totalParams.push(...params);
-  }
-
-  return {
-    filter: totalFilters.join(' AND '),
-    params: totalParams,
   };
 }
 
