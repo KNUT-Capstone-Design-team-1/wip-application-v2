@@ -28,21 +28,21 @@ function generatePrintFilter(front: string, back: string): TFilterFuncRes {
     return { filter: '', params: [] };
   }
 
+  const generateParam = (print: string) => print.split('').join('*');
+
   const printFilters: string[] = [];
   const params: string[] = [];
 
   if (front) {
-    printFilters.push(
-      `(PRINT_FRONT CONTAINS[c] ? OR PRINT_BACK CONTAINS[c] ?)`,
-    );
-    params.push(front, back);
+    printFilters.push(`(PRINT_FRONT LIKE[c] ? OR PRINT_BACK LIKE[c] ?)`);
+    const param = generateParam(front);
+    params.push(param, param);
   }
 
   if (back) {
-    printFilters.push(
-      `(PRINT_BACK CONTAINS[c] ? OR PRINT_FRONT CONTAINS[c] ?)`,
-    );
-    params.push(back, front);
+    printFilters.push(`(PRINT_BACK LIKE[c] ? OR PRINT_FRONT LIKE[c] ?)`);
+    const param = generateParam(front);
+    params.push(param, param);
   }
 
   return {
