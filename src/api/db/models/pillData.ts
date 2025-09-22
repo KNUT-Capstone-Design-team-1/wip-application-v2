@@ -19,7 +19,7 @@ export type TPillData = {
   ITEM_PERMIT_DATE?: string; // 품목 허가 일자
   MARK_CODE_FRONT?: string; // 표기코드앞
   MARK_CODE_BACK?: string; // 표기코드뒤
-  FORM_CODE?: string; // 제형코드
+  FORM_CODE?: string; // 제형코드명
   // Finished Medicine Permission Detail Schema
   CHART?: string; // 성상
   BAR_CODE?: string; // 표준코드
@@ -53,7 +53,7 @@ export class PillData extends Realm.Object<PillData> {
   ITEM_PERMIT_DATE?: string; // 품목 허가 일자
   MARK_CODE_FRONT?: string; // 표기코드앞
   MARK_CODE_BACK?: string; // 표기코드뒤
-  FORM_CODE?: string; // 제형코드
+  FORM_CODE?: string; // 제형코드명
   // Finished Medicine Permission Detail Schema
   CHART?: string; // 성상
   BAR_CODE?: string; // 표준코드
@@ -87,7 +87,7 @@ export class PillData extends Realm.Object<PillData> {
       ITEM_PERMIT_DATE: 'string?', // 품목 허가 일자
       MARK_CODE_FRONT: 'string?', // 표기코드앞
       MARK_CODE_BACK: 'string?', // 표기코드뒤
-      FORM_CODE: 'string?', // 제형코드
+      FORM_CODE: 'string?', // 제형코드명
       // Finished Medicine Permission Detail Schema
       CHART: 'string?', // 성상
       BAR_CODE: 'string?', // 표준코드
