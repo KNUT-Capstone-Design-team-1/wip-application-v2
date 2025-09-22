@@ -98,17 +98,19 @@ function generateColorClassFilter(
   const params: string[] = [];
 
   if (colorClass1?.length) {
+    const placeHolder = colorClass1.map(() => `?`).join(', ');
     colorFilters.push(
-      `COLOR_CLASS1 CONTAINS[c] {${colorClass1.map(() => `?`).join(', ')}}`,
+      `(COLOR_CLASS1 CONTAINS[c] {${placeHolder}} OR COLOR_CLASS2 CONTAINS[c] {${placeHolder}})`,
     );
-    params.push(...colorClass1);
+    params.push(...colorClass1, ...colorClass1);
   }
 
   if (colorClass2?.length) {
+    const placeHolder = colorClass2.map(() => `?`).join(', ');
     colorFilters.push(
-      `COLOR_CLASS2 CONTAINS[c] {${colorClass2.map(() => `?`).join(', ')}}`,
+      `(COLOR_CLASS2 CONTAINS[c] {${placeHolder}} OR COLOR_CLASS1 CONTAINS[c] {${placeHolder}})`,
     );
-    params.push(...colorClass2);
+    params.push(...colorClass2, ...colorClass2);
   }
 
   return {
@@ -136,8 +138,8 @@ function generateDrugShapeFilter(drugShape: string[]): TFilterFuncRes {
  */
 function generateItemNameFilter(itemName: string): TFilterFuncRes {
   return {
-    filter: itemName ? `ITEM_NAME CONTAINS[c] ?` : '',
-    params: itemName ? [itemName] : [],
+    filter: itemName ? `ITEM_NAME LIKE[c] ?` : '',
+    params: itemName ? [`*${itemName}*`] : [],
   };
 }
 
@@ -148,8 +150,8 @@ function generateItemNameFilter(itemName: string): TFilterFuncRes {
  */
 function generateEntpNameFilter(entpName: string): TFilterFuncRes {
   return {
-    filter: entpName ? `ENTP_NAME CONTAINS[c] ?` : '',
-    params: entpName ? [entpName] : [],
+    filter: entpName ? `ENTP_NAME LIKE[c] ?` : '',
+    params: entpName ? [`*${entpName}*`] : [],
   };
 }
 
@@ -186,7 +188,7 @@ function generateFormCodeFilter(formCode: string[]): TFilterFuncRes {
   const hasETCFormCode = formCode.some((v) => v === etcFormCode);
   if (hasETCFormCode) {
     formCodeFilters.push(
-      `${nonETCFormCode.map(() => `NOT FORM_CODE LIKE[c] ?`).join(' AND ')}`,
+      `(${nonETCFormCode.map(() => `NOT FORM_CODE LIKE[c] ?`).join(' AND ')})`,
     );
     params.push(...nonETCFormCode.map((v) => generateParam(v)));
   }
@@ -194,7 +196,7 @@ function generateFormCodeFilter(formCode: string[]): TFilterFuncRes {
   const nonETCFormCodeParams = formCode.filter((v) => v !== etcFormCode);
   if (nonETCFormCodeParams.length) {
     formCodeFilters.push(
-      `${nonETCFormCodeParams.map(() => `FORM_CODE LIKE[c] ?`).join(' OR ')}`,
+      `(${nonETCFormCodeParams.map(() => `FORM_CODE LIKE[c] ?`).join(' OR ')})`,
     );
     params.push(...nonETCFormCodeParams.map((v) => generateParam(v)));
   }
@@ -223,17 +225,19 @@ function generateLineFilter(
   const params: string[] = [];
 
   if (lineFront?.length) {
+    const placeHolder = lineFront.map(() => `?`).join(',');
     lineFilters.push(
-      `LINE_FRONT CONTAINS[c] {${lineFront.map(() => `?`).join(',')}}`,
+      `(LINE_FRONT CONTAINS[c] {${placeHolder}} OR LINE_BACK CONTAINS[c] {${placeHolder}})`,
     );
-    params.push(...lineFront);
+    params.push(...lineFront, ...lineFront);
   }
 
   if (lineBack?.length) {
+    const placeHolder = lineBack.map(() => `?`).join(',');
     lineFilters.push(
-      `LINE_BACK CONTAINS[c] {${lineBack.map(() => `?`).join(',')}}`,
+      `(LINE_BACK CONTAINS[c] {${placeHolder}} OR LINE_FRONT CONTAINS[c] {${placeHolder}})`,
     );
-    params.push(...lineBack);
+    params.push(...lineBack, ...lineBack);
   }
 
   return {
@@ -260,13 +264,13 @@ function generateMarkFilter(
   const markFilters: string[] = [];
 
   if (markCodeFront) {
-    markFilters.push(`MARK_CODE_FRONT = ?`);
-    params.push(markCodeFront);
+    markFilters.push(`(MARK_CODE_FRONT = ? OR MARK_CODE_BACK = ?)`);
+    params.push(markCodeFront, markCodeBack);
   }
 
   if (markCodeBack) {
-    markFilters.push(`MARK_CODE_BACK = ?`);
-    params.push(markCodeBack);
+    markFilters.push(`(MARK_CODE_BACK = ? OR MARK_CODE_FRONT = ?)`);
+    params.push(markCodeBack, markCodeBack);
   }
 
   return {
