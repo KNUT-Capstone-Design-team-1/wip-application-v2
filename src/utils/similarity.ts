@@ -20,9 +20,13 @@ const magnitude = (x: number[], y: number[]) => {
   return { magX: Math.sqrt(xSum), magY: Math.sqrt(ySum) };
 };
 
-const calcCosineSimilarity = (xVector: number[], yVector: number[]) => {
-  if (xVector.length !== yVector.length) {
-    throw new Error('입련된 두 배열의 길이가 같아야 합니다');
+const calcCosineSimilarity = (initXVector: number[], yVector: number[]) => {
+  let xVector: number[];
+  if (initXVector.length !== yVector.length) {
+    const diff = yVector.length - initXVector.length;
+    xVector = initXVector.concat(new Array(diff).fill(0));
+  } else {
+    xVector = initXVector;
   }
 
   const dotProd = dotProduct(xVector, yVector);
