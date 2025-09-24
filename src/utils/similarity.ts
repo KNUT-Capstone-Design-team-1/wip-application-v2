@@ -32,7 +32,26 @@ const calcCosineSimilarity = (initXVector: number[], yVector: number[]) => {
   const dotProd = dotProduct(xVector, yVector);
   const { magX, magY } = magnitude(xVector, yVector);
 
-  return dotProd / (magX * magY);
+  return (dotProd / (magX * magY)) * 100;
+};
+
+const calcOtherSimilarity = (input: string, target: string) => {
+  const inputUpper = input.toUpperCase();
+  const targetUpper = target.toUpperCase();
+
+  let logicScore = 0;
+
+  // 검색어 연속성 검사
+  const continuousIndex = targetUpper.indexOf(inputUpper);
+  if (continuousIndex !== -1) {
+    logicScore = 1000 - continuousIndex * 10;
+  }
+
+  // 필요한 규칙의 경우 해당 위치에 추가
+
+  logicScore = Math.max(0, logicScore);
+
+  return logicScore;
 };
 
 const maxTextLength = 29;
@@ -47,4 +66,4 @@ const textToVector = (text: string) => {
   return vector;
 };
 
-export { calcCosineSimilarity, textToVector };
+export { calcCosineSimilarity, textToVector, calcOtherSimilarity };

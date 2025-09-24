@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@realm/react';
 import { PillData, TPillData } from '@/api/db/models/pillData';
-import { calcCosineSimilarity, textToVector } from '@/utils/similarity';
+import {
+  calcCosineSimilarity,
+  calcOtherSimilarity,
+  textToVector,
+} from '@/utils/similarity';
 import { deepCopyRealmObj } from '@/utils/converter';
 import { useSearchQueryStore } from '@/store/searchQueryStore';
 
@@ -37,11 +41,22 @@ export const useGetPillData = (pageSize: number) => {
       recogArr = recogFilter
         .map((val) => {
           const recogObj = deepCopyRealmObj(val) as TPillData;
-          recogObj.SIMILARITY =
-            (((recogObj.PRINT_FRONT as string) +
-              recogObj.PRINT_BACK) as string) !== ''
-              ? calcCosineSimilarity(initVector, recogObj.VECTOR as number[])
-              : 0;
+          const inputPrint = ((initData.PRINT_FRONT as string) +
+            initData.PRINT_BACK) as string;
+          const targetPrint = ((recogObj.PRINT_FRONT as string) +
+            recogObj.PRINT_BACK) as string;
+
+          if (targetPrint !== '') {
+            const cosineScore = calcCosineSimilarity(
+              initVector,
+              recogObj.VECTOR as number[],
+            );
+            const otherScore = calcOtherSimilarity(inputPrint, targetPrint);
+            recogObj.SIMILARITY = otherScore * 0.8 + cosineScore * 0.2;
+          } else {
+            recogObj.SIMILARITY = 0;
+          }
+
           return recogObj;
         })
         .sort((a: any, b: any) => {
