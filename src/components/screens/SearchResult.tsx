@@ -3,7 +3,8 @@ import SearchResultList from '@/components/organisms/SearchResultList';
 import { useGetSearchData } from '@/hooks/useGetSearchData';
 import { useNavigation } from '@react-navigation/native';
 import { useScreenStore } from '@/store/screen';
-import { useCallback, useEffect } from 'react';
+import { Suspense, useCallback, useEffect } from 'react';
+import SkeletoneSearchResult from '@/components/organisms/SkeletoneSearchResult';
 
 const SearchResult = (): React.JSX.Element => {
   const nav: any = useNavigation();
@@ -24,7 +25,9 @@ const SearchResult = (): React.JSX.Element => {
 
   return (
     <Layout.default>
-      <SearchResultList />
+      <Suspense fallback={<SkeletoneSearchResult />}>
+        <SearchResultList />
+      </Suspense>
     </Layout.default>
   );
 };

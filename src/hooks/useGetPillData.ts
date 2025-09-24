@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useQuery } from '@realm/react';
+import { useState, useEffect, useCallback, useMemo, use } from 'react';
+import { Realm, useQuery } from '@realm/react';
 import { PillData, TPillData } from '@/api/db/models/pillData';
 import {
   calcCosineSimilarity,
@@ -8,24 +8,19 @@ import {
 } from '@/utils/similarity';
 import { deepCopyRealmObj } from '@/utils/converter';
 import { useSearchQueryStore } from '@/store/searchQueryStore';
+import { TPillSearchParam } from '@/api/db/query';
 
 //TODO: 데이터를 가져오는 과정을 비동기로 처리하기
-export const useGetPillData = (pageSize: number) => {
-  const queryRecog = useQuery(PillData);
-  const { filter, params, initData } = useSearchQueryStore(
-    (state) => state.searchFilterParams,
-  );
 
-  const [page, setPage] = useState(1);
-  const [totalSize, setTotalSize] = useState(0);
-  const [paginatedData, setPaginatedData] = useState<TPillData[]>([]);
-  const [mergedData, setMergedData] = useState<TPillData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const mergeData = useCallback(async () => {
+const getMergedPillData = (
+  filter: string | undefined,
+  params: string[] | undefined,
+  initData: TPillSearchParam | null,
+  queryRecog: Realm.Results<PillData>,
+): Promise<TPillData[]> => {
+  return new Promise((resolve) => {
     if (filter === undefined || params === undefined) {
-      setMergedData([]);
-      setTotalSize(0);
+      resolve([]);
       return;
     }
 
@@ -69,37 +64,39 @@ export const useGetPillData = (pageSize: number) => {
       recogArr = recogFilter.sorted('ITEM_NAME').slice();
     }
 
-    setMergedData(recogArr);
-    setTotalSize(recogArr.length);
-    setIsLoading(false);
-  }, [
-    filter,
-    params,
-    initData,
-    queryRecog,
-    setMergedData,
-    setTotalSize,
-    setIsLoading,
-  ]);
+    resolve(recogArr);
+  });
+};
+
+export const useGetPillData = (pageSize: number) => {
+  const queryRecog = useQuery(PillData);
+  const { filter, params, initData } = useSearchQueryStore(
+    (state) => state.searchFilterParams,
+  );
+
+  const [page, setPage] = useState(1);
+  const [paginatedData, setPaginatedData] = useState<TPillData[]>([]);
+
+  const getMergedPillDataPromise = useMemo(
+    () => getMergedPillData(filter, params, initData, queryRecog),
+    [filter, params, initData, queryRecog],
+  );
+
+  const mergedData = use(getMergedPillDataPromise);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await mergeData();
-    };
-
-    fetchData();
-
-    return () => {
-      setMergedData([]);
-      setPaginatedData([]);
-      setPage(1);
-    };
-  }, [filter, mergeData, params]);
+    setPage(1);
+    const start = 0;
+    const end = pageSize;
+    setPaginatedData(mergedData.slice(start, end));
+  }, [mergedData, pageSize]);
 
   useEffect(() => {
-    const start = (page - 1) * pageSize;
-    const end = page * pageSize;
-    setPaginatedData((prev) => [...prev, ...mergedData.slice(start, end)]);
+    if (page > 1) {
+      const start = (page - 1) * pageSize;
+      const end = page * pageSize;
+      setPaginatedData((prev) => [...prev, ...mergedData.slice(start, end)]);
+    }
   }, [page, mergedData, pageSize]);
 
   const loadData = () => {
@@ -108,5 +105,5 @@ export const useGetPillData = (pageSize: number) => {
     }
   };
 
-  return { paginatedData, totalSize, loadData, isLoading };
+  return { paginatedData, totalSize: mergedData.length, loadData };
 };
