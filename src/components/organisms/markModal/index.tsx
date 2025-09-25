@@ -17,7 +17,7 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
   const [currentGroup, setCurrentGroup] = useState(0);
 
   const { setSearchMark } = useSearchIdStore();
-  const { setSelectedMarkBase64 } = useMarkStore();
+  const { setSelectedMarkBase64, setSelectedMarkTitle } = useMarkStore();
 
   const fetchMarkData = async (title: string, pageNum: number) => {
     setLoading(true);
@@ -44,6 +44,7 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
 
   const markSelected = (item: TMarkData) => {
     setSearchMark(item.code);
+    setSelectedMarkTitle(item.title);
     setSelectedMarkBase64(item.base64);
     onClose();
   };
