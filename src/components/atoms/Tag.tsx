@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   },
   tagValue: {
     color: '#424242',
+    fontWeight: '700',
   },
 });
 
