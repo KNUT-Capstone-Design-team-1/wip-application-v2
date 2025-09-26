@@ -36,11 +36,10 @@ const UpdateDB = (): React.JSX.Element => {
     await handleReset();
     setStatus('리소스 다운로드 중');
     console.log('start update:', new Date().toISOString());
-    await resClient.getResourceChunk(() => {
-      setProgress((prev) => prev + 1);
+    await resClient.getResource((progress) => {
+      setProgress(progress);
     });
     setStatus('DB 업데이트 적용 중');
-    // await upsertDB((idx, total) => { setProgress((prev) => prev + idx / total) });
     await upsertDB();
     setProgress((prev) => prev + 1);
     await resClient.clearRes();

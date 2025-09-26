@@ -10,7 +10,7 @@ import { deepCopyRealmObj } from '@/utils/converter';
 import { useSearchQueryStore } from '@/store/searchQueryStore';
 import { TPillSearchParam } from '@/api/db/query';
 
-//TODO: 데이터를 가져오는 과정을 비동기로 처리하기
+//TODO: 메모리 최적화 필요
 
 const getMergedPillData = (
   filter: string | undefined,
