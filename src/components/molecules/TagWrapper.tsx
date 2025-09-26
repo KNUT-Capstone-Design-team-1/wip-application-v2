@@ -36,9 +36,11 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   emptyText: {
     margin: 'auto',
+    fontWeight: '700',
   },
   scrollContent: {
     paddingHorizontal: 16,
