@@ -9,8 +9,8 @@ const formatBytes = (bytes: number) => {
   return parseInt((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-const formatProgress = (count: number, total: number) => {
-  const percentage = (count / total) * 100;
+const formatProgress = (count: number) => {
+  const percentage = count * 100;
   return percentage.toFixed() + '%';
 };
 

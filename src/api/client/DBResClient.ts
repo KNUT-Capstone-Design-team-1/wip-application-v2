@@ -4,6 +4,11 @@ import { GLOBAL_STATE } from '@/global_state';
 import { signRequest } from '@/utils/sigv4';
 import { XMLParser } from 'fast-xml-parser';
 
+type ResourceDownloadResult = {
+  success: boolean;
+  error?: string;
+};
+
 export class DBResClient {
   private static instance: DBResClient;
   private tenMB = 1024 * 1024 * 10;
@@ -22,13 +27,18 @@ export class DBResClient {
     return DBResClient.instance;
   };
 
-  public async getResource(onProgress: (progress: number) => void) {
+  public async getResource(
+    onProgress: (progress: number) => void,
+  ): Promise<ResourceDownloadResult> {
     if (this.contents == null) {
       await this.getResourceList();
     }
 
     if (this.contents?.length === 0) {
-      return false;
+      return {
+        success: false,
+        error: '서버에서 리소스 목록을 가져오는데 실패했습니다',
+      };
     }
 
     const resDir = `${RNFS.DocumentDirectoryPath}/res`;
@@ -59,8 +69,10 @@ export class DBResClient {
     });
 
     if (res.statusCode !== 200 && res.statusCode !== 206) {
-      throw new Error(`Failed to download file: ${this.contents[0].Key}`);
+      return { success: false, error: '리소스를 다운로드하는데 실패했습니다' };
     }
+
+    return { success: true };
   }
 
   public async getResourceList(
