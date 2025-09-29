@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   emptyText: {
     margin: 'auto',
     fontWeight: '700',
+    color: 'grey',
   },
   scrollContent: {
     paddingHorizontal: 16,

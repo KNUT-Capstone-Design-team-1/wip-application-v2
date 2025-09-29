@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import getMarkData from '@api/client/mark';
-import { useSearchIdStore } from '@/store/searchIdStore';
-import { useMarkStore } from '@/store/markStore';
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TMarkData } from '@/types/TApiType';
-import MarkModalView from './MarkModalView';
+import { useSearchIdStore } from '@store/searchIdStore';
+import { useMarkStore } from '@store/markStore';
+import getMarkData from '@api/client/mark';
 
 const LIMIT = 20;
 
-const MarkModal = ({ onClose }: { onClose: () => void }) => {
+export const useMarkModal = () => {
   const searchText = useRef('');
   const [beforeSearchText, setBeforeSearchText] = useState('');
   const [page, setPage] = useState(1);
@@ -19,7 +18,7 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
   const { setSearchMark } = useSearchIdStore();
   const { setSelectedMarkBase64, setSelectedMarkTitle } = useMarkStore();
 
-  const fetchMarkData = async (title: string, pageNum: number) => {
+  const fetchMarkData = useCallback(async (title: string, pageNum: number) => {
     setLoading(true);
     try {
       const res = await getMarkData(title, LIMIT, pageNum);
@@ -28,42 +27,32 @@ const MarkModal = ({ onClose }: { onClose: () => void }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchMarkData(beforeSearchText, page);
   }, [page]);
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     if (beforeSearchText === searchText.current) return;
     setPage(1);
     setBeforeSearchText(searchText.current);
     setCurrentGroup(0);
     fetchMarkData(searchText.current, 1);
-  };
+  }, [beforeSearchText, searchText, fetchMarkData]);
 
-  const markSelected = (item: TMarkData) => {
-    setSearchMark(item.code);
-    setSelectedMarkTitle(item.title);
-    setSelectedMarkBase64(item.base64);
-    onClose();
+  return {
+    searchText,
+    page,
+    setPage,
+    currentGroup,
+    setCurrentGroup,
+    markDataList,
+    loading,
+    totalPages,
+    handleSearch,
+    setSearchMark,
+    setSelectedMarkBase64,
+    setSelectedMarkTitle,
   };
-
-  return (
-    <MarkModalView
-      loading={loading}
-      markDataList={markDataList}
-      page={page}
-      totalPages={totalPages}
-      currentGroup={currentGroup}
-      setPage={setPage}
-      setCurrentGroup={setCurrentGroup}
-      handleSearch={handleSearch}
-      markSelected={markSelected}
-      onClose={onClose}
-      searchText={searchText}
-    />
-  );
 };
-
-export default MarkModal;

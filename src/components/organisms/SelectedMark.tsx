@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Modal } from 'react-native';
 import { Image } from 'expo-image';
 import { font, os } from '@/style/font';
 import Button from '@components/atoms/Button';
-import MarkModal from '@components/organisms/markModal/index';
+import MarkModal from '@components/organisms/markModal/MarkModal';
 import { useMarkStore } from '@store/markStore';
 import { useSearchIdStore } from '@/store/searchIdStore';
 
