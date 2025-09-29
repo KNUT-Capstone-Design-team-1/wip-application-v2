@@ -7,17 +7,30 @@ const GROUP_KEYS = {
   FORM_CODE: 'FORM_CODE',
 } as const;
 
+/*
+ * searchResultTagData 함수는 입력 데이터(items)를 그룹화한 뒤,
+ * 같은 그룹에 속한 값들을 중복 없이 합쳐서 하나의 문자열로 묶어 반환
+ * */
 export const searchResultTagData = (items: any) => {
   const groupedMap = new Map();
-  const result = [];
 
-  // 1. 그룹화
-  for (const [key, values] of items) {
-    if (!values || values.length === 0) continue;
+  // 1. 유효한 데이터만 필터링 (데이터 중 결과 값이 빈값이거나, 배열의 길이가 0개인 경우 표시되지 않도록)
+  const validItems = items.filter(([_key, values]: [unknown, unknown]) => {
+    if (Array.isArray(values)) {
+      return values.length > 0;
+    }
 
+    return typeof values === 'string' && values.trim().length > 0;
+  });
+
+  /* 2. 그룹화
+   * 각 key가 어떤 그룹에 속하는지 확인
+   * */
+  for (const [key, values] of validItems) {
     // 그룹 키 결정
     let groupKey: string = key;
-    for (const [_, group] of Object.entries(GROUP_KEYS)) {
+    for (const group of Object.values(GROUP_KEYS)) {
+      // startsWith로 어떤 문자열로 시작했는지 기준을 잡아줌 ex. COLOR_CLASS1 / 2 -> COLOR_CLASS
       if (key.startsWith(group)) {
         groupKey = group;
         break;
@@ -27,6 +40,7 @@ export const searchResultTagData = (items: any) => {
     // 값 처리
     const valueArray = Array.isArray(values) ? values : [values];
 
+    // ex. COLOR_CLASS1 이랑 COLOR_CLASS2 는 명칭도 동일하고, 값도 동일해 한번만 들어가지도록 적용
     if (groupedMap.has(groupKey)) {
       const existingValues = groupedMap.get(groupKey);
       const newValues = [...new Set([...existingValues, ...valueArray])];
@@ -36,16 +50,10 @@ export const searchResultTagData = (items: any) => {
     }
   }
 
-  // 2. 결과 생성
-  for (const [key, values] of groupedMap.entries()) {
-    // 모든 그룹화된 항목은 값들을 합쳐서 하나의 항목으로 만듦
-    result.push({
-      key,
-      value: values.join(', '),
-    });
-  }
-
-  return result;
+  return [...groupedMap.entries()].map(([key, values]) => ({
+    key,
+    value: values.join(', '),
+  }));
 };
 
 const TITLE_MAPPING: Record<string, string> = {
@@ -61,7 +69,7 @@ const TITLE_MAPPING: Record<string, string> = {
 };
 
 // 매핑된 title 가져오는 함수
-export const getMappedTitle = (title: string): string => {
+export const getReplacedTitle = (title: string): string => {
   // COLOR_CLASS로 시작하는 모든 문자열을 COLOR_CLASS로 변환
   // LINE_로 시작하는 모든 문자열을 LINE으로 변환
   const normalizedTitle = title

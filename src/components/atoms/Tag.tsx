@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { ITagProps } from '@/types/atoms.type';
-import { getMappedTitle } from '@utils/tag';
+import { getReplacedTitle } from '@utils/tag';
 import { useTagValue } from '@/hooks/useTagValue';
 
 const Tag = ({ title, value }: ITagProps) => {
-  const displayTitle = getMappedTitle(title);
+  const displayTitle = getReplacedTitle(title);
   const tagValue = useTagValue(title, value);
 
   return (
