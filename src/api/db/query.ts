@@ -265,7 +265,7 @@ function generateMarkFilter(
 
   if (markCodeFront) {
     markFilters.push(`(MARK_CODE_FRONT = ? OR MARK_CODE_BACK = ?)`);
-    params.push(markCodeFront, markCodeBack);
+    params.push(markCodeFront, markCodeFront);
   }
 
   if (markCodeBack) {
