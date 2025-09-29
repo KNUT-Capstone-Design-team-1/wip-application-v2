@@ -10,7 +10,6 @@ import { GLOBAL_STATE } from '@/global_state';
 const upsertDB = async () => {
   const realm = await Realm.open(dbConfig);
   const updateRealm = await Realm.open(updateDBConfig);
-  // const batchSize = 1000;
 
   try {
     for (const schema of updateDBConfig.schema ?? []) {
@@ -33,10 +32,6 @@ const upsertDB = async () => {
               Realm.UpdateMode.Modified,
             );
           }
-
-          // if (idx % batchSize === 0 || idx === updateObjects.length - 1) {
-          //   callback(idx, updateObjects.length)
-          // }
         }
       });
     }

@@ -9,7 +9,7 @@ export const imgPickerOption: Options = {
   cropperToolbarTitle: '',
   // For Android
   cropperActiveWidgetColor: '#7472EB',
-  cropperStatusBarColor: '#000000',
+  cropperStatusBarLight: false,
   cropperToolbarColor: '#000000',
   cropperToolbarWidgetColor: '#7472EB',
   // For iOS
