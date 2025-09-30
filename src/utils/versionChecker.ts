@@ -1,5 +1,5 @@
 import { Alert, Linking, Platform } from 'react-native';
-import RNExitApp from 'react-native-exit-app';
+import { exitApp } from '@logicwind/react-native-exit-app';
 import DeviceInfo from 'react-native-device-info';
 import { isIos } from '@/utils/checker';
 import { apiClient } from '@api/apiClient';
@@ -21,7 +21,7 @@ const openStore = () => {
   );
 
   // 스토어 열렸을 때 앱 강제 종료
-  RNExitApp.exitApp();
+  exitApp();
 };
 
 // 애플리케이션의 OS 별 최신 버전 조회

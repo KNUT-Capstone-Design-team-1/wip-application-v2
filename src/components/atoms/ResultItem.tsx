@@ -8,6 +8,9 @@ import CustomChip from '@/components/atoms/CustomChip';
 import { getItem, setItem } from '@/utils/storage';
 import { TPillData } from '@/api/db/models/pillData';
 
+// TODO: 이미지 캐시 전략 필요
+// TODO: 이미지가 없을 경우 대체 이미지 필요
+
 const ResultItem = ({ data }: { data: TPillData }) => {
   const nav: any = useNavigation();
 
@@ -32,8 +35,13 @@ const ResultItem = ({ data }: { data: TPillData }) => {
           {!!data.ITEM_IMAGE && (
             <Image
               style={styles.pillImg}
-              source={{ uri: data.ITEM_IMAGE }}
+              source={{
+                uri: data.ITEM_IMAGE,
+                cache: 'force-cache',
+              }}
               resizeMode="contain"
+              fadeDuration={100}
+              progressiveRenderingEnabled={true}
             />
           )}
         </View>

@@ -15,7 +15,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { Fragment } from 'react/jsx-runtime';
 import CustomCheckbox from '../atoms/CustomCheckbox';
-import { CustomAlertProps } from '@/types/organisms.type';
+import { CustomAlertProps, TCustomAlertButtons } from '@/types/organisms.type';
 
 const CustomAlertComponent = ({
   visible,

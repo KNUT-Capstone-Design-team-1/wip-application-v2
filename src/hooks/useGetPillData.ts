@@ -1,27 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useQuery } from '@realm/react';
+import { useState, useEffect, useMemo, use, useRef } from 'react';
+import { Realm, useQuery } from '@realm/react';
 import { PillData, TPillData } from '@/api/db/models/pillData';
-import { calcCosineSimilarity, textToVector } from '@/utils/similarity';
+import {
+  calcCosineSimilarity,
+  calcOtherSimilarity,
+  textToVector,
+} from '@/utils/similarity';
 import { deepCopyRealmObj } from '@/utils/converter';
 import { useSearchQueryStore } from '@/store/searchQueryStore';
+import { TPillSearchParam } from '@/api/db/query';
 
-//TODO: 데이터를 가져오는 과정을 비동기로 처리하기
-export const useGetPillData = (pageSize: number) => {
-  const queryRecog = useQuery(PillData);
-  const { filter, params, initData } = useSearchQueryStore(
-    (state) => state.searchFilterParams,
-  );
+//TODO: 메모리 최적화 필요
 
-  const [page, setPage] = useState(1);
-  const [totalSize, setTotalSize] = useState(0);
-  const [paginatedData, setPaginatedData] = useState<TPillData[]>([]);
-  const [mergedData, setMergedData] = useState<TPillData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const mergeData = useCallback(async () => {
+const getMergedPillData = (
+  filter: string | undefined,
+  params: string[] | undefined,
+  initData: TPillSearchParam | null,
+  queryRecog: Realm.Results<PillData>,
+): Promise<TPillData[]> => {
+  return new Promise((resolve) => {
     if (filter === undefined || params === undefined) {
-      setMergedData([]);
-      setTotalSize(0);
+      resolve([]);
       return;
     }
 
@@ -37,11 +36,22 @@ export const useGetPillData = (pageSize: number) => {
       recogArr = recogFilter
         .map((val) => {
           const recogObj = deepCopyRealmObj(val) as TPillData;
-          recogObj.SIMILARITY =
-            (((recogObj.PRINT_FRONT as string) +
-              recogObj.PRINT_BACK) as string) !== ''
-              ? calcCosineSimilarity(initVector, recogObj.VECTOR as number[])
-              : 0;
+          const inputPrint = ((initData.PRINT_FRONT as string) +
+            initData.PRINT_BACK) as string;
+          const targetPrint = ((recogObj.PRINT_FRONT as string) +
+            recogObj.PRINT_BACK) as string;
+
+          if (targetPrint !== '') {
+            const cosineScore = calcCosineSimilarity(
+              initVector,
+              recogObj.VECTOR as number[],
+            );
+            const otherScore = calcOtherSimilarity(inputPrint, targetPrint);
+            recogObj.SIMILARITY = otherScore * 0.8 + cosineScore * 0.2;
+          } else {
+            recogObj.SIMILARITY = 0;
+          }
+
           return recogObj;
         })
         .sort((a: any, b: any) => {
@@ -54,38 +64,59 @@ export const useGetPillData = (pageSize: number) => {
       recogArr = recogFilter.sorted('ITEM_NAME').slice();
     }
 
-    setMergedData(recogArr);
-    setTotalSize(recogArr.length);
-    setIsLoading(false);
-  }, [
-    filter,
-    params,
-    initData,
-    queryRecog,
-    setMergedData,
-    setTotalSize,
-    setIsLoading,
-  ]);
+    resolve(recogArr);
+  });
+};
+
+export const useGetPillData = (pageSize: number) => {
+  const queryRecog = useQuery(PillData);
+  const { filter, params, initData } = useSearchQueryStore(
+    (state) => state.searchFilterParams,
+  );
+
+  const [page, setPage] = useState(1);
+  const [paginatedData, setPaginatedData] = useState<TPillData[]>([]);
+
+  const promiseRef = useRef<Promise<TPillData[]> | null>(null);
+
+  // 재검색 또는 검색 조건 변경 시 Promise 초기화
+  const searchKey = useMemo(
+    () => JSON.stringify({ filter, params, initData }),
+    [filter, params, initData],
+  );
+  const searchKeyRef = useRef<string>(searchKey);
+
+  if (searchKeyRef.current !== searchKey) {
+    promiseRef.current = null;
+    searchKeyRef.current = searchKey;
+  }
+
+  // 최초 또는 검색조건 변경 시 Promise 생성 (리렌더링 시 재생성 방지)
+  if (!promiseRef.current) {
+    promiseRef.current = getMergedPillData(
+      filter,
+      params,
+      initData,
+      queryRecog,
+    );
+  }
+
+  const mergedData = use(promiseRef.current);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await mergeData();
-    };
-
-    fetchData();
-
-    return () => {
-      setMergedData([]);
-      setPaginatedData([]);
-      setPage(1);
-    };
-  }, [filter, mergeData, params]);
+    setPage(1);
+    const start = 0;
+    const end = pageSize;
+    setPaginatedData(mergedData.slice(start, end));
+  }, [searchKey, pageSize]);
 
   useEffect(() => {
-    const start = (page - 1) * pageSize;
-    const end = page * pageSize;
-    setPaginatedData((prev) => [...prev, ...mergedData.slice(start, end)]);
-  }, [page, mergedData, pageSize]);
+    if (page > 1) {
+      const start = (page - 1) * pageSize;
+      const end = page * pageSize;
+      setPaginatedData((prev) => [...prev, ...mergedData.slice(start, end)]);
+    }
+  }, [page, pageSize]);
 
   const loadData = () => {
     if (paginatedData.length < mergedData.length) {
@@ -93,5 +124,5 @@ export const useGetPillData = (pageSize: number) => {
     }
   };
 
-  return { paginatedData, totalSize, loadData, isLoading };
+  return { paginatedData, totalSize: mergedData.length, loadData };
 };

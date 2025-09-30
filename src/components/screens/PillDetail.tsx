@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 
 import AddStorageSvg from '@assets/svgs/addStorage.svg';
 import ArrowDownSvg from '@assets/svgs/dropdown.svg';
-import { useSetScreen } from '@/hooks/useSetScreen';
+import { useScreenStore } from '@/store/screen';
 import { usePillBox } from '@/hooks/usePillBox';
 import { getDrugDetail } from '@/api/server';
 import { deepCopyRealmObj } from '@/utils/converter';
@@ -15,10 +15,13 @@ import LoadingCircle from '@/components/atoms/LoadingCircle';
 import PillInfo from '@/components/atoms/PillInfo';
 import { PillDetailSection } from '@/components/atoms/PillDetailSection';
 import Layout from '@/components/organisms/Layout';
-import { InfoData } from '@/types/screens/type';
+import { useNavigation } from '@react-navigation/native';
+import { InfoData } from '@/types/screens.type';
 
 const PillDetail = ({ route }: any): React.JSX.Element => {
-  useSetScreen('알약 정보');
+  const nav: any = useNavigation();
+  const setScreen = useScreenStore((state) => state.setScreen);
+
   const { addPill, getPill, delPill } = usePillBox();
   const infoRef = useRef<any>(null);
   const [isStorage, setIsStorage] = useState(false);
@@ -33,6 +36,10 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
   const [info3, setInfo3] = useState(true);
   const [moreInfo, setMoreInfo] = useState(false);
   const data = route.params.data;
+
+  const handleSetScreen = useCallback(() => {
+    setScreen('알약 정보');
+  }, [setScreen]);
 
   const handlePressAddStorage = () => {
     if (!loading) {
@@ -96,8 +103,14 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
   };
 
   useEffect(() => {
-    getDataFromPillBox();
-  }, [getDataFromPillBox, route]);
+    const unsubscribe = nav.addListener('focus', () => {
+      handleSetScreen();
+      getDataFromPillBox();
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [handleSetScreen, nav, getDataFromPillBox, route]);
 
   return (
     <Layout.default>

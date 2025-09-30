@@ -1,5 +1,5 @@
 import Layout from '@/components/organisms/Layout';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import { Image, StyleSheet, Text, View, BackHandler } from 'react-native';
 import { font, os } from '@/style/font';
 import * as Progress from 'react-native-progress';
@@ -9,7 +9,7 @@ import {
   formatDateToString,
   formatProgress,
 } from '@/utils/formatter';
-import RNExitApp from 'react-native-exit-app';
+import { exitApp } from '@logicwind/react-native-exit-app';
 import RNRestart from 'react-native-restart';
 import { upsertDB } from '@/api/update';
 import { getItem, setItem } from '@/utils/storage';
@@ -21,33 +21,75 @@ const resClient = DBResClient.getInstance();
 let isExitApp = false;
 let timeout: NodeJS.Timeout;
 
+type UpdateDBState = {
+  status: string;
+  progress: number;
+};
+
+type UpdateDBAction =
+  | { type: 'setStatus'; payload: string }
+  | { type: 'setProgress'; payload: number };
+
+const initialState: UpdateDBState = {
+  status: 'DB 업데이트 확인',
+  progress: 0,
+};
+
+function updateDBReducer(
+  state: UpdateDBState,
+  action: UpdateDBAction,
+): UpdateDBState {
+  switch (action.type) {
+    case 'setStatus':
+      return { ...state, status: action.payload };
+    case 'setProgress':
+      return { ...state, progress: action.payload };
+    default:
+      return state;
+  }
+}
+
 const UpdateDB = (): React.JSX.Element => {
-  const [status, setStatus] = useState('DB 업데이트 확인');
-  const [progress, setProgress] = useState(0);
+  const [state, dispatch] = useReducer(updateDBReducer, initialState);
   const { showAlert } = useAlert();
 
   const handleReset = async () => {
-    setProgress(0);
+    dispatch({ type: 'setProgress', payload: 0 });
     await resClient.clearRes();
   };
 
   const runUpdate = useCallback(async () => {
-    setStatus('DB 초기화 중');
+    dispatch({ type: 'setStatus', payload: 'DB 초기화 중' });
     await handleReset();
-    setStatus('리소스 다운로드 중');
+    dispatch({ type: 'setStatus', payload: '리소스 다운로드 중' });
     console.log('start update:', new Date().toISOString());
-    await resClient.getResourceChunk(() => {
-      setProgress((prev) => prev + 1);
+    const resDownloadResult = await resClient.getResource((progress) => {
+      dispatch({ type: 'setProgress', payload: progress });
     });
-    setStatus('DB 업데이트 적용 중');
-    // await upsertDB((idx, total) => { setProgress((prev) => prev + idx / total) });
+    if (!resDownloadResult.success) {
+      handleUpdateFailed(
+        resDownloadResult.error ?? '알 수 없는 오류가 발생했습니다.',
+      );
+      return;
+    }
+    dispatch({ type: 'setStatus', payload: 'DB 업데이트 적용 중' });
     await upsertDB();
-    setProgress((prev) => prev + 1);
     await resClient.clearRes();
     await setItem('lastUpdateDate', formatDateToString(new Date()));
     console.log('end update:', new Date().toISOString());
     RNRestart.restart();
   }, []);
+
+  const handleUpdateFailed = (error: string) => {
+    showAlert('데이터베이스 업데이트에 실패했습니다.', error, [
+      {
+        text: '확인',
+        onPress: () => {
+          exitApp();
+        },
+      },
+    ]);
+  };
 
   const handleClose = () => {
     if (!isExitApp) {
@@ -59,7 +101,7 @@ const UpdateDB = (): React.JSX.Element => {
       }, 2000);
     } else {
       clearTimeout(timeout);
-      RNExitApp.exitApp();
+      exitApp();
     }
   };
 
@@ -81,7 +123,7 @@ const UpdateDB = (): React.JSX.Element => {
             {
               text: '확인',
               onPress: () => {
-                RNExitApp.exitApp();
+                exitApp();
               },
               style: {},
             },
@@ -113,7 +155,7 @@ const UpdateDB = (): React.JSX.Element => {
           {
             text: '취소',
             onPress: () => {
-              RNExitApp.exitApp();
+              exitApp();
               return true;
             },
             style: {},
@@ -147,13 +189,13 @@ const UpdateDB = (): React.JSX.Element => {
         </View>
         <View style={styles.infoViewWrapper}>
           <Text style={styles.infoText}>
-            {status + ' ' + formatProgress(progress, resClient.resCount)}
+            {state.status + ' ' + formatProgress(state.progress)}
           </Text>
           <Progress.Bar
             width={200}
             height={10}
-            indeterminate={progress > 0 ? false : true}
-            progress={progress / resClient.resCount}
+            indeterminate={state.progress > 0 ? false : true}
+            progress={state.progress}
             color="#7472EB"
             unfilledColor="#fff"
             borderWidth={0}

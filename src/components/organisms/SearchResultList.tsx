@@ -8,40 +8,47 @@ import {
 import { font, os } from '@/style/font';
 import ResultItem from '@/components/atoms/ResultItem';
 import { useGetPillData } from '@/hooks/useGetPillData';
-import SkeletoneSearchResult from '@/components/organisms/SkeletoneSearchResult';
+import { useCallback } from 'react';
+import { TPillData } from '@/api/db/models/pillData';
 
 //TODO: flatlist 메모리 최적화 필요
 const SearchResultList = (): React.JSX.Element => {
-  const { paginatedData, totalSize, loadData, isLoading } = useGetPillData(20);
+  const { paginatedData, totalSize, loadData } = useGetPillData(20);
+
+  // keyExtractor를 useCallback으로 메모이제이션
+  const keyExtractor = useCallback((item: TPillData) => item.ITEM_SEQ, []);
+
+  // renderItem을 useCallback으로 메모이제이션
+  const renderItem = useCallback(
+    ({ item }: { item: TPillData }) => <ResultItem data={item} />,
+    [],
+  );
+
+  // getItemType으로 아이템 타입 지정 (FlashList 재활용 최적화)
+  const getItemType = useCallback(() => 'pill-item', []);
 
   return (
-    <>
-      {isLoading ? (
-        <SkeletoneSearchResult />
-      ) : (
-        <View style={styles.viewWrapper}>
-          <View style={styles.noteWrapper}>
-            <Text style={styles.note}>총 {totalSize}개의 검색 결과입니다.</Text>
+    <View style={styles.viewWrapper}>
+      <View style={styles.noteWrapper}>
+        <Text style={styles.note}>총 {totalSize}개의 검색 결과입니다.</Text>
+      </View>
+      <FlashList
+        data={paginatedData}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        getItemType={getItemType}
+        onEndReached={loadData}
+        onEndReachedThreshold={0.3}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyViewWrapper}>
+            <Text style={styles.note}>검색 결과가 없습니다</Text>
           </View>
-          <FlashList
-            data={paginatedData}
-            renderItem={({ item }) => <ResultItem data={item} />}
-            estimatedItemSize={135}
-            keyExtractor={(item) => item.ITEM_SEQ}
-            onEndReached={loadData}
-            onEndReachedThreshold={0.3}
-            ListEmptyComponent={() => (
-              <View style={styles.emptyViewWrapper}>
-                <Text style={styles.note}>검색 결과가 없습니다</Text>
-              </View>
-            )}
-            ListFooterComponent={() => <View style={{ marginBottom: 200 }} />}
-            contentContainerStyle={styles.resultListWrapper}
-            removeClippedSubviews={true}
-          />
-        </View>
-      )}
-    </>
+        )}
+        ListFooterComponent={() => <View style={{ marginBottom: 200 }} />}
+        contentContainerStyle={styles.resultListWrapper}
+        removeClippedSubviews={true}
+      />
+    </View>
   );
 };
 
