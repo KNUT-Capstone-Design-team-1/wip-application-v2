@@ -1,5 +1,5 @@
 import { DimensionValue, TextStyle, ViewStyle } from 'react-native';
-import { TMarkData } from '../TApiType';
+import { TMarkData } from '@/types/TApiType';
 
 // CustomChip.tsx
 export type TCustomChip = {

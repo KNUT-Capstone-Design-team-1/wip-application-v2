@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, use } from 'react';
+import { useState, useEffect, useMemo, use, useRef } from 'react';
 import { Realm, useQuery } from '@realm/react';
 import { PillData, TPillData } from '@/api/db/models/pillData';
 import {
@@ -77,19 +77,38 @@ export const useGetPillData = (pageSize: number) => {
   const [page, setPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState<TPillData[]>([]);
 
-  const getMergedPillDataPromise = useMemo(
-    () => getMergedPillData(filter, params, initData, queryRecog),
-    [filter, params, initData, queryRecog],
-  );
+  const promiseRef = useRef<Promise<TPillData[]> | null>(null);
 
-  const mergedData = use(getMergedPillDataPromise);
+  // 재검색 또는 검색 조건 변경 시 Promise 초기화
+  const searchKey = useMemo(
+    () => JSON.stringify({ filter, params, initData }),
+    [filter, params, initData],
+  );
+  const searchKeyRef = useRef<string>(searchKey);
+
+  if (searchKeyRef.current !== searchKey) {
+    promiseRef.current = null;
+    searchKeyRef.current = searchKey;
+  }
+
+  // 최초 또는 검색조건 변경 시 Promise 생성 (리렌더링 시 재생성 방지)
+  if (!promiseRef.current) {
+    promiseRef.current = getMergedPillData(
+      filter,
+      params,
+      initData,
+      queryRecog,
+    );
+  }
+
+  const mergedData = use(promiseRef.current);
 
   useEffect(() => {
     setPage(1);
     const start = 0;
     const end = pageSize;
     setPaginatedData(mergedData.slice(start, end));
-  }, [mergedData, pageSize]);
+  }, [searchKey, pageSize]);
 
   useEffect(() => {
     if (page > 1) {
@@ -97,7 +116,7 @@ export const useGetPillData = (pageSize: number) => {
       const end = page * pageSize;
       setPaginatedData((prev) => [...prev, ...mergedData.slice(start, end)]);
     }
-  }, [page, mergedData, pageSize]);
+  }, [page, pageSize]);
 
   const loadData = () => {
     if (paginatedData.length < mergedData.length) {

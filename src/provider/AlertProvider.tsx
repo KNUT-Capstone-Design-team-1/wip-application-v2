@@ -1,8 +1,6 @@
-import CustomAlert, {
-  TCustomAlertButtons,
-  TCustomModalType,
-} from '@/components/organisms/CustomAlert';
 import { createContext, useState, ReactNode, memo, useCallback } from 'react';
+import CustomAlert from '@/components/organisms/CustomAlert';
+import { TCustomAlertButtons, TCustomModalType } from '@/types/organisms.type';
 
 type TShowAlertOptions = {
   modalType: TCustomModalType;
