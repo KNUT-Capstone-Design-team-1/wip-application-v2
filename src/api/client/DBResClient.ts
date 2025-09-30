@@ -37,7 +37,7 @@ export class DBResClient {
     if (this.contents?.length === 0) {
       return {
         success: false,
-        error: '서버에서 리소스 목록을 가져오는데 실패했습니다',
+        error: '알약 정보 업데이트 데이터가 없습니다.',
       };
     }
 
@@ -69,7 +69,7 @@ export class DBResClient {
     });
 
     if (res.statusCode !== 200 && res.statusCode !== 206) {
-      return { success: false, error: '리소스를 다운로드하는데 실패했습니다' };
+      return { success: false, error: '알약 데이터 다운로드에 실패했습니다.' };
     }
 
     return { success: true };

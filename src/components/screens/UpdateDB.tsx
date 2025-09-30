@@ -68,7 +68,7 @@ const UpdateDB = (): React.JSX.Element => {
     });
     if (!resDownloadResult.success) {
       handleUpdateFailed(
-        resDownloadResult.error ?? '알 수 없는 오류가 발생했습니다',
+        resDownloadResult.error ?? '알 수 없는 오류가 발생했습니다.',
       );
       return;
     }
@@ -81,7 +81,7 @@ const UpdateDB = (): React.JSX.Element => {
   }, []);
 
   const handleUpdateFailed = (error: string) => {
-    showAlert('DB 업데이트 실패', error, [
+    showAlert('데이터베이스 업데이트에 실패했습니다.', error, [
       {
         text: '확인',
         onPress: () => {
