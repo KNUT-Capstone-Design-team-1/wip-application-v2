@@ -18,6 +18,23 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use();
 
 // 응답 인터셉터
-axiosInstance.interceptors.response.use();
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      // 새로운 토큰 갱신
+      const token = getToken();
+
+      // 헤더 업데이트
+      axiosInstance.defaults.headers.Authorization = `Bearer ${token}`;
+      originalRequest.headers.Authorization = `Bearer ${token}`;
+      return axiosInstance(originalRequest);
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default axiosInstance;
