@@ -8,6 +8,7 @@ import Layout, {
 } from '@/components/organisms/Layout';
 import { useScreenStore } from '@/store/screen';
 import { useSearchIdStore } from '@/store/searchIdStore';
+import LoadingCircle from '@/components/atoms/LoadingCircle';
 
 const SearchIdList = lazy(() => import('@/components/organisms/SearchIdList'));
 
@@ -30,7 +31,13 @@ const SearchId = (): React.JSX.Element => {
 
   return (
     <Layout.default>
-      <Suspense fallback={<View style={styles.viewWrapper} />}>
+      <Suspense
+        fallback={
+          <View style={styles.viewWrapper}>
+            <LoadingCircle size="large" color="#6060dd" />
+          </View>
+        }
+      >
         <SearchIdList />
       </Suspense>
     </Layout.default>

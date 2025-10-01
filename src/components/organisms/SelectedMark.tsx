@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Modal, Image } from 'react-native';
+import { View, StyleSheet, Text, Modal } from 'react-native';
+import { Image } from 'expo-image';
 import { font, os } from '@/style/font';
 import Button from '@components/atoms/Button';
 import MarkModal from '@components/organisms/markModal/index';
@@ -49,7 +50,7 @@ const SelectingMark = () => {
                   : require('@/assets/images/noImage.png')
               }
               style={styles.markImage}
-              resizeMode="contain"
+              contentFit="contain"
             />
           </View>
         )}

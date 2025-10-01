@@ -1,6 +1,7 @@
 import { font, os } from '@/style/font';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { View, ScrollView, StyleSheet, Image, Text } from 'react-native';
+import { View, ScrollView, StyleSheet, Text } from 'react-native';
+import { Image } from 'expo-image';
 import Toast from 'react-native-toast-message';
 
 import AddStorageSvg from '@assets/svgs/addStorage.svg';
@@ -120,8 +121,9 @@ const PillDetail = ({ route }: any): React.JSX.Element => {
             {data.ITEM_IMAGE && (
               <Image
                 style={styles.pillImg}
-                source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }}
-                resizeMode="contain"
+                source={{ uri: data.ITEM_IMAGE }}
+                contentFit="contain"
+                cachePolicy="disk"
               />
             )}
           </View>

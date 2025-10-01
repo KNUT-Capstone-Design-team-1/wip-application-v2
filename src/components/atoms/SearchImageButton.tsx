@@ -1,7 +1,8 @@
 import Button from '@/components/atoms/Button';
 import { font, os } from '@/style/font';
 import { useNavigation } from '@react-navigation/native';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Shadow } from 'react-native-shadow-2';
 
 const SearchImageButton = (): React.JSX.Element => {
