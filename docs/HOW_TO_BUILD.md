@@ -16,7 +16,13 @@ yarn run rebuild
 ### EAS 설치
 
 ```bash
+# yarn classic
+yarn global add eas-cli
+# yarn berry
 yarn add -g eas-cli
+
+# 'command not found: eas' 발생시
+npm install -g eas-cli
 ```
 
 ### EAS login
