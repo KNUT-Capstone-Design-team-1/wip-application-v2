@@ -1,5 +1,5 @@
-import { Suspense, useEffect, lazy, useCallback } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Suspense, useEffect, useCallback, useState } from 'react';
+import { Platform, StyleSheet, View, InteractionManager } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Layout, {
   defaultHeaderHeight,
@@ -9,20 +9,31 @@ import Layout, {
 import { useScreenStore } from '@/store/screen';
 import { useSearchIdStore } from '@/store/searchIdStore';
 import LoadingCircle from '@/components/atoms/LoadingCircle';
-
-const SearchIdList = lazy(() => import('@/components/organisms/SearchIdList'));
+import SearchIdList from '@/components/organisms/SearchIdList';
 
 const SearchId = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const setScreen = useScreenStore((state) => state.setScreen);
   const resetSearchId = useSearchIdStore((state) => state.resetSearchId);
 
+  const [isReady, setIsReady] = useState(false);
+
   const handleSetScreen = useCallback(() => {
     setScreen('식별 검색');
   }, [setScreen]);
 
   useEffect(() => {
-    nav.addListener('focus', () => handleSetScreen());
+    nav.addListener('focus', () => {
+      handleSetScreen();
+
+      setIsReady(false);
+      const task = InteractionManager.runAfterInteractions(() => {
+        setIsReady(true);
+      });
+
+      return () => task.cancel();
+    });
+
     return () => {
       resetSearchId();
       nav.removeListener('focus', () => handleSetScreen());
@@ -31,15 +42,13 @@ const SearchId = (): React.JSX.Element => {
 
   return (
     <Layout.default>
-      <Suspense
-        fallback={
-          <View style={styles.viewWrapper}>
-            <LoadingCircle size="large" color="#6060dd" />
-          </View>
-        }
-      >
+      {isReady ? (
         <SearchIdList />
-      </Suspense>
+      ) : (
+        <View style={styles.viewWrapper}>
+          <LoadingCircle size="large" color="#6060dd" />
+        </View>
+      )}
     </Layout.default>
   );
 };

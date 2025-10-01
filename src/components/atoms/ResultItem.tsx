@@ -41,7 +41,7 @@ const ResultItem = ({ data }: { data: TPillData }) => {
               }}
               contentFit="contain"
               transition={100}
-              cachePolicy="memory-disk"
+              cachePolicy="memory"
               priority="high"
               recyclingKey={data.ITEM_SEQ}
             />

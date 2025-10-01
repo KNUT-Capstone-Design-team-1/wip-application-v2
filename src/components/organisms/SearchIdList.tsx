@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
   },
   error: { borderColor: '#f00' },
   resetButton: {
+    alignItems: 'center',
     backgroundColor: '#fff',
     borderColor: '#cacaca',
     borderRadius: 8,
