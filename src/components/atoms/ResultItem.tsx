@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { font, os } from '@/style/font';
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { useNavigation } from '@react-navigation/native';
@@ -37,11 +38,12 @@ const ResultItem = ({ data }: { data: TPillData }) => {
               style={styles.pillImg}
               source={{
                 uri: data.ITEM_IMAGE,
-                cache: 'force-cache',
               }}
-              resizeMode="contain"
-              fadeDuration={100}
-              progressiveRenderingEnabled={true}
+              contentFit="contain"
+              transition={100}
+              cachePolicy="memory-disk"
+              priority="high"
+              recyclingKey={data.ITEM_SEQ}
             />
           )}
         </View>

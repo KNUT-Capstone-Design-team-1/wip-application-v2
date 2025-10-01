@@ -1,6 +1,7 @@
 import Layout from '@/components/organisms/Layout';
 import { useCallback, useEffect, useReducer } from 'react';
-import { Image, StyleSheet, Text, View, BackHandler } from 'react-native';
+import { StyleSheet, Text, View, BackHandler } from 'react-native';
+import { Image } from 'expo-image';
 import { font, os } from '@/style/font';
 import * as Progress from 'react-native-progress';
 import { DBResClient } from '@/api/client/DBResClient';
@@ -185,6 +186,7 @@ const UpdateDB = (): React.JSX.Element => {
           <Image
             style={styles.logo}
             source={require('@assets/images/logo_default.png')}
+            contentFit="contain"
           />
         </View>
         <View style={styles.infoViewWrapper}>
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
   },
   infoViewWrapper: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   initViewWrapper: { flex: 1 },
-  logo: { height: 150, resizeMode: 'contain', width: 150 },
+  logo: { height: 150, width: 150 },
   logoViewWrapper: { alignItems: 'center', flex: 1, justifyContent: 'center' },
 });
 

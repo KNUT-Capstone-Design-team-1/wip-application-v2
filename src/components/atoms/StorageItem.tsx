@@ -1,7 +1,8 @@
 import Button from '@/components/atoms/Button';
 import { windowWidth } from '@/components/organisms/Layout';
 import { font, os } from '@/style/font';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import DeleteSvg from '@assets/svgs/exit.svg';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +10,10 @@ import { useAlert } from '@/hooks/useAlert';
 import { usePillBox } from '@/hooks/usePillBox';
 import { IStorageItemProps } from '@/types/atoms.type';
 
-const StorageItem = ({ data, refresh }: IStorageItemProps): React.JSX.Element => {
+const StorageItem = ({
+  data,
+  refresh,
+}: IStorageItemProps): React.JSX.Element => {
   const nav: any = useNavigation();
   const { showAlert } = useAlert();
   const { delPill } = usePillBox();
@@ -109,8 +113,9 @@ const StorageItem = ({ data, refresh }: IStorageItemProps): React.JSX.Element =>
           {!!data.ITEM_IMAGE && (
             <Image
               style={styles.pillImg}
-              source={{ uri: data.ITEM_IMAGE, cache: 'only-if-cached' }}
-              resizeMode="contain"
+              source={{ uri: data.ITEM_IMAGE }}
+              contentFit="contain"
+              cachePolicy="disk"
             />
           )}
         </View>

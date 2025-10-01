@@ -1,4 +1,5 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import TouchableScale, {
   TouchableScaleProps,
 } from 'react-native-touchable-scale';
@@ -20,7 +21,11 @@ const Button = {
       </View>
     );
   },
-  imgInButton: ({ children, src, ...props }: TouchableScaleProps & { src: string }) => {
+  imgInButton: ({
+    children,
+    src,
+    ...props
+  }: TouchableScaleProps & { src: string }) => {
     return (
       <TouchableScale
         onPress={props.onPress}
@@ -33,7 +38,7 @@ const Button = {
         <Image
           source={{ uri: src }}
           style={{ width: 30, height: 30, marginBottom: 4 }}
-          resizeMode="contain"
+          contentFit="contain"
         />
         {children}
       </TouchableScale>
