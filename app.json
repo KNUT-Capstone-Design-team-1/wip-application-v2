@@ -29,7 +29,7 @@
       },
       "edgeToEdgeEnabled": false,
       "package": "com.mbm.whatispill",
-      "versionCode": 17,
+      "versionCode": 18,
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.INTERNET",
