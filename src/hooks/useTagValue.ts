@@ -1,7 +1,6 @@
 import { useMarkStore } from '@store/markStore';
 
 export const useTagValue = (title: string, value: string) => {
-  console.log(title, value);
   const { selectedMarkTitle } = useMarkStore();
 
   if (title === 'MARK_CODE') {
