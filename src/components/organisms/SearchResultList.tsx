@@ -10,10 +10,18 @@ import ResultItem from '@/components/atoms/ResultItem';
 import { useGetPillData } from '@/hooks/useGetPillData';
 import { useCallback } from 'react';
 import { TPillData } from '@/api/db/models/pillData';
+import { useSearchIdStore } from '@/store/searchIdStore';
+import Button from '@components/atoms/Button';
+import { useNavigation } from '@react-navigation/native';
+import TagWrapper from '@components/molecules/TagWrapper';
+import { searchResultTagData } from '@utils/tag';
 
 //TODO: flatlist 메모리 최적화 필요
 const SearchResultList = (): React.JSX.Element => {
   const { paginatedData, totalSize, loadData } = useGetPillData(20);
+  const { getSearchIdItems } = useSearchIdStore();
+  const nav = useNavigation<any>();
+  const searchItems = searchResultTagData(Object.entries(getSearchIdItems()));
 
   // keyExtractor를 useCallback으로 메모이제이션
   const keyExtractor = useCallback((item: TPillData) => item.ITEM_SEQ, []);
@@ -31,6 +39,21 @@ const SearchResultList = (): React.JSX.Element => {
     <View style={styles.viewWrapper}>
       <View style={styles.noteWrapper}>
         <Text style={styles.note}>총 {totalSize}개의 검색 결과입니다.</Text>
+      </View>
+      {/* 재검색 버튼 */}
+      <View style={styles.searchedFilterWrapper}>
+        <TagWrapper tagList={searchItems} wrapperWidth={'80%'} />
+        <Button.scale
+          onPress={() => {
+            nav.navigate('알약 식별 검색');
+          }}
+        >
+          <View style={styles.reSearch}>
+            {/* loading svg로 변경해서 넣기 */}
+            {/*<SearchSvg width={14} height={14} color={'#fff'} />*/}
+            <Text style={styles.buttonText}>재검색</Text>
+          </View>
+        </Button.scale>
       </View>
       <FlashList
         data={paginatedData}
