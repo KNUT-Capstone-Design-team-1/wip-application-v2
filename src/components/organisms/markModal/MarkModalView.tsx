@@ -7,12 +7,14 @@ import {
   StyleSheet,
   Keyboard,
   ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+  TouchableOpacity, Dimensions
+} from "react-native";
 import SearchInputAndButton from '@components/molecules/SearchInputAndButton';
 import ModalPageNation from '@components/molecules/ModalPageNation';
 import MarkList from '@components/molecules/MarkList';
 import { IMarkModalViewProps } from '@/types/organisms.type';
+
+const { width, height } = Dimensions.get('window');
 
 const MarkModalView = ({
   loading,
@@ -99,10 +101,11 @@ const styles = StyleSheet.create({
     },
     modalBox: {
       backgroundColor: '#fff',
+      overflow: 'scroll',
       padding: 20,
       borderRadius: 16,
-      width: '92%',
-      height: '65%',
+      width: Math.min(width * 0.92, 400),  // 최대 400px
+      height: Math.min(height * 0.65, 600), // 최대 600px
       elevation: 6,
     },
     text: {

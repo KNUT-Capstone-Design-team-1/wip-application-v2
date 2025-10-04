@@ -76,3 +76,9 @@ export interface IStorageItemProps {
   data: any;
   refresh: any;
 }
+
+// Tag.tsx
+export interface ITagProps {
+  title: string;
+  value: string;
+}
