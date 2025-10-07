@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Modal } from 'react-native';
 import { Image } from 'expo-image';
 import { font, os } from '@/style/font';
 import Button from '@components/atoms/Button';
-import MarkModal from '@components/organisms/markModal/index';
+import MarkModal from '@components/organisms/markModal/MarkModal';
 import { useMarkStore } from '@store/markStore';
 import { useSearchIdStore } from '@/store/searchIdStore';
 
@@ -88,16 +88,16 @@ const styles = StyleSheet.create({
     zIndex: 5,
     right: '-5%',
     top: -10,
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#999',
     borderWidth: 2,
     borderColor: '#999',
     borderRadius: 12,
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     textAlign: 'center',
-    lineHeight: 10,
+    lineHeight: 14,
     backgroundColor: '#fff',
   },
   markResult: {
