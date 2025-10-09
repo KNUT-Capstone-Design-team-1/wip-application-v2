@@ -4,30 +4,29 @@ import { INoticeData } from '@/types/TNoticeType';
 interface IInitialNotice {
   noticeData: INoticeData[];
   noticeDetail: INoticeData;
-  mainBottomSheetState: boolean;
+  mainBottomSheetData: INoticeData[];
 }
 
 interface INoticeActions {
   actions: {
     setNoticeData: (notices: INoticeData[]) => void;
+    setMainBottomSheetData: (state: INoticeData[]) => void;
     setNoticeDetail: (notice: INoticeData) => void;
-    setMainButtonSheetState: (state: boolean) => void;
   };
 }
 
 const initialNotice: IInitialNotice = {
   noticeData: [],
+  mainBottomSheetData: [],
   noticeDetail: {} as INoticeData,
-  mainBottomSheetState: false,
 };
 
-// export const useCountStore = create<State & Actions>(set => ({
 export const useNoticeStore = create<IInitialNotice & INoticeActions>(set => ({
     ...initialNotice,
     actions: {
       setNoticeData: (noticeData) => set({ noticeData: noticeData }),
+      setMainBottomSheetData: (mainBottomSheetData) =>
+        set({ mainBottomSheetData: mainBottomSheetData }),
       setNoticeDetail: (noticeDetail) => set({ noticeDetail: noticeDetail }),
-      setMainButtonSheetState: (mainBottomSheetState) =>
-        set({ mainBottomSheetState: mainBottomSheetState }),
     },
 }));
