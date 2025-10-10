@@ -25,7 +25,23 @@ export const useNotices = () => {
     const allNotices = notices[0].results;
     setNoticeData(allNotices);
 
-    return allNotices;
+    // notice 데이터들을 sort 하는 기능
+    return noticeDataSort(allNotices);
+  };
+
+  /* notice 데이터 정렬하는 함수
+   * 1. mustRead가 1인 것을 상위로
+   * 2. 같은 mustRead 내에서는 idx 역순(높은 숫자가 먼저)
+   * */
+  const noticeDataSort = (allNotices: INoticeData[]) => {
+    return allNotices.sort((beforeNoticeData, afterNoticeData) => {
+      // mustRead 우선 정렬 (1이 0보다 앞으로)
+      if (beforeNoticeData.mustRead !== afterNoticeData.mustRead) {
+        return afterNoticeData.mustRead - beforeNoticeData.mustRead;
+      }
+      // mustRead가 같으면 idx 역순 (높은 숫자가 앞으로)
+      return afterNoticeData.idx - beforeNoticeData.idx;
+    });
   };
 
   // 공지사항 상세 데이터 가져오는 함수
