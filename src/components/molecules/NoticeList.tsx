@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { INoticeData } from '@/types/TNoticeType';
-import NoticeData from '@components/atoms/NoticeData';
+import { INoticeListProps } from '@/types/atoms.type';
+import NoticeItem from '@components/atoms/NoticeItem';
 
-const NoticeList = ({ noticeData }: { noticeData: INoticeData[] }) => {
+const NoticeList = ({ noticeData }: INoticeListProps) => {
   return (
     <View style={styles.noticeListWrapper}>
       {noticeData.map((notice: INoticeData, index: number) => {
         return (
           <View key={index}>
-            <NoticeData noticeData={notice} />
+            <NoticeItem noticeData={notice} />
           </View>
         );
       })}

@@ -1,18 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { INoticeData } from '@/types/TNoticeType';
 import { useNavigation } from '@react-navigation/native';
+import { INoticeItemProps } from '@/types/atoms.type';
 
-interface NoticeDataProps {
-  noticeData: INoticeData;
-}
-
-const NoticeData = ({ noticeData }: NoticeDataProps) => {
+const NoticeItem = ({ noticeData }: INoticeItemProps) => {
   const navigation: any = useNavigation();
 
   const handlePress = () => {
     // 공지사항 상세 화면으로 이동
-    navigation.navigate('NoticeDetail', { notice: noticeData });
+    navigation.navigate('공지사항 상세', { notice: noticeData });
   };
 
   return (
@@ -63,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NoticeData;
+export default NoticeItem;
