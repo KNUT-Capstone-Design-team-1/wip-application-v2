@@ -15,7 +15,11 @@ const NoticeItem = ({ noticeData }: INoticeItemProps) => {
     <TouchableOpacity style={styles.noticeDataWrapper} onPress={handlePress}>
       <View>
         <Text style={styles.noticeTitle}>{noticeData.title}</Text>
-        <Text style={styles.noticeDate}>{noticeData.createDate}</Text>
+        <Text style={styles.noticeDate}>
+          {noticeData.updateDate
+            ? noticeData.createDate + ' (수정)'
+            : noticeData.createDate}
+        </Text>
       </View>
       {noticeData.mustRead === 1 && (
         <View style={styles.badge}>

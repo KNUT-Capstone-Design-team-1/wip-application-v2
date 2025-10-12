@@ -10,7 +10,14 @@ const NoticeDetailContent = ({
   return (
     <View style={styles.noticeDetailWrapper}>
       <Text style={styles.noticeTitle}>{noticeDetailContent.title}</Text>
-      <Text style={styles.noticeDate}>{noticeDetailContent.createDate}</Text>
+      <View style={styles.noticeDateWrapper}>
+        <Text
+          style={styles.noticeDate}
+        >{`등록일 : ${noticeDetailContent.createDate}`}</Text>
+        <Text
+          style={styles.noticeDate}
+        >{`수정일 : ${noticeDetailContent.updateDate}`}</Text>
+      </View>
       <View style={styles.hr} />
       <Text style={styles.noticeContent}>
         {noticeDetailContent.contents ?? '내용이 없습니다.'}
@@ -29,6 +36,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 8,
     color: '#333',
+  },
+  noticeDateWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   noticeDate: {
     fontSize: 12,
