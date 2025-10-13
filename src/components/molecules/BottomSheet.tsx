@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { INoticeData } from '@/types/TNoticeType';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -20,6 +21,7 @@ interface BottomSheetProps {
 const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const { moveToDetailContent } = useBottomSheet();
 
   useEffect(() => {
     // 모달 열릴 때 위로 슬라이드
@@ -89,7 +91,12 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
           </View>
           <Text style={styles.title}>{currentNotice.title}</Text>
           <Text style={styles.contents}>{currentNotice.contents}</Text>
-          <Text style={styles.detailButton}>자세히 보기</Text>
+          <Text
+            onPress={() => moveToDetailContent(data[currentIndex])}
+            style={styles.detailButton}
+          >
+            자세히 보기
+          </Text>
         </View>
         <View style={styles.bottomSheetControl}>
           <TouchableOpacity onPress={handleNeverShowAgain}>

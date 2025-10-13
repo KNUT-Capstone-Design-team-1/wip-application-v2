@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { INoticeData } from '@/types/TNoticeType';
 
 const HIDE_NOTICE_KEY = 'hideNoticeUntil';
 
 export const useBottomSheet = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const navigation: any = useNavigation();
 
   // 다신 보지 않기 처리
   const handleNeverShowAgain = async () => {
@@ -36,10 +39,15 @@ export const useBottomSheet = () => {
     }
   };
 
+  const moveToDetailContent = (noticeData: INoticeData) => {
+    navigation.navigate('공지사항 상세', { notice: noticeData });
+  };
+
   return {
     isVisible,
     handleClose,
     handleNeverShowAgain,
     checkShouldShow,
+    moveToDetailContent,
   };
 };
