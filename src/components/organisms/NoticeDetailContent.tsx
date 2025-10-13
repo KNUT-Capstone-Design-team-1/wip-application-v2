@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { INoticeData } from '@/types/TNoticeType';
+import RenderNoticeContent from '@components/atoms/RenderNoticeContent';
 
 const NoticeDetailContent = ({
   noticeDetailContent,
@@ -20,7 +21,12 @@ const NoticeDetailContent = ({
       </View>
       <View style={styles.hr} />
       <Text style={styles.noticeContent}>
-        {noticeDetailContent.contents ?? '내용이 없습니다.'}
+        {
+          noticeDetailContent.contents
+            ? <RenderNoticeContent contents={noticeDetailContent.contents} />
+            : '내용이 없습니다.'
+        }
+        {/*{noticeDetailContent.contents ?? '내용이 없습니다.'}*/}
       </Text>
     </View>
   );
