@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRoute } from '@react-navigation/native';
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import Layout from '@components/organisms/Layout';
 import NoticeDetailContent from '@components/organisms/NoticeDetailContent';
 
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 12,
+    marginBottom: 20,
   },
 });
 
