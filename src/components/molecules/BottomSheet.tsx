@@ -66,6 +66,18 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
 
   const currentNotice = data[currentIndex];
 
+  // base64 이미지 제거 및 텍스트 길이 제한 함수
+  const formatContents = (contents: string) => {
+    // base64 이미지 패턴 제거 (data:image/... 형태)
+    const textWithoutBase64 = contents.replace(/data:image\/[^;]+;base64,[^\s"]*/g, '');
+
+    // 20글자 넘으면 ... 처리
+    if (textWithoutBase64.length > 20) {
+      return textWithoutBase64.substring(0, 20) + '...';
+    }
+    return textWithoutBase64;
+  };
+
   return (
     <View style={styles.bottomSheetContainer}>
       <View style={styles.darkBackground} />
@@ -90,7 +102,7 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
             </TouchableOpacity>
           </View>
           <Text style={styles.title}>{currentNotice.title}</Text>
-          <Text style={styles.contents}>{currentNotice.contents}</Text>
+          <Text style={styles.contents}>{formatContents(currentNotice.contents)}</Text>
           <Text
             onPress={() => moveToDetailContent(data[currentIndex])}
             style={styles.detailButton}
