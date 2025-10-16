@@ -39,8 +39,12 @@ export const useBottomSheet = () => {
     }
   };
 
-  const moveToDetailContent = (noticeData: INoticeData) => {
+  const moveToDetailContent = (
+    noticeData: INoticeData,
+    closeFunc: () => void,
+  ) => {
     navigation.navigate('공지사항 상세', { notice: noticeData });
+    closeFunc();
   };
 
   return {
