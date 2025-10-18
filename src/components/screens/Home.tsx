@@ -20,7 +20,8 @@ const Home = (): React.JSX.Element => {
   const setScreen = useScreenStore((state) => state.setScreen);
   const { getNoticeBottomSheet } = useNotices();
   const mainBottomSheetData = useNoticeStore((state) => state.mainBottomSheetData);
-  const { isVisible, handleClose, handleNeverShowAgain, checkShouldShow } = useBottomSheet();
+  const { isVisible, handleClose, handleNeverShowAgain, checkShouldShow } =
+    useBottomSheet();
 
   const handleSetScreen = useCallback(() => {
     setScreen('홈');

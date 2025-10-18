@@ -104,7 +104,7 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
           <Text style={styles.title}>{currentNotice.title}</Text>
           <Text style={styles.contents}>{formatContents(currentNotice.contents)}</Text>
           <Text
-            onPress={() => moveToDetailContent(data[currentIndex], handleClose)}
+            onPress={() => moveToDetailContent(data[currentIndex])}
             style={styles.detailButton}
           >
             자세히 보기
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     width: '100%',
     height: '45%',
-    backgroundColor: '#5451d1',
+    backgroundColor: '#5453c8',
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
   },
