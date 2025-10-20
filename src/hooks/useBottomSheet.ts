@@ -2,12 +2,20 @@ import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { INoticeData } from '@/types/TNoticeType';
+  import { useNoticeStore } from '@store/noticeStore';
+import { useShallow } from 'zustand/react/shallow';
 
 const HIDE_NOTICE_KEY = 'hideNoticeUntil';
 
 export const useBottomSheet = () => {
   const [isVisible, setIsVisible] = useState(false);
   const navigation: any = useNavigation();
+  const [isNoticeViewing, setIsNoticeViewing] = useNoticeStore(
+    useShallow((state) => [
+      state.isDetailViewing,
+      state.actions.setIsDetailViewing,
+    ]),
+  );
 
   // 다신 보지 않기 처리
   const handleNeverShowAgain = async () => {
@@ -24,22 +32,20 @@ export const useBottomSheet = () => {
 
   // 공지사항 표시 가능 여부 확인
   const checkShouldShow = async (hasData: boolean) => {
-    if (!hasData) {
+    if (!hasData || isNoticeViewing) {
       setIsVisible(false);
       return;
     }
 
     const hideUntil = await AsyncStorage.getItem(HIDE_NOTICE_KEY);
     const now = new Date().getTime();
+    const shouldShowBottomSheet = !hideUntil || now > parseInt(hideUntil, 10);
 
-    if (!hideUntil || now > parseInt(hideUntil)) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
+    setIsVisible(shouldShowBottomSheet  );
   };
 
   const moveToDetailContent = (noticeData: INoticeData) => {
+    setIsNoticeViewing(true);
     navigation.navigate('공지사항 상세', { notice: noticeData });
     handleClose();
   };
