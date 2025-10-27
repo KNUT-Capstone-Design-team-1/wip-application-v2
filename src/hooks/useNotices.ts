@@ -18,11 +18,11 @@ export const useNotices = () => {
 
   // 전체 공지사항 데이터 불러와주는 함수
   const getNoticeList = async () => {
-    const notices: INoticeApiResponseItem[] = await apiClient.get(
+    const notices: INoticeApiResponseItem = await apiClient.get(
       `${process.env.EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NOTICES_API_URL}/notices`,
     );
 
-    const allNotices = notices[0].results;
+    const allNotices = notices.notices;
     setNoticeData(allNotices);
 
     // notice 데이터들을 sort 하는 기능
