@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import dayjs from 'dayjs';
 import { INoticeData } from '@/types/TNoticeType';
 import RenderNoticeContent from '@components/atoms/RenderNoticeContent';
 
@@ -8,16 +9,26 @@ const NoticeDetailContent = ({
 }: {
   noticeDetailContent: INoticeData;
 }) => {
+  // 분 단위까지 보여지도록
+  const formatDate = (dateString: string) => {
+    return dayjs(dateString).format('YYYY-MM-DD HH:mm');
+  };
+
+  // 생성일, 수정일 다른지 비교
+  const isModified = noticeDetailContent.createDate !== noticeDetailContent.updateDate;
+
   return (
     <View style={styles.noticeDetailWrapper}>
       <Text style={styles.noticeTitle}>{noticeDetailContent.title}</Text>
       <View style={styles.noticeDateWrapper}>
         <Text
           style={styles.noticeDate}
-        >{`등록일 : ${noticeDetailContent.createDate}`}</Text>
-        <Text
-          style={styles.noticeDate}
-        >{`수정일 : ${noticeDetailContent.updateDate}`}</Text>
+        >{`등록일 : ${formatDate(noticeDetailContent.createDate)}`}</Text>
+        {isModified && (
+          <Text
+            style={styles.noticeDate}
+          >{`수정일 : ${formatDate(noticeDetailContent.updateDate)}`}</Text>
+        )}
       </View>
       <View style={styles.hr} />
       <Text style={styles.noticeContent}>
