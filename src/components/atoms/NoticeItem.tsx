@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { INoticeItemProps } from '@/types/atoms.type';
+import { formatDate, isModified } from '@/utils/dateUtils';
 
 const NoticeItem = ({ noticeData }: INoticeItemProps) => {
   const navigation: any = useNavigation();
@@ -11,14 +12,18 @@ const NoticeItem = ({ noticeData }: INoticeItemProps) => {
     navigation.navigate('공지사항 상세', { notice: noticeData });
   };
 
+  const isContentModified = isModified(
+    noticeData.createDate,
+    noticeData.updateDate,
+  );
+
   return (
     <TouchableOpacity style={styles.noticeDataWrapper} onPress={handlePress}>
       <View>
         <Text style={styles.noticeTitle}>{noticeData.title}</Text>
         <Text style={styles.noticeDate}>
-          {noticeData.updateDate
-            ? noticeData.createDate + ' (수정)'
-            : noticeData.createDate}
+          {formatDate(noticeData.createDate)}
+          {isContentModified && ' (수정)'}
         </Text>
       </View>
       {noticeData.mustRead === 1 && (

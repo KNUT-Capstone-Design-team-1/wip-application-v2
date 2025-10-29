@@ -1,21 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import dayjs from 'dayjs';
 import { INoticeData } from '@/types/TNoticeType';
 import RenderNoticeContent from '@components/atoms/RenderNoticeContent';
+import { formatDate, isModified } from '@/utils/dateUtils';
 
 const NoticeDetailContent = ({
   noticeDetailContent,
 }: {
   noticeDetailContent: INoticeData;
 }) => {
-  // 분 단위까지 보여지도록
-  const formatDate = (dateString: string) => {
-    return dayjs(dateString).format('YYYY-MM-DD HH:mm');
-  };
-
   // 생성일, 수정일 다른지 비교
-  const isModified = noticeDetailContent.createDate !== noticeDetailContent.updateDate;
+  const isContentModified = isModified(
+    noticeDetailContent.createDate,
+    noticeDetailContent.updateDate,
+  );
 
   return (
     <View style={styles.noticeDetailWrapper}>
@@ -24,7 +22,7 @@ const NoticeDetailContent = ({
         <Text
           style={styles.noticeDate}
         >{`등록일 : ${formatDate(noticeDetailContent.createDate)}`}</Text>
-        {isModified && (
+        {isContentModified && (
           <Text
             style={styles.noticeDate}
           >{`수정일 : ${formatDate(noticeDetailContent.updateDate)}`}</Text>
@@ -67,7 +65,7 @@ const styles = StyleSheet.create({
   hr: {
     height: 1,
     backgroundColor: '#e0e0e0',
-    marginTop: 15,
+    marginTop: 8,
   },
   noticeContent: {
     marginTop: 20,
