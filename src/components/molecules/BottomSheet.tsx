@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Animated,
   Dimensions,
 } from 'react-native';
@@ -80,7 +81,9 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
 
   return (
     <View style={styles.bottomSheetContainer}>
-      <View style={styles.darkBackground} />
+      <TouchableWithoutFeedback onPress={handleClose}>
+        <View style={styles.darkBackground} />
+      </TouchableWithoutFeedback>
       <Animated.View
         style={[
           styles.bottomSheet,
