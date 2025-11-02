@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
   noticeListWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 20,
   },
 });
 
