@@ -104,9 +104,12 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
         ]}
       >
         <View style={styles.navigationContainer}>
-          <Text style={styles.pageIndicator}>
-            {currentIndex + 1} / {data.length}
-          </Text>
+          {data.map((_, index) => (
+            <View
+              key={index}
+              style={[styles.dot, currentIndex === index && styles.activeDot]}
+            />
+          ))}
         </View>
         <FlatList
           ref={flatListRef}
@@ -122,7 +125,19 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
         />
         <TouchableOpacity
           style={styles.detailButton}
-          onPress={() => moveToDetailContent(data[currentIndex])}
+          onPress={() => {
+            // 애니메이션 시작
+            Animated.timing(slideAnim, {
+              toValue: SCREEN_HEIGHT,
+              duration: 300,
+              useNativeDriver: true,
+            }).start(() => {
+              // 애니메이션 완료 후 바텀시트 닫기
+              onClose();
+              // 네비게이션
+              moveToDetailContent(data[currentIndex]);
+            });
+          }}
         >
           <Text style={styles.detailButtonText}>자세히 보기</Text>
         </TouchableOpacity>
@@ -160,7 +175,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 10,
     width: '100%',
-    height: '45%',
+    height: '42%',
     backgroundColor: '#5453c8',
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
@@ -183,13 +198,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 16,
     paddingTop: 20,
+    gap: 8,
   },
-  pageIndicator: {
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: '600',
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  activeDot: {
+    backgroundColor: '#fff',
+    width: 24,
   },
   bottomSheetControl: {
     position: 'absolute',
