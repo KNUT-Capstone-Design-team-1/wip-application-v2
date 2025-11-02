@@ -41,13 +41,14 @@ export const useBottomSheet = () => {
     const now = new Date().getTime();
     const shouldShowBottomSheet = !hideUntil || now > parseInt(hideUntil, 10);
 
-    setIsVisible(shouldShowBottomSheet  );
+    setIsVisible(shouldShowBottomSheet);
   };
 
   const moveToDetailContent = (noticeData: INoticeData) => {
     setIsNoticeViewing(true);
-    navigation.navigate('공지사항 상세', { notice: noticeData });
     handleClose();
+
+    navigation.navigate('공지사항 상세', { notice: noticeData });
   };
 
   return {
