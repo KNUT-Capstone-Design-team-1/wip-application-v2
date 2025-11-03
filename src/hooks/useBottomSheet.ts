@@ -48,7 +48,24 @@ export const useBottomSheet = () => {
     setIsNoticeViewing(true);
     handleClose();
 
-    navigation.navigate('공지사항 상세', { notice: noticeData });
+    // SettingsStack으로 이동하면서 공지사항 상세 화면을 열되,
+    // 뒤로가기 시 공지사항 화면으로 갈 수 있도록 초기 라우트 설정
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: 'HomeStack' },
+        {
+          name: 'SettingsStack',
+          state: {
+            routes: [
+              { name: '공지사항' },
+              { name: '공지사항 상세', params: { notice: noticeData } },
+            ],
+            index: 2,
+          },
+        },
+      ],
+    });
   };
 
   return {
