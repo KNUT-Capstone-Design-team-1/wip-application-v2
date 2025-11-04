@@ -10,10 +10,17 @@ const HIDE_NOTICE_KEY = 'hideNoticeUntil';
 export const useBottomSheet = () => {
   const [isVisible, setIsVisible] = useState(false);
   const navigation: any = useNavigation();
-  const [isNoticeViewing, setIsNoticeViewing] = useNoticeStore(
+  const [
+    isNoticeViewing,
+    setIsNoticeViewing,
+    mainBottomSheetData,
+    isNoticeLoading,
+  ] = useNoticeStore(
     useShallow((state) => [
       state.isDetailViewing,
       state.actions.setIsDetailViewing,
+      state.mainBottomSheetData,
+      state.isNoticeLoading,
     ]),
   );
 
@@ -31,12 +38,29 @@ export const useBottomSheet = () => {
   };
 
   // 공지사항 표시 가능 여부 확인
-  const checkShouldShow = async (hasData: boolean) => {
-    if (!hasData || isNoticeViewing) {
+  const checkShouldShow = async () => {
+    // 이미 상세 보기 중이면 표시 안 함
+    if (isNoticeViewing) {
       setIsVisible(false);
       return;
     }
 
+    // 로딩 중이면 일단 표시 (로딩 스피너를 보여주기 위해)
+    if (isNoticeLoading) {
+      const hideUntil = await AsyncStorage.getItem(HIDE_NOTICE_KEY);
+      const now = new Date().getTime();
+      const shouldShowBottomSheet = !hideUntil || now > parseInt(hideUntil, 10);
+      setIsVisible(shouldShowBottomSheet);
+      return;
+    }
+
+    // 로딩 완료 후 데이터가 없으면 표시 안 함
+    if (!mainBottomSheetData || mainBottomSheetData.length === 0) {
+      setIsVisible(false);
+      return;
+    }
+
+    // 데이터가 있으면 표시 여부 확인
     const hideUntil = await AsyncStorage.getItem(HIDE_NOTICE_KEY);
     const now = new Date().getTime();
     const shouldShowBottomSheet = !hideUntil || now > parseInt(hideUntil, 10);

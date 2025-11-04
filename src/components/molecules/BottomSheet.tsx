@@ -8,9 +8,11 @@ import {
   Animated,
   Dimensions,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { INoticeData } from '@/types/TNoticeType';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
+import { useNoticeStore } from '@store/noticeStore';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -25,6 +27,7 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const flatListRef = useRef<FlatList>(null);
   const { moveToDetailContent } = useBottomSheet();
+  const isNoticeLoading = useNoticeStore((state) => state.isNoticeLoading);
 
   const viewabilityConfig = useRef({
     viewAreaCoveragePercentThreshold: 50,
@@ -45,8 +48,6 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
       friction: 11,
     }).start();
   }, []);
-
-  if (!data || data.length === 0) return null;
 
   const handleClose = () => {
     // 모달 닫힐 때 아래로 슬라이드
@@ -72,7 +73,10 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
   // base64 이미지 제거 및 텍스트 길이 제한 함수
   const formatContents = (contents: string) => {
     // base64 이미지 패턴 제거 (data:image/... 형태)
-    const textWithoutBase64 = contents.replace(/data:image\/[^;]+;base64,[^\s"]*/g, '');
+    const textWithoutBase64 = contents.replace(
+      /data:image\/[^;]+;base64,[^\s"]*/g,
+      '',
+    );
 
     // 100글자 넘으면 ... 처리
     if (textWithoutBase64.length > 20) {
@@ -103,44 +107,57 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
           },
         ]}
       >
-        <View style={styles.navigationContainer}>
-          {data.map((_, index) => (
-            <View
-              key={index}
-              style={[styles.dot, currentIndex === index && styles.activeDot]}
+        {isNoticeLoading ? (
+          // 로딩 중일 때
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#fff" />
+          </View>
+        ) : (
+          // 데이터 로딩 완료
+          <>
+            <View style={styles.navigationContainer}>
+              {data.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentIndex === index && styles.activeDot,
+                  ]}
+                />
+              ))}
+            </View>
+            <FlatList
+              ref={flatListRef}
+              data={data}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={renderItem}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              style={styles.flatList}
             />
-          ))}
-        </View>
-        <FlatList
-          ref={flatListRef}
-          data={data}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={renderItem}
-          onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={viewabilityConfig}
-          style={styles.flatList}
-        />
-        <TouchableOpacity
-          style={styles.detailButton}
-          onPress={() => {
-            // 애니메이션 시작
-            Animated.timing(slideAnim, {
-              toValue: SCREEN_HEIGHT,
-              duration: 300,
-              useNativeDriver: true,
-            }).start(() => {
-              // 애니메이션 완료 후 바텀시트 닫기
-              onClose();
-              // 네비게이션
-              moveToDetailContent(data[currentIndex]);
-            });
-          }}
-        >
-          <Text style={styles.detailButtonText}>자세히 보기</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.detailButton}
+              onPress={() => {
+                // 애니메이션 시작
+                Animated.timing(slideAnim, {
+                  toValue: SCREEN_HEIGHT,
+                  duration: 300,
+                  useNativeDriver: true,
+                }).start(() => {
+                  // 애니메이션 완료 후 바텀시트 닫기
+                  onClose();
+                  // 네비게이션
+                  moveToDetailContent(data[currentIndex]);
+                });
+              }}
+            >
+              <Text style={styles.detailButtonText}>자세히 보기</Text>
+            </TouchableOpacity>
+          </>
+        )}
         <View style={styles.bottomSheetControl}>
           <TouchableOpacity onPress={handleNeverShowAgain}>
             <Text style={styles.sheetCloseToday}>하루 동안 보지 않기</Text>
@@ -248,6 +265,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#fff',
     paddingBottom: 2,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
   },
 });
 

@@ -20,6 +20,7 @@ const Home = (): React.JSX.Element => {
   const setScreen = useScreenStore((state) => state.setScreen);
   const { getNoticeBottomSheet } = useNotices();
   const mainBottomSheetData = useNoticeStore((state) => state.mainBottomSheetData);
+  const isNoticeLoading = useNoticeStore((state) => state.isNoticeLoading);
   const { isVisible, handleClose, handleNeverShowAgain, checkShouldShow } =
     useBottomSheet();
 
@@ -32,9 +33,10 @@ const Home = (): React.JSX.Element => {
     getNoticeBottomSheet();
   }, []);
 
+  // 로딩 상태가 변경될 때마다 바텀시트 표시 여부 확인
   useEffect(() => {
-    checkShouldShow(mainBottomSheetData && mainBottomSheetData.length > 0);
-  }, [mainBottomSheetData]);
+    checkShouldShow();
+  }, [isNoticeLoading, mainBottomSheetData]);
 
   useEffect(() => {
     nav.addListener('focus', () => handleSetScreen());
@@ -52,30 +54,32 @@ const Home = (): React.JSX.Element => {
   }, [handleSetScreen, nav]);
 
   return (
-    <Layout.default>
-      <View style={styles.homeViewWrapper}>
-        <View style={styles.viewWrapper}>
-          {/* 정보 업데이트 날짜 뷰 */}
-          <UpdateText />
-          {/* 알약 검색 버튼 */}
-          <SearchButtonList />
-          {/* 최근 조회 알약 */}
-          <LastSearchPill />
-          {/* 메뉴 리스트 */}
-          <MenuList />
-          {/* 복용법 */}
-          <TakeGuide />
-          {/* 바텀 시트 */}
-          <Modal visible={isVisible} transparent={true} animationType="fade">
-            <BottomSheet
-              data={mainBottomSheetData}
-              onClose={handleClose}
-              onNeverShowAgain={handleNeverShowAgain}
-            />
-          </Modal>
+    <>
+      <Layout.default>
+        <View style={styles.homeViewWrapper}>
+          <View style={styles.viewWrapper}>
+            {/* 정보 업데이트 날짜 뷰 */}
+            <UpdateText />
+            {/* 알약 검색 버튼 */}
+            <SearchButtonList />
+            {/* 최근 조회 알약 */}
+            <LastSearchPill />
+            {/* 메뉴 리스트 */}
+            <MenuList />
+            {/* 복용법 */}
+            <TakeGuide />
+          </View>
         </View>
-      </View>
-    </Layout.default>
+      </Layout.default>
+      {/* 바텀 시트 */}
+      <Modal visible={isVisible} transparent={true} animationType="fade">
+        <BottomSheet
+          data={mainBottomSheetData}
+          onClose={handleClose}
+          onNeverShowAgain={handleNeverShowAgain}
+        />
+      </Modal>
+    </>
   );
 };
 

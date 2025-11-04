@@ -6,6 +6,7 @@ interface IInitialNotice {
   noticeDetail: INoticeData;
   mainBottomSheetData: INoticeData[];
   isDetailViewing: boolean;
+  isNoticeLoading: boolean;
 }
 
 interface INoticeActions {
@@ -14,6 +15,7 @@ interface INoticeActions {
     setMainBottomSheetData: (state: INoticeData[]) => void;
     setNoticeDetail: (notice: INoticeData) => void;
     setIsDetailViewing: (viewingState: boolean) => void;
+    setIsNoticeLoading: (loading: boolean) => void;
   };
 }
 
@@ -22,6 +24,7 @@ const initialNotice: IInitialNotice = {
   mainBottomSheetData: [],
   noticeDetail: {} as INoticeData,
   isDetailViewing: false,
+  isNoticeLoading: true,
 };
 
 export const useNoticeStore = create<IInitialNotice & INoticeActions>(set => ({
@@ -32,5 +35,6 @@ export const useNoticeStore = create<IInitialNotice & INoticeActions>(set => ({
         set({ mainBottomSheetData: mainBottomSheetData }),
       setNoticeDetail: (noticeDetail) => set({ noticeDetail: noticeDetail }),
       setIsDetailViewing: (viewingState: boolean) => set({ isDetailViewing: viewingState }),
+      setIsNoticeLoading: (loading: boolean) => set({ isNoticeLoading: loading }),
     },
 }));
