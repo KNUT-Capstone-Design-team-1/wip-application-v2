@@ -5,7 +5,7 @@ import LastSearchPill from '@/components/organisms/LastSearchPill';
 import MenuList from '@/components/organisms/MenuList';
 import TakeGuide from '@/components/organisms/TakeGuide';
 import BottomSheet from '@/components/molecules/BottomSheet';
-import { View, StyleSheet, BackHandler, Modal } from "react-native";
+import { View, StyleSheet, BackHandler, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { gstyles } from '@/style/globalStyle';
 import Layout from '@/components/organisms/Layout';
@@ -43,6 +43,12 @@ const Home = (): React.JSX.Element => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
+        // 바텀시트가 열려있으면 바텀시트를 닫고, 앱 종료는 막음
+        if (isVisible) {
+          handleClose();
+          return true;
+        }
+        // 바텀시트가 닫혀있으면 앱 종료
         exitApp();
         return true;
       },
@@ -51,7 +57,7 @@ const Home = (): React.JSX.Element => {
       nav.removeListener('focus', () => handleSetScreen());
       backHandler.remove();
     };
-  }, [handleSetScreen, nav]);
+  }, [handleSetScreen, nav, isVisible, handleClose]);
 
   return (
     <>
@@ -72,7 +78,12 @@ const Home = (): React.JSX.Element => {
         </View>
       </Layout.default>
       {/* 바텀 시트 */}
-      <Modal visible={isVisible} transparent={true} animationType="fade">
+      <Modal
+        visible={isVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleClose}
+      >
         <BottomSheet
           data={mainBottomSheetData}
           onClose={handleClose}

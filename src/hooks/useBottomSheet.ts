@@ -27,6 +27,7 @@ export const useBottomSheet = () => {
   // 하루 보지 않기 처리
   const handleNeverShowAgain = async () => {
     const tomorrow = new Date().getTime() + 24 * 60 * 60 * 1000;
+    // test 용
     // const tomorrow = new Date().getTime() + 20000;
     await AsyncStorage.setItem(HIDE_NOTICE_KEY, tomorrow.toString());
     setIsVisible(false);
