@@ -46,12 +46,9 @@ export const useBottomSheet = () => {
       return;
     }
 
-    // 로딩 중이면 일단 표시 (로딩 스피너를 보여주기 위해)
+    // 로딩 중이면 표시 안 함 (데이터 로딩 완료 후에만 표시)
     if (isNoticeLoading) {
-      const hideUntil = await AsyncStorage.getItem(HIDE_NOTICE_KEY);
-      const now = new Date().getTime();
-      const shouldShowBottomSheet = !hideUntil || now > parseInt(hideUntil, 10);
-      setIsVisible(shouldShowBottomSheet);
+      setIsVisible(false);
       return;
     }
 

@@ -8,11 +8,9 @@ import {
   Animated,
   Dimensions,
   FlatList,
-  ActivityIndicator,
 } from 'react-native';
 import { INoticeData } from '@/types/TNoticeType';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { useNoticeStore } from '@store/noticeStore';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -27,7 +25,6 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const flatListRef = useRef<FlatList>(null);
   const { moveToDetailContent } = useBottomSheet();
-  const isNoticeLoading = useNoticeStore((state) => state.isNoticeLoading);
 
   const viewabilityConfig = useRef({
     viewAreaCoveragePercentThreshold: 50,
@@ -107,57 +104,47 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: BottomSheetProps) => {
           },
         ]}
       >
-        {isNoticeLoading ? (
-          // 로딩 중일 때
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#fff" />
-          </View>
-        ) : (
-          // 데이터 로딩 완료
-          <>
-            <View style={styles.navigationContainer}>
-              {data.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    currentIndex === index && styles.activeDot,
-                  ]}
-                />
-              ))}
-            </View>
-            <FlatList
-              ref={flatListRef}
-              data={data}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={renderItem}
-              onViewableItemsChanged={onViewableItemsChanged}
-              viewabilityConfig={viewabilityConfig}
-              style={styles.flatList}
+        <View style={styles.navigationContainer}>
+          {data.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                currentIndex === index && styles.activeDot,
+              ]}
             />
-            <TouchableOpacity
-              style={styles.detailButton}
-              onPress={() => {
-                // 애니메이션 시작
-                Animated.timing(slideAnim, {
-                  toValue: SCREEN_HEIGHT,
-                  duration: 300,
-                  useNativeDriver: true,
-                }).start(() => {
-                  // 애니메이션 완료 후 바텀시트 닫기
-                  onClose();
-                  // 네비게이션
-                  moveToDetailContent(data[currentIndex]);
-                });
-              }}
-            >
-              <Text style={styles.detailButtonText}>자세히 보기</Text>
-            </TouchableOpacity>
-          </>
-        )}
+          ))}
+        </View>
+        <FlatList
+          ref={flatListRef}
+          data={data}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={renderItem}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          style={styles.flatList}
+        />
+        <TouchableOpacity
+          style={styles.detailButton}
+          onPress={() => {
+            // 애니메이션 시작
+            Animated.timing(slideAnim, {
+              toValue: SCREEN_HEIGHT,
+              duration: 300,
+              useNativeDriver: true,
+            }).start(() => {
+              // 애니메이션 완료 후 바텀시트 닫기
+              onClose();
+              // 네비게이션
+              moveToDetailContent(data[currentIndex]);
+            });
+          }}
+        >
+          <Text style={styles.detailButtonText}>자세히 보기</Text>
+        </TouchableOpacity>
         <View style={styles.bottomSheetControl}>
           <TouchableOpacity onPress={handleNeverShowAgain}>
             <Text style={styles.sheetCloseToday}>하루 동안 보지 않기</Text>
@@ -265,12 +252,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#fff',
     paddingBottom: 2,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 16,
   },
 });
 
