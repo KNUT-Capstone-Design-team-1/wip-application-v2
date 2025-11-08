@@ -30,6 +30,10 @@ const Settings = (): React.JSX.Element => {
     nav.push('이용약관');
   };
 
+  const noticesHandlePress = () => {
+    nav.push('공지사항');
+  };
+
   const handlePressStorageReset = () => {
     showAlert('보관함 초기화', `정말로 보관함을 '초기화'하시겠습니까?`, [
       { text: '취소' },
@@ -70,6 +74,10 @@ const Settings = (): React.JSX.Element => {
         </View>
         <TouchableOpacity style={styles.settingItem} onPress={handlePressTerm}>
           <Text style={styles.settingItemLabel}>이용약관</Text>
+          <ArrowRightSvg style={styles.rightArrow} width={12} height={16} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.settingItem} onPress={noticesHandlePress}>
+          <Text style={styles.settingItemLabel}>공지사항</Text>
           <ArrowRightSvg style={styles.rightArrow} width={12} height={16} />
         </TouchableOpacity>
         <TouchableOpacity

@@ -25,3 +25,25 @@ export interface ISearchInputAndButtonProps {
   };
   buttonClickHandler: () => void;
 }
+
+// PrevNextPagination
+export interface IPrevNextPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPrevious: () => void;
+  onNext: () => void;
+}
+
+export interface IUsePaginationProps<T> {
+  data: T[];
+  itemsPerPage: number;
+}
+
+export interface IUsePaginationReturn<T> {
+  currentPage: number;
+  totalPages: number;
+  currentData: T[];
+  handlePrevious: () => void;
+  handleNext: () => void;
+  goToPage: (page: number) => void;
+}
