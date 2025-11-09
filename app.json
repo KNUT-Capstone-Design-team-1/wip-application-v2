@@ -61,12 +61,6 @@
         }
       ],
       [
-        "react-native-vision-camera",
-        {
-          "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
-        }
-      ],
-      [
         "expo-font",
         {
           "fonts": [

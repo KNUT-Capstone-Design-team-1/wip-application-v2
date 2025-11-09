@@ -1,5 +1,4 @@
 import { Alert, Linking } from 'react-native';
-import { Camera } from 'react-native-vision-camera';
 import {
   getCameraPermissionsAsync,
   requestCameraPermissionsAsync,

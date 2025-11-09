@@ -185,9 +185,9 @@ const SearchCrop = (): React.JSX.Element => {
                 ) : (
                   <View style={styles.emptyImg}>
                     <CameraSvg
-                      width={32}
-                      height={32}
-                      color={'#A5A5A5'}
+                      width={24}
+                      height={24}
+                      color={'#fff'}
                       preserveAspectRatio="xMinYMax"
                     />
                     <Text style={styles.emptyImgText}>카메라</Text>
@@ -199,7 +199,7 @@ const SearchCrop = (): React.JSX.Element => {
                   <ElbumSvg
                     width={20}
                     height={20}
-                    color={'#A5A5A5'}
+                    color={'#7c7c7c'}
                     preserveAspectRatio="xMinYMax"
                   />
                   <Text style={styles.pickButton}>앨범에서 선택하기</Text>
@@ -217,9 +217,9 @@ const SearchCrop = (): React.JSX.Element => {
                 ) : (
                   <View style={styles.emptyImg}>
                     <CameraSvg
-                      width={32}
-                      height={32}
-                      color={'#A5A5A5'}
+                      width={24}
+                      height={24}
+                      color={'#fff'}
                       preserveAspectRatio="xMinYMax"
                     />
                     <Text style={styles.emptyImgText}>카메라</Text>
@@ -231,7 +231,7 @@ const SearchCrop = (): React.JSX.Element => {
                   <ElbumSvg
                     width={20}
                     height={20}
-                    color={'#A5A5A5'}
+                    color={'#7c7c7c'}
                     preserveAspectRatio="xMinYMax"
                   />
                   <Text style={styles.pickButton}>앨범에서 선택하기</Text>
@@ -312,15 +312,15 @@ const styles = StyleSheet.create({
   emptyImg: {
     alignItems: 'center',
     aspectRatio: '1/1',
-    backgroundColor: '#efeff7',
+    backgroundColor: '#7e7e7e',
     borderRadius: 10,
     justifyContent: 'center',
     padding: 14,
     width: '100%',
   },
   emptyImgText: {
-    color: '#A1A1A1',
-    fontFamily: os.font(700, 700),
+    color: '#fff',
+    fontFamily: os.font(500, 500),
     fontSize: font(16),
     includeFontPadding: false,
     marginTop: 6,
@@ -356,11 +356,11 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   pickButton: {
-    color: '#A5A5A5',
+    color: '#7c7c7c',
     fontFamily: os.font(500, 500),
     fontSize: font(14),
     includeFontPadding: false,
-    paddingBottom: 1,
+    paddingBottom: 3,
   },
   pickButtonWrapper: {
     alignItems: 'center',
@@ -369,16 +369,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     paddingHorizontal: 16,
     paddingVertical: 16,
-  },
-  reTryBtn: {
-    alignItems: 'center',
-    backgroundColor: '#6A6A93',
-    borderRadius: 8,
-    flexDirection: 'row',
-    gap: 12,
-    height: '100%',
-    overflow: 'hidden',
-    paddingHorizontal: 32,
   },
   scrollViewWrapper: {
     backgroundColor: '#fff',
