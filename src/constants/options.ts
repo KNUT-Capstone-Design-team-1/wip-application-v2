@@ -1,20 +1,12 @@
-import { Options } from 'react-native-image-crop-picker';
 import { DeviceFilter } from 'react-native-vision-camera';
+import { ImagePickerOptions } from 'expo-image-picker';
 
-export const imgPickerOption: Options = {
-  mediaType: 'photo',
-  cropping: true,
-  height: 640,
-  width: 640,
-  cropperToolbarTitle: '',
-  // For Android
-  cropperActiveWidgetColor: '#7472EB',
-  cropperStatusBarLight: false,
-  cropperToolbarColor: '#000000',
-  cropperToolbarWidgetColor: '#7472EB',
-  // For iOS
-  cropperChooseText: '선택',
-  cropperCancelText: '취소',
+export const imgPickerOption: ImagePickerOptions = {
+  mediaTypes: ['images'],
+  allowsEditing: true,
+  aspect: [1, 1],
+  quality: 1.0,
+  shape: 'rectangle',
 };
 
 export const cameraDeviceOption: DeviceFilter = {

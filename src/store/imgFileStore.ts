@@ -1,9 +1,9 @@
-import { type Image as ImageType } from 'react-native-image-crop-picker';
+import { type ImagePickerAsset } from 'expo-image-picker';
 import { create } from 'zustand';
 
 export type TImgFile = {
-  front: ImageType | null;
-  back: ImageType | null;
+  front: ImagePickerAsset | null;
+  back: ImagePickerAsset | null;
 };
 
 interface IImgFileStore {

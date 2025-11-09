@@ -12,11 +12,7 @@ import {
   Animated,
 } from 'react-native';
 import { getImgPath } from '@/utils/image';
-import {
-  openPicker,
-  clean as cleanPicker,
-  type Image as ImageType,
-} from 'react-native-image-crop-picker';
+import { ImagePickerResult, launchImageLibraryAsync } from 'expo-image-picker';
 import { imgPickerOption } from '@/constants/options';
 import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import CameraSvg from '@assets/svgs/camera.svg';
@@ -92,12 +88,8 @@ const SearchCrop = (): React.JSX.Element => {
   };
 
   const handlePressRePick = async (direction: string) => {
-    const response: ImageType | null = await openPicker(imgPickerOption).catch(
-      (err) => {
-        // when user cancel picker
-        return null;
-      },
-    );
+    const response: ImagePickerResult =
+      await launchImageLibraryAsync(imgPickerOption);
 
     let result: TImgFile;
     if (imgFile) {
@@ -106,8 +98,8 @@ const SearchCrop = (): React.JSX.Element => {
       result = { front: null, back: null };
     }
 
-    if (response) {
-      result[direction as keyof TImgFile] = response;
+    if (response.assets && response.assets.length > 0) {
+      result[direction as keyof TImgFile] = response.assets[0];
       setImgFile(result);
     }
   };
@@ -143,7 +135,6 @@ const SearchCrop = (): React.JSX.Element => {
     downArrowAni();
     noteUpAni();
     noteOpacityAni();
-    cleanPicker();
   }, [downArrowAni, noteOpacityAni, noteUpAni]);
 
   return (
