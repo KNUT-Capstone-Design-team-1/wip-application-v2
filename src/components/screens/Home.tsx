@@ -19,7 +19,9 @@ const Home = (): React.JSX.Element => {
   const nav: any = useNavigation();
   const setScreen = useScreenStore((state) => state.setScreen);
   const { getNoticeBottomSheet } = useNotices();
-  const mainBottomSheetData = useNoticeStore((state) => state.mainBottomSheetData);
+  const mainBottomSheetData = useNoticeStore(
+    (state) => state.mainBottomSheetData,
+  );
   const isNoticeLoading = useNoticeStore((state) => state.isNoticeLoading);
   const { isVisible, handleClose, handleNeverShowAgain, checkShouldShow } =
     useBottomSheet();

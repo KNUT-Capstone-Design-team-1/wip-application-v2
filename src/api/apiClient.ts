@@ -14,16 +14,12 @@ const handleError = (error: unknown): IErrorResponse => {
     return {
       error: true,
       message:
-        err.response?.data?.message ??
-        '데이터 요청 중 오류가 발생했습니다.',
+        err.response?.data?.message ?? '데이터 요청 중 오류가 발생했습니다.',
       status: err.response?.status,
     };
   }
 
-  ToastAndroid.show(
-    `앱 종료 후 다시 실행시켜주세요.`,
-    ToastAndroid.SHORT,
-  );
+  ToastAndroid.show(`앱 종료 후 다시 실행시켜주세요.`, ToastAndroid.SHORT);
 
   return {
     error: true,

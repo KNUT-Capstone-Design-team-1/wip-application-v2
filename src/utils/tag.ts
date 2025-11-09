@@ -57,15 +57,15 @@ export const searchResultTagData = (items: any) => {
 };
 
 const TITLE_MAPPING: Record<string, string> = {
-  'COLOR_CLASS': '색상',  // COLOR_CLASS1, COLOR_CLASS2 모두 매칭
-  'DRUG_SHAPE': '모양',
-  'LINE': '분할선',
-  'MARK_CODE': '마크',
-  'FORM_CODE': '제형',
-  'PRINT_FRONT': '앞면',
-  'PRINT_BACK': '뒷면',
-  'ITEM_NAME': '이름',
-  'ENTP_NAME': '제조사'
+  COLOR_CLASS: '색상', // COLOR_CLASS1, COLOR_CLASS2 모두 매칭
+  DRUG_SHAPE: '모양',
+  LINE: '분할선',
+  MARK_CODE: '마크',
+  FORM_CODE: '제형',
+  PRINT_FRONT: '앞면',
+  PRINT_BACK: '뒷면',
+  ITEM_NAME: '이름',
+  ENTP_NAME: '제조사',
 };
 
 // 매핑된 title 가져오는 함수

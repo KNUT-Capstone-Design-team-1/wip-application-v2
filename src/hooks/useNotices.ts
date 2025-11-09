@@ -84,15 +84,18 @@ export const useNotices = () => {
       const cachedNotices = await getCachedNotices();
       if (cachedNotices) {
         console.log('캐시된 공지사항 데이터 사용');
-        const cachedMustReadNotice = cachedNotices.filter((notice: INoticeData) => {
+        const cachedMustReadNotice = cachedNotices.filter(
+          (notice: INoticeData) => {
             return notice.mustRead === 1;
-        });
+          },
+        );
         setNoticeData(cachedNotices);
         setMainBottomSheetData(cachedMustReadNotice);
         setIsNoticeLoading(false);
 
         // 백그라운드에서 새 데이터 가져오기 (캐시 갱신용)
-        getNoticeList().then((allNotices) => {
+        getNoticeList()
+          .then((allNotices) => {
             cacheNotices(allNotices);
           })
           .catch((error) => {

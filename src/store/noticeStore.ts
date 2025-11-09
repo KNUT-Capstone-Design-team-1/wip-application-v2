@@ -27,14 +27,18 @@ const initialNotice: IInitialNotice = {
   isNoticeLoading: true,
 };
 
-export const useNoticeStore = create<IInitialNotice & INoticeActions>(set => ({
+export const useNoticeStore = create<IInitialNotice & INoticeActions>(
+  (set) => ({
     ...initialNotice,
     actions: {
       setNoticeData: (noticeData) => set({ noticeData: noticeData }),
       setMainBottomSheetData: (mainBottomSheetData) =>
         set({ mainBottomSheetData: mainBottomSheetData }),
       setNoticeDetail: (noticeDetail) => set({ noticeDetail: noticeDetail }),
-      setIsDetailViewing: (viewingState: boolean) => set({ isDetailViewing: viewingState }),
-      setIsNoticeLoading: (loading: boolean) => set({ isNoticeLoading: loading }),
+      setIsDetailViewing: (viewingState: boolean) =>
+        set({ isDetailViewing: viewingState }),
+      setIsNoticeLoading: (loading: boolean) =>
+        set({ isNoticeLoading: loading }),
     },
-}));
+  }),
+);
