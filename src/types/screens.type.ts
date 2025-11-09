@@ -4,9 +4,3 @@ export interface InfoData {
   UD?: string[] | null | undefined;
   NB?: string[] | null | undefined;
 }
-
-// SearchCamera.tsx
-export interface ICameraImg {
-  front: any;
-  back: any;
-}

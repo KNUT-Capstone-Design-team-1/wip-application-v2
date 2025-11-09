@@ -13,11 +13,9 @@ import Button from '@/components/atoms/Button';
 import Layout from '@/components/organisms/Layout';
 import NoteSvg from '@assets/svgs/note.svg';
 import { font, os } from '@/style/font';
-import CameraSvg from '@assets/svgs/camera.svg';
 import { requestCameraPermission } from '@/utils/permission';
 import { useNavigation } from '@react-navigation/native';
 import { shootingGuideData } from '@/constants/guide';
-import ElbumSvg from '@assets/svgs/elbum.svg';
 import { useScreenStore } from '@/store/screen';
 import { useImgFileStore } from '@/store/imgFileStore';
 
@@ -34,6 +32,11 @@ const ShootingGuide = () => {
   }).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
+  // Dot 애니메이션 참조 생성
+  const dotAnimValues = useRef(
+    shootingGuideData.map(() => new Animated.Value(0)),
+  ).current;
+
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       onSlideChange(viewableItems[0].index);
@@ -45,12 +48,24 @@ const ShootingGuide = () => {
 
     setIsAnimating(true);
 
+    // 모든 dot 애니메이션 실행
+    const animationSequence = shootingGuideData.map((_, dotIndex) => {
+      return Animated.timing(dotAnimValues[dotIndex], {
+        toValue: dotIndex === index ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true,
+      });
+    });
+
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 150,
       useNativeDriver: true,
     }).start(() => {
       setCurrentIndex(index);
+
+      // 모든 dot 애니메이션 병렬 실행
+      Animated.parallel(animationSequence).start();
 
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -64,12 +79,8 @@ const ShootingGuide = () => {
 
   const permissionCheck = () => {
     if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
-    requestCameraPermission(true, () => nav.navigate('카메라'));
-  };
-
-  const handlePressImgPicker = () => {
     setImgFile({ front: null, back: null });
-    nav.navigate('알약 촬영');
+    requestCameraPermission(true, () => nav.navigate('알약 촬영'));
   };
 
   const handleSetScreen = useCallback(() => {
@@ -79,6 +90,13 @@ const ShootingGuide = () => {
   useEffect(() => {
     handleSetScreen();
   }, [handleSetScreen]);
+
+  // 초기 dot 애니메이션 값 설정 (첫 번째 dot이 active)
+  useEffect(() => {
+    dotAnimValues.forEach((anim, index) => {
+      anim.setValue(index === 0 ? 1 : 0);
+    });
+  }, []);
 
   return (
     <Layout.default>
@@ -132,31 +150,38 @@ const ShootingGuide = () => {
           </Text>
         </Animated.View>
 
+        <View style={styles.indicatorContainer}>
+          {shootingGuideData.map((_, index) => {
+            const scaleXInterpolation = dotAnimValues[index].interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.4, 1], // 8px -> 20px
+            });
+
+            return (
+              <View key={index} style={styles.dotWrapper}>
+                <Animated.View
+                  style={[
+                    styles.dot,
+                    currentIndex === index && styles.activeDot,
+                    {
+                      transform: [{ scaleX: scaleXInterpolation }],
+                    },
+                  ]}
+                />
+              </View>
+            );
+          })}
+        </View>
+
         <Button.scale
           onPress={() => {
             permissionCheck();
           }}
         >
           <View style={styles.button}>
-            <CameraSvg width={18} height={18} />
-            <Text style={styles.buttonText}>촬영하기</Text>
+            <Text style={styles.buttonText}>확인</Text>
           </View>
         </Button.scale>
-        <Button.scale onPress={handlePressImgPicker}>
-          <View style={styles.albumSelect}>
-            <ElbumSvg width={18} height={18} color={'#fff'} />
-            <Text style={styles.buttonText}>앨범에서 선택</Text>
-          </View>
-        </Button.scale>
-
-        <View style={styles.indicatorContainer}>
-          {shootingGuideData.map((_, index) => (
-            <View
-              key={index}
-              style={[styles.dot, currentIndex === index && styles.activeDot]}
-            />
-          ))}
-        </View>
       </View>
     </Layout.default>
   );
@@ -170,7 +195,8 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     top: -5,
-    width: Dimensions.get('window').width,
+    width: width,
+    paddingBottom: 15 + (Platform.OS === 'ios' ? 28 : 0),
   },
 
   // header
@@ -198,16 +224,25 @@ const styles = StyleSheet.create({
   indicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: -5,
+    marginBottom: 20,
+  },
+  dotWrapper: {
+    width: 8,
+    height: 8,
+    marginHorizontal: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dot: {
     backgroundColor: '#ccc',
     borderRadius: 4,
     height: 8,
-    marginHorizontal: 4,
-    width: 8,
+    width: 20,
   },
-  activeDot: { backgroundColor: '#7472EB' },
+  activeDot: {
+    backgroundColor: '#7472EB',
+  },
 
   slideImg: {
     width: width * 0.5,
@@ -247,29 +282,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#7472EB',
     borderRadius: 8,
     flexDirection: 'row',
-    gap: 8,
-    height: 40,
+    height: 42,
     justifyContent: 'center',
-    top: -10,
-    width: 300,
+    width: width * 0.9,
   },
   buttonText: {
     color: '#fff',
     fontFamily: os.font(500, 500),
-    fontSize: font(15),
+    fontSize: font(16),
+    fontWeight: '700',
     includeFontPadding: false,
     textAlign: 'center',
-  },
-
-  albumSelect: {
-    alignItems: 'center',
-    backgroundColor: '#95937E',
-    borderRadius: 8,
-    flexDirection: 'row',
-    gap: 8,
-    height: 40,
-    justifyContent: 'center',
-    width: 300,
   },
 });
 

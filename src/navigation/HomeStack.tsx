@@ -2,7 +2,6 @@ import Home from '@/components/screens/Home';
 import PillDetail from '@/components/screens/PillDetail';
 import SearchId from '@/components/screens/SearchId';
 import ShootingGuide from '@/components/screens/ShootingGuide';
-import SearchCamera from '@/components/screens/SearchCamera';
 import SearchCrop from '@/components/screens/SearchCrop';
 import SearchResult from '@/components/screens/SearchResult';
 import ScreenOptions from '@/navigation/ScreenOptions';
@@ -33,16 +32,6 @@ const HomeStack: React.FC = () => {
         options={{ headerShown: false }}
       />
       {/* 카메라 화면 */}
-      <Stack.Screen
-        name="카메라"
-        component={SearchCamera}
-        presentation="modal"
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-          detachPreviousScreen: true,
-        }}
-      />
       <Stack.Screen
         name="알약 촬영"
         component={SearchCrop}

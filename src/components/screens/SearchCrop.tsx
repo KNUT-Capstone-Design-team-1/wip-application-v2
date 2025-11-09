@@ -12,15 +12,18 @@ import {
   Animated,
 } from 'react-native';
 import { getImgPath } from '@/utils/image';
-import { ImagePickerResult, launchImageLibraryAsync } from 'expo-image-picker';
+import {
+  ImagePickerResult,
+  launchCameraAsync,
+  launchImageLibraryAsync,
+} from 'expo-image-picker';
 import { imgPickerOption } from '@/constants/options';
-import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import CameraSvg from '@assets/svgs/camera.svg';
+import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import SearchSvg from '@assets/svgs/search.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot from 'react-native-view-shot';
 import Toast from 'react-native-toast-message';
-import { requestCameraPermission } from '@/utils/permission';
 import { useScreenStore } from '@/store/screen';
 import { TImgFile, useImgFileStore } from '@/store/imgFileStore';
 import { useSearchImgStore } from '@/store/searchImgStore';
@@ -82,14 +85,16 @@ const SearchCrop = (): React.JSX.Element => {
     setScreen('알약 검색');
   }, [setScreen]);
 
-  const handlePressRetry = () => {
-    if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
-    requestCameraPermission(true, () => nav.navigate('카메라'));
-  };
-
-  const handlePressRePick = async (direction: string) => {
-    const response: ImagePickerResult =
-      await launchImageLibraryAsync(imgPickerOption);
+  const handlePressRePick = async (
+    direction: string,
+    type: 'camera' | 'album',
+  ) => {
+    let response: ImagePickerResult;
+    if (type === 'camera') {
+      response = await launchCameraAsync(imgPickerOption);
+    } else {
+      response = await launchImageLibraryAsync(imgPickerOption);
+    }
 
     let result: TImgFile;
     if (imgFile) {
@@ -169,7 +174,9 @@ const SearchCrop = (): React.JSX.Element => {
           <View style={styles.cropImgList}>
             <View style={styles.cropImgWrapper}>
               <Text style={styles.labelText}>앞면</Text>
-              <Button.scale onPress={() => handlePressRePick('front')}>
+              <Button.scale
+                onPress={() => handlePressRePick('front', 'camera')}
+              >
                 {imgFile?.front ? (
                   <Image
                     src={getImgPath(imgFile.front)}
@@ -177,13 +184,17 @@ const SearchCrop = (): React.JSX.Element => {
                   />
                 ) : (
                   <View style={styles.emptyImg}>
-                    <Text style={styles.emptyImgText}>
-                      알약의 글자가 보이는 사진을 선택해주세요.
-                    </Text>
+                    <CameraSvg
+                      width={32}
+                      height={32}
+                      color={'#A5A5A5'}
+                      preserveAspectRatio="xMinYMax"
+                    />
+                    <Text style={styles.emptyImgText}>카메라</Text>
                   </View>
                 )}
               </Button.scale>
-              <Button.scale onPress={() => handlePressRePick('front')}>
+              <Button.scale onPress={() => handlePressRePick('front', 'album')}>
                 <View style={styles.pickButtonWrapper}>
                   <ElbumSvg
                     width={20}
@@ -197,7 +208,7 @@ const SearchCrop = (): React.JSX.Element => {
             </View>
             <View style={styles.cropImgWrapper}>
               <Text style={styles.labelText}>뒷면</Text>
-              <Button.scale onPress={() => handlePressRePick('back')}>
+              <Button.scale onPress={() => handlePressRePick('back', 'camera')}>
                 {imgFile?.back ? (
                   <Image
                     src={getImgPath(imgFile.back)}
@@ -205,13 +216,17 @@ const SearchCrop = (): React.JSX.Element => {
                   />
                 ) : (
                   <View style={styles.emptyImg}>
-                    <Text style={styles.emptyImgText}>
-                      알약의 반대 면의 사진을 선택해주세요.
-                    </Text>
+                    <CameraSvg
+                      width={32}
+                      height={32}
+                      color={'#A5A5A5'}
+                      preserveAspectRatio="xMinYMax"
+                    />
+                    <Text style={styles.emptyImgText}>카메라</Text>
                   </View>
                 )}
               </Button.scale>
-              <Button.scale onPress={() => handlePressRePick('back')}>
+              <Button.scale onPress={() => handlePressRePick('back', 'album')}>
                 <View style={styles.pickButtonWrapper}>
                   <ElbumSvg
                     width={20}
@@ -246,20 +261,16 @@ const SearchCrop = (): React.JSX.Element => {
           </Animated.View>
         </View>
         <View style={styles.btnWrapper}>
-          <Button.scale onPress={handlePressRetry}>
-            <View style={styles.reTryBtn}>
-              <CameraSvg
-                width={20}
-                height={20}
-                preserveAspectRatio="xMinYMax"
-              />
-            </View>
-          </Button.scale>
           <Button.scale
             style={styles.searchBtnWrapper}
             onPress={handlePressSearch}
           >
-            <View style={styles.searchBtn}>
+            <View
+              style={[
+                styles.searchBtn,
+                (!imgFile.front || !imgFile.back) && styles.btnDisabled,
+              ]}
+            >
               <SearchSvg
                 width={15}
                 height={15}
@@ -285,6 +296,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   btnWrapper: { flexDirection: 'row', gap: 8, height: 54 },
+  btnDisabled: {
+    backgroundColor: '#A5A5A5',
+  },
   cropImg: { aspectRatio: '1/1', borderRadius: 10, width: '100%' },
   cropImgList: {
     borderColor: '#000000',
@@ -305,10 +319,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   emptyImgText: {
-    color: '#a1a1a1',
-    fontFamily: os.font(400, 400),
-    fontSize: font(14),
+    color: '#A1A1A1',
+    fontFamily: os.font(700, 700),
+    fontSize: font(16),
     includeFontPadding: false,
+    marginTop: 6,
     paddingBottom: 0,
     textAlign: 'center',
     width: '100%',
