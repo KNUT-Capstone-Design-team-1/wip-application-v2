@@ -124,7 +124,7 @@ const SearchCrop = (): React.JSX.Element => {
     if (viewShotRef.current) {
       viewShotRef.current.capture().then((uri: any) => {
         setSearchImage(uri);
-        nav.replace('알약 검색 결과', { data: uri, mode: 1 });
+        nav.navigate('알약 검색 결과', { data: uri, mode: 1 });
       });
     }
   };
