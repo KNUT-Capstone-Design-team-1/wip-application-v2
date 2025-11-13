@@ -27,6 +27,7 @@ import Toast from 'react-native-toast-message';
 import { useScreenStore } from '@/store/screen';
 import { TImgFile, useImgFileStore } from '@/store/imgFileStore';
 import { useSearchImgStore } from '@/store/searchImgStore';
+import { clearImageCache } from '@/utils/cache';
 
 const SearchCrop = (): React.JSX.Element => {
   const nav: any = useNavigation();
@@ -105,6 +106,19 @@ const SearchCrop = (): React.JSX.Element => {
 
     if (response.assets && response.assets.length > 0) {
       result[direction as keyof TImgFile] = response.assets[0];
+
+      // 제외할 파일 URI 수집 (빈 값 제외)
+      const excludeUris: string[] = [];
+      if (result.front?.uri) {
+        excludeUris.push(result.front.uri);
+      }
+      if (result.back?.uri) {
+        excludeUris.push(result.back.uri);
+      }
+
+      // result를 제외한 이미지 캐시 삭제 진행
+      await clearImageCache(excludeUris);
+
       setImgFile(result);
     }
   };
