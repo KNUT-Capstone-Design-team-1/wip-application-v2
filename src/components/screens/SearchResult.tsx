@@ -1,6 +1,5 @@
 import Layout from '@/components/organisms/Layout';
 import SearchResultList from '@/components/organisms/SearchResultList';
-// import { useGetSearchData } from '@/hooks/useGetSearchData';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useScreenStore } from '@/store/screen';
 import { Suspense, useCallback, useEffect, use, useRef } from 'react';
@@ -103,8 +102,8 @@ const SearchDataHandler = () => {
       }
 
       const data: TPillSearchParam = {
-        PRINT_FRONT: '',
-        PRINT_BACK: '',
+        PRINT_FRONT: res.PRINT.join(''),
+        PRINT_BACK: res.PRINT.join(''),
         DRUG_SHAPE: res.SHAPE,
         COLOR_CLASS1: res.COLOR,
         COLOR_CLASS2: res.COLOR,
@@ -142,8 +141,6 @@ const SearchResult = (): React.JSX.Element => {
       unsubscribe();
     };
   }, [handleSetScreen, nav]);
-
-  // useGetSearchData();
 
   return (
     <Layout.default>
