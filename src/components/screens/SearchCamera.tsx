@@ -33,7 +33,7 @@ import { ICameraImg } from '@/types/screens.type';
 import { useSearchCamera } from '@/hooks/useSearchCamera';
 
 // 포커스 UI 가로,세로 크기
-const focusSize = 90;
+const focusSize = 80;
 
 // 진동 옵션
 const options = {
@@ -48,12 +48,13 @@ const SearchCamera = (): React.JSX.Element => {
     cameraRef,
     cameraProps,
     cameraLoading,
+    focusXY,
+    isManualFocus,
     torchInfo,
     focus,
-    focusXY,
+    hideFocusUI,
   } = useSearchCamera();
   const focusScaleAnimation = useRef(new Animated.Value(1.2)).current;
-  const focusOpacityAnimation = useRef(new Animated.Value(1)).current;
   const boxGapAnimation = useRef(new Animated.Value(-60)).current;
   const boxOpacityAnimation = useRef(new Animated.Value(0)).current;
   const guideFrontTopAnimation = useRef(new Animated.Value(-100)).current;
@@ -70,6 +71,7 @@ const SearchCamera = (): React.JSX.Element => {
 
   /** 포커스 크기 축소 애니메이션 */
   const focusScaleAni = useCallback(() => {
+    focusScaleAnimation.setValue(1.2);
     Animated.timing(focusScaleAnimation, {
       toValue: 1,
       delay: 0,
@@ -78,17 +80,6 @@ const SearchCamera = (): React.JSX.Element => {
       useNativeDriver: false,
     }).start();
   }, [focusScaleAnimation]);
-
-  /** 포커스 반투명 애니메이션 */
-  const focusOpacityAni = () => {
-    Animated.timing(focusOpacityAnimation, {
-      toValue: 0.5,
-      delay: 1500,
-      duration: 400,
-      easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
-      useNativeDriver: false,
-    }).start();
-  };
 
   /** 뒷면 이미지 박스 이동 애니메이션 */
   const boxGapAni = useCallback(() => {
@@ -163,31 +154,12 @@ const SearchCamera = (): React.JSX.Element => {
     ).start();
   }, [arrowLoopAnimation]);
 
-  /** 수동 포커스 중지 */
-  const focusOff = useCallback(
-    (bool: boolean) => {
-      const focusInterval = setTimeout(() => {
-        const c = cameraRef.current;
-        if (c == null) return;
-        focus({ x: 0, y: 0 });
-        c.focus({ x: windowWidth / 2, y: windowHeight / 2 });
-      }, 2000);
-
-      if (bool) for (let i = 0; i < Number(focusInterval); i++) clearTimeout(i);
-      else for (let i = 0; i <= Number(focusInterval); i++) clearTimeout(i);
-
-      focusScaleAni();
-    },
-    [focusScaleAni],
-  );
-
   /** 카메라 제스처 관리 */
   const gesture = Gesture.Tap()
     .runOnJS(true)
     .onEnd(({ x, y }) => {
       focus({ x, y });
-      focusOpacityAni();
-      focusOff(true);
+      focusScaleAni();
     });
 
   const handleSetScreen = useCallback(() => {
@@ -289,38 +261,6 @@ const SearchCamera = (): React.JSX.Element => {
   }, [downArrowAni]);
 
   const styles = StyleSheet.create({
-    LineBottom: {
-      backgroundColor: '#ff0c',
-      bottom: 0,
-      height: 8,
-      left: focusSize / 2,
-      position: 'absolute',
-      width: 1,
-    },
-    LineLeft: {
-      backgroundColor: '#ff0c',
-      height: 1,
-      left: 0,
-      position: 'absolute',
-      top: focusSize / 2,
-      width: 8,
-    },
-    LineRight: {
-      backgroundColor: '#ff0c',
-      height: 1.1,
-      position: 'absolute',
-      right: 0,
-      top: focusSize / 2,
-      width: 8,
-    },
-    LineTop: {
-      backgroundColor: '#ff0c',
-      height: 8,
-      left: focusSize / 2,
-      position: 'absolute',
-      top: 0,
-      width: 1,
-    },
     activeBoxWrapper: { borderColor: '#ffffa1', transform: [{ scale: 1 }] },
     backBtn: {
       alignItems: 'center',
@@ -395,18 +335,17 @@ const SearchCamera = (): React.JSX.Element => {
     flashBtnWrapper: { bottom: 10, position: 'absolute', right: 10 },
     focusDetected: {
       borderColor: '#ff0c',
-      borderWidth: 1,
-      display: focusXY.x === 0 && focusXY.y === 0 ? 'none' : 'flex',
+      borderRadius: 100,
+      borderWidth: 1.5,
+      display: isManualFocus ? 'flex' : 'none',
       height: focusSize,
       left: focusXY.x - focusSize / 2,
-      opacity: focusOpacityAnimation,
       pointerEvents: 'none',
       position: 'absolute',
       top: focusXY.y - focusSize / 2,
       transform: [{ scale: focusScaleAnimation }],
       width: focusSize,
     },
-    focusLock: { left: focusSize / 2 - 4, position: 'absolute', top: -20 },
     frame: { aspectRatio: '1/1', backgroundColor: '#000', width: '66%' },
     frameWrapper: {
       alignItems: 'center',
@@ -636,12 +575,7 @@ const SearchCamera = (): React.JSX.Element => {
             height={'100%'}
             style={{ pointerEvents: 'none' }}
           />
-          <Animated.View style={styles.focusDetected}>
-            <View style={styles.LineTop} />
-            <View style={styles.LineLeft} />
-            <View style={styles.LineBottom} />
-            <View style={styles.LineRight} />
-          </Animated.View>
+          <Animated.View style={styles.focusDetected} />
           {torchInfo.isTorchAvailable && (
             <Button.scale
               style={styles.flashBtnWrapper}

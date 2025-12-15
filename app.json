@@ -67,6 +67,12 @@
         }
       ],
       [
+        "expo-sensors",
+        {
+          "motionPermission": "$(PRODUCT_NAME)에서 알약 촬영시 초점 이동을 위해 모션 권한이 필요합니다"
+        }
+      ],
+      [
         "expo-font",
         {
           "fonts": [
