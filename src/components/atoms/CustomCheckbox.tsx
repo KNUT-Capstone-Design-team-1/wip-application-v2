@@ -7,8 +7,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ViewStyle,
-  TextStyle,
 } from 'react-native';
 
 const CustomCheckbox = ({

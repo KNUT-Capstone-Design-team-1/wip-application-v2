@@ -1,9 +1,5 @@
 import Button from '@/components/atoms/Button';
-import Layout, {
-  StatusBarHeight,
-  windowHeight,
-  windowWidth,
-} from '@/components/organisms/Layout';
+import Layout, { StatusBarHeight } from '@/components/organisms/Layout';
 import { font, os } from '@/style/font';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,7 +15,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Camera } from 'react-native-vision-camera';
-import { scheduleOnRN } from 'react-native-worklets';
 import CameraMaskFrame from '@assets/svgs/cameraMaskFrame.svg';
 import FlashOnSvg from '@assets/svgs/flash_on.svg';
 import FlashOffSvg from '@assets/svgs/flash_off.svg';

@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { Platform, StyleSheet, View, InteractionManager } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Layout, {
