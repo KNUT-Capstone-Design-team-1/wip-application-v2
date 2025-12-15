@@ -136,7 +136,13 @@ const Layout = {
     const pressAnimation = useRef(new Animated.Value(0)).current;
     const [backAvaliableState, setBackAvaliableState] = useState<boolean>(true);
 
-    const visibleList: string[] = ['홈', '보관함', '설정', '알약 촬영'];
+    const visibleList: string[] = [
+      '홈',
+      '보관함',
+      '설정',
+      '카메라',
+      '알약 촬영',
+    ];
 
     changeNavigationBarColor('black', false);
 

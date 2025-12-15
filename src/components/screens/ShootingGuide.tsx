@@ -12,6 +12,8 @@ import {
 import Button from '@/components/atoms/Button';
 import Layout from '@/components/organisms/Layout';
 import NoteSvg from '@assets/svgs/note.svg';
+import CameraSvg from '@assets/svgs/camera.svg';
+import ElbumSvg from '@assets/svgs/elbum.svg';
 import { font, os } from '@/style/font';
 import { requestCameraPermission } from '@/utils/permission';
 import { useNavigation } from '@react-navigation/native';
@@ -80,7 +82,12 @@ const ShootingGuide = () => {
   const permissionCheck = () => {
     if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
     setImgFile({ front: null, back: null });
-    requestCameraPermission(true, () => nav.navigate('알약 촬영'));
+    requestCameraPermission(true, () => nav.navigate('카메라'));
+  };
+
+  const handlePressImgPicker = () => {
+    setImgFile({ front: null, back: null });
+    nav.navigate('알약 촬영');
   };
 
   const handleSetScreen = useCallback(() => {
@@ -173,15 +180,24 @@ const ShootingGuide = () => {
           })}
         </View>
 
-        <Button.scale
-          onPress={() => {
-            permissionCheck();
-          }}
-        >
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>확인</Text>
-          </View>
-        </Button.scale>
+        <View style={styles.buttonWrapper}>
+          <Button.scale
+            onPress={() => {
+              permissionCheck();
+            }}
+          >
+            <View style={styles.button}>
+              <CameraSvg width={18} height={18} />
+              <Text style={styles.buttonText}>촬영하기</Text>
+            </View>
+          </Button.scale>
+          <Button.scale onPress={handlePressImgPicker}>
+            <View style={[styles.button, { backgroundColor: '#95937E' }]}>
+              <ElbumSvg width={18} height={18} color={'#fff'} />
+              <Text style={styles.buttonText}>확인</Text>
+            </View>
+          </Button.scale>
+        </View>
       </View>
     </Layout.default>
   );
@@ -276,7 +292,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
   },
-
+  buttonWrapper: {
+    gap: 8,
+  },
   button: {
     alignItems: 'center',
     backgroundColor: '#7472EB',
@@ -284,6 +302,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 42,
     justifyContent: 'center',
+    gap: 8,
     width: width * 0.9,
   },
   buttonText: {

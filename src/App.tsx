@@ -10,6 +10,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { updateCheck } from '@/api/update';
 import UpdateDB from '@/components/screens/UpdateDB';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RealmProvider } from '@realm/react';
 import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
@@ -77,12 +78,14 @@ const App = (): React.JSX.Element => {
   }, [isReady]);
 
   return (
-    <RealmProvider {...dbConfig}>
-      <AlertProvider>
-        {updateDB ? <UpdateDB /> : <Navigation />}
-        <Toast config={toastConfig} position="bottom" bottomOffset={130} />
-      </AlertProvider>
-    </RealmProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <RealmProvider {...dbConfig}>
+        <AlertProvider>
+          {updateDB ? <UpdateDB /> : <Navigation />}
+          <Toast config={toastConfig} position="bottom" bottomOffset={130} />
+        </AlertProvider>
+      </RealmProvider>
+    </GestureHandlerRootView>
   );
 };
 

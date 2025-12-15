@@ -12,11 +12,7 @@ import {
   Animated,
 } from 'react-native';
 import { getImgPath } from '@/utils/image';
-import {
-  ImagePickerResult,
-  launchCameraAsync,
-  launchImageLibraryAsync,
-} from 'expo-image-picker';
+import { ImagePickerResult, launchImageLibraryAsync } from 'expo-image-picker';
 import { imgPickerOption } from '@/constants/options';
 import CameraSvg from '@assets/svgs/camera.svg';
 import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
@@ -28,6 +24,7 @@ import { useScreenStore } from '@/store/screen';
 import { TImgFile, useImgFileStore } from '@/store/imgFileStore';
 import { useSearchImgStore } from '@/store/searchImgStore';
 import { clearImageCache } from '@/utils/cache';
+import { requestCameraPermission } from '@/utils/permission';
 
 const SearchCrop = (): React.JSX.Element => {
   const nav: any = useNavigation();
@@ -86,16 +83,14 @@ const SearchCrop = (): React.JSX.Element => {
     setScreen('알약 검색');
   }, [setScreen]);
 
-  const handlePressRePick = async (
-    direction: string,
-    type: 'camera' | 'album',
-  ) => {
+  const handlePressRetry = () => {
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
+    requestCameraPermission(true, () => nav.navigate('카메라'));
+  };
+
+  const handlePressRePick = async (direction: string) => {
     let response: ImagePickerResult;
-    if (type === 'camera') {
-      response = await launchCameraAsync(imgPickerOption);
-    } else {
-      response = await launchImageLibraryAsync(imgPickerOption);
-    }
+    response = await launchImageLibraryAsync(imgPickerOption);
 
     let result: TImgFile;
     if (imgFile) {
@@ -188,9 +183,7 @@ const SearchCrop = (): React.JSX.Element => {
           <View style={styles.cropImgList}>
             <View style={styles.cropImgWrapper}>
               <Text style={styles.labelText}>앞면</Text>
-              <Button.scale
-                onPress={() => handlePressRePick('front', 'camera')}
-              >
+              <Button.scale onPress={() => handlePressRePick('front')}>
                 {imgFile?.front ? (
                   <Image
                     src={getImgPath(imgFile.front)}
@@ -198,17 +191,16 @@ const SearchCrop = (): React.JSX.Element => {
                   />
                 ) : (
                   <View style={styles.emptyImg}>
-                    <CameraSvg
-                      width={24}
-                      height={24}
-                      color={'#fff'}
-                      preserveAspectRatio="xMinYMax"
-                    />
-                    <Text style={styles.emptyImgText}>카메라</Text>
+                    <Text
+                      style={styles.emptyImgText}
+                      lineBreakStrategyIOS={'hangul-word'}
+                    >
+                      알약의 글자가 보이는 사진을 선택해주세요
+                    </Text>
                   </View>
                 )}
               </Button.scale>
-              <Button.scale onPress={() => handlePressRePick('front', 'album')}>
+              <Button.scale onPress={() => handlePressRePick('front')}>
                 <View style={styles.pickButtonWrapper}>
                   <ElbumSvg
                     width={20}
@@ -222,7 +214,7 @@ const SearchCrop = (): React.JSX.Element => {
             </View>
             <View style={styles.cropImgWrapper}>
               <Text style={styles.labelText}>뒷면</Text>
-              <Button.scale onPress={() => handlePressRePick('back', 'camera')}>
+              <Button.scale onPress={() => handlePressRePick('back')}>
                 {imgFile?.back ? (
                   <Image
                     src={getImgPath(imgFile.back)}
@@ -230,17 +222,16 @@ const SearchCrop = (): React.JSX.Element => {
                   />
                 ) : (
                   <View style={styles.emptyImg}>
-                    <CameraSvg
-                      width={24}
-                      height={24}
-                      color={'#fff'}
-                      preserveAspectRatio="xMinYMax"
-                    />
-                    <Text style={styles.emptyImgText}>카메라</Text>
+                    <Text
+                      style={styles.emptyImgText}
+                      lineBreakStrategyIOS={'hangul-word'}
+                    >
+                      알약 반대면 사진을 선택해주세요
+                    </Text>
                   </View>
                 )}
               </Button.scale>
-              <Button.scale onPress={() => handlePressRePick('back', 'album')}>
+              <Button.scale onPress={() => handlePressRePick('back')}>
                 <View style={styles.pickButtonWrapper}>
                   <ElbumSvg
                     width={20}
@@ -275,6 +266,15 @@ const SearchCrop = (): React.JSX.Element => {
           </Animated.View>
         </View>
         <View style={styles.btnWrapper}>
+          <Button.scale onPress={handlePressRetry}>
+            <View style={styles.reTryBtn}>
+              <CameraSvg
+                width={20}
+                height={20}
+                preserveAspectRatio="xMinYMax"
+              />
+            </View>
+          </Button.scale>
           <Button.scale
             style={styles.searchBtnWrapper}
             onPress={handlePressSearch}
@@ -333,11 +333,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   emptyImgText: {
+    flexShrink: 1,
     color: '#fff',
-    fontFamily: os.font(500, 500),
-    fontSize: font(16),
+    fontFamily: os.font(600, 600),
+    fontSize: font(14),
     includeFontPadding: false,
-    marginTop: 6,
     paddingBottom: 0,
     textAlign: 'center',
     width: '100%',
@@ -383,6 +383,15 @@ const styles = StyleSheet.create({
     marginTop: 6,
     paddingHorizontal: 16,
     paddingVertical: 16,
+  },
+  reTryBtn: {
+    alignItems: 'center',
+    backgroundColor: '#6A6A93',
+    borderRadius: 8,
+    flexDirection: 'row',
+    height: '100%',
+    overflow: 'hidden',
+    paddingHorizontal: 32,
   },
   scrollViewWrapper: {
     backgroundColor: '#fff',
