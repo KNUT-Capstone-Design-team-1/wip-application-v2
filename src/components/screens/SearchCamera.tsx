@@ -16,6 +16,7 @@ import {
   Animated,
   Easing,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { Camera } from 'react-native-vision-camera';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -68,6 +69,7 @@ const SearchCamera = (): React.JSX.Element => {
   const [currentDirection, setCurrentDirection] = useState<
     'front' | 'back' | 'complete'
   >('front');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   /** 포커스 크기 축소 애니메이션 */
   const focusScaleAni = useCallback(() => {
@@ -168,9 +170,10 @@ const SearchCamera = (): React.JSX.Element => {
 
   /** 카메라 촬영 */
   const handleTakePic = async () => {
-    if (cameraRef.current === null) return;
+    if (cameraRef.current === null || isProcessing) return;
     try {
       if (currentDirection !== 'complete') {
+        setIsProcessing(true);
         const imageData = await cameraRef.current.takePhoto();
         let result: null | ICameraImg = { front: null, back: null };
 
@@ -194,9 +197,11 @@ const SearchCamera = (): React.JSX.Element => {
         }
         result[currentDirection] = await getCropImage(imageData, 0.666);
         setCameraImage(result);
+        setIsProcessing(false);
       }
     } catch (e) {
       console.log(e);
+      setIsProcessing(false);
     }
   };
 
@@ -411,13 +416,13 @@ const SearchCamera = (): React.JSX.Element => {
       backgroundColor: '#fff',
       borderRadius: 100,
       height: 64,
-      opacity: currentDirection === 'complete' ? 0.3 : 1,
+      opacity: currentDirection === 'complete' || isProcessing ? 0.3 : 1,
       width: 64,
     },
     takePicBtnWrapper: {
       alignItems: 'center',
       borderColor:
-        currentDirection === 'complete'
+        currentDirection === 'complete' || isProcessing
           ? 'rgba(255, 255, 255 , 0.3)'
           : 'rgba(255, 255, 255, 1)',
       borderRadius: 100,
@@ -425,6 +430,9 @@ const SearchCamera = (): React.JSX.Element => {
       height: 76,
       justifyContent: 'center',
       width: 76,
+    },
+    takePicBtnLoading: {
+      position: 'absolute',
     },
     thumbnailImage: {
       borderColor: '#444',
@@ -638,9 +646,17 @@ const SearchCamera = (): React.JSX.Element => {
           <TouchableOpacity
             style={styles.takePicBtnWrapper}
             onPress={handleTakePic}
-            disabled={currentDirection === 'complete'}
+            disabled={currentDirection === 'complete' || isProcessing}
           >
-            <View style={styles.takePicBtn} />
+            {isProcessing ? (
+              <ActivityIndicator
+                size="large"
+                color="#fff"
+                style={styles.takePicBtnLoading}
+              />
+            ) : (
+              <View style={styles.takePicBtn} />
+            )}
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: 'center' }}>
             {cameraImage?.front && cameraImage.back && (
