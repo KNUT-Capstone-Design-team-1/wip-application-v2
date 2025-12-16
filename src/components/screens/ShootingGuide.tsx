@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#7472EB',
     borderRadius: 8,
     flexDirection: 'row',
-    height: 42,
+    height: 48,
     justifyContent: 'center',
     gap: 8,
     width: width * 0.9,
