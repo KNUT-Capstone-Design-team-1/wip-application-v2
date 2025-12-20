@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { TMarkData } from '@/types/TApiType';
 import { useSearchIdStore } from '@store/searchIdStore';
 import { useMarkStore } from '@store/markStore';

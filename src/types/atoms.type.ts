@@ -1,5 +1,6 @@
 import { DimensionValue, TextStyle, ViewStyle } from 'react-native';
 import { TMarkData } from '@/types/TApiType';
+import { INoticeData } from '@/types/TNoticeType';
 
 // CustomChip.tsx
 export type TCustomChip = {
@@ -81,4 +82,13 @@ export interface IStorageItemProps {
 export interface ITagProps {
   title: string;
   value: string;
+}
+
+// NoticeItem.tsx
+export interface INoticeListProps {
+  noticeData: INoticeData[];
+}
+
+export interface INoticeItemProps {
+  noticeData: INoticeData;
 }

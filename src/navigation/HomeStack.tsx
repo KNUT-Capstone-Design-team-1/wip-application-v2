@@ -7,6 +7,7 @@ import SearchCrop from '@/components/screens/SearchCrop';
 import SearchResult from '@/components/screens/SearchResult';
 import ScreenOptions from '@/navigation/ScreenOptions';
 import { createStackNavigator } from '@react-navigation/stack';
+import NoticeDetail from '@components/screens/NoticeDetail';
 
 const HomeStack: React.FC = () => {
   const Stack: any = createStackNavigator();
@@ -57,6 +58,14 @@ const HomeStack: React.FC = () => {
         name="알약 정보"
         component={PillDetail}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="공지사항 상세"
+        component={NoticeDetail}
+        options={{
+          title: '공지사항 상세',
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );

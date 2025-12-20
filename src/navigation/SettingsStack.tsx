@@ -2,6 +2,9 @@ import Settings from '@/components/screens/Settings';
 import Terms from '@/components/screens/Terms';
 import ScreenOptions from '@/navigation/ScreenOptions';
 import { createStackNavigator } from '@react-navigation/stack';
+import Notice from '@components/screens/Notice';
+import NoticeDetail from '@components/screens/NoticeDetail';
+import React from 'react';
 
 const SettingsStack: React.FC = () => {
   const Stack: any = createStackNavigator();
@@ -20,6 +23,20 @@ const SettingsStack: React.FC = () => {
         name="이용약관"
         component={Terms}
         options={{ headerShown: false }}
+      />
+      {/* 이용약관 화면 */}
+      <Stack.Screen
+        name="공지사항"
+        component={Notice}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="공지사항 상세"
+        component={NoticeDetail}
+        options={{
+          title: '공지사항 상세',
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );
