@@ -6628,6 +6628,14 @@ react-native-progress@^5.0.1:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-reanimated@~4.1.1:
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-4.1.6.tgz#9d3d06416eaf48ab25594611185f66b34e404291"
+  integrity sha512-F+ZJBYiok/6Jzp1re75F/9aLzkgoQCOh4yxrnwATa8392RvM3kx+fiXXFvwcgE59v48lMwd9q0nzF1oJLXpfxQ==
+  dependencies:
+    react-native-is-edge-to-edge "^1.2.1"
+    semver "7.7.2"
+
 react-native-restart@^0.0.27:
   version "0.0.27"
   resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.27.tgz#43aa8210312c9dfa5ec7bd4b2f35238ad7972b19"

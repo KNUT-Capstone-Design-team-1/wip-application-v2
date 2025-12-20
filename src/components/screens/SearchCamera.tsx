@@ -13,6 +13,7 @@ import {
   Easing,
   Platform,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { Camera } from 'react-native-vision-camera';
 import CameraMaskFrame from '@assets/svgs/cameraMaskFrame.svg';
@@ -27,6 +28,15 @@ import { useImgFileStore } from '@/store/imgFileStore';
 import { useScreenStore } from '@/store/screen';
 import { ICameraImg } from '@/types/screens.type';
 import { useSearchCamera } from '@/hooks/useSearchCamera';
+import Reanimated, {
+  useAnimatedProps,
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
+
+const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
+// Text와 TextInput의 속성 타입과 변경 매커니즘 참고
+const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
 // 포커스 UI 가로,세로 크기
 const focusSize = 80;
@@ -46,10 +56,31 @@ const SearchCamera = (): React.JSX.Element => {
     cameraLoading,
     focusXY,
     isManualFocus,
+    zoom,
+    animatedProps,
     torchInfo,
     focus,
+    onZoomBegin,
+    onPinch,
+    onPan,
     hideFocusUI,
   } = useSearchCamera();
+
+  const zoomIndicatorStyle = useAnimatedStyle(() => ({
+    opacity: zoom.value > 1 ? 1 : 0,
+    display: zoom.value > 1 ? 'flex' : 'none',
+  }));
+
+  const zoomText = useDerivedValue(() => {
+    return `${zoom.value.toFixed(1)}`;
+  });
+
+  const zoomTextProps = useAnimatedProps(() => {
+    return {
+      text: zoomText.value,
+    } as any;
+  });
+
   const focusScaleAnimation = useRef(new Animated.Value(1.2)).current;
   const boxGapAnimation = useRef(new Animated.Value(-60)).current;
   const boxOpacityAnimation = useRef(new Animated.Value(0)).current;
@@ -152,12 +183,38 @@ const SearchCamera = (): React.JSX.Element => {
   }, [arrowLoopAnimation]);
 
   /** 카메라 제스처 관리 */
-  const gesture = Gesture.Tap()
+  const tapGesture = Gesture.Tap()
     .runOnJS(true)
     .onEnd(({ x, y }) => {
       focus({ x, y });
       focusScaleAni();
     });
+
+  const pinchGesture = Gesture.Pinch()
+    .runOnJS(true)
+    .onBegin(() => {
+      onZoomBegin();
+    })
+    .onUpdate((event) => {
+      onPinch(event.scale);
+    });
+
+  const panGesture = Gesture.Pan()
+    .maxPointers(1)
+    .activeOffsetY([-2, 2])
+    .runOnJS(true)
+    .onBegin(() => {
+      onZoomBegin();
+    })
+    .onUpdate((event) => {
+      onPan(event.translationY);
+    });
+
+  const finalGesture = Gesture.Simultaneous(
+    tapGesture,
+    pinchGesture,
+    panGesture,
+  );
 
   const handleSetScreen = useCallback(() => {
     setScreen('알약 검색');
@@ -491,8 +548,20 @@ const SearchCamera = (): React.JSX.Element => {
       fontSize: font(12),
       includeFontPadding: false,
       marginBottom: 1,
+      padding: 0,
       textAlign: 'center',
-      width: '100%',
+    },
+    zoomLevelIndicator: {
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      borderRadius: 100,
+      bottom: 16,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      position: 'absolute',
+      zIndex: 10,
     },
     zoomLevelWrapper: {},
   });
@@ -553,10 +622,10 @@ const SearchCamera = (): React.JSX.Element => {
           )}
         </View>
       </View>
-      <GestureDetector gesture={gesture}>
+      <GestureDetector gesture={finalGesture}>
         <View style={styles.mainWrapper}>
           {cameraDevice && (
-            <Camera
+            <ReanimatedCamera
               ref={cameraRef}
               style={StyleSheet.absoluteFill}
               device={cameraDevice}
@@ -564,7 +633,7 @@ const SearchCamera = (): React.JSX.Element => {
               photo={cameraProps.photo}
               torch={cameraProps.torch}
               format={cameraProps.format}
-              zoom={cameraProps.zoom}
+              animatedProps={animatedProps}
               enableZoomGesture={cameraProps.enableZoomGesture}
             />
           )}
@@ -579,6 +648,17 @@ const SearchCamera = (): React.JSX.Element => {
             style={{ pointerEvents: 'none' }}
           />
           <Animated.View style={styles.focusDetected} />
+          <Reanimated.View
+            style={[styles.zoomLevelIndicator, zoomIndicatorStyle]}
+          >
+            <AnimatedTextInput
+              underlineColorAndroid="transparent"
+              editable={false}
+              value={zoomText.value}
+              style={styles.zoomLevelText}
+              animatedProps={zoomTextProps}
+            />
+          </Reanimated.View>
           {torchInfo.isTorchAvailable && (
             <Button.scale
               style={styles.flashBtnWrapper}

@@ -5,16 +5,26 @@ import {
   useCameraDevice,
   Point,
   useCameraFormat,
+  CameraProps,
 } from 'react-native-vision-camera';
 import { Accelerometer, AccelerometerMeasurement } from 'expo-sensors';
+import {
+  useSharedValue,
+  useAnimatedProps,
+  interpolate,
+  Extrapolation,
+} from 'react-native-reanimated';
 
 const MOVEMENT_THRESHOLD = 0.2;
 const FOCUS_UI_DURATION = 4000;
+const MIN_ZOOM = 1.0;
+const MAX_ZOOM = 2.0;
+const ZOOM_SENSITIVITY = 0.005;
 
 /**
  * 카메라 하드웨어 설정 및 제어를 위한 커스텀 훅
  * - 후면 카메라 사용 (cameraDeviceOption 적용)
- * - Zoom 고정 (1.0)
+ * - Zoom 제어 (1.0 ~ 2.0, Reanimated SharedValue 사용)
  * - AE 비활성화 및 밝기 고정 (exposure: 0)
  * - Torch 제어
  * - Tap-to-focus 지원
@@ -31,6 +41,11 @@ export const useSearchCamera = () => {
     },
   ]);
   const [cameraLoading, setCameraLoading] = useState<boolean>(true);
+
+  // Zoom 상태 관리 (Reanimated SharedValue)
+  const zoom = useSharedValue(MIN_ZOOM);
+  // Zoom 제스처용 임시 값
+  const zoomOffset = useSharedValue(MIN_ZOOM);
 
   // Torch 상태 관리
   // device.hasTorch가 true일 때만 토치 사용 가능
@@ -51,6 +66,38 @@ export const useSearchCamera = () => {
     if (!isTorchAvailable) return;
     setTorchState((prev) => (prev === 'off' ? 'on' : 'off'));
   }, [isTorchAvailable]);
+
+  // Zoom 제어 (Pinch & Pan)
+  const onZoomBegin = useCallback(() => {
+    zoomOffset.value = zoom.value;
+  }, [zoom, zoomOffset]);
+
+  const updateZoom = useCallback(
+    (newZoom: number) => {
+      zoom.value = interpolate(
+        newZoom,
+        [MIN_ZOOM, MAX_ZOOM],
+        [MIN_ZOOM, MAX_ZOOM],
+        Extrapolation.CLAMP,
+      );
+    },
+    [zoom],
+  );
+
+  const onPinch = useCallback(
+    (scale: number) => {
+      updateZoom(zoomOffset.value * scale);
+    },
+    [updateZoom, zoomOffset],
+  );
+
+  const onPan = useCallback(
+    (translationY: number) => {
+      // 위로 드래그하면 수치가 마이너스이므로 빼줌 (위로 올리면 확대)
+      updateZoom(zoomOffset.value - translationY * ZOOM_SENSITIVITY);
+    },
+    [updateZoom, zoomOffset],
+  );
 
   // Focus 제어 (Tap-to-focus only)
   // focus ui 숨기기
@@ -127,8 +174,15 @@ export const useSearchCamera = () => {
     };
   }, [isManualFocus, hideFocusUI]);
 
+  // Reanimated Animated Props
+  const animatedProps = useAnimatedProps<CameraProps>(
+    () => ({
+      zoom: zoom.value,
+    }),
+    [zoom],
+  );
+
   // 설정 정보 구성
-  // Zoom: 1.0 고정
   // Exposure: 0 (AE 비활성화/기본 밝기 고정)
   // WhiteBalance: 별도 props 없음 (기본값 사용)
   const cameraProps = {
@@ -136,11 +190,10 @@ export const useSearchCamera = () => {
     format: cameraFormat,
     isActive: true, // 기본 활성화
     ref: cameraRef,
-    zoom: 1.0, // Zoom 고정
     exposure: 0, // 밝기 고정 (AE 비활성화 효과)
     torch: torchState,
     photo: true, // 사진 촬영용
-    enableZoomGesture: false, // Zoom 제스처 비활성화 (필요 시 추가)
+    enableZoomGesture: false, // Zoom 제스처 수동 구현
   };
 
   useEffect(() => {
@@ -156,12 +209,17 @@ export const useSearchCamera = () => {
     cameraLoading,
     focusXY,
     isManualFocus,
+    zoom,
+    animatedProps,
     torchInfo: {
       isTorchAvailable,
       torchState,
       toggleTorch,
     },
     focus,
+    onZoomBegin,
+    onPinch,
+    onPan,
     hideFocusUI,
   };
 };
