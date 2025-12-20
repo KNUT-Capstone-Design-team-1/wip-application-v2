@@ -10,12 +10,14 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { updateCheck } from '@/api/update';
 import UpdateDB from '@/components/screens/UpdateDB';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RealmProvider } from '@realm/react';
 import { dbConfig } from '@/api/db/config';
 import { AlertProvider } from '@/provider/AlertProvider';
 import { checkAppVersion } from '@/utils/versionChecker';
 import wipConfig from '../wip_config.json';
 import { GLOBAL_STATE } from './global_state';
+import { clearImageCache } from './utils/cache';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,6 +51,9 @@ const App = (): React.JSX.Element => {
   };
 
   useEffect(() => {
+    // 이미지 캐시 삭제 진행 => 앱 실행 시 이미지 캐시 삭제
+    clearImageCache();
+
     // 앱 버전 체크
     checkAppVersion();
 
@@ -73,12 +78,14 @@ const App = (): React.JSX.Element => {
   }, [isReady]);
 
   return (
-    <RealmProvider {...dbConfig}>
-      <AlertProvider>
-        {updateDB ? <UpdateDB /> : <Navigation />}
-        <Toast config={toastConfig} position="bottom" bottomOffset={130} />
-      </AlertProvider>
-    </RealmProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <RealmProvider {...dbConfig}>
+        <AlertProvider>
+          {updateDB ? <UpdateDB /> : <Navigation />}
+          <Toast config={toastConfig} position="bottom" bottomOffset={130} />
+        </AlertProvider>
+      </RealmProvider>
+    </GestureHandlerRootView>
   );
 };
 

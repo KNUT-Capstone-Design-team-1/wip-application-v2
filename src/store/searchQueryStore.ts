@@ -32,6 +32,7 @@ export const useSearchQueryStore = create<ISearchQueryStore>((set) => ({
           initData: null,
         },
       });
+      return;
     }
     const { filter, params } = getQueryForSearch(searchQuery.data);
     set({

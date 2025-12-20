@@ -1,9 +1,5 @@
 import Button from '@/components/atoms/Button';
-import Layout, {
-  StatusBarHeight,
-  windowHeight,
-  windowWidth,
-} from '@/components/organisms/Layout';
+import Layout, { StatusBarHeight } from '@/components/organisms/Layout';
 import { font, os } from '@/style/font';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -16,29 +12,34 @@ import {
   Animated,
   Easing,
   Platform,
+  ActivityIndicator,
+  TextInput,
 } from 'react-native';
-import {
-  Camera,
-  Point,
-  useCameraDevice,
-  useCameraFormat,
-} from 'react-native-vision-camera';
+import { Camera } from 'react-native-vision-camera';
 import CameraMaskFrame from '@assets/svgs/cameraMaskFrame.svg';
 import FlashOnSvg from '@assets/svgs/flash_on.svg';
 import FlashOffSvg from '@assets/svgs/flash_off.svg';
-import FocusLockSvg from '@assets/svgs/lock.svg';
 import ExitSvg from '@assets/svgs/exit.svg';
 import ArrowRightSvg from '@assets/svgs/arrow_right.svg';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { trigger } from 'react-native-haptic-feedback';
-import { cameraDeviceOption } from '@/constants/options';
 import { getCropImage, getImgPath } from '@/utils/image';
 import { useImgFileStore } from '@/store/imgFileStore';
 import { useScreenStore } from '@/store/screen';
 import { ICameraImg } from '@/types/screens.type';
+import { useSearchCamera } from '@/hooks/useSearchCamera';
+import Reanimated, {
+  useAnimatedProps,
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
+
+const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
+// Text와 TextInput의 속성 타입과 변경 매커니즘 참고
+const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
 // 포커스 UI 가로,세로 크기
-const focusSize = 90;
+const focusSize = 80;
 
 // 진동 옵션
 const options = {
@@ -48,10 +49,39 @@ const options = {
 
 const SearchCamera = (): React.JSX.Element => {
   const nav: any = useNavigation();
-  const cameraDevice = useCameraDevice('back', cameraDeviceOption);
-  const cameraRef = useRef<Camera>(null);
+  const {
+    cameraDevice,
+    cameraRef,
+    cameraProps,
+    cameraLoading,
+    focusXY,
+    isManualFocus,
+    zoom,
+    animatedProps,
+    torchInfo,
+    focus,
+    onZoomBegin,
+    onPinch,
+    onPan,
+    hideFocusUI,
+  } = useSearchCamera();
+
+  const zoomIndicatorStyle = useAnimatedStyle(() => ({
+    opacity: zoom.value > 1 ? 1 : 0,
+    display: zoom.value > 1 ? 'flex' : 'none',
+  }));
+
+  const zoomText = useDerivedValue(() => {
+    return `${zoom.value.toFixed(1)}`;
+  });
+
+  const zoomTextProps = useAnimatedProps(() => {
+    return {
+      text: zoomText.value,
+    } as any;
+  });
+
   const focusScaleAnimation = useRef(new Animated.Value(1.2)).current;
-  const focusOpacityAnimation = useRef(new Animated.Value(1)).current;
   const boxGapAnimation = useRef(new Animated.Value(-60)).current;
   const boxOpacityAnimation = useRef(new Animated.Value(0)).current;
   const guideFrontTopAnimation = useRef(new Animated.Value(-100)).current;
@@ -61,25 +91,15 @@ const SearchCamera = (): React.JSX.Element => {
 
   const setScreen = useScreenStore((state) => state.setScreen);
   const setImgFile = useImgFileStore((state) => state.setImgFile);
-  const [cameraLoading, setCameraLoading] = useState<boolean>(true);
   const [cameraImage, setCameraImage] = useState<null | ICameraImg>(null);
   const [currentDirection, setCurrentDirection] = useState<
     'front' | 'back' | 'complete'
   >('front');
-  const [isTorch, setIsTorch] = useState<'off' | 'on' | undefined>('off');
-  const [focusXY, setFocusXY] = useState<any>({ x: 0, y: 0 });
-  const [selectZoomLevel, setSelectZoomLevel] = useState<0 | 1 | 2>(1);
-  const [zoomLevel, setZoomLevel] = useState<number | undefined>(
-    cameraDevice?.neutralZoom,
-  );
-  const [longFocus, setLongFocus] = useState<boolean>(false);
-
-  const cameraFormat = useCameraFormat(cameraDevice, [
-    { photoResolution: { width: 1280, height: 1280 } },
-  ]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   /** 포커스 크기 축소 애니메이션 */
   const focusScaleAni = useCallback(() => {
+    focusScaleAnimation.setValue(1.2);
     Animated.timing(focusScaleAnimation, {
       toValue: 1,
       delay: 0,
@@ -88,17 +108,6 @@ const SearchCamera = (): React.JSX.Element => {
       useNativeDriver: false,
     }).start();
   }, [focusScaleAnimation]);
-
-  /** 포커스 반투명 애니메이션 */
-  const focusOpacityAni = () => {
-    Animated.timing(focusOpacityAnimation, {
-      toValue: 0.5,
-      delay: 1500,
-      duration: 400,
-      easing: Easing.bezier(0.14, 1.07, 0.59, 0.97),
-      useNativeDriver: false,
-    }).start();
-  };
 
   /** 뒷면 이미지 박스 이동 애니메이션 */
   const boxGapAni = useCallback(() => {
@@ -173,66 +182,38 @@ const SearchCamera = (): React.JSX.Element => {
     ).start();
   }, [arrowLoopAnimation]);
 
-  /** 수동 포커스 실행 */
-  const focusOn = useCallback(
-    (point: Point) => {
-      const c = cameraRef.current;
-      if (c == null) return;
-      c.focus(point);
-      focusScaleAnimation.setValue(1.2);
-      focusOpacityAnimation.setValue(1);
-      setFocusXY({ x: point.x, y: point.y });
-      setLongFocus(false);
-      focusScaleAni();
-    },
-    [focusOpacityAnimation, focusScaleAni, focusScaleAnimation],
-  );
-
-  /** 수동 포커스 중지 */
-  const focusOff = useCallback(
-    (bool: boolean) => {
-      const focusInterval = setTimeout(() => {
-        const c = cameraRef.current;
-        if (c == null) return;
-        setFocusXY({ x: 0, y: 0 });
-        c.focus({ x: windowWidth / 2, y: windowHeight / 2 });
-      }, 4000);
-
-      if (bool) for (let i = 0; i < Number(focusInterval); i++) clearTimeout(i);
-      else for (let i = 0; i <= Number(focusInterval); i++) clearTimeout(i);
-
-      focusScaleAni();
-    },
-    [focusScaleAni],
-  );
-
   /** 카메라 제스처 관리 */
-  const gesture = Gesture.Simultaneous(
-    Gesture.Tap()
-      .onBegin(({ x, y }) => {
-        'worklet';
-        if (longFocus) {
-          setFocusXY({ x: 0, y: 0 });
-          setLongFocus(false);
-        } else {
-          focusOn({ x, y });
-        }
-      })
-      .onEnd(() => {
-        'worklet';
-        focusOpacityAni();
-        focusOff(true);
-      }),
-    Gesture.LongPress()
-      .onStart(() => {
-        'worklet';
-        setLongFocus(true);
-        focusOff(false);
-      })
-      .onFinalize(() => {
-        'worklet';
-        focusOpacityAni();
-      }),
+  const tapGesture = Gesture.Tap()
+    .runOnJS(true)
+    .onEnd(({ x, y }) => {
+      focus({ x, y });
+      focusScaleAni();
+    });
+
+  const pinchGesture = Gesture.Pinch()
+    .runOnJS(true)
+    .onBegin(() => {
+      onZoomBegin();
+    })
+    .onUpdate((event) => {
+      onPinch(event.scale);
+    });
+
+  const panGesture = Gesture.Pan()
+    .maxPointers(1)
+    .activeOffsetY([-2, 2])
+    .runOnJS(true)
+    .onBegin(() => {
+      onZoomBegin();
+    })
+    .onUpdate((event) => {
+      onPan(event.translationY);
+    });
+
+  const finalGesture = Gesture.Simultaneous(
+    tapGesture,
+    pinchGesture,
+    panGesture,
   );
 
   const handleSetScreen = useCallback(() => {
@@ -241,9 +222,10 @@ const SearchCamera = (): React.JSX.Element => {
 
   /** 카메라 촬영 */
   const handleTakePic = async () => {
-    if (cameraRef.current === null) return;
+    if (cameraRef.current === null || isProcessing) return;
     try {
       if (currentDirection !== 'complete') {
+        setIsProcessing(true);
         const imageData = await cameraRef.current.takePhoto();
         let result: null | ICameraImg = { front: null, back: null };
 
@@ -267,40 +249,16 @@ const SearchCamera = (): React.JSX.Element => {
         }
         result[currentDirection] = await getCropImage(imageData, 0.666);
         setCameraImage(result);
+        setIsProcessing(false);
       }
     } catch (e) {
       console.log(e);
+      setIsProcessing(false);
     }
   };
 
   const handleBackBtn = () => {
     nav.goBack();
-  };
-
-  const handleClickFlash = () => {
-    if (isTorch === 'off') setIsTorch('on');
-    if (isTorch === 'on') setIsTorch('off');
-  };
-
-  /** zoom level 변경 핸들러 */
-  const handleClickZoomLevelButton = (z: 0 | 1 | 2): any => {
-    if (cameraDevice) {
-      const normal = cameraDevice.neutralZoom;
-      let rate;
-      switch (z) {
-        case 0:
-          rate = Number(normal) / 2;
-          break;
-        case 1:
-          rate = Number(normal);
-          break;
-        case 2:
-          rate = Number(normal) * 2;
-          break;
-      }
-      setSelectZoomLevel(z);
-      setZoomLevel(rate);
-    }
   };
 
   const handlePressBox = (direction: 'front' | 'back') => {
@@ -320,18 +278,6 @@ const SearchCamera = (): React.JSX.Element => {
       nav.removeListener('focus', () => handleSetScreen());
     };
   }, [handleSetScreen, nav]);
-
-  useEffect(() => {
-    if (cameraDevice !== undefined) {
-      setCameraLoading(false);
-    }
-  }, [cameraDevice]);
-
-  useEffect(() => {
-    if (longFocus) {
-      trigger('impactLight', options);
-    }
-  }, [longFocus]);
 
   useEffect(() => {
     if (cameraImage) {
@@ -372,38 +318,6 @@ const SearchCamera = (): React.JSX.Element => {
   }, [downArrowAni]);
 
   const styles = StyleSheet.create({
-    LineBottom: {
-      backgroundColor: '#ff0c',
-      bottom: 0,
-      height: 8,
-      left: focusSize / 2,
-      position: 'absolute',
-      width: 1,
-    },
-    LineLeft: {
-      backgroundColor: '#ff0c',
-      height: 1,
-      left: 0,
-      position: 'absolute',
-      top: focusSize / 2,
-      width: 8,
-    },
-    LineRight: {
-      backgroundColor: '#ff0c',
-      height: 1.1,
-      position: 'absolute',
-      right: 0,
-      top: focusSize / 2,
-      width: 8,
-    },
-    LineTop: {
-      backgroundColor: '#ff0c',
-      height: 8,
-      left: focusSize / 2,
-      position: 'absolute',
-      top: 0,
-      width: 1,
-    },
     activeBoxWrapper: { borderColor: '#ffffa1', transform: [{ scale: 1 }] },
     backBtn: {
       alignItems: 'center',
@@ -478,18 +392,17 @@ const SearchCamera = (): React.JSX.Element => {
     flashBtnWrapper: { bottom: 10, position: 'absolute', right: 10 },
     focusDetected: {
       borderColor: '#ff0c',
-      borderWidth: 1,
-      display: focusXY.x === 0 && focusXY.y === 0 ? 'none' : 'flex',
+      borderRadius: 100,
+      borderWidth: 1.5,
+      display: isManualFocus ? 'flex' : 'none',
       height: focusSize,
       left: focusXY.x - focusSize / 2,
-      opacity: focusOpacityAnimation,
       pointerEvents: 'none',
       position: 'absolute',
       top: focusXY.y - focusSize / 2,
       transform: [{ scale: focusScaleAnimation }],
       width: focusSize,
     },
-    focusLock: { left: focusSize / 2 - 4, position: 'absolute', top: -20 },
     frame: { aspectRatio: '1/1', backgroundColor: '#000', width: '66%' },
     frameWrapper: {
       alignItems: 'center',
@@ -522,7 +435,7 @@ const SearchCamera = (): React.JSX.Element => {
     mainWrapper: {
       alignItems: 'center',
       aspectRatio: '1/1',
-      pointerEvents: 'box-none',
+      backgroundColor: 'transparent',
       position: 'relative',
       width: '100%',
       zIndex: 0,
@@ -555,13 +468,13 @@ const SearchCamera = (): React.JSX.Element => {
       backgroundColor: '#fff',
       borderRadius: 100,
       height: 64,
-      opacity: currentDirection === 'complete' ? 0.3 : 1,
+      opacity: currentDirection === 'complete' || isProcessing ? 0.3 : 1,
       width: 64,
     },
     takePicBtnWrapper: {
       alignItems: 'center',
       borderColor:
-        currentDirection === 'complete'
+        currentDirection === 'complete' || isProcessing
           ? 'rgba(255, 255, 255 , 0.3)'
           : 'rgba(255, 255, 255, 1)',
       borderRadius: 100,
@@ -569,6 +482,9 @@ const SearchCamera = (): React.JSX.Element => {
       height: 76,
       justifyContent: 'center',
       width: 76,
+    },
+    takePicBtnLoading: {
+      position: 'absolute',
     },
     thumbnailImage: {
       borderColor: '#444',
@@ -632,8 +548,20 @@ const SearchCamera = (): React.JSX.Element => {
       fontSize: font(12),
       includeFontPadding: false,
       marginBottom: 1,
+      padding: 0,
       textAlign: 'center',
-      width: '100%',
+    },
+    zoomLevelIndicator: {
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      borderRadius: 100,
+      bottom: 16,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      position: 'absolute',
+      zIndex: 10,
     },
     zoomLevelWrapper: {},
   });
@@ -694,19 +622,19 @@ const SearchCamera = (): React.JSX.Element => {
           )}
         </View>
       </View>
-      <GestureDetector gesture={gesture}>
+      <GestureDetector gesture={finalGesture}>
         <View style={styles.mainWrapper}>
           {cameraDevice && (
-            <Camera
+            <ReanimatedCamera
               ref={cameraRef}
               style={StyleSheet.absoluteFill}
               device={cameraDevice}
-              isActive={true}
-              photo={true}
-              torch={isTorch}
-              format={cameraFormat}
-              zoom={zoomLevel}
-              enableZoomGesture
+              isActive={cameraProps.isActive}
+              photo={cameraProps.photo}
+              torch={cameraProps.torch}
+              format={cameraProps.format}
+              animatedProps={animatedProps}
+              enableZoomGesture={cameraProps.enableZoomGesture}
             />
           )}
           {cameraLoading && (
@@ -719,26 +647,33 @@ const SearchCamera = (): React.JSX.Element => {
             height={'100%'}
             style={{ pointerEvents: 'none' }}
           />
-          <Animated.View style={styles.focusDetected}>
-            <View style={styles.LineTop} />
-            <View style={styles.LineLeft} />
-            <View style={styles.LineBottom} />
-            <View style={styles.LineRight} />
-            {longFocus && <FocusLockSvg style={styles.focusLock} width={9} />}
-          </Animated.View>
-          <Button.scale
-            style={styles.flashBtnWrapper}
-            onPress={() => handleClickFlash()}
-            activeScale={0.85}
+          <Animated.View style={styles.focusDetected} />
+          <Reanimated.View
+            style={[styles.zoomLevelIndicator, zoomIndicatorStyle]}
           >
-            <View style={styles.flashBtn}>
-              {isTorch === 'on' ? (
-                <FlashOnSvg width={'70%'} />
-              ) : (
-                <FlashOffSvg width={'70%'} />
-              )}
-            </View>
-          </Button.scale>
+            <AnimatedTextInput
+              underlineColorAndroid="transparent"
+              editable={false}
+              value={zoomText.value}
+              style={styles.zoomLevelText}
+              animatedProps={zoomTextProps}
+            />
+          </Reanimated.View>
+          {torchInfo.isTorchAvailable && (
+            <Button.scale
+              style={styles.flashBtnWrapper}
+              onPress={() => torchInfo.toggleTorch()}
+              activeScale={0.85}
+            >
+              <View style={styles.flashBtn}>
+                {torchInfo.torchState === 'on' ? (
+                  <FlashOnSvg width={'70%'} />
+                ) : (
+                  <FlashOffSvg width={'70%'} />
+                )}
+              </View>
+            </Button.scale>
+          )}
           {currentDirection === 'front' && (
             <Animated.View
               style={[styles.noteWrapper, styles.noteFrontWrapper]}
@@ -781,79 +716,22 @@ const SearchCamera = (): React.JSX.Element => {
         </View>
       </GestureDetector>
       <View style={styles.bottomWrapper}>
-        <View style={styles.zoomLevelList}>
-          <Button.scale
-            activeScale={1.1}
-            style={styles.zoomLevelWrapper}
-            onPress={() => handleClickZoomLevelButton(0)}
-          >
-            <View
-              style={[
-                styles.zoomLevelButton,
-                selectZoomLevel === 0 && styles.zoomLevelButtonActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.zoomLevelText,
-                  selectZoomLevel === 0 && styles.zoomLevelActiveText,
-                ]}
-              >
-                .5x
-              </Text>
-            </View>
-          </Button.scale>
-          <Button.scale
-            activeScale={1.1}
-            style={styles.zoomLevelWrapper}
-            onPress={() => handleClickZoomLevelButton(1)}
-          >
-            <View
-              style={[
-                styles.zoomLevelButton,
-                selectZoomLevel === 1 && styles.zoomLevelButtonActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.zoomLevelText,
-                  selectZoomLevel === 1 && styles.zoomLevelActiveText,
-                ]}
-              >
-                1x
-              </Text>
-            </View>
-          </Button.scale>
-          <Button.scale
-            activeScale={1.1}
-            style={styles.zoomLevelWrapper}
-            onPress={() => handleClickZoomLevelButton(2)}
-          >
-            <View
-              style={[
-                styles.zoomLevelButton,
-                selectZoomLevel === 2 && styles.zoomLevelButtonActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.zoomLevelText,
-                  selectZoomLevel === 2 && styles.zoomLevelActiveText,
-                ]}
-              >
-                2x
-              </Text>
-            </View>
-          </Button.scale>
-        </View>
         <View style={styles.buttonWrapper}>
           <View style={{ flex: 1 }} />
           <TouchableOpacity
             style={styles.takePicBtnWrapper}
             onPress={handleTakePic}
-            disabled={currentDirection === 'complete'}
+            disabled={currentDirection === 'complete' || isProcessing}
           >
-            <View style={styles.takePicBtn} />
+            {isProcessing ? (
+              <ActivityIndicator
+                size="large"
+                color="#fff"
+                style={styles.takePicBtnLoading}
+              />
+            ) : (
+              <View style={styles.takePicBtn} />
+            )}
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: 'center' }}>
             {cameraImage?.front && cameraImage.back && (

@@ -4,7 +4,7 @@ import { font, os } from '@/style/font';
 import { INavIconSize, INavWrapperProps } from '@/types/atoms.type';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { DimensionValue, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 const NavButton = ({ iconXML, name, navName, tabName }: INavWrapperProps) => {

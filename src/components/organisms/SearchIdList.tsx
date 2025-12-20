@@ -8,6 +8,14 @@ import { useSelectSearchId } from '@/hooks/useSelectSearchId';
 import SearchIdInput from '@/components/organisms/SearchIdInput';
 import SearchIdItem from '@/components/atoms/SearchIdItem';
 import SelectedMark from '@/components/organisms/SelectedMark';
+import { windowWidth } from './Layout';
+
+const ITEM_SIZE = 70;
+const SPACING = 16;
+const COLUMNS = 4;
+const DEFAULT_WIDTH = ITEM_SIZE * COLUMNS + SPACING * (COLUMNS + 1);
+
+const safeStaticDimension = Math.floor(Math.min(windowWidth, DEFAULT_WIDTH));
 
 const SearchIdList = (): React.JSX.Element => {
   const {
@@ -98,10 +106,12 @@ const SearchIdList = (): React.JSX.Element => {
     <>
       <View style={styles.viewWrapper}>
         <SectionGrid
-          itemDimension={70}
+          itemDimension={ITEM_SIZE}
+          staticDimension={safeStaticDimension}
           fixed={true}
-          spacing={16}
+          spacing={SPACING}
           sections={idSelectData}
+          style={{ alignSelf: 'center' }}
           keyExtractor={(item, index) => `${item.key} - ${index}`}
           renderItem={({ item }) => (
             <SearchIdItem
