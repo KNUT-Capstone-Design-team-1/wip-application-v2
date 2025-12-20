@@ -1,20 +1,6 @@
 import React from 'react';
-import TotalSvg from '@assets/svgs/shape/total.svg';
-import CircleSvg from '@assets/svgs/shape/circle.svg';
-import EllipseSvg from '@assets/svgs/shape/ellipse.svg';
-import LongSvg from '@assets/svgs/shape/long.svg';
-import HalfSvg from '@assets/svgs/shape/half.svg';
-import TriangleSvg from '@assets/svgs/shape/triangle.svg';
-import RectangleSvg from '@assets/svgs/shape/rectangle.svg';
-import DiamondSvg from '@assets/svgs/shape/diamond.svg';
-import PentagonSvg from '@assets/svgs/shape/pentagon.svg';
-import HexagonSvg from '@assets/svgs/shape/hexagon.svg';
-import OctagonSvg from '@assets/svgs/shape/octagon.svg';
-import StraightSvg from '@assets/svgs/shape/straight.svg';
-import CrossSvg from '@assets/svgs/shape/cross.svg';
-import CapsultSvg from '@assets/svgs/capsult/capsult.svg';
-import SoftCapsultSvg from '@assets/svgs/capsult/softCapsult.svg';
-import HardCapsultSvg from '@assets/svgs/capsult/hardCapsult.svg';
+import { Image } from 'expo-image';
+import { StyleSheet } from 'react-native';
 
 type TItemData = {
   name: string;
@@ -36,6 +22,140 @@ type TSectionData = {
 
 export type { TItemData };
 
+const styles = StyleSheet.create({
+  icon: {
+    width: 24,
+    aspectRatio: 1,
+    backgroundColor: 'transparent',
+  },
+});
+
+const iconAssets = {
+  total: (
+    <Image
+      source={require('@assets/images/shape/total.png')}
+      style={styles.icon}
+      contentFit="contain"
+    />
+  ),
+  circle: (
+    <Image
+      source={require('@assets/images/shape/circle.png')}
+      style={styles.icon}
+      contentFit="contain"
+    />
+  ),
+  ellipse: (
+    <Image
+      source={require('@assets/images/shape/ellipse.png')}
+      style={[styles.icon, { width: 36 }]}
+      contentFit="contain"
+    />
+  ),
+  long: (
+    <Image
+      source={require('@assets/images/shape/long.png')}
+      style={[styles.icon, { width: 36 }]}
+      contentFit="contain"
+    />
+  ),
+  half: (
+    <Image
+      source={require('@assets/images/shape/half.png')}
+      style={[styles.icon, { width: 36 }]}
+      contentFit="contain"
+    />
+  ),
+  triangle: (
+    <Image
+      source={require('@assets/images/shape/triangle.png')}
+      style={[styles.icon, { width: 28 }]}
+      contentFit="contain"
+    />
+  ),
+  rectangle: (
+    <Image
+      source={require('@assets/images/shape/rectangle.png')}
+      style={styles.icon}
+      contentFit="contain"
+    />
+  ),
+  diamond: (
+    <Image
+      source={require('@assets/images/shape/diamond.png')}
+      style={[styles.icon, { width: 28 }]}
+      contentFit="contain"
+    />
+  ),
+  pentagon: (
+    <Image
+      source={require('@assets/images/shape/pentagon.png')}
+      style={[styles.icon, { width: 24 }]}
+      contentFit="contain"
+    />
+  ),
+  hexagon: (
+    <Image
+      source={require('@assets/images/shape/hexagon.png')}
+      style={[styles.icon, { width: 28 }]}
+      contentFit="contain"
+    />
+  ),
+  octagon: (
+    <Image
+      source={require('@assets/images/shape/octagon.png')}
+      style={[styles.icon, { width: 24 }]}
+      contentFit="contain"
+    />
+  ),
+  etc: (
+    <Image
+      source={require('@assets/images/shape/total.png')}
+      style={styles.icon}
+      contentFit="contain"
+    />
+  ),
+  capsult: {
+    capsult: (
+      <Image
+        source={require('@assets/images/capsult/capsult.png')}
+        style={[styles.icon, { width: 50 }]}
+        contentFit="contain"
+      />
+    ),
+    softCapsult: (
+      <Image
+        source={require('@assets/images/capsult/softCapsult.png')}
+        style={[styles.icon, { width: 50 }]}
+        contentFit="contain"
+      />
+    ),
+    hardCapsult: (
+      <Image
+        source={require('@assets/images/capsult/hardCapsult.png')}
+        style={[styles.icon, { width: 50 }]}
+        contentFit="contain"
+      />
+    ),
+  },
+  dividing: {
+    cross: (
+      <Image
+        source={require('@assets/images/shape/cross.png')}
+        style={styles.icon}
+        contentFit="contain"
+      />
+    ),
+    straight: (
+      <Image
+        source={require('@assets/images/shape/straight.png')}
+        style={styles.icon}
+        contentFit="contain"
+      />
+    ),
+  },
+};
+
 export const idSelectData: TSectionData[] = [
   {
     title: '문자',
@@ -56,30 +176,33 @@ export const idSelectData: TSectionData[] = [
     data: [
       {
         name: '전체',
-        icon: <TotalSvg />,
+        icon: iconAssets.total,
         category: 'formCode',
         key: '0',
         default: true,
       },
-      { name: '정제', icon: <CapsultSvg />, category: 'formCode', key: '1' },
+      {
+        name: '정제',
+        icon: iconAssets.capsult.capsult,
+        category: 'formCode',
+        color: '#fafafa',
+        key: '1',
+      },
       {
         name: '연질캡슐',
-        icon: <SoftCapsultSvg />,
+        icon: iconAssets.capsult.softCapsult,
         category: 'formCode',
+        color: '#fafafa',
         key: '2',
       },
       {
         name: '경질캡슐',
-        icon: <HardCapsultSvg />,
+        icon: iconAssets.capsult.hardCapsult,
         category: 'formCode',
+        color: '#fafafa',
         key: '3',
       },
-      {
-        name: '기타',
-        icon: <TotalSvg />,
-        category: 'formCode',
-        key: '4',
-      },
+      { name: '기타', icon: iconAssets.etc, category: 'formCode', key: '4' },
     ],
   },
   {
@@ -88,14 +211,24 @@ export const idSelectData: TSectionData[] = [
     data: [
       {
         name: '전체',
-        icon: <TotalSvg />,
+        icon: iconAssets.total,
         category: 'dividing',
         key: '0',
         default: true,
       },
-      { name: '없음', icon: <CircleSvg />, category: 'dividing', key: '1' },
-      { name: '+ 형', icon: <CrossSvg />, category: 'dividing', key: '2' },
-      { name: '- 형', icon: <StraightSvg />, category: 'dividing', key: '3' },
+      { name: '없음', icon: iconAssets.circle, category: 'dividing', key: '1' },
+      {
+        name: '+ 형',
+        icon: iconAssets.dividing.cross,
+        category: 'dividing',
+        key: '2',
+      },
+      {
+        name: '- 형',
+        icon: iconAssets.dividing.straight,
+        category: 'dividing',
+        key: '3',
+      },
     ],
   },
   {
@@ -103,22 +236,47 @@ export const idSelectData: TSectionData[] = [
     data: [
       {
         name: '전체',
-        icon: <TotalSvg />,
+        icon: iconAssets.total,
         category: 'shape',
         key: '0',
         default: true,
       },
-      { name: '원형', icon: <CircleSvg />, category: 'shape', key: '1' },
-      { name: '타원형', icon: <EllipseSvg />, category: 'shape', key: '2' },
-      { name: '장방형', icon: <LongSvg />, category: 'shape', key: '3' },
-      { name: '반원형', icon: <HalfSvg />, category: 'shape', key: '4' },
-      { name: '삼각형', icon: <TriangleSvg />, category: 'shape', key: '5' },
-      { name: '사각형', icon: <RectangleSvg />, category: 'shape', key: '6' },
-      { name: '마름모형', icon: <DiamondSvg />, category: 'shape', key: '7' },
-      { name: '오각형', icon: <PentagonSvg />, category: 'shape', key: '8' },
-      { name: '육각형', icon: <HexagonSvg />, category: 'shape', key: '9' },
-      { name: '팔각형', icon: <OctagonSvg />, category: 'shape', key: '10' },
-      { name: '기타', icon: <TotalSvg />, category: 'shape', key: '11' },
+      { name: '원형', icon: iconAssets.circle, category: 'shape', key: '1' },
+      { name: '타원형', icon: iconAssets.ellipse, category: 'shape', key: '2' },
+      { name: '장방형', icon: iconAssets.long, category: 'shape', key: '3' },
+      { name: '반원형', icon: iconAssets.half, category: 'shape', key: '4' },
+      {
+        name: '삼각형',
+        icon: iconAssets.triangle,
+        category: 'shape',
+        key: '5',
+      },
+      {
+        name: '사각형',
+        icon: iconAssets.rectangle,
+        category: 'shape',
+        key: '6',
+      },
+      {
+        name: '마름모형',
+        icon: iconAssets.diamond,
+        category: 'shape',
+        key: '7',
+      },
+      {
+        name: '오각형',
+        icon: iconAssets.pentagon,
+        category: 'shape',
+        key: '8',
+      },
+      { name: '육각형', icon: iconAssets.hexagon, category: 'shape', key: '9' },
+      {
+        name: '팔각형',
+        icon: iconAssets.octagon,
+        category: 'shape',
+        key: '10',
+      },
+      { name: '기타', icon: iconAssets.etc, category: 'shape', key: '11' },
     ],
   },
   {
@@ -127,7 +285,7 @@ export const idSelectData: TSectionData[] = [
     data: [
       {
         name: '전체',
-        icon: <TotalSvg />,
+        icon: iconAssets.total,
         category: 'color',
         key: '0',
         default: true,

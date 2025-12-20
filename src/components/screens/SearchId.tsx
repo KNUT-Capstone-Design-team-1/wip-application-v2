@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useState } from 'react';
-import { Platform, StyleSheet, View, InteractionManager } from 'react-native';
+import { useEffect, useCallback } from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Layout, {
   defaultHeaderHeight,
@@ -8,7 +8,6 @@ import Layout, {
 } from '@/components/organisms/Layout';
 import { useScreenStore } from '@/store/screen';
 import { useSearchIdStore } from '@/store/searchIdStore';
-import LoadingCircle from '@/components/atoms/LoadingCircle';
 import SearchIdList from '@/components/organisms/SearchIdList';
 
 const SearchId = (): React.JSX.Element => {
@@ -16,39 +15,27 @@ const SearchId = (): React.JSX.Element => {
   const setScreen = useScreenStore((state) => state.setScreen);
   const resetSearchId = useSearchIdStore((state) => state.resetSearchId);
 
-  const [isReady, setIsReady] = useState(false);
-
   const handleSetScreen = useCallback(() => {
     setScreen('식별 검색');
   }, [setScreen]);
 
   useEffect(() => {
-    nav.addListener('focus', () => {
-      handleSetScreen();
-
-      setIsReady(false);
-      const task = InteractionManager.runAfterInteractions(() => {
-        setIsReady(true);
-      });
-
-      return () => task.cancel();
-    });
+    const unsubscribe = nav.addListener('focus', handleSetScreen);
 
     return () => {
-      resetSearchId();
-      nav.removeListener('focus', () => handleSetScreen());
+      unsubscribe();
     };
-  }, [handleSetScreen, nav, resetSearchId]);
+  }, [handleSetScreen, nav]);
+
+  useEffect(() => {
+    return () => {
+      resetSearchId();
+    };
+  }, [resetSearchId]);
 
   return (
     <Layout.default>
-      {isReady ? (
-        <SearchIdList />
-      ) : (
-        <View style={styles.viewWrapper}>
-          <LoadingCircle size="large" color="#6060dd" />
-        </View>
-      )}
+      <SearchIdList />
     </Layout.default>
   );
 };
