@@ -75,7 +75,10 @@ const Home = (): React.JSX.Element => {
             lastBackPress.current = now;
             Toast.show({
               type: 'noteToast',
-              text1: '뒤로가기를 한번 더 누르면 앱이 종료됩니다.',
+              text1: '뒤로 버튼을 한 번 더 누르시면 종료됩니다.',
+              visibilityTime: EXIT_APP_GAP,
+              autoHide: true,
+              bottomOffset: 90,
             });
           }
           return true;
@@ -84,6 +87,8 @@ const Home = (): React.JSX.Element => {
 
       return () => {
         backHandler.remove();
+        lastBackPress.current = 0;
+        Toast.hide();
       };
     }, [handleClose, isVisible]),
   );
