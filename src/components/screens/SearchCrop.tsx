@@ -12,22 +12,19 @@ import {
   Animated,
 } from 'react-native';
 import { getImgPath } from '@/utils/image';
-import {
-  openPicker,
-  clean as cleanPicker,
-  type Image as ImageType,
-} from 'react-native-image-crop-picker';
+import { ImagePickerResult, launchImageLibraryAsync } from 'expo-image-picker';
 import { imgPickerOption } from '@/constants/options';
-import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import CameraSvg from '@assets/svgs/camera.svg';
+import ArrowDownSvg from '@assets/svgs/arrow_down.svg';
 import SearchSvg from '@assets/svgs/search.svg';
 import ElbumSvg from '@assets/svgs/elbum.svg';
 import ViewShot from 'react-native-view-shot';
 import Toast from 'react-native-toast-message';
-import { requestCameraPermission } from '@/utils/permission';
 import { useScreenStore } from '@/store/screen';
 import { TImgFile, useImgFileStore } from '@/store/imgFileStore';
 import { useSearchImgStore } from '@/store/searchImgStore';
+import { clearImageCache } from '@/utils/cache';
+import { requestCameraPermission } from '@/utils/permission';
 
 const SearchCrop = (): React.JSX.Element => {
   const nav: any = useNavigation();
@@ -92,12 +89,8 @@ const SearchCrop = (): React.JSX.Element => {
   };
 
   const handlePressRePick = async (direction: string) => {
-    const response: ImageType | null = await openPicker(imgPickerOption).catch(
-      (err) => {
-        // when user cancel picker
-        return null;
-      },
-    );
+    let response: ImagePickerResult;
+    response = await launchImageLibraryAsync(imgPickerOption);
 
     let result: TImgFile;
     if (imgFile) {
@@ -106,8 +99,21 @@ const SearchCrop = (): React.JSX.Element => {
       result = { front: null, back: null };
     }
 
-    if (response) {
-      result[direction as keyof TImgFile] = response;
+    if (response.assets && response.assets.length > 0) {
+      result[direction as keyof TImgFile] = response.assets[0];
+
+      // 제외할 파일 URI 수집 (빈 값 제외)
+      const excludeUris: string[] = [];
+      if (result.front?.uri) {
+        excludeUris.push(result.front.uri);
+      }
+      if (result.back?.uri) {
+        excludeUris.push(result.back.uri);
+      }
+
+      // result를 제외한 이미지 캐시 삭제 진행
+      await clearImageCache(excludeUris);
+
       setImgFile(result);
     }
   };
@@ -127,7 +133,7 @@ const SearchCrop = (): React.JSX.Element => {
     if (viewShotRef.current) {
       viewShotRef.current.capture().then((uri: any) => {
         setSearchImage(uri);
-        nav.replace('알약 검색 결과', { data: uri, mode: 1 });
+        nav.navigate('알약 검색 결과', { data: uri, mode: 1 });
       });
     }
   };
@@ -143,7 +149,6 @@ const SearchCrop = (): React.JSX.Element => {
     downArrowAni();
     noteUpAni();
     noteOpacityAni();
-    cleanPicker();
   }, [downArrowAni, noteOpacityAni, noteUpAni]);
 
   return (
@@ -186,8 +191,11 @@ const SearchCrop = (): React.JSX.Element => {
                   />
                 ) : (
                   <View style={styles.emptyImg}>
-                    <Text style={styles.emptyImgText}>
-                      알약의 글자가 보이는 사진을 선택해주세요.
+                    <Text
+                      style={styles.emptyImgText}
+                      lineBreakStrategyIOS={'hangul-word'}
+                    >
+                      알약의 글자가 보이는 사진을 선택해주세요
                     </Text>
                   </View>
                 )}
@@ -197,7 +205,7 @@ const SearchCrop = (): React.JSX.Element => {
                   <ElbumSvg
                     width={20}
                     height={20}
-                    color={'#A5A5A5'}
+                    color={'#7c7c7c'}
                     preserveAspectRatio="xMinYMax"
                   />
                   <Text style={styles.pickButton}>앨범에서 선택하기</Text>
@@ -214,8 +222,11 @@ const SearchCrop = (): React.JSX.Element => {
                   />
                 ) : (
                   <View style={styles.emptyImg}>
-                    <Text style={styles.emptyImgText}>
-                      알약의 반대 면의 사진을 선택해주세요.
+                    <Text
+                      style={styles.emptyImgText}
+                      lineBreakStrategyIOS={'hangul-word'}
+                    >
+                      알약 반대면 사진을 선택해주세요
                     </Text>
                   </View>
                 )}
@@ -225,7 +236,7 @@ const SearchCrop = (): React.JSX.Element => {
                   <ElbumSvg
                     width={20}
                     height={20}
-                    color={'#A5A5A5'}
+                    color={'#7c7c7c'}
                     preserveAspectRatio="xMinYMax"
                   />
                   <Text style={styles.pickButton}>앨범에서 선택하기</Text>
@@ -268,7 +279,12 @@ const SearchCrop = (): React.JSX.Element => {
             style={styles.searchBtnWrapper}
             onPress={handlePressSearch}
           >
-            <View style={styles.searchBtn}>
+            <View
+              style={[
+                styles.searchBtn,
+                (!imgFile.front || !imgFile.back) && styles.btnDisabled,
+              ]}
+            >
               <SearchSvg
                 width={15}
                 height={15}
@@ -294,6 +310,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   btnWrapper: { flexDirection: 'row', gap: 8, height: 54 },
+  btnDisabled: {
+    backgroundColor: '#A5A5A5',
+  },
   cropImg: { aspectRatio: '1/1', borderRadius: 10, width: '100%' },
   cropImgList: {
     borderColor: '#000000',
@@ -307,15 +326,16 @@ const styles = StyleSheet.create({
   emptyImg: {
     alignItems: 'center',
     aspectRatio: '1/1',
-    backgroundColor: '#efeff7',
+    backgroundColor: '#7e7e7e',
     borderRadius: 10,
     justifyContent: 'center',
     padding: 14,
     width: '100%',
   },
   emptyImgText: {
-    color: '#a1a1a1',
-    fontFamily: os.font(400, 400),
+    flexShrink: 1,
+    color: '#fff',
+    fontFamily: os.font(600, 600),
     fontSize: font(14),
     includeFontPadding: false,
     paddingBottom: 0,
@@ -350,11 +370,11 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   pickButton: {
-    color: '#A5A5A5',
+    color: '#7c7c7c',
     fontFamily: os.font(500, 500),
     fontSize: font(14),
     includeFontPadding: false,
-    paddingBottom: 1,
+    paddingBottom: 3,
   },
   pickButtonWrapper: {
     alignItems: 'center',
@@ -369,7 +389,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#6A6A93',
     borderRadius: 8,
     flexDirection: 'row',
-    gap: 12,
     height: '100%',
     overflow: 'hidden',
     paddingHorizontal: 32,

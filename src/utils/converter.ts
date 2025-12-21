@@ -1,3 +1,14 @@
+const convertToCacheKey = (data: string): string => {
+  if (!data) return '';
+
+  let hash = 5381;
+  for (let i = 0; i < data.length; i++) {
+    hash = (hash << 5) + hash + data.charCodeAt(i); // hash * 33 + c
+  }
+
+  return `img_${hash >>> 0}_${data.length}`; // >>> 0으로 unsigned 변환
+};
+
 const stringToInt8Array = (data: string): Int8Array => {
   const res = data.match(/-?\d+/g)?.map(Number);
   return new Int8Array(res ?? []);
@@ -56,4 +67,4 @@ const deepCopyRealmObj = <T extends object>(data: T): T => {
 }
 */
 
-export { stringToInt8Array, deepCopyRealmObj };
+export { stringToInt8Array, deepCopyRealmObj, convertToCacheKey };

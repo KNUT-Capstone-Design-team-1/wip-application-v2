@@ -3,7 +3,7 @@
     "name": "이게뭐약",
     "slug": "whatispill",
     "owner": "mustbemadness",
-    "version": "2.2.2",
+    "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "newArchEnabled": true,
@@ -29,7 +29,7 @@
       },
       "edgeToEdgeEnabled": false,
       "package": "com.mbm.whatispill",
-      "versionCode": 19,
+      "versionCode": 20,
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.INTERNET",
@@ -63,7 +63,13 @@
       [
         "react-native-vision-camera",
         {
-          "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
+          "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하기 위해 카메라 권한이 필요합니다"
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "$(PRODUCT_NAME)에서 알약 촬영시 초점 이동을 위해 모션 권한이 필요합니다"
         }
       ],
       [
@@ -78,6 +84,13 @@
             "./assets/fonts/NotoSansKR-Regular.ttf",
             "./assets/fonts/NotoSansKR-SemiBold.ttf"
           ]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "$(PRODUCT_NAME)에서 알약 검색에 필요한 이미지를 가져오기 위해 사진 권한이 필요합니다",
+          "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
         }
       ],
       ["expo-localization"]

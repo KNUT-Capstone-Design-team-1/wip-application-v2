@@ -1,5 +1,9 @@
 import axiosInstance from '@api/index';
-import { AxiosError, isAxiosError } from 'axios';
+import {
+  AxiosRequestConfig,
+  AxiosError,
+  isAxiosError
+} from 'axios';
 import { ToastAndroid } from 'react-native';
 
 export interface IErrorResponse {
@@ -28,10 +32,15 @@ const handleError = (error: unknown): IErrorResponse => {
 };
 
 export const apiClient = {
-  get: async <T>(url: string, params?: object): Promise<T | any> => {
+  get: async <T>(
+    url: string,
+    params?: object,
+    config?: AxiosRequestConfig,
+  ): Promise<T | any> => {
     try {
       const response = await axiosInstance.get<T>(url, {
         params,
+        ...config,
       });
       return response.data;
     } catch (error) {
@@ -42,8 +51,9 @@ export const apiClient = {
   post: async <T>(
     url: string,
     data?: object,
+    config?: AxiosRequestConfig,
   ): Promise<{ res: T; status: number; message: string }> => {
-    const response = await axiosInstance.post<T>(url, data);
+    const response = await axiosInstance.post<T>(url, data, config);
 
     return {
       res: response.data,
