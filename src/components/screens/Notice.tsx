@@ -19,16 +19,16 @@ const Notice = () => {
 
   useEffect(() => {
     getNoticeList();
-    nav.addListener('focus', () => handleSetScreen());
+    const unsubscribe = nav.addListener('focus', () => handleSetScreen());
     return () => {
-      nav.removeListener('focus', () => handleSetScreen());
+      unsubscribe();
     };
   }, [handleSetScreen, nav]);
 
   return (
     <Layout.default>
       <ScrollView style={styles.scrollViewWrapper}>
-        {noticeData.length !== 0 ? (
+        {noticeData?.length > 0 ? (
           <NoticeList noticeData={noticeData} />
         ) : (
           <View style={styles.noNoticeWrapper}>

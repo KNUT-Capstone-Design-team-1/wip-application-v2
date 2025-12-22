@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import UpdateText from '@/components/atoms/UpdateText';
 import SearchButtonList from '@/components/organisms/SearchButtonList';
 import LastSearchPill from '@/components/organisms/LastSearchPill';
@@ -6,7 +6,7 @@ import MenuList from '@/components/organisms/MenuList';
 import TakeGuide from '@/components/organisms/TakeGuide';
 import BottomSheet from '@/components/molecules/BottomSheet';
 import { View, StyleSheet, BackHandler, Modal } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { gstyles } from '@/style/globalStyle';
 import Layout from '@/components/organisms/Layout';
 import { exitApp } from '@logicwind/react-native-exit-app';
@@ -14,6 +14,10 @@ import { useScreenStore } from '@/store/screen';
 import { useNotices } from '@/hooks/useNotices';
 import { useNoticeStore } from '@store/noticeStore';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
+import Toast from 'react-native-toast-message';
+
+// 앱 종료 버튼 누르고 나서 다시 누르기 전까지의 시간 간격
+const EXIT_APP_GAP = 2000;
 
 const Home = (): React.JSX.Element => {
   const nav: any = useNavigation();
@@ -25,6 +29,8 @@ const Home = (): React.JSX.Element => {
   const isNoticeLoading = useNoticeStore((state) => state.isNoticeLoading);
   const { isVisible, handleClose, handleNeverShowAgain, checkShouldShow } =
     useBottomSheet();
+
+  const lastBackPress = useRef(0);
 
   const handleSetScreen = useCallback(() => {
     setScreen('홈');
@@ -41,25 +47,51 @@ const Home = (): React.JSX.Element => {
   }, [isNoticeLoading, mainBottomSheetData]);
 
   useEffect(() => {
-    nav.addListener('focus', () => handleSetScreen());
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        // 바텀시트가 열려있으면 바텀시트를 닫고, 앱 종료는 막음
-        if (isVisible) {
-          handleClose();
-          return true;
-        }
-        // 바텀시트가 닫혀있으면 앱 종료
-        exitApp();
-        return true;
-      },
-    );
+    const unsubscribe = nav.addListener('focus', () => handleSetScreen());
+
     return () => {
-      nav.removeListener('focus', () => handleSetScreen());
-      backHandler.remove();
+      unsubscribe();
     };
-  }, [handleSetScreen, nav, isVisible, handleClose]);
+  }, [handleSetScreen, nav]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => {
+          if (isVisible) {
+            handleClose();
+            return true;
+          }
+
+          const now = Date.now();
+
+          if (
+            lastBackPress.current > 0 &&
+            now - lastBackPress.current < EXIT_APP_GAP
+          ) {
+            exitApp();
+          } else {
+            lastBackPress.current = now;
+            Toast.show({
+              type: 'noteToast',
+              text1: '뒤로 버튼을 한 번 더 누르시면 종료됩니다.',
+              visibilityTime: EXIT_APP_GAP,
+              autoHide: true,
+              bottomOffset: 90,
+            });
+          }
+          return true;
+        },
+      );
+
+      return () => {
+        backHandler.remove();
+        lastBackPress.current = 0;
+        Toast.hide();
+      };
+    }, [handleClose, isVisible]),
+  );
 
   return (
     <>

@@ -33,10 +33,9 @@ import Reanimated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
+import { ZoomLevelChip } from '../atoms/ZoomLevelChip';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
-// Text와 TextInput의 속성 타입과 변경 매커니즘 참고
-const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
 // 포커스 UI 가로,세로 크기
 const focusSize = 80;
@@ -70,16 +69,6 @@ const SearchCamera = (): React.JSX.Element => {
     opacity: zoom.value > 1 ? 1 : 0,
     display: zoom.value > 1 ? 'flex' : 'none',
   }));
-
-  const zoomText = useDerivedValue(() => {
-    return `${zoom.value.toFixed(1)}`;
-  });
-
-  const zoomTextProps = useAnimatedProps(() => {
-    return {
-      text: zoomText.value,
-    } as any;
-  });
 
   const focusScaleAnimation = useRef(new Animated.Value(1.2)).current;
   const boxGapAnimation = useRef(new Animated.Value(-60)).current;
@@ -273,9 +262,9 @@ const SearchCamera = (): React.JSX.Element => {
   };
 
   useEffect(() => {
-    nav.addListener('focus', () => handleSetScreen());
+    const unsubscribe = nav.addListener('focus', () => handleSetScreen());
     return () => {
-      nav.removeListener('focus', () => handleSetScreen());
+      unsubscribe();
     };
   }, [handleSetScreen, nav]);
 
@@ -651,13 +640,7 @@ const SearchCamera = (): React.JSX.Element => {
           <Reanimated.View
             style={[styles.zoomLevelIndicator, zoomIndicatorStyle]}
           >
-            <AnimatedTextInput
-              underlineColorAndroid="transparent"
-              editable={false}
-              value={zoomText.value}
-              style={styles.zoomLevelText}
-              animatedProps={zoomTextProps}
-            />
+            <ZoomLevelChip zoom={zoom} style={styles.zoomLevelText} />
           </Reanimated.View>
           {torchInfo.isTorchAvailable && (
             <Button.scale

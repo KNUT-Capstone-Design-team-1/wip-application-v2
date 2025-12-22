@@ -27,11 +27,15 @@ export const useNotices = () => {
       `${process.env.EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NOTICES_API_URL}/notices`,
     );
 
-    const allNotices = notices.notices;
-    setNoticeData(allNotices);
+    if (notices && Array.isArray(notices.notices)) {
+      const allNotices = notices.notices;
+      setNoticeData(allNotices);
 
-    // notice 데이터들을 sort 하는 기능
-    return noticeDataSort(allNotices);
+      // notice 데이터들을 sort 하는 기능
+      return noticeDataSort(allNotices);
+    }
+
+    return [];
   };
 
   /* notice 데이터 정렬하는 함수
