@@ -14,7 +14,14 @@
       "@store/*": ["store/*"],
       "@utils/*": ["utils/*"],
       "@constants/*": ["constants/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src", "**/*.tsx", "declarations.d.ts", "new_src/features/setting/styles/molecules/setting_list.ts"]
+  "include": [
+    "src",
+    "**/*.tsx",
+    "declarations.d.ts",
+    "new_src/features/setting/styles/molecules/setting_list.ts"
+, "app"  ]
 }
