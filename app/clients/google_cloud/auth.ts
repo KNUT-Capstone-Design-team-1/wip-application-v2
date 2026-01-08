@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import crypto from 'crypto';
+import forge from 'node-forge';
 
 /**
  * GCP 인증 인스턴스
@@ -17,16 +17,28 @@ export class GoogleAuthInstance {
    * @returns
    */
   private createToken() {
-    const rsaPubKey = (process.env.GOOGLE_CLOUD_RSA_PUB_KEY as string).replace(
+    const rsaPubKey = process.env.EXPO_PUBLIC_GOOGLE_CLOUD_RSA_PUB_KEY?.replace(
       /\\n/g,
       '\n',
     );
 
     dayjs.extend(utc);
+
     const now = dayjs.utc().format();
 
-    return crypto
-      .publicEncrypt(`${rsaPubKey}`, Buffer.from(now))
-      .toString('base64');
+    try {
+      const publicKey = forge.pki.publicKeyFromPem(rsaPubKey as string);
+      const encrypted = publicKey.encrypt(now, 'RSA-OAEP', {
+        md: forge.md.sha1.create(),
+        mgf1: {
+          md: forge.md.sha1.create(),
+        },
+      });
+
+      return forge.util.encode64(encrypted);
+    } catch (error) {
+      console.error('Error encrypting token:', error);
+      return '';
+    }
   }
 }
