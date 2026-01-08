@@ -27,7 +27,7 @@
         "monochromeImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#3b3b90"
       },
-      "edgeToEdgeEnabled": false,
+      "edgeToEdgeEnabled": true,
       "package": "com.mbm.whatispill",
       "versionCode": 21,
       "softwareKeyboardLayoutMode": "resize",
