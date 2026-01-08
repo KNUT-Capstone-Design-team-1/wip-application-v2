@@ -1,4 +1,4 @@
-import axios, { Axios } from "axios";
+import axios, { Axios } from 'axios';
 
 export type TNearbyPharmacy = {
   id: string; // 암호화요양기호
@@ -27,20 +27,30 @@ type TNearbyPharmacyList = {
     rows_read: number;
     rows_written: number;
   };
-  results: Array<TNearbyPharmacy>;
+  results: TNearbyPharmacy[];
 };
 
+type TNearbyPharmacySearchParam = Partial<
+  Pick<
+    TNearbyPharmacy,
+    'states' | 'region' | 'district' | 'address' | 'x' | 'y'
+  >
+>;
+
+/**
+ * 주변 약국 클라이언트
+ */
 export class NearbyPharmacyClient {
   private readonly apiURL: string;
   private readonly token: string;
   private readonly axiosClient: Axios;
 
   constructor() {
-    const { CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL, CLOUD_FLARE_WORKERS_TOKEN } =
-      process.env;
+    this.apiURL = process.env
+      .CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL as string;
 
-    this.apiURL = CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL as string;
-    this.token = CLOUD_FLARE_WORKERS_TOKEN as string;
+    this.token = process.env.CLOUD_FLARE_WORKERS_TOKEN as string;
+
     this.axiosClient = axios.create({
       baseURL: this.apiURL,
       headers: {
@@ -49,9 +59,17 @@ export class NearbyPharmacyClient {
     });
   }
 
-  public async readNearbyPharmacies(params: Partial<Pick<TNearbyPharmacy, 'states' | 'region' | 'district' | 'address' | 'x' | 'y'>>) {
-    return (await this.axiosClient.get<TNearbyPharmacyList>(`/nearby-pharmacies`, {
-      params,
-    })).data;
+  /**
+   * 주변 약국 목록 조회
+   * @param params 주변 약국 검색 파라미터
+   * @returns
+   */
+  public async readNearbyPharmacies(params: TNearbyPharmacySearchParam) {
+    const response = await this.axiosClient.get<TNearbyPharmacyList>(
+      `/nearby-pharmacies`,
+      { params },
+    );
+
+    return response.data;
   }
 }

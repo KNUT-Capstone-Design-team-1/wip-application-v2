@@ -1,6 +1,6 @@
-import axios from "axios";
-import { IClient } from "../client.interface";
-import { GoogleAuthInstance } from "./auth";
+import axios from 'axios';
+import { IClient } from '../client.interface';
+import { GoogleAuthInstance } from './auth';
 
 type TDrugPermissionDetailData = {
   ITEM_SEQ: string; // 품목기준코드
