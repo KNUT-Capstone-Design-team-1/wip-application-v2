@@ -1,4 +1,4 @@
-import CLOUD_FLARE_AXIOS_CLIENT from './axios';
+import CLOUD_FLARE_AXIOS_INSTANCE from './cloud_flare_axios_instance';
 
 export type TNearbyPharmacy = {
   id: string; // 암호화요양기호
@@ -45,7 +45,7 @@ type TNearbyPharmacySearchParam = Partial<
 export const requestGetNearbyPharmacies = async (
   params: TNearbyPharmacySearchParam,
 ) => {
-  const response = await CLOUD_FLARE_AXIOS_CLIENT.get<TNearbyPharmacyList>(
+  const response = await CLOUD_FLARE_AXIOS_INSTANCE.get<TNearbyPharmacyList>(
     `/nearby-pharmacies`,
     { params },
   );

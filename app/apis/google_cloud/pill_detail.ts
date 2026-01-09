@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from './auth';
+import { getToken } from './google_cloud_token';
 
 type TDrugPermissionDetailData = {
   ITEM_SEQ: string; // 품목기준코드

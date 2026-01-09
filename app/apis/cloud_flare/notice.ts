@@ -1,4 +1,4 @@
-import CLOUD_FLARE_AXIOS_CLIENT from './axios';
+import CLOUD_FLARE_AXIOS_INSTANCE from './cloud_flare_axios_instance';
 
 type TNotice = {
   title: string;
@@ -22,7 +22,7 @@ type TNoticeWritePayload = Pick<TNotice, 'title' | 'contents' | 'mustRead'>;
  * @returns
  */
 export const requestCreateNotice = async (contents: TNoticeWritePayload) => {
-  return CLOUD_FLARE_AXIOS_CLIENT.post<'Created'>(`/notices`, contents, {
+  return CLOUD_FLARE_AXIOS_INSTANCE.post<'Created'>(`/notices`, contents, {
     headers: { 'Content-Type': 'application/json' },
   });
 };
@@ -39,7 +39,7 @@ export const requestReadNotices = async (
   limit?: number,
   mustRead?: boolean,
 ) => {
-  return CLOUD_FLARE_AXIOS_CLIENT.get<TNoticeList>(`/notices`, {
+  return CLOUD_FLARE_AXIOS_INSTANCE.get<TNoticeList>(`/notices`, {
     params: { skip, limit, mustRead },
   });
 };
@@ -54,9 +54,13 @@ export const requestUpdateNotice = async (
   idx: number,
   contents: TNoticeWritePayload,
 ) => {
-  return CLOUD_FLARE_AXIOS_CLIENT.put<'Success'>(`/notices/${idx}`, contents, {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return CLOUD_FLARE_AXIOS_INSTANCE.put<'Success'>(
+    `/notices/${idx}`,
+    contents,
+    {
+      headers: { 'Content-Type': 'application/json' },
+    },
+  );
 };
 
 /**
@@ -65,5 +69,5 @@ export const requestUpdateNotice = async (
  * @returns
  */
 export const requestDeleteNotice = async (idx: number) => {
-  return CLOUD_FLARE_AXIOS_CLIENT.delete<'Success'>(`/notices/${idx}`);
+  return CLOUD_FLARE_AXIOS_INSTANCE.delete<'Success'>(`/notices/${idx}`);
 };

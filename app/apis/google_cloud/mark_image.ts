@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from './auth';
+import { getToken } from './google_cloud_token';
 
 type TMarkImageData = {
   total: number; // 마크이미지 총 개수
