@@ -3,42 +3,31 @@ import utc from 'dayjs/plugin/utc';
 import forge from 'node-forge';
 
 /**
- * GCP 인증 인스턴스
+ * 토큰 생성
+ * @returns
  */
-export class GoogleAuthInstance {
-  protected readonly token: string;
+export const getToken = () => {
+  const rsaPubKey = process.env.EXPO_PUBLIC_GOOGLE_CLOUD_RSA_PUB_KEY?.replace(
+    /\\n/g,
+    '\n',
+  );
 
-  constructor() {
-    this.token = this.createToken();
-  }
+  dayjs.extend(utc);
 
-  /**
-   * 토큰 생성
-   * @returns
-   */
-  private createToken() {
-    const rsaPubKey = process.env.EXPO_PUBLIC_GOOGLE_CLOUD_RSA_PUB_KEY?.replace(
-      /\\n/g,
-      '\n',
-    );
+  const now = dayjs.utc().format();
 
-    dayjs.extend(utc);
-
-    const now = dayjs.utc().format();
-
-    try {
-      const publicKey = forge.pki.publicKeyFromPem(rsaPubKey as string);
-      const encrypted = publicKey.encrypt(now, 'RSA-OAEP', {
+  try {
+    const publicKey = forge.pki.publicKeyFromPem(rsaPubKey as string);
+    const encrypted = publicKey.encrypt(now, 'RSA-OAEP', {
+      md: forge.md.sha1.create(),
+      mgf1: {
         md: forge.md.sha1.create(),
-        mgf1: {
-          md: forge.md.sha1.create(),
-        },
-      });
+      },
+    });
 
-      return forge.util.encode64(encrypted);
-    } catch (error) {
-      console.error('Error encrypting token:', error);
-      return '';
-    }
+    return forge.util.encode64(encrypted);
+  } catch (error) {
+    console.error('Error encrypting token:', error);
+    return '';
   }
-}
+};

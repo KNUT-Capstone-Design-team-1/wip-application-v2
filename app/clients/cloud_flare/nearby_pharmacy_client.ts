@@ -1,4 +1,4 @@
-import axios, { Axios } from 'axios';
+import CLOUD_FLARE_AXIOS_CLIENT from './axios';
 
 export type TNearbyPharmacy = {
   id: string; // 암호화요양기호
@@ -38,38 +38,17 @@ type TNearbyPharmacySearchParam = Partial<
 >;
 
 /**
- * 주변 약국 클라이언트
+ * 주변 약국 목록 조회
+ * @param params 주변 약국 검색 파라미터
+ * @returns
  */
-export class NearbyPharmacyClient {
-  private readonly apiURL: string;
-  private readonly token: string;
-  private readonly axiosClient: Axios;
+export const requestGetNearbyPharmacies = async (
+  params: TNearbyPharmacySearchParam,
+) => {
+  const response = await CLOUD_FLARE_AXIOS_CLIENT.get<TNearbyPharmacyList>(
+    `/nearby-pharmacies`,
+    { params },
+  );
 
-  constructor() {
-    this.apiURL = process.env
-      .CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL as string;
-
-    this.token = process.env.CLOUD_FLARE_WORKERS_TOKEN as string;
-
-    this.axiosClient = axios.create({
-      baseURL: this.apiURL,
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    });
-  }
-
-  /**
-   * 주변 약국 목록 조회
-   * @param params 주변 약국 검색 파라미터
-   * @returns
-   */
-  public async readNearbyPharmacies(params: TNearbyPharmacySearchParam) {
-    const response = await this.axiosClient.get<TNearbyPharmacyList>(
-      `/nearby-pharmacies`,
-      { params },
-    );
-
-    return response.data;
-  }
-}
+  return response.data;
+};

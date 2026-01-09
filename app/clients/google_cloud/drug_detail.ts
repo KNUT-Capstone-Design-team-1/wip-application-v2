@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { IClient } from '../client.interface';
-import { GoogleAuthInstance } from './auth';
+import { getToken } from './auth';
 
 type TDrugPermissionDetailData = {
   ITEM_SEQ: string; // 품목기준코드
@@ -47,23 +46,20 @@ type TDrugPermissionDetailData = {
   BOZRNO: string; // 사업자등록번호
 };
 
-export class DrugDetailClient
-  extends GoogleAuthInstance
-  implements IClient<TDrugPermissionDetailData>
-{
-  private readonly serviceUrl: string;
+/**
+ * 알약 상세정보 조회
+ * @param itemSeq 알약 ID
+ * @returns
+ */
+export const requestGetPillDetail = async (itemSeq: string) => {
+  const serviceURL = process.env.GOOGLE_CLOUD_DRUG_DETAIL_URL as string;
 
-  constructor() {
-    super();
-    this.serviceUrl = process.env.GOOGLE_CLOUD_DRUG_DETAIL_URL as string;
-  }
+  const token = getToken();
 
-  public async request(itemSeq: string) {
-    const result = await axios.get<TDrugPermissionDetailData>(this.serviceUrl, {
-      params: { ITEM_SEQ: itemSeq },
-      headers: { Authorization: `Bearer ${this.token}` },
-    });
+  const result = await axios.get<TDrugPermissionDetailData>(serviceURL, {
+    params: { ITEM_SEQ: itemSeq },
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-    return result.data;
-  }
-}
+  return result.data;
+};
