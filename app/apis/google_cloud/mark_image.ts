@@ -25,7 +25,8 @@ export const requestGetMarkImage = async (
   limit: number,
   title?: string,
 ) => {
-  const serviceURL = process.env.GOOGLE_CLOUD_MARK_IMAGE_URL as string;
+  const serviceURL = process.env
+    .EXPO_PUBLIC_GOOGLE_CLOUD_MARK_IMAGE_URL as string;
 
   const token = getToken();
 

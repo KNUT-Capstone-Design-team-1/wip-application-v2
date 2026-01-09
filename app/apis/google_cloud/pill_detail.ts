@@ -52,7 +52,8 @@ type TDrugPermissionDetailData = {
  * @returns
  */
 export const requestGetPillDetail = async (itemSeq: string) => {
-  const serviceURL = process.env.GOOGLE_CLOUD_DRUG_DETAIL_URL as string;
+  const serviceURL = process.env
+    .EXPO_PUBLIC_GOOGLE_CLOUD_DRUG_DETAIL_URL as string;
 
   const token = getToken();
 

@@ -13,7 +13,8 @@ type TGeminiPillFeatureExtractionResponse = {
  * @returns
  */
 export const requestPillImageFeatureExtraction = async (base64: string) => {
-  const serviceURL = process.env.GOOGLE_CLOUD_DL_SERVER_URL as string;
+  const serviceURL = process.env
+    .EXPO_PUBLIC_GOOGLE_CLOUD_DL_SERVER_URL as string;
 
   const token = getToken();
 

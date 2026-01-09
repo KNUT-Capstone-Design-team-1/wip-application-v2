@@ -1,4 +1,4 @@
-import CLOUD_FLARE_AXIOS_INSTANCE from './cloud_flare_axios_instance';
+import axios from 'axios';
 
 export type TNearbyPharmacy = {
   id: string; // 암호화요양기호
@@ -37,6 +37,14 @@ type TNearbyPharmacySearchParam = Partial<
   >
 >;
 
+const axiosInstance = axios.create({
+  baseURL: process.env
+    .EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL as string,
+  headers: {
+    Authorization: `Bearer ${process.env.CLOUD_FLARE_WORKERS_TOKEN as string}`,
+  },
+});
+
 /**
  * 주변 약국 목록 조회
  * @param params 주변 약국 검색 파라미터
@@ -45,7 +53,7 @@ type TNearbyPharmacySearchParam = Partial<
 export const requestGetNearbyPharmacies = async (
   params: TNearbyPharmacySearchParam,
 ) => {
-  const response = await CLOUD_FLARE_AXIOS_INSTANCE.get<TNearbyPharmacyList>(
+  const response = await axiosInstance.get<TNearbyPharmacyList>(
     `/nearby-pharmacies`,
     { params },
   );
