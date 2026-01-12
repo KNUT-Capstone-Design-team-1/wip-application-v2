@@ -1,18 +1,10 @@
 import axios from 'axios';
 import { getToken } from './google_cloud_token';
+import { ITTableColumnSchema } from '../../database/types';
 
 interface IPillDataTableSchemaResponse {
   schemaVersion: string;
-  columns: [
-    {
-      name: string;
-      type: string;
-      size: number; // byte
-      nullable: boolean;
-      defaultValue: string | number | null;
-      isPK: boolean;
-    },
-  ];
+  columns: ITTableColumnSchema[];
 }
 
 /**

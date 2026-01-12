@@ -43,7 +43,7 @@ interface IPillDetailResponse {
   ITEM_ENG_NAME: string; // 품목영문명
   ENTP_ENG_NAME: string; // 업체영문명
   MAIN_INGR_NAME: string; // 주성분영문명
-  BOZRNO: string; // 사업자등록번호
+  BIZNO: string; // 사업자등록번호
 }
 
 /**

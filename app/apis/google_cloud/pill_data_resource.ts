@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getToken } from './google_cloud_token';
-import { IPillData } from '../../types/pill_data';
+import { IPillData } from '../../database/types';
 
 interface IPillDataResourceResponse {
   resourceVersion: string;
