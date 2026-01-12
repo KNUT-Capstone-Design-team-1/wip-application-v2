@@ -9,8 +9,7 @@ import { initDatabase } from './database';
  */
 const RootLayout = () => {
   useEffect(() => {
-    // 데이터베이스 초기화
-    initDatabase().catch(console.error);
+    initDatabase().catch(console.error); // 데이터베이스 초기화
   }, []);
 
   return (
