@@ -16,13 +16,19 @@ type TNoticeList = {
 
 type TNoticeWritePayload = Pick<TNotice, 'title' | 'contents' | 'mustRead'>;
 
-const axiosInstance = axios.create({
-  baseURL: process.env
-    .EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NOTICES_API_URL as string,
-  headers: {
-    Authorization: `Bearer ${process.env.CLOUD_FLARE_WORKERS_TOKEN as string}`,
-  },
-});
+/**
+ * axios 인스턴스 반환 (env 로드 문제로 인해 함수로 분리)
+ * @returns
+ */
+const getAxiosInstance = () => {
+  return axios.create({
+    baseURL: process.env
+      .EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NOTICES_API_URL as string,
+    headers: {
+      Authorization: `Bearer ${process.env.CLOUD_FLARE_WORKERS_TOKEN as string}`,
+    },
+  });
+};
 
 /**
  * 공지사항 작성
@@ -30,9 +36,13 @@ const axiosInstance = axios.create({
  * @returns
  */
 export const requestCreateNotice = async (contents: TNoticeWritePayload) => {
-  const response = await axiosInstance.post<'Created'>(`/notices`, contents, {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const response = await getAxiosInstance().post<'Created'>(
+    `/notices`,
+    contents,
+    {
+      headers: { 'Content-Type': 'application/json' },
+    },
+  );
 
   return response.data;
 };
@@ -49,7 +59,7 @@ export const requestReadNotices = async (
   limit?: number,
   mustRead?: boolean,
 ) => {
-  const response = await axiosInstance.get<TNoticeList>(`/notices`, {
+  const response = await getAxiosInstance().get<TNoticeList>(`/notices`, {
     params: { skip, limit, mustRead },
   });
 
@@ -66,7 +76,7 @@ export const requestUpdateNotice = async (
   idx: number,
   contents: TNoticeWritePayload,
 ) => {
-  const response = await axiosInstance.put<'Success'>(
+  const response = await getAxiosInstance().put<'Success'>(
     `/notices/${idx}`,
     contents,
     { headers: { 'Content-Type': 'application/json' } },
@@ -81,7 +91,9 @@ export const requestUpdateNotice = async (
  * @returns
  */
 export const requestDeleteNotice = async (idx: number) => {
-  const response = await axiosInstance.delete<'Success'>(`/notices/${idx}`);
+  const response = await getAxiosInstance().delete<'Success'>(
+    `/notices/${idx}`,
+  );
 
   return response.data;
 };

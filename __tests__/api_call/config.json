@@ -1,0 +1,12 @@
+{
+  "apiList": [
+    "_get-image-search-v2",
+    "_get-drug-detail",
+    "_get-notices",
+    "_post-notices",
+    "_put-notices-idx",
+    "_delete-notices-idx",
+    "_get-nearby-pharmacies",
+    "_mark-image"
+  ]
+}

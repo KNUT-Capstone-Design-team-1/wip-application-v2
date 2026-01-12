@@ -37,13 +37,19 @@ type TNearbyPharmacySearchParam = Partial<
   >
 >;
 
-const axiosInstance = axios.create({
-  baseURL: process.env
-    .EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL as string,
-  headers: {
-    Authorization: `Bearer ${process.env.CLOUD_FLARE_WORKERS_TOKEN as string}`,
-  },
-});
+/**
+ * axios 인스턴스를 반환 (env 로드 문제로 함수 호출)
+ * @returns
+ */
+const getAxiosInstance = () => {
+  return axios.create({
+    baseURL: process.env
+      .EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NEARBY_PHARMACIES_API_URL as string,
+    headers: {
+      Authorization: `Bearer ${process.env.CLOUD_FLARE_WORKERS_TOKEN as string}`,
+    },
+  });
+};
 
 /**
  * 주변 약국 목록 조회
@@ -53,7 +59,7 @@ const axiosInstance = axios.create({
 export const requestGetNearbyPharmacies = async (
   params: TNearbyPharmacySearchParam,
 ) => {
-  const response = await axiosInstance.get<TNearbyPharmacyList>(
+  const response = await getAxiosInstance().get<TNearbyPharmacyList>(
     `/nearby-pharmacies`,
     { params },
   );
