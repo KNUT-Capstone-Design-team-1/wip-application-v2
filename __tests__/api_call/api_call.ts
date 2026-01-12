@@ -2,15 +2,7 @@ import dotenv from 'dotenv';
 import _ from 'lodash';
 import config from './config.json';
 import data from './data.json';
-import {
-  PillImageFeatureExtractionAPI,
-  PillDetailAPI,
-  MarkImageAPI,
-  DatabaseVersionAPI,
-  PillDataTableSchemaAPI,
-  PillDataResourceAPI,
-} from '../../app/apis/google_cloud';
-import { NearbyPharmacyAPI, NoticeAPI } from '../../app/apis/cloud_flare';
+import { GoogleCloud, CloudFlare } from '../../app/apis';
 
 dotenv.config({ path: '.env.local' });
 
@@ -22,37 +14,37 @@ export async function callAPI() {
   try {
     if (apiList.includes('get-image-search-v2')) {
       results['get-image-search-v2'] =
-        await PillImageFeatureExtractionAPI.requestPillImageFeatureExtraction(
+        await GoogleCloud.PillImageFeatureExtractionAPI.requestPillImageFeatureExtraction(
           data.pillImageFeatureExtraction.v2base64,
         );
     }
 
     if (apiList.includes('get-drug-detail')) {
       results['get-drug-detail'] =
-        await PillDetailAPI.requestGetPillDetail('195500005');
+        await GoogleCloud.PillDetailAPI.requestGetPillDetail('195500005');
     }
 
     if (apiList.includes('get-notices')) {
-      results['get-notices'] = await NoticeAPI.requestReadNotices();
+      results['get-notices'] = await CloudFlare.NoticeAPI.requestReadNotices();
     }
 
     if (apiList.includes('post-notices')) {
-      results['post-notices'] = await NoticeAPI.requestCreateNotice(
+      results['post-notices'] = await CloudFlare.NoticeAPI.requestCreateNotice(
         data.noticeCreate,
       );
     }
 
     if (apiList.includes('put-notices-idx')) {
-      results['put-notices-idx'] = await NoticeAPI.requestUpdateNotice(
-        data.noticeUpdate.idx,
-        data.noticeUpdate.contents,
-      );
+      results['put-notices-idx'] =
+        await CloudFlare.NoticeAPI.requestUpdateNotice(
+          data.noticeUpdate.idx,
+          data.noticeUpdate.contents,
+        );
     }
 
     if (apiList.includes('delete-notices-idx')) {
-      results['delete-notices-idx'] = await NoticeAPI.requestDeleteNotice(
-        data.noticeDelete.idx,
-      );
+      results['delete-notices-idx'] =
+        await CloudFlare.NoticeAPI.requestDeleteNotice(data.noticeDelete.idx);
     }
 
     if (apiList.includes('get-nearby-pharmacies')) {
@@ -62,32 +54,29 @@ export async function callAPI() {
       );
 
       results['get-nearby-pharmacies'] =
-        await NearbyPharmacyAPI.requestGetNearbyPharmacies(param);
+        await CloudFlare.NearbyPharmacyAPI.requestGetNearbyPharmacies(param);
     }
 
     if (apiList.includes('mark-image')) {
       const { page, limit, title } = data.markImage;
 
-      results['mark-image'] = await MarkImageAPI.requestGetMarkImage(
-        page,
-        limit,
-        title,
-      );
+      results['mark-image'] =
+        await GoogleCloud.MarkImageAPI.requestGetMarkImage(page, limit, title);
     }
 
     if (apiList.includes('database-version')) {
       results['database-version'] =
-        await DatabaseVersionAPI.requestDatabaseVersion();
+        await GoogleCloud.DatabaseVersionAPI.requestDatabaseVersion();
     }
 
     if (apiList.includes('pill-data-table-schema')) {
       results['pill-data-table-schema'] =
-        await PillDataTableSchemaAPI.requestPillDataTableSchema();
+        await GoogleCloud.PillDataTableSchemaAPI.requestPillDataTableSchema();
     }
 
     if (apiList.includes('pill-data-resource')) {
       results['pill-data-resource'] =
-        await PillDataResourceAPI.requestPillDataResource(
+        await GoogleCloud.PillDataResourceAPI.requestPillDataResource(
           data.pillDataResource.page,
         );
     }

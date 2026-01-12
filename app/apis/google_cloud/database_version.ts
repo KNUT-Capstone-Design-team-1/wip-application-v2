@@ -2,8 +2,10 @@ import axios from 'axios';
 import { getToken } from './google_cloud_token';
 
 interface IDatabaseVersionResponse {
-  schemaVersion: number; // 스키마 버전
-  dataVersion: number; // 데이터베이스 버전
+  pillData: {
+    schemaVersion: number; // 스키마 버전
+    dataVersion: number; // 데이터베이스 버전
+  };
 }
 
 /**

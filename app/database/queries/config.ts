@@ -1,5 +1,5 @@
 import { getDatabase } from '../sqlite';
-import { IConfig } from '../types';
+import { IConfig, TConfigKey } from '../types';
 
 /**
  * 모든 환경설정 조회
@@ -36,7 +36,7 @@ export const getSpecificConfig = async (key: string) => {
  * @param keys 환경설정 키 목록
  * @returns
  */
-export const getSpecificConfigs = async (keys: string[]) => {
+export const getSpecificConfigs = async (keys: TConfigKey[]) => {
   const db = await getDatabase();
 
   const result = await db.getAllAsync<IConfig>(

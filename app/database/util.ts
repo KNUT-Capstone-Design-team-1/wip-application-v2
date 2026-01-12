@@ -1,4 +1,4 @@
-import { IPillData, ITTableColumnSchema } from './types';
+import { IPillData, ITableColumnSchema } from './types';
 
 export const INSERT_BATCH_SIZE = 500;
 
@@ -37,7 +37,7 @@ export const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
  * @returns
  */
 export const getColumnPlaceholderForTableCreate = (
-  columnData: ITTableColumnSchema[],
+  columnData: ITableColumnSchema[],
 ) => {
   const result = columnData.map((col) => {
     const parts: string[] = [];

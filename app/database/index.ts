@@ -1,5 +1,6 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from './sqlite';
+import { IConfig } from './types';
 
 const CREATE_CONFIG_TABLE_SQL = `
 CREATE TABLE IF NOT EXISTS config (
@@ -7,9 +8,9 @@ CREATE TABLE IF NOT EXISTS config (
   value TEXT NULL DEFAULT NULL
 )`;
 
-const DEFAULT_CONFIG = [
-  { key: `'schemaVersion'`, value: 0 },
-  { key: `'dataVersion'`, value: 0 },
+const DEFAULT_CONFIG: IConfig[] = [
+  { key: 'pillDataSchemaVersion', value: 0 },
+  { key: 'pillDataResourceVersion', value: 0 },
 ];
 
 /**

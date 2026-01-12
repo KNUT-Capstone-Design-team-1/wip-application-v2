@@ -38,21 +38,23 @@ export interface IDrugRecognition {
   FORM_CODE: string; // 제형코드명
 }
 
+export type TConfigKey = 'pillDataSchemaVersion' | 'pillDataResourceVersion';
+
 // pill_data 테이블 스키마
 export interface IPillData
   extends IDrugRecognition, IFinishedMedicinePermissionDetail {}
 
-export interface ITTableColumnSchema {
+// config 테이블 스키마
+export interface IConfig {
+  key: TConfigKey;
+  value: string | number;
+}
+
+export interface ITableColumnSchema {
   name: string;
   type: string;
   size: number; // byte
   nullable: boolean;
   defaultValue: string | number | null;
   isPK: boolean;
-}
-
-// config 테이블 스키마
-export interface IConfig {
-  key: string;
-  value: string | number;
 }

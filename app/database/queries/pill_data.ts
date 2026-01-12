@@ -1,5 +1,5 @@
 import { getDatabase } from '../sqlite';
-import { IPillData, ITTableColumnSchema } from '../types';
+import { IPillData, ITableColumnSchema } from '../types';
 import {
   ALL_PILL_DATA_COLUMNS,
   getColumnPlaceholderForTableCreate,
@@ -38,9 +38,7 @@ export const dropPillDataTable = async () => {
  * pill_data 테이블 생성
  * @param columnData 컬럼 정보
  */
-export const createPillDataTable = async (
-  columnData: ITTableColumnSchema[],
-) => {
+export const createPillDataTable = async (columnData: ITableColumnSchema[]) => {
   const db = await getDatabase();
 
   const columnDefs = getColumnPlaceholderForTableCreate(columnData);

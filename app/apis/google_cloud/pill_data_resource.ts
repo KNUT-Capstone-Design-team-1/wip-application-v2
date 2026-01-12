@@ -2,10 +2,11 @@ import axios from 'axios';
 import { getToken } from './google_cloud_token';
 import { IPillData } from '../../database/types';
 
-interface IPillDataResourceResponse {
-  resourceVersion: string;
+export interface IPillDataResourceResponse {
   datas: IPillData[];
   total: number;
+  totalPage: number;
+  current: number;
 }
 
 /**
