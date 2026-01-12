@@ -7,6 +7,9 @@
     "_put-notices-idx",
     "_delete-notices-idx",
     "_get-nearby-pharmacies",
-    "_mark-image"
+    "_mark-image",
+    "_database-version",
+    "_pill-data-table-schema",
+    "pill-data-resource"
   ]
 }

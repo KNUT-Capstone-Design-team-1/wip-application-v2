@@ -30,5 +30,8 @@
   },
   "noticeDelete": {
     "idx": 5
+  },
+  "pillDataResource": {
+    "page": 1
   }
 }
