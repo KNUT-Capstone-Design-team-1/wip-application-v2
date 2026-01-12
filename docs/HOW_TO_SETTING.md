@@ -6,7 +6,6 @@
 
 ```bash
 yarn run rebuild
-# npx expo prebuild --clean
 ```
 
 # env
