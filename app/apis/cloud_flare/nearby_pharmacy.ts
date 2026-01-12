@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export type TNearbyPharmacy = {
+interface INearbyPharmacyData {
   id: string; // 암호화요양기호
   name: string; // 요양기관명
   states: string; // 시도코드명
@@ -12,9 +12,9 @@ export type TNearbyPharmacy = {
   openDate: string; // 개설일자
   x: number; // 좌표(X)
   y: number; // 좌표(Y)
-};
+}
 
-type TNearbyPharmacyList = {
+interface INearbyPharmacyResponse {
   success: boolean;
   // Cloudflare workers metadata
   meta: {
@@ -27,12 +27,12 @@ type TNearbyPharmacyList = {
     rows_read: number;
     rows_written: number;
   };
-  results: TNearbyPharmacy[];
-};
+  results: INearbyPharmacyData[];
+}
 
 type TNearbyPharmacySearchParam = Partial<
   Pick<
-    TNearbyPharmacy,
+    INearbyPharmacyData,
     'states' | 'region' | 'district' | 'address' | 'x' | 'y'
   >
 >;
@@ -59,7 +59,7 @@ const getAxiosInstance = () => {
 export const requestGetNearbyPharmacies = async (
   params: TNearbyPharmacySearchParam,
 ) => {
-  const response = await getAxiosInstance().get<TNearbyPharmacyList>(
+  const response = await getAxiosInstance().get<INearbyPharmacyResponse>(
     `/nearby-pharmacies`,
     { params },
   );

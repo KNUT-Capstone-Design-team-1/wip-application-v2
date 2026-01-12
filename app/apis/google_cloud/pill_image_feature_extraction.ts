@@ -1,11 +1,17 @@
 import axios from 'axios';
 import { getToken } from './google_cloud_token';
 
-type TGeminiPillFeatureExtractionResponse = {
+interface IGeminiPillFeatureExtractionData {
+  PRINT: string[];
+  SHAPE: string[];
+  COLOR: string[];
+}
+
+interface IGeminiPillFeatureExtractionResponse {
   success: boolean;
-  data?: { PRINT: string[]; SHAPE: string[]; COLOR: string[] };
+  data?: IGeminiPillFeatureExtractionData;
   message?: string;
-};
+}
 
 /**
  * 이미지 특징 추출 요청
@@ -18,7 +24,7 @@ export const requestPillImageFeatureExtraction = async (base64: string) => {
 
   const token = getToken();
 
-  const result = await axios.post<TGeminiPillFeatureExtractionResponse>(
+  const result = await axios.post<IGeminiPillFeatureExtractionResponse>(
     serviceURL,
     { base64 },
     {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken } from './google_cloud_token';
 
-type TDrugPermissionDetailData = {
+interface IPillDetailResponse {
   ITEM_SEQ: string; // 품목기준코드
   ITEM_NAME: string; // 품목명
   ENTP_NAME: string; // 업체명
@@ -44,7 +44,7 @@ type TDrugPermissionDetailData = {
   ENTP_ENG_NAME: string; // 업체영문명
   MAIN_INGR_NAME: string; // 주성분영문명
   BOZRNO: string; // 사업자등록번호
-};
+}
 
 /**
  * 알약 상세정보 조회
@@ -57,7 +57,7 @@ export const requestGetPillDetail = async (itemSeq: string) => {
 
   const token = getToken();
 
-  const result = await axios.get<TDrugPermissionDetailData>(serviceURL, {
+  const result = await axios.get<IPillDetailResponse>(serviceURL, {
     params: { ITEM_SEQ: itemSeq },
     headers: { Authorization: `Bearer ${token}` },
   });
