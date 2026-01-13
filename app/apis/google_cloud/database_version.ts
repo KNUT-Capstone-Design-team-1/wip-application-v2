@@ -14,7 +14,7 @@ interface IDatabaseVersionResponse {
  */
 export async function requestDatabaseVersion() {
   const serviceURL = process.env
-    .EXPO_PUBLIC_GOOGLE_CLOUD_DATA_BASE_VERSION_URL as string;
+    .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_DATA_BASE_VERSION_URL as string;
 
   const token = getToken();
 

@@ -20,7 +20,7 @@ interface IGeminiPillFeatureExtractionResponse {
  */
 export const requestPillImageFeatureExtraction = async (base64: string) => {
   const serviceURL = process.env
-    .EXPO_PUBLIC_GOOGLE_CLOUD_DL_SERVER_URL as string;
+    .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_PILL_IMAGE_FEATURE_EXTRACTION_URL as string;
 
   const token = getToken();
 

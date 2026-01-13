@@ -12,7 +12,7 @@ interface IPillDataTableSchemaResponse {
  */
 export async function requestPillDataTableSchema() {
   const serviceURL = process.env
-    .EXPO_PUBLIC_GOOGLE_CLOUD_PILL_DATA_TABLE_SCHEMA_URL as string;
+    .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_PILL_DATA_TABLE_SCHEMA_URL as string;
 
   const token = getToken();
 

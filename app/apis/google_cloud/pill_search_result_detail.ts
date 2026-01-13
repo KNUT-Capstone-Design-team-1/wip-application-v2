@@ -53,7 +53,7 @@ interface IPillDetailResponse {
  */
 export const requestGetPillDetail = async (itemSeq: string) => {
   const serviceURL = process.env
-    .EXPO_PUBLIC_GOOGLE_CLOUD_DRUG_DETAIL_URL as string;
+    .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_PILL_DETAIL_URL as string;
 
   const token = getToken();
 

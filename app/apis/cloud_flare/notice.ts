@@ -22,10 +22,9 @@ type TNoticeWritePayload = Pick<TNotice, 'title' | 'contents' | 'mustRead'>;
  */
 const getAxiosInstance = () => {
   return axios.create({
-    baseURL: process.env
-      .EXPO_PUBLIC_CLOUD_FLARE_WORKERS_NOTICES_API_URL as string,
+    baseURL: process.env.EXPO_PUBLIC_CLOUD_FLARE_WIP_NOTICE_URL as string,
     headers: {
-      Authorization: `Bearer ${process.env.CLOUD_FLARE_WORKERS_TOKEN as string}`,
+      Authorization: `Bearer ${process.env.EXPO_PUBLIC_CLOUD_FLARE_TOKEN as string}`,
     },
   });
 };

@@ -16,7 +16,7 @@ export interface IPillDataResourceResponse {
  */
 export async function requestPillDataResource(page: number) {
   const serviceURL = process.env
-    .EXPO_PUBLIC_GOOGLE_CLOUD_PILL_DATA_RESOURCE_URL as string;
+    .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_PILL_DATA_RESOURCE_URL as string;
 
   const token = getToken();
 
