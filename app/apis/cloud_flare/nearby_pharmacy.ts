@@ -45,9 +45,6 @@ const getAxiosInstance = () => {
   return axios.create({
     baseURL: process.env
       .EXPO_PUBLIC_CLOUD_FLARE_WIP_NEARBY_PHARMACY_URL as string,
-    headers: {
-      Authorization: `Bearer ${process.env.EXPO_PUBLIC_CLOUD_FLARE_TOKEN as string}`,
-    },
   });
 };
 
