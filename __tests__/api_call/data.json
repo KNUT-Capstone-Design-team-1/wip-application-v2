@@ -33,5 +33,9 @@
   },
   "pillDataResource": {
     "page": 1
+  },
+  "log": {
+    "logLevel": "info",
+    "logContents": "test"
   }
 }

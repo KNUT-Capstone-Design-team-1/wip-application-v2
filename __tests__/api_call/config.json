@@ -10,6 +10,7 @@
     "_mark-image",
     "_database-version",
     "_pill-data-table-schema",
-    "_pill-data-resource"
+    "_pill-data-resource",
+    "log"
   ]
 }

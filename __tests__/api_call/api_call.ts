@@ -80,6 +80,13 @@ export async function callAPI() {
           data.pillDataResource.page,
         );
     }
+
+    if (apiList.includes('log')) {
+      results['log'] = await GoogleCloud.LogAPI.requestWriteLog(
+        data.log.logLevel as 'info' | 'warn' | 'error',
+        data.log.logContents,
+      );
+    }
   } catch (e) {
     console.log('[CALL-API] Error occurred. %s', (e as Error).stack || e);
     throw e;
