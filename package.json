@@ -2,7 +2,7 @@
   "name": "whatispill",
   "private": true,
   "repository": "https://github.com/KNUT-Capstone-Design-team-1/wip-application-v2",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --clear",
     "android": "expo run:android",
@@ -23,6 +23,7 @@
     "@react-native-community/image-editor": "^4.3.0",
     "@shopify/flash-list": "2.0.2",
     "axios": "^1.11.0",
+    "babel-plugin-module-resolver": "^5.0.2",
     "dayjs": "^1.11.13",
     "expo": "^54.0.0",
     "expo-build-properties": "~1.0.9",
