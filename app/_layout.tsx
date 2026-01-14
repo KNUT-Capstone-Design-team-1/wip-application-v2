@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
 import { initDatabase } from './database';
+import Layout from './layouts/Layout';
 
 /**
  * 전역 스크린 옵션
@@ -14,9 +15,11 @@ const RootLayout = () => {
 
   return (
     <SafeAreaProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" options={{ title: '홈' }} />
-      </Stack>
+      <Layout>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" options={{ title: '홈' }} />
+        </Stack>
+      </Layout>
     </SafeAreaProvider>
   );
 };
