@@ -21,7 +21,9 @@ export async function callAPI() {
 
     if (apiList.includes('get-drug-detail')) {
       results['get-drug-detail'] =
-        await GoogleCloud.PillDetailAPI.requestGetPillDetail('195500005');
+        await GoogleCloud.PillDetailAPI.requestGetPillDetail(
+          data.pillDetail.ITEM_SEQ,
+        );
     }
 
     if (apiList.includes('get-notices')) {
