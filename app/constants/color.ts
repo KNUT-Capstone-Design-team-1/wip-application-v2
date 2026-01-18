@@ -3,6 +3,7 @@ export const COLOR = {
   black: '#000000',
   normal: '#34B233',
   error: '#FF4960',
+  alert: '#FF5454',
 };
 
 // TypeScript에서 숫자 키를 가진 객체 속성에 접근할 때는 대괄호 표기법([200])을 사용
@@ -15,7 +16,9 @@ export const COLOR_PRIMARY = {
 
 export const COLOR_GRAY = {
   100: '#E1E1E1',
+  150: '#EFEFEF',
   200: '#B8B8B8',
   300: '#8E8E8E',
   400: '#778385',
+  500: '#D9D9D9',
 };
