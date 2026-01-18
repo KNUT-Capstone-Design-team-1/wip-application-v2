@@ -1,7 +1,7 @@
 import React from 'react';
-import HomeSvg from '@/assets/images/home.svg';
-import PillIdentificationSearchSvg from '@/assets/images/pillIdentificationSearch.svg';
-import PillImageSearchSvg from '@/assets/images/pillImageSearch.svg';
+import HomeSvg from '@assets/images/home.svg';
+import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
+import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import PharmacySvg from '@/assets/images/pharmacy.svg';
 import StorageSvg from '@/assets/images/storage.svg';
 import { COLOR } from '@/app/constants/color';

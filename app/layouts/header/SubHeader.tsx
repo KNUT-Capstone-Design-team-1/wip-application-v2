@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
 import MenuSvg from '@/assets/images/menu.svg';
-import LeftArrow from '@/assets/images/arrowLeft.svg';
+import LeftArrow from '@assets/images/arrow-left.svg';
 
 interface SubHeaderProps {
   title: string;
