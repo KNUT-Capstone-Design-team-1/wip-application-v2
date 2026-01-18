@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import Tag from '@/components/atoms/Tag';
+import Tag from '../atoms/Tag';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface ITagListProps {
