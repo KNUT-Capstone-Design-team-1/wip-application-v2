@@ -1,16 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, StyleSheet } from 'react-native';
+import LastSearchPill from '../components/organisms/LastSearchPill';
+import { COLOR_GRAY } from '@/app/constants/color';
+import MenuList from '@/app/features/home/components/organisms/MenuList';
+import TakeGuide from '@/app/features/home/components/organisms/TakeGuide';
 
 const HomeScreen: React.FC = () => {
-  const router = useRouter();
-
-  const handleNavigate = (path: string) => {
-    router.push(`/${path}`);
-  };
+  const dummyData = [
+    '칼산탄정',
+    '올메르플러정',
+    '온글라이자정',
+    '실버셉트오디정',
+    '펜폴캡슐',
+  ];
 
   return (
     <View style={styles.container}>
+      <LastSearchPill lastSearchPillData={dummyData} />
+      <View style={styles.hr}></View>
+      <MenuList />
+      <TakeGuide />
     </View>
   );
 };
@@ -18,9 +27,14 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
+    paddingHorizontal: '5%',
+  },
+  hr: {
+    width: '100%',
+    height: 1,
+    backgroundColor: COLOR_GRAY[150],
+    marginTop: 20,
   },
 });
 
