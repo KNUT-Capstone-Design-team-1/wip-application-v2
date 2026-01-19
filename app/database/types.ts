@@ -63,7 +63,9 @@ export interface IPillDataSearchParam {
   INGR_NAME: string; // 첨가제명
   ITEM_IMAGE: string; // 큰제품이미지
   PRINT_FRONT: string; // 표시앞
+  PRINT_FRONT_EXACTLY: string; // 표시앞 일치
   PRINT_BACK: string; // 표시뒤
+  PRINT_BACK_EXACTLY: string; // 표시뒤 일치
   DRUG_SHAPE: string[]; // 의약품제형
   COLOR_CLASS1: string[]; // 색상앞
   COLOR_CLASS2: string[]; // 색상뒤

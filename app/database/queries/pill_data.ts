@@ -20,10 +20,7 @@ import {
  */
 const getPillDataWhereQuery: TWhereQueryClauseFunc = (
   pillData: Partial<IPillDataSearchParam>,
-): Record<
-  keyof IPillDataSearchParam & 'PRINT_FRONT_EXACTLY' & 'PRINT_BACK_EXACTLY',
-  IWhereQueryClause
-> => {
+): Record<keyof IPillDataSearchParam, IWhereQueryClause> => {
   return {
     ITEM_SEQ: {
       query: `ITEM_SEQ = ?`,
