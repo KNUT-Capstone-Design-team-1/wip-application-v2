@@ -1,8 +1,8 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
-import { initDatabase } from './database';
-import Layout from './layouts/Layout';
+import { initDatabase } from '../src/database';
+import Layout from '../src/layouts/Layout';
 
 /**
  * 전역 스크린 옵션

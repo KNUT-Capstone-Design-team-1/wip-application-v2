@@ -1,3 +1,3 @@
-import Setting from '@/app/features/setting/screens/Setting';
+import Setting from '../../src/features/setting/screens/Setting';
 
 export default Setting;
