@@ -1,41 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import ImageSearchSlideContainer from '../components/ImageSearchSlideContainer';
-import ImageSearchContent from '../components/ImageSearchContent';
-import ImageSearchButtons from '../components/ImageSearchButtons';
-
+import ImageSearchContent from '@/app/features/pill_image_search/components/organisms/ImageSearchContent';
+import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
+import { COLOR_GRAY } from "@/app/constants/color";
 
 const PillImageSearch = () => {
-  const [slideIndex, setSlideIndex] = useState(0);
-  const slideDatas = [
-    {
-      contentTitle: '제목1',
-      contentInfo: '내용1',
-    },
-    {
-      contentTitle: '제목2',
-      contentInfo: '내용2',
-    },
-    {
-      contentTitle: '제목3',
-      contentInfo: '내용3',
-    },
-  ];
   return (
     // onChange 이벤트가 발생하면 setSlideIndex 값 갱신하도록 하기
-    <ImageSearchSlideContainer>
-      {/*{*/}
-      {/*  slideDatas.map((data, index) => {*/}
-      {/*    return (*/}
-      {/*      <ImageSearchContent key={index} contentTitle={data.contentTitle} contentInfo={data.contentInfo} />*/}
-      {/*    );*/}
-      {/*  };*/}
-      {/*};*/}
-      <Text>이미지 검색</Text>
-
-      <ImageSearchButtons visible={slideIndex === slideDatas.length} />
-    </ImageSearchSlideContainer>
+    <View style={styles.container}>
+      <ImageSearchContent contentState={false} />
+      <View style={styles.hr}></View>
+      <ImageSearchButtons visible={false} />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: '5%',
+  },
+  hr: {
+    width: '100%',
+    height: 1,
+    backgroundColor: COLOR_GRAY[150],
+    marginTop: 30,
+    marginBottom: 30,
+  },
+});
 
 export default PillImageSearch;
