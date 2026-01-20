@@ -21,6 +21,50 @@ import {
 const getPillDataWhereQuery: TWhereQueryClauseFunc = (
   pillData: Partial<IPillDataSearchParam>,
 ): Record<keyof IPillDataSearchParam, IWhereQueryClause> => {
+  const ETC_FORM_CODE = '기타';
+  const NON_ETC_FORM_CODE = ['정제', '연질캡슐', '경질캡슐'];
+
+  const generateFormCodeParam = (param: string) => {
+    switch (param) {
+      // 정제의 경우 FORM_CODE에 *정으로 들어간다
+      case '정제':
+        return `%${param.replace(/제/, '')}`;
+
+      case '연질캡슐':
+      case '경질캡슐':
+        return `%${param.replace(/캡슐/, '')}%`;
+
+      default:
+        return `%${param}%`;
+    }
+  };
+
+  const generateFormCodeQuery = (formCodes: string[]) => {
+    if (!formCodes.length) {
+      return '';
+    }
+
+    const whereClause: string[] = [];
+
+    const hasETCFormCode = formCodes.some((v) => v === ETC_FORM_CODE);
+
+    if (hasETCFormCode) {
+      whereClause.push(
+        `(${NON_ETC_FORM_CODE.map(() => `FORM_CODE NOT LIKE ?`).join(' AND ')})`,
+      );
+    }
+
+    const nonETCFormCodeParams = formCodes.filter((v) => v !== ETC_FORM_CODE);
+
+    if (nonETCFormCodeParams.length) {
+      whereClause.push(
+        `(${nonETCFormCodeParams.map(() => `FORM_CODE LIKE ?`).join(' OR ')})`,
+      );
+    }
+
+    return `(${whereClause.join(' OR ')})`;
+  };
+
   return {
     ITEM_SEQ: {
       query: `ITEM_SEQ = ?`,
@@ -147,9 +191,28 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       values: (markCodeBack: string) => [markCodeBack, markCodeBack],
     },
     FORM_CODE: {
-      query: `(${pillData.FORM_CODE?.map(() => 'FORM_CODE LIKE ?').join(' AND ')})`,
-      values: (formCode: string[]) =>
-        formCode.map((formCode) => `%${formCode}%`),
+      query: generateFormCodeQuery(pillData.FORM_CODE || []),
+      values: (formCode: string[]) => {
+        const params: string[] = [];
+
+        if (formCode.some((v) => v === ETC_FORM_CODE)) {
+          params.push(
+            ...NON_ETC_FORM_CODE.map((v) => generateFormCodeParam(v)),
+          );
+        }
+
+        const nonETCFormCodeParams = formCode.filter(
+          (v) => v !== ETC_FORM_CODE,
+        );
+
+        if (nonETCFormCodeParams.length) {
+          params.push(
+            ...nonETCFormCodeParams.map((v) => generateFormCodeParam(v)),
+          );
+        }
+
+        return params;
+      },
     },
   };
 };
@@ -238,7 +301,10 @@ export const insertPillData = async (data: Partial<IPillData>[]) => {
  * @param option
  * @returns
  */
-export const getPillDatas = async (param: Partial<IPillDataSearchParam>) => {
+export const getPillDatas = async (
+  param: Partial<IPillDataSearchParam>,
+  queryOption: { page: number; limit: number },
+) => {
   const db = await getDatabase();
 
   const { whereClause, whereValues } = buildWhereClause(
@@ -246,9 +312,17 @@ export const getPillDatas = async (param: Partial<IPillDataSearchParam>) => {
     param,
   );
 
-  const sql = `SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data ${whereClause}`;
+  const sql = `SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data ${whereClause}
+               LIMIT ?, ?`;
 
-  const result = await db.getAllAsync<IPillData>(sql, [...whereValues]);
+  const { page = 1, limit = 30 } = queryOption;
+  const offset = (page - 1) * limit;
+
+  const result = await db.getAllAsync<IPillData>(sql, [
+    ...whereValues,
+    offset,
+    limit,
+  ]);
 
   return result;
 };
