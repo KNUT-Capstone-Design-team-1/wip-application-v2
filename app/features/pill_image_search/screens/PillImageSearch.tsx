@@ -6,12 +6,18 @@ import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
 import { COLOR_GRAY } from "@/app/constants/color";
 
 const PillImageSearch = () => {
+  const [hasImage, setHasImage] = useState(false);
+
+  const handleImageSelect = () => {
+    // TODO: 실제 이미지 선택 로직 추가
+    setHasImage(true);
+  };
+
   return (
-    // onChange 이벤트가 발생하면 setSlideIndex 값 갱신하도록 하기
     <View style={styles.container}>
-      <ImageSearchContent contentState={false} />
+      <ImageSearchContent contentState={hasImage} />
       <View style={styles.hr}></View>
-      <ImageSearchButtons visible={false} />
+      <ImageSearchButtons visible={false} onImageSelect={handleImageSelect} />
     </View>
   );
 };
