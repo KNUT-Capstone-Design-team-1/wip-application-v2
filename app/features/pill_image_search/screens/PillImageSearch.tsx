@@ -1,24 +1,42 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import ImageSearchSlideContainer from '../components/ImageSearchSlideContainer';
+import React from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import ImageSearchContent from '@/app/features/pill_image_search/components/organisms/ImageSearchContent';
 import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
-import { COLOR_GRAY } from "@/app/constants/color";
+import { COLOR_GRAY } from '@/app/constants/color';
+import { usePillImageSelection } from '../hooks/usePillImageSelection';
 
 const PillImageSearch = () => {
-  const [hasImage, setHasImage] = useState(false);
-
-  const handleImageSelect = () => {
-    // TODO: 실제 이미지 선택 로직 추가
-    setHasImage(true);
-  };
+  const {
+    pillImages,
+    hasImage,
+    isBothImagesSelected,
+    handleImageSelect,
+    handleMultipleImageSelect,
+    handleImageRemove,
+    handleSearch,
+  } = usePillImageSelection();
 
   return (
-    <View style={styles.container}>
-      <ImageSearchContent contentState={hasImage} />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <ImageSearchContent
+        contentState={hasImage}
+        frontImage={pillImages.front}
+        backImage={pillImages.back}
+      />
       <View style={styles.hr}></View>
-      <ImageSearchButtons visible={false} onImageSelect={handleImageSelect} />
-    </View>
+      <ImageSearchButtons
+        visible={false}
+        onImageSelect={handleImageSelect}
+        onMultipleImageSelect={handleMultipleImageSelect}
+        pillImages={pillImages}
+        onImageRemove={handleImageRemove}
+        onApply={handleSearch}
+        showApplyButton={isBothImagesSelected}
+      />
+    </ScrollView>
   );
 };
 
@@ -26,7 +44,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  contentContainer: {
     paddingHorizontal: '5%',
+    paddingBottom: 40,
   },
   hr: {
     width: '100%',
