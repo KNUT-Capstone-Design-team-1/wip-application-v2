@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from './token';
 
 type TNotice = {
   title: string;
@@ -32,11 +33,16 @@ const getAxiosInstance = () => {
  * @returns
  */
 export const requestCreateNotice = async (contents: TNoticeWritePayload) => {
+  const token = await getToken();
+
   const response = await getAxiosInstance().post<'Created'>(
     `/notices`,
     contents,
     {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': token,
+      },
     },
   );
 
@@ -55,8 +61,11 @@ export const requestReadNotices = async (
   limit?: number,
   mustRead?: boolean,
 ) => {
+  const token = await getToken();
+
   const response = await getAxiosInstance().get<TNoticeList>(`/notices`, {
     params: { skip, limit, mustRead },
+    headers: { 'x-auth-token': token },
   });
 
   return response.data;
@@ -72,10 +81,17 @@ export const requestUpdateNotice = async (
   idx: number,
   contents: TNoticeWritePayload,
 ) => {
+  const token = await getToken();
+
   const response = await getAxiosInstance().put<'Success'>(
     `/notices/${idx}`,
     contents,
-    { headers: { 'Content-Type': 'application/json' } },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': token,
+      },
+    },
   );
 
   return response.data;
@@ -87,8 +103,13 @@ export const requestUpdateNotice = async (
  * @returns
  */
 export const requestDeleteNotice = async (idx: number) => {
+  const token = await getToken();
+
   const response = await getAxiosInstance().delete<'Success'>(
     `/notices/${idx}`,
+    {
+      headers: { 'x-auth-token': token },
+    },
   );
 
   return response.data;

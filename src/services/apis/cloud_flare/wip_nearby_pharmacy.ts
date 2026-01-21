@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from './token';
 
 interface INearbyPharmacyData {
   id: string; // 암호화요양기호
@@ -56,9 +57,11 @@ const getAxiosInstance = () => {
 export const requestGetNearbyPharmacies = async (
   params: TNearbyPharmacySearchParam,
 ) => {
+  const token = await getToken();
+
   const response = await getAxiosInstance().get<INearbyPharmacyResponse>(
     `/nearby-pharmacies`,
-    { params },
+    { params, headers: { 'x-auth-token': token } },
   );
 
   return response.data;
