@@ -4,7 +4,7 @@ import PillIdentificationSearchSvg from '@assets/images/pillIdentification-searc
 import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import PharmacySvg from '@/assets/images/pharmacy.svg';
 import StorageSvg from '@/assets/images/storage.svg';
-import { COLOR } from '../../constants/color';
+import { COLOR } from '../../constants';
 import { TabConfig } from './types';
 
 export const ICON_SIZE = 24;

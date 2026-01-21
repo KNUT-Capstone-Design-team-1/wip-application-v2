@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getToken } from './google_cloud_token';
-import { TLogLevel } from '../../constants/types';
+import { TLogLevel } from '../../../constants';
 
 /**
  * 로그 서버에 로그 기록 요청

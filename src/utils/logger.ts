@@ -1,5 +1,5 @@
-import { LogAPI } from '../apis/google_cloud';
-import { TLogLevel } from '../constants/types';
+import { LogAPI } from '../services/apis/google_cloud';
+import { TLogLevel } from '../constants';
 
 /**
  * 로그 서버에 로그 기록 요청

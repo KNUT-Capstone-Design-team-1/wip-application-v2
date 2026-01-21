@@ -22,6 +22,7 @@
     "src",
     "**/*.tsx",
     "declarations.d.ts",
-    "new_src/features/setting/styles/molecules/setting_list.ts"
-, "app"  ]
+    "new_src/features/setting/styles/molecules/setting_list.ts",
+    "app"
+  ]
 }

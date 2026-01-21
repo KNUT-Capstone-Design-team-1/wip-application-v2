@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import _ from 'lodash';
 import config from './config.json';
 import data from './data.json';
-import { GoogleCloud, CloudFlare } from '../../app/apis';
+import { GoogleCloud, CloudFlare } from '../../src/services/apis';
 
 dotenv.config({ path: '.env.local' });
 

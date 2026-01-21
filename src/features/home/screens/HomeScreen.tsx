@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import LastSearchPill from '../components/organisms/LastSearchPill';
-import { COLOR_GRAY } from '../../../constants/color';
+import { COLOR_GRAY } from '../../../constants';
 import MenuList from '../components/organisms/MenuList';
 import TakeGuide from '../components/organisms/TakeGuide';
 

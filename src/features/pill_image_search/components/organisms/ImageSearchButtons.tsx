@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
-import { COLOR_PRIMARY } from '../../../../constants/color';
+import { COLOR_PRIMARY } from '../../../../constants';
 import CameraIcon from '@/assets/icons/camera.svg';
 import AlbumIcon from '@/assets/icons/album.svg';
 import ImagePreviewSlots from '../organisms/ImagePreviewSlots';

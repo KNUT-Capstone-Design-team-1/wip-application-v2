@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
-import { COLOR_GRAY } from '../../../constants/color';
+import { COLOR_GRAY } from '../../../constants';
 import { usePillImageSelection } from '../hooks/usePillImageSelection';
 
 const PillImageSearch = () => {

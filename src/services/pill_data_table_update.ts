@@ -1,5 +1,5 @@
-import { ConfigQuery, PillDataQuery } from '../database/queries';
-import { GoogleCloud } from '../apis';
+import { ConfigQuery, PillDataQuery } from './database/queries';
+import { GoogleCloud } from './apis';
 
 type CODE =
   | 'OK'
