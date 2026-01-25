@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import Svg, {
   Defs,
@@ -9,6 +9,7 @@ import { TabItem } from './TabItem';
 import { styles } from './styles';
 import { TAB_CONFIGS, GRADIENT_COLORS } from './constants';
 import { useBottomTab } from './hooks/useBottomTab';
+import PillIdentificationSearchModal from '../../features/pill_identification_search/components/PillIdentificationSearchModal';
 
 /**
  * BottomTab 컴포넌트
@@ -20,6 +21,16 @@ import { useBottomTab } from './hooks/useBottomTab';
  */
 const BottomTab = () => {
   const { insets, handleTabPress, isTabActive } = useBottomTab();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // 탭 클릭 핸들러 (식별 검색은 Modal로 처리)
+  const handleCustomTabPress = (path: string) => {
+    if (path === '/pillIdentificationSearch' || path === '/pill-identification-search') {
+      setIsModalVisible(true);
+    } else {
+      handleTabPress(path);
+    }
+  };
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
@@ -47,9 +58,15 @@ const BottomTab = () => {
           label={tab.label}
           isActive={isTabActive(tab.path)}
           isCenter={tab.isCenter}
-          onPress={() => handleTabPress(tab.path)}
+          onPress={() => handleCustomTabPress(tab.path)}
         />
       ))}
+
+      {/* 식별 검색 Modal */}
+      <PillIdentificationSearchModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+      />
     </View>
   );
 };
