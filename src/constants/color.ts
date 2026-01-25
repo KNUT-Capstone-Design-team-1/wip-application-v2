@@ -18,6 +18,7 @@ export const COLOR_GRAY = {
   100: '#E1E1E1',
   150: '#EFEFEF',
   200: '#B8B8B8',
+  250: '#DEDEDE',
   300: '#8E8E8E',
   400: '#778385',
   500: '#D9D9D9',
