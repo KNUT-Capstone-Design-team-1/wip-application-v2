@@ -53,32 +53,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 15,
     borderTopWidth: 1,
     borderTopColor: COLOR_GRAY[150],
-  },
-  resetButton: {
-    flex: 1,
-    paddingVertical: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLOR_PRIMARY[100],
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  resetButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLOR_PRIMARY[100],
-  },
-  searchButton: {
-    flex: 1,
-    paddingVertical: 15,
-    borderRadius: 10,
-    backgroundColor: COLOR_PRIMARY[100],
-    alignItems: 'center',
-  },
-  searchButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    justifyContent: 'space-between',
   },
 });

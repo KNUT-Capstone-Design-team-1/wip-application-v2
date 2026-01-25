@@ -12,6 +12,8 @@ import { pillIdentificstionData } from '../constants/pillIdentificstionData';
 import IdentificationSection from './molecules/identificationSection';
 import { Input } from './atoms/Input';
 import IconButton from './atoms/IconButton';
+import Button from './atoms/Button';
+import { COLOR_PRIMARY } from '@/src/constants';
 
 interface IPillIdentificationSearchModalProps {
   visible: boolean;
@@ -205,15 +207,18 @@ const PillIdentificationSearchModal: React.FC<
 
           {/* 하단 버튼 */}
           <View style={styles.bottomButtons}>
-            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-              <Text style={styles.resetButtonText}>초기화</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={handleSearch}
-            >
-              <Text style={styles.searchButtonText}>검색하기</Text>
-            </TouchableOpacity>
+            <Button
+              width="48%"
+              label="초기화"
+              pressHandler={handleReset}
+              background={'#fff'}
+              color={COLOR_PRIMARY[100]}
+            />
+            <Button
+              width="48%"
+              label="검색하기"
+              pressHandler={handleSearch}
+            />
           </View>
         </Pressable>
       </Pressable>
