@@ -40,7 +40,7 @@ export const TAB_CONFIGS: TabConfig[] = [
     isCenter: false,
   },
   {
-    key: 'pillImageSearch',
+    key: '/pill-image-search',
     label: '이미지검색',
     icon: (isActive: boolean) => (
       <PillImageSearchSvg
