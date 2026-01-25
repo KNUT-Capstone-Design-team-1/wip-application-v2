@@ -6,11 +6,11 @@ import pillSave from '@/assets/images/pill-save.png';
 export const BUTTON_LIST = [
   {
     img: pillIdentificationSearch,
-    path: '/pillIdentificationSearch',
+    path: '/pill-identification-search',
   },
   {
     img: pillImageSearch,
-    path: '/pillImageSearch',
+    path: '/pill-image-search',
   },
   {
     img: nearbyPharmacy,

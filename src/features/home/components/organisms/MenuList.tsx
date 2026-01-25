@@ -4,8 +4,21 @@ import { styles } from '../../styles/organisms/MenuList';
 import { BUTTON_LIST } from '../../constants/MenuList';
 import ImageButton from '../../components/atoms/ImageButton';
 
-const MenuList = () => {
+interface IMenuListProps {
+  onPillIdentificationPress?: () => void;
+}
+
+const MenuList = ({ onPillIdentificationPress }: IMenuListProps) => {
   const router = useRouter();
+
+  const handlePress = (path: string, index: number) => {
+    // 첫 번째 버튼(식별 검색)은 모달로 열기
+    if (index === 0 && onPillIdentificationPress) {
+      onPillIdentificationPress();
+    } else {
+      router.push(path);
+    }
+  };
 
   return (
     <View style={styles.menuListWrapper}>
@@ -15,7 +28,7 @@ const MenuList = () => {
           imageSource={button.img}
           width={166}
           height={140}
-          onPress={() => router.push(button.path)}
+          onPress={() => handlePress(button.path, index)}
         />
       ))}
     </View>
