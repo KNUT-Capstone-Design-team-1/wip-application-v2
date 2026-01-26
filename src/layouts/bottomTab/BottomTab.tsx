@@ -9,7 +9,7 @@ import { TabItem } from './TabItem';
 import { styles } from './styles';
 import { TAB_CONFIGS, GRADIENT_COLORS } from './constants';
 import { useBottomTab } from './hooks/useBottomTab';
-import PillIdentificationSearchModal from '../../features/pill_identification_search/components/PillIdentificationSearchModal';
+import PillIdentificationSearchModal from '../../features/pill_identification_search/components/organisms/PillIdentificationSearchModal';
 
 /**
  * BottomTab 컴포넌트

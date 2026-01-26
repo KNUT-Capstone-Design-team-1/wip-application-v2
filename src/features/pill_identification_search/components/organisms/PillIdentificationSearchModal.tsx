@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import { styles } from '../styles/PillIdentificationSearchModal';
-import { pillIdentificstionData } from '../constants/pillIdentificstionData';
-import IdentificationSection from './molecules/identificationSection';
-import { Input } from './atoms/Input';
-import IconButton from './atoms/IconButton';
-import Button from './atoms/Button';
+import { styles } from '../../styles/organisms/PillIdentificationSearchModal';
+import { pillIdentificstionData } from '../../constants/pillIdentificstionData';
+import IdentificationSection from '../molecules/identificationSection';
+import { Input } from '../atoms/Input';
+import IconButton from '../atoms/IconButton';
+import Button from '../atoms/Button';
 import { COLOR_PRIMARY } from '@/src/constants';
+import MarkSection from '@/src/features/pill_identification_search/components/molecules/MarkSection';
 
 interface IPillIdentificationSearchModalProps {
   visible: boolean;
@@ -165,7 +166,7 @@ const PillIdentificationSearchModal: React.FC<
             direction="column"
             selectedIndex={[]}
           >
-            <Text>특수 처리 필요</Text>
+            <MarkSection isSelected={false} selectedMarkName={''} selectedMarkIcon={''} />
           </IdentificationSection>
         </View>
       );

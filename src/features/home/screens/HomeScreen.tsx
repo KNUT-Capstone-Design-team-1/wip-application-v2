@@ -4,7 +4,7 @@ import LastSearchPill from '../components/organisms/LastSearchPill';
 import { COLOR_GRAY } from '../../../constants';
 import MenuList from '../components/organisms/MenuList';
 import TakeGuide from '../components/organisms/TakeGuide';
-import PillIdentificationSearchModal from '../../pill_identification_search/components/PillIdentificationSearchModal';
+import PillIdentificationSearchModal from '../../pill_identification_search/components/organisms/PillIdentificationSearchModal';
 
 const HomeScreen: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
