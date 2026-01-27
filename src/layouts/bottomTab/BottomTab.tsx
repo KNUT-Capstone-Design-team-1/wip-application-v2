@@ -25,7 +25,10 @@ const BottomTab = () => {
 
   // 탭 클릭 핸들러 (식별 검색은 Modal로 처리)
   const handleCustomTabPress = (path: string) => {
-    if (path === '/pillIdentificationSearch' || path === '/pill-identification-search') {
+    if (
+      path === '/pillIdentificationSearch' ||
+      path === '/pill-identification-search'
+    ) {
       setIsModalVisible(true);
     } else {
       handleTabPress(path);

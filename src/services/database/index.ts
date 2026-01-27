@@ -4,8 +4,8 @@ import { IConfig } from './types';
 
 const CREATE_CONFIG_TABLE_SQL = `
 CREATE TABLE IF NOT EXISTS config (
-  key VARCHAR(255) PRIMARY KEY NOT NULL,
-  value TEXT NULL DEFAULT NULL
+  \`key\` VARCHAR(255) PRIMARY KEY NOT NULL,
+  \`value\` TEXT NULL DEFAULT NULL
 )`;
 
 const DEFAULT_CONFIG: IConfig[] = [
@@ -20,12 +20,12 @@ const DEFAULT_CONFIG: IConfig[] = [
 const initConfigTable = async (db: SQLiteDatabase) => {
   await db.execAsync(CREATE_CONFIG_TABLE_SQL);
 
-  const sql = `INSERT IGNORE INTO config (\`key\`, \`value\`) VALUES
+  const sql = `INSERT INTO config (\`key\`, \`value\`) VALUES
     ${DEFAULT_CONFIG.map(() => `(?, ?)`).join(', ')}`;
 
   await db.runAsync(
     sql,
-    DEFAULT_CONFIG.map((v) => v.value),
+    DEFAULT_CONFIG.flatMap(({ key, value }) => [key, value]),
   );
 };
 

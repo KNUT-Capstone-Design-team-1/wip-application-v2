@@ -166,7 +166,11 @@ const PillIdentificationSearchModal: React.FC<
             direction="column"
             selectedIndex={[]}
           >
-            <MarkSection isSelected={false} selectedMarkName={''} selectedMarkIcon={''} />
+            <MarkSection
+              isSelected={false}
+              selectedMarkName={''}
+              selectedMarkIcon={''}
+            />
           </IdentificationSection>
         </View>
       );
@@ -215,11 +219,7 @@ const PillIdentificationSearchModal: React.FC<
               background={'#fff'}
               color={COLOR_PRIMARY[100]}
             />
-            <Button
-              width="48%"
-              label="검색하기"
-              pressHandler={handleSearch}
-            />
+            <Button width="48%" label="검색하기" pressHandler={handleSearch} />
           </View>
         </Pressable>
       </Pressable>
