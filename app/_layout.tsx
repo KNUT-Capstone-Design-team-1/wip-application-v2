@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
-import { initDatabase } from '../src/database';
+import { initDatabase } from '../src/services/database';
 import Layout from '../src/layouts/Layout';
 
 /**
