@@ -1,0 +1,27 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  settingList: {
+    display: 'flex',
+    height: '100%',
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+  },
+  settingItem: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: 70,
+  },
+  settingItemTextBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  text: {
+    fontWeight: 500,
+    fontSize: 16,
+  },
+});
