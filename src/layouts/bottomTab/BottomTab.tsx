@@ -1,75 +1,68 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import Svg, {
-  Defs,
-  LinearGradient as SvgLinearGradient,
-  Stop,
-} from 'react-native-svg';
-import { TabItem } from './TabItem';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { TAB_CONFIGS } from '@/src/layouts/bottomTab/constants';
+import { router, usePathname } from 'expo-router';
 import { styles } from './styles';
-import { TAB_CONFIGS, GRADIENT_COLORS } from './constants';
-import { useBottomTab } from './hooks/useBottomTab';
-import PillIdentificationSearchModal from '../../features/pill_identification_search/components/organisms/PillIdentificationSearchModal';
+import Svg, { Defs, LinearGradient, Stop } from 'react-native-svg';
 
-/**
- * BottomTab 컴포넌트
- *
- * 앱 하단에 표시되는 네비게이션 탭바
- * - 5개의 탭: 홈, 식별검색, 이미지검색(중앙), 약국, 보관함
- * - 중앙 탭(이미지검색)은 큰 원형 그라데이션 디자인
- * - 활성 탭은 아이콘/텍스트 색상 변경
- */
 const BottomTab = () => {
-  const { insets, handleTabPress, isTabActive } = useBottomTab();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const pathname = usePathname();
 
-  // 탭 클릭 핸들러 (식별 검색은 Modal로 처리)
-  const handleCustomTabPress = (path: string) => {
-    if (
-      path === '/pillIdentificationSearch' ||
-      path === '/pill-identification-search'
-    ) {
-      setIsModalVisible(true);
-    } else {
-      handleTabPress(path);
-    }
+  // 현재 경로와 탭 경로를 비교하여 활성화 상태 확인
+  const isTabActive = (tabPath: string) => {
+    console.log('Checking tab:', tabPath, 'Current pathname:', pathname);
+    if (tabPath === '/') return pathname === '/';
+    return pathname.startsWith(tabPath);
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      {/* SVG 그라데이션 정의 - 아이콘에서 참조 */}
-      <Svg height={0} width={0}>
-        <Defs>
-          <SvgLinearGradient
-            id="iconGradient"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="100%"
-          >
-            <Stop offset="0%" stopColor={GRADIENT_COLORS[0]} />
-            <Stop offset="100%" stopColor={GRADIENT_COLORS[1]} />
-          </SvgLinearGradient>
-        </Defs>
-      </Svg>
+    <View style={styles.bottomTabContainer}>
+      <View style={styles.bottomTabList}>
+        {/* SVG Gradient 정의 */}
+        <Svg height="0" width="0">
+          <Defs>
+            <LinearGradient id="iconGradient" x1="0" y1="0" x2="1" y2="1">
+              <Stop offset="0" stopColor="#137DFF" stopOpacity="1" />
+              <Stop offset="1" stopColor="#32D2FF" stopOpacity="1" />
+            </LinearGradient>
+          </Defs>
+        </Svg>
 
-      {/* 탭 아이템 렌더링 */}
-      {TAB_CONFIGS.map((tab) => (
-        <TabItem
-          key={tab.key}
-          icon={tab.icon(isTabActive(tab.path))}
-          label={tab.label}
-          isActive={isTabActive(tab.path)}
-          isCenter={tab.isCenter}
-          onPress={() => handleCustomTabPress(tab.path)}
-        />
-      ))}
+        {TAB_CONFIGS.map((item, index) => {
+          const isActive = isTabActive(item.path);
 
-      {/* 식별 검색 Modal */}
-      <PillIdentificationSearchModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-      />
+          console.log(`Tab: ${item.label}, isActive:`, isActive); // 디버깅 로그
+
+          const handlePress = () => {
+            // 같은 route인 경우 스택 쌓지 않음
+            if (isActive) return;
+            router.push(item.path);
+          };
+
+          return (
+            <TouchableOpacity
+              style={[
+                styles.bottomTabItem,
+                isActive && styles.bottomTabItemActive,
+              ]}
+              key={index}
+              onPress={handlePress}
+            >
+              <View style={styles.bottomTabIcon}>
+                {item.icon(isActive)}
+              </View>
+              <Text
+                style={[
+                  styles.bottomTabLabel,
+                  isActive && styles.bottomTabLabelActive,
+                ]}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };

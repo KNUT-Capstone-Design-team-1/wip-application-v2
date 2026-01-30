@@ -1,9 +1,10 @@
 import React from 'react';
 import HomeSvg from '@assets/images/home.svg';
+import StorageSvg from '@assets/images/storage.svg';
+import SettingSvg from '@assets/images/setting.svg';
 import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
 import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import PharmacySvg from '@/assets/images/pharmacy.svg';
-import StorageSvg from '@/assets/images/storage.svg';
 import { COLOR } from '../../constants';
 import { TabConfig } from './types';
 
@@ -20,51 +21,51 @@ export const TAB_CONFIGS: TabConfig[] = [
       <HomeSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? 'url(#iconGradient)' : COLOR.white}
+        fill={isActive ? '#000000' : '#C1D1D5'}
       />
     ),
     path: '/',
     isCenter: false,
   },
-  {
-    key: 'pillIdentificationSearch',
-    label: '식별검색',
-    icon: (isActive: boolean) => (
-      <PillIdentificationSearchSvg
-        width={ICON_SIZE}
-        height={ICON_SIZE}
-        fill={isActive ? 'url(#iconGradient)' : COLOR.white}
-      />
-    ),
-    path: '/pillIdentificationSearch',
-    isCenter: false,
-  },
-  {
-    key: '/pill-image-search',
-    label: '이미지검색',
-    icon: (isActive: boolean) => (
-      <PillImageSearchSvg
-        width={CENTER_ICON_SIZE}
-        height={CENTER_ICON_SIZE}
-        fill={COLOR.white}
-      />
-    ),
-    path: '/pillImageSearch',
-    isCenter: true,
-  },
-  {
-    key: 'pharmacy',
-    label: '약국',
-    icon: (isActive: boolean) => (
-      <PharmacySvg
-        width={ICON_SIZE}
-        height={ICON_SIZE}
-        fill={isActive ? 'url(#iconGradient)' : COLOR.white}
-      />
-    ),
-    path: '/pharmacy',
-    isCenter: false,
-  },
+  // {
+  //   key: 'pillIdentificationSearch',
+  //   label: '식별검색',
+  //   icon: (isActive: boolean) => (
+  //     <PillIdentificationSearchSvg
+  //       width={ICON_SIZE}
+  //       height={ICON_SIZE}
+  //       fill={isActive ? 'url(#iconGradient)' : COLOR.white}
+  //     />
+  //   ),
+  //   path: '/pillIdentificationSearch',
+  //   isCenter: false,
+  // },
+  // {
+  //   key: '/pill-image-search',
+  //   label: '이미지검색',
+  //   icon: (isActive: boolean) => (
+  //     <PillImageSearchSvg
+  //       width={CENTER_ICON_SIZE}
+  //       height={CENTER_ICON_SIZE}
+  //       fill={COLOR.white}
+  //     />
+  //   ),
+  //   path: '/pillImageSearch',
+  //   isCenter: true,
+  // },
+  // {
+  //   key: 'pharmacy',
+  //   label: '약국',
+  //   icon: (isActive: boolean) => (
+  //     <PharmacySvg
+  //       width={ICON_SIZE}
+  //       height={ICON_SIZE}
+  //       fill={isActive ? 'url(#iconGradient)' : COLOR.white}
+  //     />
+  //   ),
+  //   path: '/pharmacy',
+  //   isCenter: false,
+  // },
   {
     key: 'storage',
     label: '보관함',
@@ -72,10 +73,27 @@ export const TAB_CONFIGS: TabConfig[] = [
       <StorageSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? 'url(#iconGradient)' : COLOR.white}
+        fill={isActive ? '#000000' : '#C1D1D5'}
+        color={isActive ? '#000000' : '#C1D1D5'}
+        style={{ color: isActive ? '#000000' : '#C1D1D5' }}
       />
     ),
     path: '/storage',
+    isCenter: false,
+  },
+  {
+    key: 'setting',
+    label: '설정',
+    icon: (isActive: boolean) => (
+      <SettingSvg
+        width={ICON_SIZE}
+        height={ICON_SIZE}
+        fill={isActive ? '#000000' : '#C1D1D5'}
+        color={isActive ? '#000000' : '#C1D1D5'}
+        style={{ color: isActive ? '#000000' : '#C1D1D5' }}
+      />
+    ),
+    path: '/setting',
     isCenter: false,
   },
 ];

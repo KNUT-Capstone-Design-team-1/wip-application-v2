@@ -1,9 +1,10 @@
 import { View, Text } from 'react-native';
+import SettingList from '../components/SettingList';
 
 const Setting = () => {
   return (
     <View>
-      <Text>setting</Text>
+      <SettingList />
     </View>
   );
 };
