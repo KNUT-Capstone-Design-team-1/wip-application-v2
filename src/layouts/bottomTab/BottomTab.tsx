@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { TAB_CONFIGS } from '@/src/layouts/bottomTab/constants';
 import { router, usePathname } from 'expo-router';

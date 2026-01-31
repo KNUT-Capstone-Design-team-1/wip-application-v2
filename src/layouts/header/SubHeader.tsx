@@ -27,9 +27,7 @@ const SubHeader = ({ title }: SubHeaderProps) => {
           <LeftArrow width={10} height={18} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
-        <TouchableOpacity onPress={handleMenuPress} style={styles.menuButton}>
-          <MenuSvg width={24} height={24} />
-        </TouchableOpacity>
+        <View style={styles.menuButton} />
       </View>
     </View>
   );

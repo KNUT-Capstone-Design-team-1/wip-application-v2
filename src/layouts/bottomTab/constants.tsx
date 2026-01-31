@@ -2,10 +2,6 @@ import React from 'react';
 import HomeSvg from '@assets/images/home.svg';
 import StorageSvg from '@assets/images/storage.svg';
 import SettingSvg from '@assets/images/setting.svg';
-import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
-import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
-import PharmacySvg from '@/assets/images/pharmacy.svg';
-import { COLOR } from '../../constants';
 import { TabConfig } from './types';
 
 export const ICON_SIZE = 24;
@@ -74,8 +70,6 @@ export const TAB_CONFIGS: TabConfig[] = [
         width={ICON_SIZE}
         height={ICON_SIZE}
         fill={isActive ? '#000000' : '#C1D1D5'}
-        color={isActive ? '#000000' : '#C1D1D5'}
-        style={{ color: isActive ? '#000000' : '#C1D1D5' }}
       />
     ),
     path: '/storage',
@@ -89,8 +83,6 @@ export const TAB_CONFIGS: TabConfig[] = [
         width={ICON_SIZE}
         height={ICON_SIZE}
         fill={isActive ? '#000000' : '#C1D1D5'}
-        color={isActive ? '#000000' : '#C1D1D5'}
-        style={{ color: isActive ? '#000000' : '#C1D1D5' }}
       />
     ),
     path: '/setting',

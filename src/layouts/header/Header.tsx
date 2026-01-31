@@ -17,9 +17,9 @@ const Header = () => {
         <TouchableOpacity onPress={() => router.push('/')}>
           <LogoSvg width={120} height={40} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleMenuPress} style={styles.menuButton}>
-          <MenuSvg width={24} height={24} />
-        </TouchableOpacity>
+        {/*<TouchableOpacity onPress={handleMenuPress} style={styles.menuButton}>*/}
+        {/*  <MenuSvg width={24} height={24} />*/}
+        {/*</TouchableOpacity>*/}
       </View>
     </View>
   );

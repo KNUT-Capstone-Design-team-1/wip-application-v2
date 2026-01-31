@@ -22,9 +22,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 8,
     gap: 6,
-    marginVertical: 8,
-    marginHorizontal: 4,
-    borderRadius: 16,
   },
   bottomTabItemActive: {
     backgroundColor: '#FFFFFF',
