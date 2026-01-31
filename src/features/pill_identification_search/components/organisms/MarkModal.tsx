@@ -19,8 +19,6 @@ interface IMarkModalProps {
   onClose: () => void;
 }
 
-const { width, height } = Dimensions.get('window');
-
 const MarkModal = ({ onClose }: IMarkModalProps) => {
   const {
     searchText,
