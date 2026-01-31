@@ -3,7 +3,7 @@ import { getToken } from './google_cloud_token';
 import { IPillData } from '../../database/types';
 
 export interface IPillDataResourceResponse {
-  datas: IPillData[];
+  resource: IPillData[]; // API는 'resource' 필드 사용
   total: number;
   totalPage: number;
   current: number;
@@ -20,10 +20,22 @@ export async function requestPillDataResource(page: number) {
 
   const token = getToken();
 
-  const result = await axios.get<IPillDataResourceResponse>(serviceURL, {
-    params: { page },
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    const result = await axios.get<IPillDataResourceResponse>(serviceURL, {
+      params: { page },
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  return result.data;
+    return result.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('API Error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+      });
+    }
+    throw error;
+  }
 }
