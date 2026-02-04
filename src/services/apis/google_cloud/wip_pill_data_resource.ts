@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { getToken } from './google_cloud_token';
 import { IPillData } from '../../database/types';
 
@@ -28,7 +28,7 @@ export async function requestPillDataResource(page: number) {
 
     return result.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
+    if (isAxiosError(error)) {
       console.error('API Error:', {
         status: error.response?.status,
         statusText: error.response?.statusText,
