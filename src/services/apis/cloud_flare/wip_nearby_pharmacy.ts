@@ -13,6 +13,7 @@ interface INearbyPharmacyData {
   openDate: string; // 개설일자
   x: number; // 좌표(X)
   y: number; // 좌표(Y)
+  distance: number; // 거리 (소수점)
 }
 
 interface INearbyPharmacyResponse {
