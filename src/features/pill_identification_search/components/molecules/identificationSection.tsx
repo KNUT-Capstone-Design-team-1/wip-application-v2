@@ -1,5 +1,5 @@
-import { Text, View } from "react-native";
-import React, { ReactNode } from "react";
+import { Text, View } from 'react-native';
+import React, { ReactNode } from 'react';
 import { styles } from '../../styles/molecules/identificationSection';
 
 interface IIdentificationSectionProps {
