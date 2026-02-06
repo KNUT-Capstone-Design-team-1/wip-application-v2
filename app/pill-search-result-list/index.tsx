@@ -1,3 +1,3 @@
-import PillSearchResultList from '../../src/features/pill_search_result_list/screens/PillSearchResultList';
+import PillSearchResultListScreen from '../../src/features/pill_search_result_list/screens/PillSearchResultListScreen';
 
-export default PillSearchResultList;
+export default PillSearchResultListScreen;
