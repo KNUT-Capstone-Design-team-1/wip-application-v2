@@ -4,6 +4,7 @@ export const COLOR = {
   normal: '#34B233',
   error: '#FF4960',
   alert: '#FF5454',
+  item: '#FF991C',
 };
 
 // TypeScript에서 숫자 키를 가진 객체 속성에 접근할 때는 대괄호 표기법([200])을 사용
