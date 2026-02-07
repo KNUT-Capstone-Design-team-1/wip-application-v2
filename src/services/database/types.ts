@@ -13,9 +13,6 @@ export interface IPillData {
   CHART: string; // 성상
   BAR_CODE: string; // 표준코드
   MATERIAL_NAME: string; // 원료성분
-  EE_DOC_DATA: string; // 효능효과
-  UD_DOC_DATA: string; // 용법용량
-  NB_DOC_DATA: string; // 주의사항
   VALID_TERM: string; // 유효기간
   STORAGE_METHOD: string; // 저장방법
   PACK_UNIT: string; // 포장단위
@@ -73,7 +70,21 @@ export interface ITableColumnSchema {
   isPK: boolean;
 }
 
-export interface IPillDataSearchParam extends IPillData {
+export interface IPillDataSearchParam extends Omit<
+  IPillData,
+  | 'DRUG_SHAPE'
+  | 'COLOR_CLASS1'
+  | 'COLOR_CLASS2'
+  | 'LINE_FRONT'
+  | 'LINE_BACK'
+  | 'FORM_CODE'
+> {
+  DRUG_SHAPE: string[];
+  COLOR_CLASS1: string[];
+  COLOR_CLASS2: string[];
+  LINE_FRONT: string[];
+  LINE_BACK: string[];
+  FORM_CODE: string[];
   PRINT_FRONT_EXACTLY: string; // 표시앞 일치
   PRINT_BACK_EXACTLY: string; // 표시뒤 일치
 }
