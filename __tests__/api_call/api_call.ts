@@ -73,12 +73,15 @@ export async function callAPI() {
 
     if (apiList.includes('pill-data-table-schema')) {
       results['pill-data-table-schema'] =
-        await GoogleCloud.PillDataTableSchemaAPI.requestPillDataTableSchema();
+        await GoogleCloud.PillDataTableSchemaAPI.requestTableSchema(
+          'pill_data',
+        );
     }
 
     if (apiList.includes('pill-data-resource')) {
       results['pill-data-resource'] =
-        await GoogleCloud.PillDataResourceAPI.requestPillDataResource(
+        await GoogleCloud.PillDataResourceAPI.requestResourceData(
+          'pill_data',
           data.pillDataResource.page,
         );
     }

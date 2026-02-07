@@ -74,7 +74,7 @@ initDatabase(onProgress?: (progress) => void)
   ├─ initPillDataTable()          // PillData 테이블 초기화 및 다운로드
   │   ├─ hasLatestPillData()     // 최신 버전 확인
   │   ├─ requestDatabaseVersion() // 서버 버전 조회
-  │   ├─ requestPillDataResource() // 페이지별 데이터 다운로드
+  │   ├─ requestResourceData() // 페이지별 데이터 다운로드
   │   └─ batchInsertPillData()    // 데이터 삽입
   └─ 데이터 검증 (샘플 5개 조회 + 전체 개수)
 ```
@@ -189,7 +189,7 @@ requestDatabaseVersion(): Promise<{
 **파일:** `src/services/apis/google_cloud/wip_pill_data_resource.ts`
 
 ```typescript
-requestPillDataResource(page: number): Promise<{
+requestResourceData(page: number): Promise<{
   resource: IPillData[],
   total: number,
   totalPage: number,

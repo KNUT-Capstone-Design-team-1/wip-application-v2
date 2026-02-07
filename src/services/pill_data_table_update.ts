@@ -1,5 +1,6 @@
 import { ConfigQuery, PillDataQuery } from './database/queries';
 import { GoogleCloud } from './apis';
+import { IPillData } from './database/types';
 
 type CODE =
   | 'OK'
@@ -43,7 +44,7 @@ const hasLatestPillData = async (): Promise<CODE> => {
   const serverVersion =
     await GoogleCloud.DatabaseVersionAPI.requestDatabaseVersion();
 
-  const { schemaVersion, dataVersion } = serverVersion.pillData;
+  const { schemaVersion, dataVersion } = serverVersion.pill_data;
 
   const isOldSchema =
     Number(currentPillDataSchemaVersion) < Number(schemaVersion);
@@ -66,7 +67,7 @@ const hasLatestPillData = async (): Promise<CODE> => {
  */
 const initPillDataTable = async (): Promise<CODE> => {
   const schema =
-    await GoogleCloud.PillDataTableSchemaAPI.requestPillDataTableSchema();
+    await GoogleCloud.PillDataTableSchemaAPI.requestTableSchema('pill_data');
 
   if (!schema.columns?.length) {
     return 'INVALID-SCHEMA';
@@ -108,14 +109,14 @@ const insertPillData = async (): Promise<CODE> => {
   let code: CODE = 'OK';
   do {
     // 최신 데이터 요청
-    let response: GoogleCloud.PillDataResourceAPI.IPillDataResourceResponse;
+    let response: GoogleCloud.PillDataResourceAPI.IResourceDataResponse<IPillData>;
     try {
-      response =
-        await GoogleCloud.PillDataResourceAPI.requestPillDataResource(
-          currentPage,
-        );
+      response = await GoogleCloud.PillDataResourceAPI.requestResourceData(
+        'pill_data',
+        currentPage,
+      );
 
-      if (!response?.datas?.length || !response?.totalPage) {
+      if (!response?.resource?.length || !response?.totalPage) {
         code = 'ERROR-NO-RESOURCE-DATA';
         break;
       }
@@ -129,11 +130,11 @@ const insertPillData = async (): Promise<CODE> => {
       break;
     }
 
-    const { totalPage, datas } = response;
+    const { totalPage, resource } = response;
 
     // pill_data 테이블에 INSERT
     try {
-      await PillDataQuery.insertPillData(datas);
+      await PillDataQuery.insertPillData(resource);
     } catch (e) {
       console.log(
         '[INSERT-PILL-DATA] Error Occurred from insert pill data resource. %s',

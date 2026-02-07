@@ -1,6 +1,8 @@
 export type TConfigKey = 'pillDataSchemaVersion' | 'pillDataResourceVersion';
 
-// pill_data 테이블 스키마
+export type TTable = 'pill_data' | 'mark_images' | 'nearby_pharmacies';
+
+// 알약 데이터 테이블 스키마
 export interface IPillData {
   ITEM_SEQ: string; // 품목일련번호
   ITEM_NAME: string; // 품목명
@@ -32,6 +34,28 @@ export interface IPillData {
   MARK_CODE_FRONT: string; // 표기코드앞
   MARK_CODE_BACK: string; // 표기코드뒤
   FORM_CODE: string; // 제형코드명
+}
+
+// 마크 이미지 테이블 스키마
+export interface IMarkImages {
+  code: string;
+  title: string;
+  base64: string;
+}
+
+// 주변 약국 테이블 스키마
+export interface INearbyPharmacies {
+  id: string; // 암호화요양기호
+  name: string; // 요양기관명
+  states: string; // 시도코드명
+  region: string; // 시군구코드명
+  district: string; // 읍면동
+  postalCode: string; // 우편번호
+  address: string; // 주소
+  telephone: string; // 전화번호
+  openData: string; // 개설일자
+  x: string; // X 좌표
+  y: string; // Y 좌표
 }
 
 // config 테이블 스키마

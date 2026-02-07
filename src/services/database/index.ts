@@ -2,8 +2,7 @@ import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from './sqlite';
 import { IConfig, IPillData } from './types';
 import { getSpecificConfig, updateSpecificConfig } from './queries/config';
-import { requestDatabaseVersion } from '../apis/google_cloud/wip_database_version';
-import { requestPillDataResource } from '../apis/google_cloud/wip_pill_data_resource';
+import { DatabaseVersionAPI, PillDataResourceAPI } from '../apis/google_cloud';
 
 const CREATE_CONFIG_TABLE_SQL = `
 CREATE TABLE IF NOT EXISTS config (
@@ -73,8 +72,8 @@ const initConfigTable = async (db: SQLiteDatabase) => {
 export const hasLatestPillData = async (): Promise<boolean> => {
   try {
     // 서버에서 최신 버전 정보 가져오기
-    const versionInfo = await requestDatabaseVersion();
-    const serverVersion = `${versionInfo.pillData.schemaVersion}_${versionInfo.pillData.dataVersion}`;
+    const versionInfo = await DatabaseVersionAPI.requestDatabaseVersion();
+    const serverVersion = `${versionInfo.pill_data.schemaVersion}_${versionInfo.pill_data.dataVersion}`;
 
     const localVersion = await getSpecificConfig('pillDataResourceVersion');
 
@@ -154,9 +153,9 @@ const initPillDataTable = async (
     // 서버에서 최신 버전 정보 가져오기
     onProgress?.({ status: '서버 정보 확인 중', progress: 0 });
     // 서버 버전 조회
-    const versionInfo = await requestDatabaseVersion();
+    const versionInfo = await DatabaseVersionAPI.requestDatabaseVersion();
     console.log('Version info:', versionInfo);
-    const serverVersion = `${versionInfo.pillData.schemaVersion}_${versionInfo.pillData.dataVersion}`;
+    const serverVersion = `${versionInfo.pill_data.schemaVersion}_${versionInfo.pill_data.dataVersion}`;
 
     // 기존 데이터 삭제
     onProgress?.({ status: '기존 데이터 삭제 중', progress: 0 });
@@ -165,11 +164,17 @@ const initPillDataTable = async (
     // 첫 페이지 조회 (total, totalPage 정보 얻기)
     let currentPage = 1;
     // 페이지별 데이터 다운로드
-    const firstPageData = await requestPillDataResource(currentPage);
+    const firstPageData =
+      await PillDataResourceAPI.requestResourceData<IPillData>(
+        'pill_data',
+        currentPage,
+      );
 
     // 응답 검증
     if (!firstPageData) {
-      throw new Error('Invalid API response: firstPageData is null or undefined');
+      throw new Error(
+        'Invalid API response: firstPageData is null or undefined',
+      );
     }
 
     // API 응답에서 데이터 추출 (resource 필드 사용)
@@ -178,11 +183,18 @@ const initPillDataTable = async (
     const totalPage = firstPageData.totalPage;
 
     if (!datas || !Array.isArray(datas)) {
-      console.error('❌ Invalid response structure:', Object.keys(firstPageData || {}));
-      throw new Error(`Invalid API response: resource is missing or not an array`);
+      console.error(
+        '❌ Invalid response structure:',
+        Object.keys(firstPageData || {}),
+      );
+      throw new Error(
+        `Invalid API response: resource is missing or not an array`,
+      );
     }
 
-    console.log(`📦 Total pills: ${total}, Total pages: ${totalPage}, Items per page: ${datas.length}`);
+    console.log(
+      `📦 Total pills: ${total}, Total pages: ${totalPage}, Items per page: ${datas.length}`,
+    );
 
     // 첫 페이지 데이터 삽입
     if (datas && datas.length > 0) {
@@ -198,10 +210,15 @@ const initPillDataTable = async (
 
     // 나머지 페이지 다운로드
     for (currentPage = 2; currentPage <= totalPage; currentPage++) {
-      const pageData = await requestPillDataResource(currentPage);
+      const pageData = await PillDataResourceAPI.requestResourceData<IPillData>(
+        'pill_data',
+        currentPage,
+      );
 
       if (!pageData || !pageData.resource) {
-        console.warn(`⚠️ Page ${currentPage} has invalid response, skipping...`);
+        console.warn(
+          `⚠️ Page ${currentPage} has invalid response, skipping...`,
+        );
         continue;
       }
 
