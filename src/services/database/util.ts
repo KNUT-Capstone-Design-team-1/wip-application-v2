@@ -5,8 +5,6 @@ import {
   TWhereQueryClauseFunc,
 } from './types';
 
-export const INSERT_BATCH_SIZE = 500;
-
 export const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
   'ITEM_SEQ',
   'ITEM_NAME',

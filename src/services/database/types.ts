@@ -1,6 +1,26 @@
-export type TConfigKey = 'pillDataSchemaVersion' | 'pillDataResourceVersion';
+export type TConfigKey =
+  | 'pillDataSchemaVersion'
+  | 'pillDataDataVersion'
+  | 'markImagesSchemaVersion'
+  | 'markImagesDataVersion'
+  | 'nearbyPharmaciesSchemaVersion'
+  | 'nearbyPharmaciesDataVersion';
 
-export type TTable = 'pill_data' | 'mark_images' | 'nearby_pharmacies';
+export type TDataTable = 'pill_data' | 'mark_images' | 'nearby_pharmacies';
+
+export type DATABSE_UPDATE_RESULT_CODE =
+  | 'OK'
+  | 'NO-UPDATED'
+  | 'REQUIRE-UPDATE'
+  | 'UNNECESSARY-UPDATE'
+  | 'ERROR-CHECK-VERSION'
+  | 'INVALID-SCHEMA'
+  | 'ERROR-DROP-TABLE'
+  | 'ERROR-CREATE-TABLE'
+  | 'ERROR-INITIALIZE-TABLE'
+  | 'ERROR-GET-RESOURCE'
+  | 'ERROR-NO-RESOURCE-DATA'
+  | 'ERROR-INSERT-TABLE';
 
 // 알약 데이터 테이블 스키마
 export interface IPillData {
@@ -54,6 +74,8 @@ export interface INearbyPharmacies {
   x: string; // X 좌표
   y: string; // Y 좌표
 }
+
+export type TResourceDataSchemas = IPillData | IMarkImages | INearbyPharmacies;
 
 // config 테이블 스키마
 export interface IConfig {

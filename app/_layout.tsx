@@ -1,10 +1,22 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
-import { initDatabase, IUpdateProgress } from '../src/services/database';
+import { initDatabase } from '../src/services/database';
 import Layout from '../src/layouts/Layout';
 import { logger } from '../src/utils';
 import UpdateDB from './UpdateDB';
+
+// FIXME 커스텀 훅으로 옮기고 useEffect를 커스텀 훅으로 대체해야한다
+export interface IUpdateProgress {
+  status: string;
+  progress: number;
+  currentPage?: number;
+  totalPages?: number;
+}
+
+const DATABASE_INIT_STATUS = {
+  COMPLETE: 'COMPLETE',
+} as const;
 
 /**
  * 전역 스크린 옵션
@@ -20,9 +32,15 @@ const RootLayout = () => {
   useEffect(() => {
     const initializeDatabase = async () => {
       try {
-        await initDatabase((progress) => {
-          setUpdateProgress(progress);
-        });
+        const result = await initDatabase();
+
+        if (result) {
+          setUpdateProgress({
+            status: DATABASE_INIT_STATUS.COMPLETE,
+            progress: 1,
+          });
+        }
+
         // 초기화 완료 후 잠시 대기
         setTimeout(() => {
           setIsInitializing(false);

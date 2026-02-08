@@ -6,14 +6,14 @@ interface IDatabaseVersion {
   dataVersion: number; // 데이터베이스 버전
 }
 
-interface IDatabaseVersionResponse {
+export interface IDatabaseVersionResponse {
   pill_data: IDatabaseVersion;
   mark_images: IDatabaseVersion;
   nearby_pharmacies: IDatabaseVersion;
 }
 
 /**
- * 데이터베이스 버전 조회 요청
+ * 데이터베이스 버전 조회 요청 (모든 데이터베이스 버전을 가져옴)
  * @returns
  */
 export async function requestDatabaseVersion() {

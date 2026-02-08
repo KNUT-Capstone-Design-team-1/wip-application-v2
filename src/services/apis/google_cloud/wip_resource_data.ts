@@ -1,14 +1,7 @@
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
 import { getToken } from './google_cloud_token';
-import {
-  IMarkImages,
-  INearbyPharmacies,
-  IPillData,
-  TTable,
-} from '../../database/types';
-import { logger } from '../../../utils';
+import { TDataTable, TResourceDataSchemas } from '../../database/types';
 
-type TResourceDataSchemas = IPillData | IMarkImages | INearbyPharmacies;
 export interface IResourceDataResponse<T extends TResourceDataSchemas> {
   resource: T[]; // API는 'resource' 필드 사용
   total: number;
@@ -18,11 +11,12 @@ export interface IResourceDataResponse<T extends TResourceDataSchemas> {
 
 /**
  * pill_data 테이블 원천 데이터 요청
+ * @param table 테이블 이름
  * @param page 페이지
  * @returns
  */
 export async function requestResourceData<T extends TResourceDataSchemas>(
-  table: TTable,
+  table: TDataTable,
   page: number,
 ) {
   const serviceURL = process.env
@@ -30,24 +24,10 @@ export async function requestResourceData<T extends TResourceDataSchemas>(
 
   const token = getToken();
 
-  try {
-    const result = await axios.get<IResourceDataResponse<T>>(serviceURL, {
-      params: { table, page },
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const result = await axios.get<IResourceDataResponse<T>>(serviceURL, {
+    params: { table, page },
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-    return result.data;
-  } catch (error) {
-    if (isAxiosError(error)) {
-      logger.error(
-        `API Error: ${JSON.stringify({
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          message: error.message,
-        })}`,
-      );
-    }
-    throw error;
-  }
+  return result.data;
 }
