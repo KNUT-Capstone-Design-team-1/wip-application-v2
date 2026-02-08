@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import _ from 'lodash';
 import config from './config.json';
 import data from './data.json';
 import { GoogleCloud, CloudFlare } from '../../src/services/apis';
@@ -19,8 +18,8 @@ export async function callAPI() {
         );
     }
 
-    if (apiList.includes('get-drug-detail')) {
-      results['get-drug-detail'] =
+    if (apiList.includes('get-pill-detail')) {
+      results['get-pill-detail'] =
         await GoogleCloud.PillDetailAPI.requestGetPillDetail(
           data.pillDetail.ITEM_SEQ,
         );
@@ -49,38 +48,19 @@ export async function callAPI() {
         await CloudFlare.NoticeAPI.requestDeleteNotice(data.noticeDelete.idx);
     }
 
-    if (apiList.includes('get-nearby-pharmacies')) {
-      const param = _.pickBy(
-        data.nearbyPharmacy,
-        (value) => !_.isNil(value) && value !== '',
-      );
-
-      results['get-nearby-pharmacies'] =
-        await CloudFlare.NearbyPharmacyAPI.requestGetNearbyPharmacies(param);
-    }
-
-    if (apiList.includes('mark-image')) {
-      const { page, limit, title } = data.markImage;
-
-      results['mark-image'] =
-        await GoogleCloud.MarkImageAPI.requestGetMarkImage(page, limit, title);
-    }
-
     if (apiList.includes('database-version')) {
       results['database-version'] =
         await GoogleCloud.DatabaseVersionAPI.requestDatabaseVersion();
     }
 
-    if (apiList.includes('pill-data-table-schema')) {
-      results['pill-data-table-schema'] =
-        await GoogleCloud.PillDataTableSchemaAPI.requestTableSchema(
-          'pill_data',
-        );
+    if (apiList.includes('table-schema')) {
+      results['table-schema'] =
+        await GoogleCloud.TableSchemaAPI.requestTableSchema('pill_data');
     }
 
-    if (apiList.includes('pill-data-resource')) {
-      results['pill-data-resource'] =
-        await GoogleCloud.PillDataResourceAPI.requestResourceData(
+    if (apiList.includes('resource-data')) {
+      results['resource-data'] =
+        await GoogleCloud.ResourceDataAPI.requestResourceData(
           'pill_data',
           data.pillDataResource.page,
         );
