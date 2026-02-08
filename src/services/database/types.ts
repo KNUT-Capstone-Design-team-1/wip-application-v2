@@ -92,6 +92,15 @@ export interface ITableColumnSchema {
   isPK: boolean;
 }
 
+export interface IWhereQueryClause {
+  query: string;
+  values: (str: any) => (string | number)[];
+}
+
+export type TWhereQueryClauseFunc = (
+  param: Record<string, any>,
+) => Record<string, IWhereQueryClause>;
+
 export interface IPillDataSearchParam extends Omit<
   IPillData,
   | 'DRUG_SHAPE'
@@ -111,11 +120,14 @@ export interface IPillDataSearchParam extends Omit<
   PRINT_BACK_EXACTLY: string; // 표시뒤 일치
 }
 
-export interface IWhereQueryClause {
-  query: string;
-  values: (str: any) => string[];
-}
+export type TQuerySearchParamResult<T> = Record<keyof T, IWhereQueryClause>;
 
-export type TWhereQueryClauseFunc = (
-  param: Record<string, any>,
-) => Record<string, IWhereQueryClause>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface IMarkImagesSearchParam extends Omit<IMarkImages, 'base64'> {}
+
+export interface INearbyPharmaciesSearchParam extends Omit<
+  INearbyPharmacies,
+  'postalCode' | 'telephone' | 'openData' | 'x' | 'y'
+> {
+  coordinate: { x: number; y: number };
+}

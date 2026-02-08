@@ -2,19 +2,48 @@ import { getDatabase } from '../sqlite';
 import {
   IPillData,
   IPillDataSearchParam,
-  IWhereQueryClause,
+  TQuerySearchParamResult,
   TWhereQueryClauseFunc,
 } from '../types';
-import { ALL_PILL_DATA_COLUMNS, buildWhereClause } from '../util';
+import { buildWhereClause } from '../util';
+
+const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
+  'ITEM_SEQ',
+  'ITEM_NAME',
+  'ENTP_NAME',
+  'ITEM_PERMIT_DATE',
+  'ETC_OTC_CODE',
+  'CHART',
+  'BAR_CODE',
+  'MATERIAL_NAME',
+  'VALID_TERM',
+  'STORAGE_METHOD',
+  'PACK_UNIT',
+  'MAIN_ITEM_INGR',
+  'INGR_NAME',
+  'ITEM_IMAGE',
+  'PRINT_FRONT',
+  'PRINT_BACK',
+  'DRUG_SHAPE',
+  'COLOR_CLASS1',
+  'COLOR_CLASS2',
+  'LINE_FRONT',
+  'LINE_BACK',
+  'IMG_REGIST_TS',
+  'CLASS_NAME',
+  'MARK_CODE_FRONT',
+  'MARK_CODE_BACK',
+  'FORM_CODE',
+] as const;
 
 /**
  * pill_data 테이블 조회를 위한 WHERE param 생성
- * @param pillData 조회할 데이터
+ * @param params 조회할 데이터
  * @returns
  */
 const getPillDataWhereQuery: TWhereQueryClauseFunc = (
-  pillData: Partial<IPillDataSearchParam>,
-): Record<keyof IPillDataSearchParam, IWhereQueryClause> => {
+  params: Partial<IPillDataSearchParam>,
+): TQuerySearchParamResult<IPillDataSearchParam> => {
   const ETC_FORM_CODE = '기타';
   const NON_ETC_FORM_CODE = ['정제', '연질캡슐', '경질캡슐'];
 
@@ -145,27 +174,27 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       values: (printBack: string) => [printBack],
     },
     DRUG_SHAPE: {
-      query: `DRUG_SHAPE IN (${pillData.DRUG_SHAPE?.map(() => '?').join(', ')})`,
+      query: `DRUG_SHAPE IN (${params.DRUG_SHAPE?.map(() => '?').join(', ')})`,
       values: (drugShape: string[]) => [...drugShape],
     },
     COLOR_CLASS1: {
-      query: `(COLOR_CLASS1 IN (${pillData.COLOR_CLASS1?.map(() => '?').join(', ')}) 
-               OR COLOR_CLASS2 IN (${pillData.COLOR_CLASS1?.map(() => '?').join(', ')}))`,
+      query: `(COLOR_CLASS1 IN (${params.COLOR_CLASS1?.map(() => '?').join(', ')}) 
+               OR COLOR_CLASS2 IN (${params.COLOR_CLASS1?.map(() => '?').join(', ')}))`,
       values: (colorClass1: string[]) => [...colorClass1, ...colorClass1],
     },
     COLOR_CLASS2: {
-      query: `(COLOR_CLASS2 IN (${pillData.COLOR_CLASS2?.map(() => '?').join(', ')}) 
-               OR COLOR_CLASS1 IN (${pillData.COLOR_CLASS2?.map(() => '?').join(', ')}))`,
+      query: `(COLOR_CLASS2 IN (${params.COLOR_CLASS2?.map(() => '?').join(', ')}) 
+               OR COLOR_CLASS1 IN (${params.COLOR_CLASS2?.map(() => '?').join(', ')}))`,
       values: (colorClass2: string[]) => [...colorClass2, ...colorClass2],
     },
     LINE_FRONT: {
-      query: `(LINE_FRONT IN (${pillData.LINE_FRONT?.map(() => '?').join(', ')}) 
-               OR LINE_BACK IN (${pillData.LINE_FRONT?.map(() => '?').join(', ')}))`,
+      query: `(LINE_FRONT IN (${params.LINE_FRONT?.map(() => '?').join(', ')}) 
+               OR LINE_BACK IN (${params.LINE_FRONT?.map(() => '?').join(', ')}))`,
       values: (lineFront: string[]) => [...lineFront, ...lineFront],
     },
     LINE_BACK: {
-      query: `(LINE_BACK IN (${pillData.LINE_BACK?.map(() => '?').join(', ')})
-               OR LINE_FRONT IN (${pillData.LINE_BACK?.map(() => '?').join(', ')}))`,
+      query: `(LINE_BACK IN (${params.LINE_BACK?.map(() => '?').join(', ')})
+               OR LINE_FRONT IN (${params.LINE_BACK?.map(() => '?').join(', ')}))`,
       values: (lineBack: string[]) => [...lineBack, ...lineBack],
     },
     IMG_REGIST_TS: {
@@ -185,7 +214,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       values: (markCodeBack: string) => [markCodeBack, markCodeBack],
     },
     FORM_CODE: {
-      query: generateFormCodeQuery(pillData.FORM_CODE || []),
+      query: generateFormCodeQuery(params.FORM_CODE || []),
       values: (formCode: string[]) => {
         const params: string[] = [];
 
@@ -212,19 +241,20 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
 };
 
 /**
- * pill_data 목록 조회
- * @param option
+ * 알약 데이터 목록 조회
+ * @param params 검색 조건
+ * @param queryOption 쿼리 옵션
  * @returns
  */
 export const getPillDatas = async (
-  param: Partial<IPillDataSearchParam>,
+  params: Partial<IPillDataSearchParam>,
   queryOption: { page: number; limit: number },
 ) => {
   const db = await getDatabase();
 
   const { whereClause, whereValues } = buildWhereClause(
     getPillDataWhereQuery,
-    param,
+    params,
   );
 
   const sql = `SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data ${whereClause}
@@ -243,7 +273,7 @@ export const getPillDatas = async (
 };
 
 /**
- * ID 값인 ITEM_SEQ를 기준으로 pill_data 목록 조회
+ * ID 값인 ITEM_SEQ를 기준으로 알약 데이터 목록 조회
  * @param itemSeqs ITEM_SEQ 배열
  * @returns
  */
