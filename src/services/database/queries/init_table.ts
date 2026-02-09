@@ -69,7 +69,7 @@ export const insertData = async (
 
   const db = await getDatabase();
 
-  const INSERT_BATCH_SIZE = 500;
+  const INSERT_BATCH_SIZE = 50;
 
   for (let i = 0; i < data.length; i += INSERT_BATCH_SIZE) {
     const batch = data.slice(i, i + INSERT_BATCH_SIZE);
@@ -82,11 +82,11 @@ export const insertData = async (
           continue;
         }
 
-        const columns = entries.map(([key]) => key);
+        const columns = entries.map(([key]) => `"${key}"`);
         const values = entries.map(([, v]) => v);
-        const placeholders = columns.map(() => '?').join(', ');
 
-        const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`;
+        const sql = `INSERT INTO ${table} (${columns.join(', ')}) 
+                     VALUES (${columns.map(() => '?').join(', ')})`;
 
         await db.runAsync(sql, values);
       }

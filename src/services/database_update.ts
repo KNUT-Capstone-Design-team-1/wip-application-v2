@@ -45,11 +45,11 @@ export const checkRequireTableUpdate = async (
 
   const currentSchemaVersion = currentVersion.find((v) =>
     v.key.endsWith('SchemaVersion'),
-  );
+  )?.value;
 
   const currentDataVersion = currentVersion.find((v) =>
     v.key.endsWith('DataVersion'),
-  );
+  )?.value;
 
   if (!currentSchemaVersion || !currentDataVersion) {
     return 'REQUIRE-UPDATE';
