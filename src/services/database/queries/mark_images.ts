@@ -13,6 +13,11 @@ const ALL_MARK_IMAGES_COLUMNS: (keyof IMarkImages)[] = [
   'base64',
 ];
 
+const bufferToDataUrl = (buffer: string, mime = 'image/gif') => {
+  const base64 = buffer.toString();
+  return `data:${mime};base64,${base64}`;
+};
+
 /**
  * mark_images 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
@@ -62,5 +67,8 @@ export const getMarkImages = async (
     limit,
   ]);
 
-  return result;
+  return result.map((v) => ({
+    ...v,
+    base64: bufferToDataUrl(v.base64),
+  }));
 };
