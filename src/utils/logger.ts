@@ -8,6 +8,7 @@ import { TLogLevel } from '../constants';
  */
 const writeLog = async (logLevel: TLogLevel, logContents: string) => {
   try {
+    console.log(`[${logLevel}] ${logContents}`);
     await LogAPI.requestWriteLog(logLevel, logContents);
   } catch (e) {
     console.log(`Failed to write log. %s`, (e as Error)?.stack || e);
