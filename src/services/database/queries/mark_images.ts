@@ -1,3 +1,4 @@
+import { binaryToBase64 } from '../../../../src/utils';
 import { getDatabase } from '../sqlite';
 import {
   IMarkImages,
@@ -12,11 +13,6 @@ const ALL_MARK_IMAGES_COLUMNS: (keyof IMarkImages)[] = [
   'title',
   'base64',
 ];
-
-const bufferToDataUrl = (buffer: string, mime = 'image/gif') => {
-  const base64 = buffer.toString();
-  return `data:${mime};base64,${base64}`;
-};
 
 /**
  * mark_images 테이블 조회를 위한 WHERE param 생성
@@ -67,8 +63,6 @@ export const getMarkImages = async (
     limit,
   ]);
 
-  return result.map((v) => ({
-    ...v,
-    base64: bufferToDataUrl(v.base64),
-  }));
+  // BLOB으로 저장된 base64 컬럼의 값을 이미지로 표시할 수 있도록 base64로 변환한다
+  return result.map((v) => ({ ...v, base64: binaryToBase64(v.base64) }));
 };

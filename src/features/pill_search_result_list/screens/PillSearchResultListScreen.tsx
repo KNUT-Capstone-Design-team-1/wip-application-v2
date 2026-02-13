@@ -10,7 +10,9 @@ const PillSearchResultListScreen = () => {
   return (
     <View style={styles.pillSearchResultListRoot}>
       <SearchBar />
-      <Text style={styles.searchCountLabel}>검색 결과 {getSearchResultData().length}건</Text>
+      <Text style={styles.searchCountLabel}>
+        검색 결과 {getSearchResultData().length}건
+      </Text>
 
       {isLoading ? (
         <View

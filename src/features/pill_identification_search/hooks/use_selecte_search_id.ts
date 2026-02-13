@@ -1,5 +1,8 @@
 import { useSearchIdStore } from '../store/search_id_store';
-import { getPillDatas, getPillDatasByItemSeq } from "@/src/services/database/queries/pill_data";
+import {
+  getPillDatas,
+  getPillDatasByItemSeq,
+} from '@/src/services/database/queries/pill_data';
 import { getDatabase } from '@/src/services/database/sqlite';
 import { IPillDataSearchParam } from '@/src/services/database/types';
 import { router } from 'expo-router';
@@ -33,31 +36,31 @@ export const useSelecteSearchId = () => {
   const { setSearchResultData, setIsLoading } = useSearchResultListStore();
 
   const settingDataLog = () => {
-    console.log("=== Store 값 확인 ===");
-    console.log("앞면 식별표기:", sideLabelFrontText);
-    console.log("뒷면 식별표기:", sideLabelBackText);
-    console.log("제품명:", productNameText);
-    console.log("업체명:", companyName);
-    console.log("제조/수입사:", manufactureName);
-    console.log("분할선:", dividerLineData);
-    console.log("모양:", shape);
-    console.log("앞면 색상:", frontColor);
-    console.log("뒷면 색상:", backColor);
-    console.log("==================");
+    console.log('=== Store 값 확인 ===');
+    console.log('앞면 식별표기:', sideLabelFrontText);
+    console.log('뒷면 식별표기:', sideLabelBackText);
+    console.log('제품명:', productNameText);
+    console.log('업체명:', companyName);
+    console.log('제조/수입사:', manufactureName);
+    console.log('분할선:', dividerLineData);
+    console.log('모양:', shape);
+    console.log('앞면 색상:', frontColor);
+    console.log('뒷면 색상:', backColor);
+    console.log('==================');
   };
 
   const searchIdInputChangeHandler = (text: string, key: string) => {
-    switch(key) {
-      case "front":
+    switch (key) {
+      case 'front':
         setSideLabelFrontText(text);
         break;
-      case "back":
+      case 'back':
         setSideLabelBackText(text);
         break;
-      case "product":
+      case 'product':
         setProductNameText(text);
         break;
-      case "company":
+      case 'company':
         setCompanyName(text);
         break;
     }
@@ -66,47 +69,47 @@ export const useSelecteSearchId = () => {
   const radioButtonPressHandler = (label: string, key: string) => {
     const toggleArrayValue = (currentArray: string[], label: string) => {
       // "전체" 선택 시 배열을 비우고 "전체"만 넣기
-      if (label === "전체") {
-        return ["전체"];
+      if (label === '전체') {
+        return ['전체'];
       }
 
       // 다른 버튼 선택 시
       let newArray = [...currentArray];
 
       // "전체"가 있으면 제거
-      if (newArray.includes("전체")) {
-        newArray = newArray.filter(item => item !== "전체");
+      if (newArray.includes('전체')) {
+        newArray = newArray.filter((item) => item !== '전체');
       }
 
       // label이 이미 있으면 제거 (toggle off), 없으면 추가 (toggle on)
       if (newArray.includes(label)) {
-        newArray = newArray.filter(item => item !== label);
+        newArray = newArray.filter((item) => item !== label);
       } else {
         newArray.push(label);
       }
 
       // 배열이 비어있으면 "전체" 넣기
       if (newArray.length === 0) {
-        newArray = ["전체"];
+        newArray = ['전체'];
       }
 
       return newArray;
     };
 
-    switch(key) {
-      case "manufactureName":
+    switch (key) {
+      case 'manufactureName':
         setManufactureName(toggleArrayValue(manufactureName, label));
         break;
-      case "dividerLineData":
+      case 'dividerLineData':
         setDividerLineData(toggleArrayValue(dividerLineData, label));
         break;
-      case "shape":
+      case 'shape':
         setShape(toggleArrayValue(shape, label));
         break;
-      case "frontColor":
+      case 'frontColor':
         setFrontColor(toggleArrayValue(frontColor, label));
         break;
-      case "backColor":
+      case 'backColor':
         setBackColor(toggleArrayValue(backColor, label));
         break;
     }
@@ -138,7 +141,7 @@ export const useSelecteSearchId = () => {
 
     // 배열 필드들 - "전체" 제거 및 빈 배열이 아닌 경우만 추가
     const filterArray = (arr: string[]) => {
-      const filtered = arr.filter(item => item !== "전체" && item.trim());
+      const filtered = arr.filter((item) => item !== '전체' && item.trim());
       return filtered.length > 0 ? filtered : undefined;
     };
 
@@ -187,7 +190,9 @@ export const useSelecteSearchId = () => {
 
       // 3. 검색 조건이 하나도 없으면 경고
       if (Object.keys(searchParam).length === 0) {
-        console.warn('검색 조건이 없습니다. 최소 하나 이상의 조건을 입력해주세요.');
+        console.warn(
+          '검색 조건이 없습니다. 최소 하나 이상의 조건을 입력해주세요.',
+        );
         return [];
       }
 
@@ -203,7 +208,9 @@ export const useSelecteSearchId = () => {
         console.log(`  - 업체명: ${pill.ENTP_NAME}`);
         console.log(`  - 모양: ${pill.DRUG_SHAPE}`);
         console.log(`  - 색상: ${pill.COLOR_CLASS1} / ${pill.COLOR_CLASS2}`);
-        console.log(`  - 식별표기: ${pill.PRINT_FRONT || '없음'} / ${pill.PRINT_BACK || '없음'}`);
+        console.log(
+          `  - 식별표기: ${pill.PRINT_FRONT || '없음'} / ${pill.PRINT_BACK || '없음'}`,
+        );
       });
 
       if (results.length > 3) {
@@ -227,16 +234,19 @@ export const useSelecteSearchId = () => {
       const db = await getDatabase();
 
       // 데이터베이스에서 처음 5개의 ITEM_SEQ 조회
-      const results = await db.getAllAsync<{ ITEM_SEQ: string; ITEM_NAME: string }>(
-        'SELECT ITEM_SEQ, ITEM_NAME FROM pill_data LIMIT 5'
-      );
+      const results = await db.getAllAsync<{
+        ITEM_SEQ: string;
+        ITEM_NAME: string;
+      }>('SELECT ITEM_SEQ, ITEM_NAME FROM pill_data LIMIT 5');
 
       console.log('=== 예시 ITEM_SEQ 값들 ===');
       results.forEach((item, index) => {
-        console.log(`${index + 1}. ITEM_SEQ: "${item.ITEM_SEQ}" - ${item.ITEM_NAME}`);
+        console.log(
+          `${index + 1}. ITEM_SEQ: "${item.ITEM_SEQ}" - ${item.ITEM_NAME}`,
+        );
       });
 
-      return results.map(item => item.ITEM_SEQ);
+      return results.map((item) => item.ITEM_SEQ);
     } catch (error) {
       console.error('ITEM_SEQ 조회 실패:', error);
       return [];
@@ -272,9 +282,15 @@ export const useSelecteSearchId = () => {
         console.log(`  - ITEM_SEQ: ${pill.ITEM_SEQ}`);
         console.log(`  - 업체명: ${pill.ENTP_NAME}`);
         console.log(`  - 모양: ${pill.DRUG_SHAPE}`);
-        console.log(`  - 색상(앞/뒤): ${pill.COLOR_CLASS1} / ${pill.COLOR_CLASS2}`);
-        console.log(`  - 식별표기(앞/뒤): ${pill.PRINT_FRONT || '없음'} / ${pill.PRINT_BACK || '없음'}`);
-        console.log(`  - 분할선(앞/뒤): ${pill.LINE_FRONT || '없음'} / ${pill.LINE_BACK || '없음'}`);
+        console.log(
+          `  - 색상(앞/뒤): ${pill.COLOR_CLASS1} / ${pill.COLOR_CLASS2}`,
+        );
+        console.log(
+          `  - 식별표기(앞/뒤): ${pill.PRINT_FRONT || '없음'} / ${pill.PRINT_BACK || '없음'}`,
+        );
+        console.log(
+          `  - 분할선(앞/뒤): ${pill.LINE_FRONT || '없음'} / ${pill.LINE_BACK || '없음'}`,
+        );
       });
 
       console.log('\n=== 테스트 완료 ===');
@@ -301,8 +317,8 @@ export const useSelecteSearchId = () => {
       console.log('🚀 페이지 이동 완료');
 
       // 3. 검색 실행
-      const testShape = ["타원형"];
-      const testColor = ["분홍"];
+      const testShape = ['타원형'];
+      const testColor = ['분홍'];
 
       console.log('검색 조건:', { shape: testShape, color: testColor });
 
@@ -311,7 +327,10 @@ export const useSelecteSearchId = () => {
         COLOR_CLASS1: testColor,
       };
 
-      const results = await getPillDatas(testSearchParam, { page: 1, limit: 30 });
+      const results = await getPillDatas(testSearchParam, {
+        page: 1,
+        limit: 30,
+      });
 
       console.log(`✅ 검색 결과: ${results.length}개`);
 
