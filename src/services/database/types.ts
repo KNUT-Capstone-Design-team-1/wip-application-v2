@@ -70,7 +70,7 @@ export interface INearbyPharmacies {
   postalCode: string; // 우편번호
   address: string; // 주소
   telephone: string; // 전화번호
-  openData: string; // 개설일자
+  openData: number; // 개설일자
   x: string; // X 좌표
   y: string; // Y 좌표
 }
@@ -85,7 +85,7 @@ export interface IConfig {
 
 export interface ITableColumnSchema {
   name: string;
-  type: string;
+  type: 'TEXT' | 'BLOB' | 'INTEGER' | 'DOUBLE';
   size: number; // byte
   nullable: boolean;
   defaultValue: string | number | null;
