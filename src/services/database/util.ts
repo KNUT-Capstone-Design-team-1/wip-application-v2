@@ -1,3 +1,4 @@
+import { base64ToBinary } from '@/src/utils';
 import {
   ITableColumnSchema,
   IWhereQueryClause,
@@ -73,4 +74,31 @@ export const buildWhereClause = (
     : '';
 
   return { whereClause, whereValues };
+};
+
+/**
+ * 테이블에 INSERT 할 수 있는 데이터로 반환
+ * @param row INSERT 할 row
+ * @returns
+ */
+export const prepareRowForInsert = (row: Record<string, any>) => {
+  const blobColumnNames = ['base64'];
+
+  const prepareObj: Record<string, any> = {};
+
+  Object.entries(row).forEach(([key, value]) => {
+    const isBlobColumn = blobColumnNames.some((c) => c === key);
+
+    if (isBlobColumn && value) {
+      const pureBase64 = value.includes('base64,')
+        ? value.split('base64,')[1]
+        : value;
+      prepareObj[key] = base64ToBinary(pureBase64);
+      return;
+    }
+
+    prepareObj[key] = value;
+  });
+
+  return prepareObj;
 };

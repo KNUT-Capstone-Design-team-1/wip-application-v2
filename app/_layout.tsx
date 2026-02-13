@@ -29,29 +29,60 @@ const DATABASE_INIT_STATUS = {
  * 데이터 테이블 업데이트
  * @returns
  */
-const updateDataTable = async (
-  table: TDataTable,
-): Promise<DATABSE_UPDATE_RESULT_CODE> => {
+const hook = async (table: TDataTable) => {
+  console.log(`UPDATE TO ${table} table`);
+
   // 데이터베이스 업데이트 필요 여부 체크
   const checkResult =
     await DatabaseUpdateService.checkRequireTableUpdate(table);
 
-  const requireUpdate = checkResult === 'REQUIRE-UPDATE';
-  if (!requireUpdate) {
-    return 'NO-UPDATED';
+  if (checkResult.code !== 'REQUIRE-UPDATE') {
+    console.log(`NO-UPDATED ${table}`);
+    // 바로 넘어가게 처리
+    return;
   }
 
   // 테이블 초기화
   const result = await DatabaseUpdateService.initTable(table);
 
   if (result !== 'OK') {
-    return result;
+    console.log(`INIT-FAILED ${table}`);
+    // UI에 실패를 알림
+    return;
   }
 
-  // 테이블에 최신 데이터 반영
-  const insertResult = await DatabaseUpdateService.insertData(table);
+  // 테이블 INSERT
+  let currentPage = 1;
+  let totalPage = 1;
 
-  return insertResult;
+  do {
+    const insertResult = await DatabaseUpdateService.insertData(
+      currentPage,
+      table,
+    );
+
+    if (insertResult.code !== 'OK') {
+      console.log(`INSERT-FAILED ${table}`);
+      break;
+    }
+
+    totalPage = insertResult.totalPage;
+    currentPage++;
+
+    // 여기서 progress 업데이트
+  } while (currentPage <= totalPage);
+
+  const { newSchemaVersion, newDataVersion } = checkResult;
+
+  // config 테이블에 데이터베이스 버전 업데이트
+  await DatabaseUpdateService.updateDatabaseVersion(
+    table,
+    newSchemaVersion,
+    newDataVersion,
+  );
+
+  // progress 100%로 처리
+  console.log(`UPDATE COMPLETE ${table}`);
 };
 
 /**
@@ -64,10 +95,12 @@ const updateAllDataTables = async () => {
     'nearby_pharmacies',
   ];
 
-  const updatePromises = targetTables.map((table) => updateDataTable(table));
+  for (let i = 0; i < targetTables.length; i += 1) {
+    const table = targetTables[i];
 
-  // 테이블 별 비동기 처리 (겹치지 않으므로)
-  return Promise.all(updatePromises);
+    await hook(table);
+  }
+  console.log(`COMPLETE UPDATE ALL TABLE`);
 };
 
 /**
@@ -102,7 +135,7 @@ const RootLayout = () => {
         setIsInitializing(false);
       }
 
-      await updateAllDataTables(); // for test
+      await updateAllDataTables(); // 이 함수는 커스텀 훅이 되어야 한다
     };
 
     initializeDatabase();

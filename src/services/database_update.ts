@@ -34,13 +34,17 @@ let DATABASE_VERSION_ON_SERVER: IDatabaseVersionResponse =
  */
 export const checkRequireTableUpdate = async (
   table: TDataTable,
-): Promise<DATABSE_UPDATE_RESULT_CODE> => {
+): Promise<{
+  code: DATABSE_UPDATE_RESULT_CODE;
+  newSchemaVersion: number;
+  newDataVersion: number;
+}> => {
   const currentVersion = await ConfigQuery.getSpecificConfigs(
     TABLE_CONFIG_KEYS_MAP[table],
   );
 
   if (!currentVersion?.length) {
-    return 'REQUIRE-UPDATE';
+    return { code: 'REQUIRE-UPDATE', newSchemaVersion: 0, newDataVersion: 0 };
   }
 
   const currentSchemaVersion = currentVersion.find((v) =>
@@ -52,7 +56,7 @@ export const checkRequireTableUpdate = async (
   )?.value;
 
   if (!currentSchemaVersion || !currentDataVersion) {
-    return 'REQUIRE-UPDATE';
+    return { code: 'REQUIRE-UPDATE', newSchemaVersion: 0, newDataVersion: 0 };
   }
 
   // API 호출을 최소화하기 위해 싱글턴 패턴으로 처리
@@ -61,19 +65,20 @@ export const checkRequireTableUpdate = async (
       await GoogleCloud.DatabaseVersionAPI.requestDatabaseVersion();
   }
 
-  const { schemaVersion, dataVersion } = DATABASE_VERSION_ON_SERVER[table];
+  const { schemaVersion: newSchemaVersion, dataVersion: newDataVersion } =
+    DATABASE_VERSION_ON_SERVER[table];
 
-  const isOldSchema = Number(currentSchemaVersion) < Number(schemaVersion);
+  const isOldSchema = Number(currentSchemaVersion) < Number(newSchemaVersion);
   if (isOldSchema) {
-    return 'REQUIRE-UPDATE';
+    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
   }
 
-  const isOldData = Number(currentDataVersion) < Number(dataVersion);
+  const isOldData = Number(currentDataVersion) < Number(newDataVersion);
   if (isOldData) {
-    return 'REQUIRE-UPDATE';
+    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
   }
 
-  return 'UNNECESSARY-UPDATE';
+  return { code: 'UNNECESSARY-UPDATE', newSchemaVersion, newDataVersion };
 };
 
 /**
@@ -94,7 +99,7 @@ export const initTable = async (
     await InitTableQuery.dropTable(table);
   } catch (e) {
     logger.error(
-      `[INIT-PILL-DATA-TABLE] Error occurred from drop pill_data table. ${(e as Error).stack || e}`,
+      `[INIT-PILL-DATA-TABLE] Error occurred from drop ${table} table. ${(e as Error).stack || e}`,
     );
 
     return 'ERROR-DROP-TABLE';
@@ -104,7 +109,7 @@ export const initTable = async (
     await InitTableQuery.createTable(table, schema.columns);
   } catch (e) {
     logger.error(
-      `[INIT-PILL-DATA-TABLE] Error occurred from create pill_data table. ${(e as Error).stack || e}`,
+      `[INIT-PILL-DATA-TABLE] Error occurred from create ${table} table. ${(e as Error).stack || e}`,
     );
 
     return 'ERROR-CREATE-TABLE';
@@ -115,54 +120,81 @@ export const initTable = async (
 
 /**
  * 테이블에 최신 데이터 반영
+ * @param currentPage 최근 페이지
  * @param table 테이블 이름
  * @returns
  */
 export const insertData = async (
+  currentPage: number,
   table: TDataTable,
+): Promise<{ code: DATABSE_UPDATE_RESULT_CODE; totalPage: number }> => {
+  let response: GoogleCloud.ResourceDataAPI.IResourceDataResponse<TResourceDataSchemas>;
+
+  try {
+    response = await GoogleCloud.ResourceDataAPI.requestResourceData(
+      table,
+      currentPage,
+    );
+
+    if (!response?.resource?.length || !response?.totalPage) {
+      return { code: 'ERROR-NO-RESOURCE-DATA', totalPage: 0 };
+    }
+  } catch (e) {
+    logger.error(
+      `[INSERT-PILL-DATA] Error Occurred from request ${table} table resource. ${(e as Error).stack || e}`,
+    );
+
+    return { code: 'ERROR-GET-RESOURCE', totalPage: 0 };
+  }
+
+  const { totalPage, resource } = response;
+
+  try {
+    await InitTableQuery.insertData(table, resource);
+  } catch (e) {
+    logger.error(
+      `[INSERT-PILL-DATA] Error Occurred from insert ${table} table resource. ${(e as Error).stack || e}`,
+    );
+
+    return { code: 'ERROR-INSERT-TABLE', totalPage };
+  }
+
+  return { code: 'OK', totalPage };
+};
+
+/**
+ * 다음 업데이트가 진행되지 않게 데이터베이스 버전 업데이트
+ * @param table 테이블 이름
+ * @param newSchemaVersion 최신 스키마 버전
+ * @param newDataVersion 최신 데이터 버전
+ */
+export const updateDatabaseVersion = async (
+  table: TDataTable,
+  newSchemaVersion: number,
+  newDataVersion: number,
 ): Promise<DATABSE_UPDATE_RESULT_CODE> => {
-  let currentPage = 1;
-  let totalPages = 1;
-  let code: DATABSE_UPDATE_RESULT_CODE = 'OK';
+  try {
+    const configKeys = TABLE_CONFIG_KEYS_MAP[table];
 
-  do {
-    let response: GoogleCloud.ResourceDataAPI.IResourceDataResponse<TResourceDataSchemas>;
+    const schemaVersionConfigKey = configKeys.find((key) =>
+      key.endsWith('SchemaVersion'),
+    );
 
-    // 최신 데이터 요청
-    try {
-      response = await GoogleCloud.ResourceDataAPI.requestResourceData(
-        table,
-        currentPage,
-      );
+    const dataVersionConfigKey = configKeys.find((key) =>
+      key.endsWith('DataVersion'),
+    );
 
-      if (!response?.resource?.length || !response?.totalPage) {
-        code = 'ERROR-NO-RESOURCE-DATA';
-        break;
-      }
-    } catch (e) {
-      logger.error(
-        `[INSERT-PILL-DATA] Error Occurred from request pill data resource. ${(e as Error).stack || e}`,
-      );
-      code = 'ERROR-GET-RESOURCE';
-      break;
-    }
+    await ConfigQuery.updateConfigs([
+      { key: schemaVersionConfigKey as TConfigKey, value: newSchemaVersion },
+      { key: dataVersionConfigKey as TConfigKey, value: newDataVersion },
+    ]);
 
-    const { totalPage, resource } = response;
+    return 'OK';
+  } catch (e) {
+    logger.error(
+      `Error occurred from update database version. table: ${table}. newSchemaVersion: ${newSchemaVersion}, newDataVersion: ${newDataVersion}. ${(e as Error).stack || e}`,
+    );
 
-    // 테이블에 INSERT
-    try {
-      await InitTableQuery.insertData(table, resource);
-    } catch (e) {
-      logger.error(
-        `[INSERT-PILL-DATA] Error Occurred from insert pill data resource. ${(e as Error).stack || e}`,
-      );
-      code = 'ERROR-INSERT-TABLE';
-      break;
-    }
-
-    totalPages = totalPage;
-    currentPage++;
-  } while (currentPage <= totalPages);
-
-  return code;
+    return 'ERROR-UPDATE-DATABASE-VERSION';
+  }
 };

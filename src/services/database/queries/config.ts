@@ -80,7 +80,7 @@ export const updateConfigs = async (updateDatas: IConfig[]) => {
 
   const result = await db.runAsync(
     `UPDATE config SET \`value\` = CASE \`key\`
-     ${configKeys.map((key) => `WHEN '${key}' THEN ?`).join(', ')}
+     ${configKeys.map((key) => `WHEN '${key}' THEN ?`).join(' ')}
      END
      WHERE \`key\` IN (${configKeys.map(() => '?').join(', ')})
     `,

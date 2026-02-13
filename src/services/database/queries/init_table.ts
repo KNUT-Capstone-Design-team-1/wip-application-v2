@@ -1,6 +1,9 @@
 import { getDatabase } from '../sqlite';
 import { ITableColumnSchema, TDataTable, TResourceDataSchemas } from '../types';
-import { getColumnPlaceholderForTableCreate } from '../util';
+import {
+  getColumnPlaceholderForTableCreate,
+  prepareRowForInsert,
+} from '../util';
 
 /**
  * 테이블 유무 확인
@@ -69,14 +72,18 @@ export const insertData = async (
 
   const db = await getDatabase();
 
-  const INSERT_BATCH_SIZE = 50;
+  const insertBatchSize = 50;
 
-  for (let i = 0; i < data.length; i += INSERT_BATCH_SIZE) {
-    const batch = data.slice(i, i + INSERT_BATCH_SIZE);
+  for (let i = 0; i < data.length; i += insertBatchSize) {
+    const batch = data.slice(i, i + insertBatchSize);
 
     await db.withTransactionAsync(async () => {
       for (const row of batch) {
-        const entries = Object.entries(row).filter(([, v]) => v !== undefined);
+        const preparedRow = prepareRowForInsert(row);
+
+        const entries = Object.entries(preparedRow).filter(
+          ([, v]) => v !== undefined,
+        );
 
         if (!entries.length) {
           continue;
