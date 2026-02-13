@@ -1,4 +1,4 @@
-import { base64ToBinary } from '@/src/utils';
+import { base64ToUint8Array } from '@/src/utils';
 import {
   ITableColumnSchema,
   IWhereQueryClause,
@@ -93,7 +93,7 @@ export const prepareRowForInsert = (row: Record<string, any>) => {
       const pureBase64 = value.includes('base64,')
         ? value.split('base64,')[1]
         : value;
-      prepareObj[key] = base64ToBinary(pureBase64);
+      prepareObj[key] = base64ToUint8Array(pureBase64);
       return;
     }
 

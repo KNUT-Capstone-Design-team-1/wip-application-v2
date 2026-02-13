@@ -88,7 +88,7 @@ export const getNearbyPharmacies = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_NEARBY_PHARMACIES_COLUMNS} FROM pill_data ${whereClause}
+  const sql = `SELECT ${ALL_NEARBY_PHARMACIES_COLUMNS} FROM nearby_pharmacies ${whereClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;

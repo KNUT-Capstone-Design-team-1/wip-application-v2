@@ -6,10 +6,12 @@ import Layout from '../src/layouts/Layout';
 import { logger } from '../src/utils';
 import UpdateDB from './UpdateDB';
 import { DatabaseUpdateService } from '../src/services';
+import { TDataTable } from '../src/services/database/types';
 import {
-  DATABSE_UPDATE_RESULT_CODE,
-  TDataTable,
-} from '../src/services/database/types';
+  MarkImagesQuery,
+  NearbyPharmaciesQuery,
+  PillDataQuery,
+} from '@/src/services/database/queries';
 
 // FIXME 커스텀 훅으로 옮기고 useEffect를 커스텀 훅으로 대체해야한다
 export interface IUpdateProgress {
@@ -101,6 +103,12 @@ const updateAllDataTables = async () => {
     await hook(table);
   }
   console.log(`COMPLETE UPDATE ALL TABLE`);
+
+  console.log(await MarkImagesQuery.getMarkImages({}, { page: 0, limit: 1 }));
+  console.log(
+    await NearbyPharmaciesQuery.getNearbyPharmacies({}, { page: 0, limit: 1 }),
+  );
+  console.log(await PillDataQuery.getPillDatas({}, { page: 0, limit: 1 }));
 };
 
 /**

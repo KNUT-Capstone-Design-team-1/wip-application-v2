@@ -41,7 +41,7 @@ const getMarkImagesWhereQuery: TWhereQueryClauseFunc = (
  * @returns
  */
 export const getMarkImages = async (
-  params: Partial<IMarkImagesSearchParam>,
+  params: Partial<IMarkImagesSearchParam> = {},
   queryOption: { page: number; limit: number },
 ) => {
   const { whereClause, whereValues } = buildWhereClause(
@@ -51,7 +51,7 @@ export const getMarkImages = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_MARK_IMAGES_COLUMNS} FROM pill_data ${whereClause}
+  const sql = `SELECT ${ALL_MARK_IMAGES_COLUMNS} FROM mark_images ${whereClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;
@@ -64,5 +64,8 @@ export const getMarkImages = async (
   ]);
 
   // BLOB으로 저장된 base64 컬럼의 값을 이미지로 표시할 수 있도록 base64로 변환한다
-  return result.map((v) => ({ ...v, base64: binaryToBase64(v.base64) }));
+  return result.map((v) => ({
+    ...v,
+    base64: binaryToBase64(v.base64),
+  }));
 };
