@@ -9,7 +9,7 @@ interface INotice {
   updateDate: string;
 }
 
-type TNoticeList = {
+type TNoticeListResponse = {
   success: boolean;
   notices: INotice[];
   total: number;
@@ -63,10 +63,13 @@ export const requestReadNotices = async (
 ) => {
   const token = await getToken();
 
-  const response = await getAxiosInstance().get<TNoticeList>(`/notices`, {
-    params: { skip, limit, mustRead },
-    headers: { 'x-auth-token': token },
-  });
+  const response = await getAxiosInstance().get<TNoticeListResponse>(
+    `/notices`,
+    {
+      params: { skip, limit, mustRead },
+      headers: { 'x-auth-token': token },
+    },
+  );
 
   return response.data;
 };

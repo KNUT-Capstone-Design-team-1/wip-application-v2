@@ -1,9 +1,11 @@
 import axios, { AxiosError, isAxiosError } from 'axios';
 import { getToken } from './token';
 
-type IUnifiedSearchResponse = {
-  results: string[];
-};
+interface IUnifiedSearchResponse {
+  success: boolean;
+  data: string[];
+  message: string;
+}
 
 /**
  * 통합 검색 요청
@@ -22,7 +24,7 @@ export async function requestUnifiedSearch(keywords: string[]) {
       },
     );
 
-    return { success: true, data: response.data.results, message: '' };
+    return { success: true, data: response.data, message: '' };
   } catch (e) {
     if (isAxiosError(e)) {
       return {
