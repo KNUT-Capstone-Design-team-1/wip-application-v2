@@ -72,6 +72,13 @@ export async function callAPI() {
         data.log.logContents,
       );
     }
+
+    if (apiList.includes('unified-search')) {
+      results['unified-search'] =
+        await CloudFlare.UnifiedSearchAPI.requestUnifiedSearch(
+          data.unifiedSearch.keywords,
+        );
+    }
   } catch (e) {
     console.log('[CALL-API] Error occurred. %s', (e as Error).stack || e);
     throw e;

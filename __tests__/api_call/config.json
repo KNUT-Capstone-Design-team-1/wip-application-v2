@@ -9,6 +9,7 @@
     "_database-version",
     "_table-schema",
     "_resource-data",
-    "_log"
+    "_log",
+    "_unified-search"
   ]
 }

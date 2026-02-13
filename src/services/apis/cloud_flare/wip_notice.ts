@@ -1,21 +1,21 @@
 import axios from 'axios';
 import { getToken } from './token';
 
-type TNotice = {
+interface INotice {
   title: string;
   contents: string;
   mustRead: boolean;
   createDate: string;
   updateDate: string;
-};
+}
 
 type TNoticeList = {
   success: boolean;
-  notices: TNotice[];
+  notices: INotice[];
   total: number;
 }[];
 
-type TNoticeWritePayload = Pick<TNotice, 'title' | 'contents' | 'mustRead'>;
+type TNoticeWritePayload = Pick<INotice, 'title' | 'contents' | 'mustRead'>;
 
 /**
  * axios 인스턴스 반환 (env 로드 문제로 인해 함수로 분리)

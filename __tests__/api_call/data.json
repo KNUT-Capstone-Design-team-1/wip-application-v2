@@ -40,5 +40,8 @@
   "log": {
     "logLevel": "info",
     "logContents": "test"
+  },
+  "unifiedSearch": {
+    "keywords": ["감기"]
   }
 }
