@@ -1,12 +1,8 @@
 import axios, { AxiosError, isAxiosError } from 'axios';
 import { getToken } from './token';
 
-interface IUnifiedSearchResult {
-  ITEM_SEQ: string;
-}
-
 type IUnifiedSearchResponse = {
-  results: IUnifiedSearchResult[];
+  results: string[];
 };
 
 /**
