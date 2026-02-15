@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   bottomTabContainer: {
     position: 'relative',
     width: '100%',
-    height: 90,
+    height: 70,
     backgroundColor: '#E9E9E9',
   },
   bottomTabList: {
