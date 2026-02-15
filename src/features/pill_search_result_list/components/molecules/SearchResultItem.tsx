@@ -1,9 +1,20 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/molecules/SearchResultItem';
 
-const SearchResultItem = ({ resultItem }: any) => {
+interface IResultItemProps {
+  resultItem: any;
+  itemClickHandler: (seq: string, itemImage: string) => void;
+}
+
+const SearchResultItem = ({
+  resultItem,
+  itemClickHandler,
+}: IResultItemProps) => {
   return (
-    <View style={styles.searchItemWrapper}>
+    <TouchableOpacity
+      style={styles.searchItemWrapper}
+      onPress={() => itemClickHandler(resultItem.ITEM_SEQ, resultItem.ITEM_IMAGE)}
+    >
       <View style={styles.searchItemImage}>
         <Image
           source={{ uri: resultItem.ITEM_IMAGE }}
@@ -17,7 +28,7 @@ const SearchResultItem = ({ resultItem }: any) => {
         <Text style={styles.searchItemEtcOtcCode}>{resultItem.ETC_OTC_CODE}</Text>
         <Text style={styles.searchItemPrintFront}>{resultItem.PRINT_FRONT}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
