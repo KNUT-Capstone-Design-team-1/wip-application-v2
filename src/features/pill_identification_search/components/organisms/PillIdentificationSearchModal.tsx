@@ -15,6 +15,7 @@ import IconButton from '../atoms/IconButton';
 import Button from '../atoms/Button';
 import { COLOR_PRIMARY } from '@/src/constants';
 import MarkSection from '@/src/features/pill_identification_search/components/molecules/MarkSection';
+import { useSelecteSearchId } from '../../hooks/use_selecte_search_id';
 
 interface IPillIdentificationSearchModalProps {
   visible: boolean;
@@ -39,18 +40,12 @@ const PillIdentificationSearchModal: React.FC<
     [key: string]: number[];
   }>(getInitialSelectedIndexes());
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+  const { searchPillDatas } = useSelecteSearchId();
 
   // 초기화 핸들러
   const handleReset = () => {
     setSelectedIndexes(getInitialSelectedIndexes());
     setInputValues({});
-  };
-
-  // 검색 핸들러
-  const handleSearch = () => {
-    console.log('Search with:', { selectedIndexes, inputValues });
-    // TODO: 검색 API 호출
-    onClose();
   };
 
   // 섹션별 렌더링 함수
@@ -219,7 +214,11 @@ const PillIdentificationSearchModal: React.FC<
               background={'#fff'}
               color={COLOR_PRIMARY[100]}
             />
-            <Button width="48%" label="검색하기" pressHandler={handleSearch} />
+            <Button
+              width="48%"
+              label="검색하기"
+              pressHandler={searchPillDatas}
+            />
           </View>
         </Pressable>
       </Pressable>
