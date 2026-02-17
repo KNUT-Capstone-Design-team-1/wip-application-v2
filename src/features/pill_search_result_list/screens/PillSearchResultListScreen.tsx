@@ -5,16 +5,19 @@ import SearchResultList from '../components/organisms/SearchResultList';
 import { useSearchResultListStore } from '../store/search_result_list_store';
 
 const PillSearchResultListScreen = () => {
-  const { getSearchResultData, isLoading } = useSearchResultListStore();
+  const { searchResultData, isLoading } = useSearchResultListStore();
+
+  // 초기 로딩: 데이터가 없고 로딩 중일 때만 전체 화면 인디케이터 표시
+  const isInitialLoading = isLoading && searchResultData.length === 0;
 
   return (
     <View style={styles.pillSearchResultListRoot}>
       <SearchBar />
       <Text style={styles.searchCountLabel}>
-        검색 결과 {getSearchResultData().length}건
+        검색 결과 {searchResultData.length}건
       </Text>
 
-      {isLoading ? (
+      {isInitialLoading ? (
         <View
           style={{
             flex: 1,
@@ -29,7 +32,8 @@ const PillSearchResultListScreen = () => {
           </Text>
         </View>
       ) : (
-        <SearchResultList searchResultData={getSearchResultData()} />
+        // 추가 로딩 중에도 SearchResultList를 언마운트하지 않음 (스크롤 유지)
+        <SearchResultList searchResultData={searchResultData} isLoadingMore={isLoading} />
       )}
     </View>
   );
