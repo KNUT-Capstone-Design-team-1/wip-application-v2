@@ -7,16 +7,17 @@ import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list
 
 interface ISearchResultData {
   searchResultData: any[];
+  isLoadingMore?: boolean;
 }
 
-const SearchResultList = ({ searchResultData }: ISearchResultData) => {
-  // const { loadMorePills } = usePillSearch();
+const SearchResultList = ({ searchResultData, isLoadingMore }: ISearchResultData) => {
+  const { loadMorePills } = usePillSearch();
   const previousDataLength = useRef(searchResultData.length);
-  const { searchItemClickHandler } = usePillSearchResultList();
+  const { searchItemClickHandler, keyExtractor } = usePillSearchResultList();
 
   useEffect(() => {
-    const isNewDataAdded = searchResultData.length > previousDataLength.current;
-    console.log('🔄 SearchResultList 리렌더링 - 데이터 개수:', searchResultData.length, isNewDataAdded ? '(데이터 추가됨)' : '');
+    // const isNewDataAdded = searchResultData.length > previousDataLength.current;
+    // console.log('🔄 SearchResultList 리렌더링 - 데이터 개수:', searchResultData.length, isNewDataAdded ? '(데이터 추가됨)' : '');
     previousDataLength.current = searchResultData.length;
   }, [searchResultData]);
 
@@ -36,23 +37,9 @@ const SearchResultList = ({ searchResultData }: ISearchResultData) => {
 
   const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
 
-  const keyExtractor = useCallback(
-    (item: any, index: number) => {
-    // ITEM_SEQ를 우선 사용하여 안정적인 key 보장
-    if (item.ITEM_SEQ) {
-      return String(item.ITEM_SEQ);
-    }
-    // ITEM_SEQ가 없는 경우 여러 필드 조합으로 고유 key 생성
-    return `pill-${item.ITEM_NAME || 'unknown'}-${item.ENTP_NAME || ''}-${index}`;
-  }, []);
-
-  // const handleLoadMore = useCallback(() => {
-  //   loadMorePills();
-  // }, [loadMorePills]);
-
-  const handleLoadMore = () => {
-    console.log('123');
-  };
+  const handleLoadMore = useCallback(() => {
+    loadMorePills();
+  }, [loadMorePills]);
 
   return (
     <FlatList
@@ -70,13 +57,7 @@ const SearchResultList = ({ searchResultData }: ISearchResultData) => {
       initialNumToRender={10}
       maxToRenderPerBatch={10}
       windowSize={5}
-      removeClippedSubviews={true} // 화면 밖 아이템 메모리에서 제거
-      // 리스트 업데이트 시 불필요한 스크롤 방지
-      getItemLayout={(data, index) => ({
-        length: 100, // 아이템의 평균 높이 (실제 값에 맞게 조정 필요)
-        offset: 100 * index,
-        index,
-      })}
+      removeClippedSubviews={true}
     />
   );
 };

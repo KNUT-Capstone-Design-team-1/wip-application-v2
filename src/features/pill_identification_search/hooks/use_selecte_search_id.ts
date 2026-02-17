@@ -33,7 +33,7 @@ export const useSelecteSearchId = () => {
     getSelectedSearchId,
   } = useSearchIdStore();
 
-  const { setSearchResultData, setIsLoading } = useSearchResultListStore();
+  const { setSearchResultData, setIsLoading, setSearchParam } = useSearchResultListStore();
 
   const settingDataLog = () => {
     console.log('=== Store 값 확인 ===');
@@ -344,7 +344,11 @@ export const useSelecteSearchId = () => {
       });
 
       // 5. 데이터 저장 (자동으로 로딩 종료됨)
-      console.log('📦 Store에 데이터 저장 중...');
+      console.log('📦 Store에 데이터 저장 중...', testSearchParam);
+
+      // 검색한 파라미터 저장 (currentPage: 1로 초기화됨 → loadMorePills는 page: 2부터 시작)
+      setSearchParam(testSearchParam);
+      // 검색 결과 저장
       setSearchResultData(results);
       console.log('✅ 완료!');
 
