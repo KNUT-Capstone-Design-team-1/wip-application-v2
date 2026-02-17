@@ -181,11 +181,9 @@ const PillIdentificationSearchModal: React.FC<
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable
-          style={styles.modalContainer}
-          onPress={(e) => e.stopPropagation()}
-        >
+      <View style={styles.modalOverlay}>
+        <Pressable onPress={onClose} />
+        <View style={styles.modalContainer}>
           {/* 헤더 */}
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>식별 검색</Text>
@@ -220,8 +218,8 @@ const PillIdentificationSearchModal: React.FC<
               pressHandler={searchPillDatas}
             />
           </View>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 };
