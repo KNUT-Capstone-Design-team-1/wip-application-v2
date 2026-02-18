@@ -17,6 +17,22 @@ import straight from '@assets/images/shape/straight.png';
 import triangle from '@assets/images/shape/triangle.png';
 import total from '@assets/images/shape/total.png';
 
+// section key → store 배열 변수 매핑
+export const SECTION_KEY_TO_STORE_KEY: { [key: string]: string } = {
+  manufacturerName: 'manufacturerName',
+  dividerLineData: 'dividerLineData',
+  shape: 'shape',
+  frontColor: 'frontColor',
+  backColor: 'backColor',
+};
+
+// section key → textInput store 변수 매핑 (data index 기준)
+export const SECTION_KEY_TO_TEXT_STORE_KEYS: { [key: string]: string[] } = {
+  sideLabelText: ['sideLabelFrontText', 'sideLabelBackText'],
+  productNameText: ['productNameText'],
+  companyName: ['companyName'],
+};
+
 // 식별 검색에 들어갈 데이터들
 export const pillIdentificstionData = {
   // 앞면, 뒷면 식별 문자
@@ -25,11 +41,13 @@ export const pillIdentificstionData = {
     title: '식별 문자',
     datas: [
       {
+        key: 'front',
         placeholder: '앞면 문자',
         width: '50%',
         parsingDataName: '',
       },
       {
+        key: 'back',
         placeholder: '뒷면 문자',
         width: '50%',
         parsingDataName: '',
@@ -42,6 +60,7 @@ export const pillIdentificstionData = {
     title: '제품명',
     datas: [
       {
+        key: 'product',
         placeholder: '제품명',
         parsingDataName: '',
       },
@@ -53,6 +72,7 @@ export const pillIdentificstionData = {
     title: '제조사명',
     datas: [
       {
+        key: 'company',
         placeholder: '제조사명',
         parsingDataName: '',
       },
@@ -68,26 +88,31 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
+        value: '전체',
       },
       {
         iconUrl: capsult,
         iconColor: '',
         label: '정제',
+        value: '정제',
       },
       {
         iconUrl: hardCapsult,
         iconColor: '',
         label: '경질캡슐',
+        value: '경질캡슐',
       },
       {
         iconUrl: softCapsult,
         iconColor: '',
         label: '연질캡슐',
+        value: '연질캡슐',
       },
       {
         iconUrl: capsultEtc,
         iconColor: '',
         label: '기타',
+        value: '기타',
       },
     ],
   },
@@ -100,21 +125,31 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
+        value: '전체',
       },
       {
         iconUrl: circle,
         iconColor: '',
         label: '선없음',
+        // minus, plus, no, etc, 전체
+        value: 'no',
       },
       {
         iconUrl: cross,
         iconColor: '',
         label: '십자(+)형',
+        value: 'plus',
       },
       {
         iconUrl: straight,
         iconColor: '',
         label: '일자(-)형',
+        value: 'minus',
+      },
+      {
+        iconUrl: total,
+        iconColor: '',
+        label: 'etc',
       },
     ],
   },
@@ -127,61 +162,73 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
+        value: '',
       },
       {
         iconUrl: circle,
         iconColor: '',
         label: '원형',
+        value: '',
       },
       {
         iconUrl: ellipse,
         iconColor: '',
         label: '타원형',
+        value: '',
       },
       {
         iconUrl: long,
         iconColor: '',
         label: '장방형',
+        value: '',
       },
       {
         iconUrl: half,
         iconColor: '',
         label: '반원형',
+        value: '',
       },
       {
         iconUrl: triangle,
         iconColor: '',
         label: '삼각형',
+        value: '',
       },
       {
         iconUrl: rectangle,
         iconColor: '',
         label: '사각형',
+        value: '',
       },
       {
         iconUrl: diamond,
         iconColor: '',
         label: '마름모형',
+        value: '',
       },
       {
         iconUrl: pentagon,
         iconColor: '',
         label: '오각형',
+        value: '',
       },
       {
         iconUrl: hexagon,
         iconColor: '',
         label: '육각형',
+        value: '',
       },
       {
         iconUrl: octagon,
         iconColor: '',
         label: '팔각형',
+        value: '',
       },
       {
         iconUrl: total,
         iconColor: '',
         label: '기타',
+        value: '',
       },
     ],
   },
@@ -194,86 +241,103 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#fff',
         label: '흰색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#FCEC60',
         label: '노란색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#F19D38',
         label: '주황색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#ED6FD0',
         label: '분홍색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#EA3323',
         label: '빨간색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#9F4D2E',
         label: '갈색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#97C15C',
         label: '연두색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#42943E',
         label: '초록색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#377EA5',
         label: '청록색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#4B68F6',
         label: '파란색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#1627A6',
         label: '남색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#A92274',
         label: '자주색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#8E1BAF',
         label: '보라색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#9E9E9E',
         label: '회색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#1E1E1E',
         label: '검정색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#E7E7E7',
         label: '투명색',
+        value: '',
       },
     ],
   },
@@ -286,86 +350,103 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#fff',
         label: '흰색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#FCEC60',
         label: '노란색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#F19D38',
         label: '주황색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#ED6FD0',
         label: '분홍색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#EA3323',
         label: '빨간색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#9F4D2E',
         label: '갈색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#97C15C',
         label: '연두색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#42943E',
         label: '초록색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#377EA5',
         label: '청록색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#4B68F6',
         label: '파란색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#1627A6',
         label: '남색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#A92274',
         label: '자주색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#8E1BAF',
         label: '보라색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#9E9E9E',
         label: '회색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#1E1E1E',
         label: '검정색',
+        value: '',
       },
       {
         iconUrl: '',
         iconColor: '#E7E7E7',
         label: '투명색',
+        value: '',
       },
     ],
   },

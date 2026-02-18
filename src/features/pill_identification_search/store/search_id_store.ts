@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
 interface ISearchIdValue {
-  sideLabelFrontText: string,
-  sideLabelBackText: string,
-  productNameText: string,
-  companyName: string,
-  manufactureName: string[],
-  dividerLineData: string[],
-  shape: string[],
-  frontColor: string[],
-  backColor: string[],
+  sideLabelFrontText: string;
+  sideLabelBackText: string;
+  productNameText: string;
+  companyName: string;
+  manufacturerName: string[];
+  dividerLineData: string[];
+  shape: string[];
+  frontColor: string[];
+  backColor: string[];
 }
 
 interface ISearchIdStore extends ISearchIdValue{
@@ -17,7 +17,7 @@ interface ISearchIdStore extends ISearchIdValue{
   setSideLabelBackText: (value: string) => void;
   setProductNameText: (value: string) => void;
   setCompanyName: (value: string) => void;
-  setManufactureName: (value: string[]) => void;
+  setManufacturerName: (value: string[]) => void;
   setDividerLineData: (value: string[]) => void;
   setShape: (value: string[]) => void;
   setFrontColor: (value: string[]) => void;
@@ -32,7 +32,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   productNameText: '',
 
   companyName: '',
-  manufactureName: [],
+  manufacturerName: [],
   dividerLineData: [],
   shape: [],
   frontColor: [],
@@ -53,9 +53,9 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     set({
       companyName: value,
     }),
-  setManufactureName: (arr: string[]) =>
+  setManufacturerName: (arr: string[]) =>
     set({
-      manufactureName: arr,
+      manufacturerName: arr,
     }),
   setDividerLineData: (arr: string[]) =>
     set({
@@ -79,7 +79,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       sideLabelBackText: '',
       productNameText: '',
       companyName: '',
-      manufactureName: [],
+      manufacturerName: [],
       dividerLineData: [],
       shape: [],
       frontColor: [],
@@ -90,7 +90,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       searchIdBackText = get().sideLabelBackText,
       searchProductNameText = get().productNameText,
       searchCompanyName = get().companyName,
-      searchManufactureName = get().manufactureName,
+      searchManufacturerName = get().manufacturerName,
       searchDividerLineData = get().dividerLineData,
       searchShape = get().shape,
       searchFrontColor = get().frontColor,
@@ -104,7 +104,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       DRUG_SHAPE: searchShape,
       COLOR_CLASS1: searchFrontColor,
       COLOR_CLASS2: searchBackColor,
-      LINE_FRONT: searchManufactureName,
+      LINE_FRONT: searchManufacturerName,
       LINE_BACK: searchDividerLineData,
       // FORM_CODE: [],
       MARK_CODE_FRONT: '',

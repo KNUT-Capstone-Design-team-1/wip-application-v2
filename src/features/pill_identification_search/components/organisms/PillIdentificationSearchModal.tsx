@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,11 @@ import {
   Pressable,
 } from 'react-native';
 import { styles } from '../../styles/organisms/PillIdentificationSearchModal';
-import { pillIdentificstionData } from '../../constants/pillIdentificstionData';
+import {
+  SECTION_KEY_TO_STORE_KEY,
+  SECTION_KEY_TO_TEXT_STORE_KEYS,
+  pillIdentificstionData,
+} from '../../constants/pillIdentificstionData';
 import IdentificationSection from '../molecules/identificationSection';
 import { Input } from '../atoms/Input';
 import IconButton from '../atoms/IconButton';
@@ -16,6 +20,7 @@ import Button from '../atoms/Button';
 import { COLOR_PRIMARY } from '@/src/constants';
 import MarkSection from '@/src/features/pill_identification_search/components/molecules/MarkSection';
 import { useSelecteSearchId } from '../../hooks/use_selecte_search_id';
+import { useSearchIdStore } from '../../store/search_id_store';
 
 interface IPillIdentificationSearchModalProps {
   visible: boolean;
@@ -25,27 +30,47 @@ interface IPillIdentificationSearchModalProps {
 const PillIdentificationSearchModal: React.FC<
   IPillIdentificationSearchModalProps
 > = ({ visible, onClose }) => {
-  // 초기 상태: 모든 iconButton 섹션의 '전체'(index 0) 선택
-  const getInitialSelectedIndexes = () => {
-    const initial: { [key: string]: number[] } = {};
-    Object.entries(pillIdentificstionData).forEach(([key, section]) => {
-      if (section.type === 'iconButton') {
-        initial[key] = [0]; // 첫 번째 항목(전체) 선택
-      }
-    });
-    return initial;
+  const {
+    searchIdInputChangeHandler,
+    radioButtonPressHandler,
+    searchPillDatas,
+    resetButtonClickHandler,
+  } = useSelecteSearchId();
+
+  const storeValues = useSearchIdStore();
+
+  // store 배열에서 선택된 label 목록을 인덱스 배열로 변환
+  const getSelectedIndexesFromStore = (
+    sectionKey: string,
+    datas: any[],
+  ): number[] => {
+    const storeKey = SECTION_KEY_TO_STORE_KEY[sectionKey];
+    if (!storeKey) return [0];
+
+    const storeArray: string[] = (storeValues as any)[storeKey] || [];
+
+    // store가 비어있거나 '전체'만 있으면 index 0 반환
+    if (storeArray.length === 0 || (storeArray.length === 1 && storeArray[0] === '전체')) {
+      return [0];
+    }
+
+    const indexes = datas
+      .map((data, index) => (storeArray.includes(data.label) ? index : -1))
+      .filter((i) => i !== -1);
+
+    return indexes.length > 0 ? indexes : [0];
   };
 
-  const [selectedIndexes, setSelectedIndexes] = useState<{
-    [key: string]: number[];
-  }>(getInitialSelectedIndexes());
-  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
-  const { searchPillDatas } = useSelecteSearchId();
+  // store에서 textInput 값 가져오기
+  const getTextInputValue = (sectionKey: string, dataIndex: number): string => {
+    const storeKeys = SECTION_KEY_TO_TEXT_STORE_KEYS[sectionKey];
+    if (!storeKeys || !storeKeys[dataIndex]) return '';
+    return (storeValues as any)[storeKeys[dataIndex]] || '';
+  };
 
   // 초기화 핸들러
   const handleReset = () => {
-    setSelectedIndexes(getInitialSelectedIndexes());
-    setInputValues({});
+    resetButtonClickHandler();
   };
 
   // 섹션별 렌더링 함수
@@ -66,14 +91,14 @@ const PillIdentificationSearchModal: React.FC<
                 <View key={index} style={{ flex: 1 }}>
                   <Input
                     placeholder={data.placeholder}
-                    value={inputValues[`${key}_${index}`] || ''}
+                    value={getTextInputValue(key, index)}
                     width="100%"
                     height="40"
                     inputChangeHandler={(event) => {
-                      setInputValues({
-                        ...inputValues,
-                        [`${key}_${index}`]: event.nativeEvent.text,
-                      });
+                      searchIdInputChangeHandler(
+                        event.nativeEvent.text,
+                        section.datas[index].key,
+                      );
                     }}
                   />
                 </View>
@@ -86,60 +111,33 @@ const PillIdentificationSearchModal: React.FC<
 
     // iconButton 타입
     if (section.type === 'iconButton') {
+      const selectedIndexes = getSelectedIndexesFromStore(key, section.datas);
+
       return (
         <View key={key} style={{ marginBottom: 20 }}>
           <IdentificationSection
             title={title}
             direction="column"
-            selectedIndex={selectedIndexes[key] || []}
+            selectedIndex={selectedIndexes}
           >
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
               {section.datas.map((data: any, index: number) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    const currentSelected = selectedIndexes[key] || [];
-                    const isSelected = currentSelected.includes(index);
-
-                    // '전체' 버튼(index 0) 클릭 시
                     if (index === 0) {
-                      // 이미 선택되어 있으면 아무것도 안 함 (전체는 항상 선택되거나 다른 것 선택)
-                      if (!isSelected) {
-                        setSelectedIndexes({
-                          ...selectedIndexes,
-                          [key]: [0], // 전체만 선택
-                        });
+                      // '전체' 버튼: 이미 선택 상태면 무시
+                      if (!selectedIndexes.includes(0)) {
+                        radioButtonPressHandler('전체', key);
                       }
                     } else {
-                      // 다른 버튼 클릭 시
-                      let newSelected = [...currentSelected];
-
-                      // 전체 버튼이 선택되어 있으면 제거
-                      if (newSelected.includes(0)) {
-                        newSelected = newSelected.filter((i) => i !== 0);
-                      }
-
-                      if (isSelected) {
-                        // 이미 선택된 버튼 클릭 -> 해제
-                        newSelected = newSelected.filter((i) => i !== index);
-                        // 아무것도 선택 안 되면 전체 선택
-                        if (newSelected.length === 0) {
-                          newSelected = [0];
-                        }
-                      } else {
-                        // 선택 안 된 버튼 클릭 -> 추가
-                        newSelected.push(index);
-                      }
-
-                      setSelectedIndexes({
-                        ...selectedIndexes,
-                        [key]: newSelected,
-                      });
+                      console.log('!!', data, key);
+                      radioButtonPressHandler(data.value, key);
                     }
                   }}
                 >
                   <IconButton
-                    isSelected={(selectedIndexes[key] || []).includes(index)}
+                    isSelected={selectedIndexes.includes(index)}
                     iconUrl={data.iconUrl}
                     iconColor={data.iconColor}
                     label={data.label}

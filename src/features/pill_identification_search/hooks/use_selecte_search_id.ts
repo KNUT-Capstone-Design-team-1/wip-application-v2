@@ -1,7 +1,6 @@
 import { useSearchIdStore } from '../store/search_id_store';
 import {
   getPillDatas,
-  getPillDatasByItemSeq,
 } from '@/src/services/database/queries/pill_data';
 import { getDatabase } from '@/src/services/database/sqlite';
 import { IPillDataSearchParam } from '@/src/services/database/types';
@@ -14,7 +13,7 @@ export const useSelecteSearchId = () => {
     setSideLabelBackText,
     setProductNameText,
     setCompanyName,
-    setManufactureName,
+    setManufacturerName,
     setDividerLineData,
     setShape,
     setFrontColor,
@@ -24,7 +23,7 @@ export const useSelecteSearchId = () => {
     sideLabelBackText,
     productNameText,
     companyName,
-    manufactureName,
+    manufacturerName,
     dividerLineData,
     shape,
     frontColor,
@@ -41,7 +40,7 @@ export const useSelecteSearchId = () => {
     console.log('뒷면 식별표기:', sideLabelBackText);
     console.log('제품명:', productNameText);
     console.log('업체명:', companyName);
-    console.log('제조/수입사:', manufactureName);
+    console.log('제조/수입사:', manufacturerName);
     console.log('분할선:', dividerLineData);
     console.log('모양:', shape);
     console.log('앞면 색상:', frontColor);
@@ -66,10 +65,10 @@ export const useSelecteSearchId = () => {
     }
   };
 
-  const radioButtonPressHandler = (label: string, key: string) => {
-    const toggleArrayValue = (currentArray: string[], label: string) => {
+  const radioButtonPressHandler = (value: string, key: string) => {
+    const toggleArrayValue = (currentArray: string[], value: string) => {
       // "전체" 선택 시 배열을 비우고 "전체"만 넣기
-      if (label === '전체') {
+      if (value === '전체') {
         return ['전체'];
       }
 
@@ -81,11 +80,11 @@ export const useSelecteSearchId = () => {
         newArray = newArray.filter((item) => item !== '전체');
       }
 
-      // label이 이미 있으면 제거 (toggle off), 없으면 추가 (toggle on)
-      if (newArray.includes(label)) {
-        newArray = newArray.filter((item) => item !== label);
+      // value가 이미 있으면 제거 (toggle off), 없으면 추가 (toggle on)
+      if (newArray.includes(value)) {
+        newArray = newArray.filter((item) => item !== value);
       } else {
-        newArray.push(label);
+        newArray.push(value);
       }
 
       // 배열이 비어있으면 "전체" 넣기
@@ -97,20 +96,20 @@ export const useSelecteSearchId = () => {
     };
 
     switch (key) {
-      case 'manufactureName':
-        setManufactureName(toggleArrayValue(manufactureName, label));
+      case 'manufacturerName':
+        setManufacturerName(toggleArrayValue(manufacturerName, value));
         break;
       case 'dividerLineData':
-        setDividerLineData(toggleArrayValue(dividerLineData, label));
+        setDividerLineData(toggleArrayValue(dividerLineData, value));
         break;
       case 'shape':
-        setShape(toggleArrayValue(shape, label));
+        setShape(toggleArrayValue(shape, value));
         break;
       case 'frontColor':
-        setFrontColor(toggleArrayValue(frontColor, label));
+        setFrontColor(toggleArrayValue(frontColor, value));
         break;
       case 'backColor':
-        setBackColor(toggleArrayValue(backColor, label));
+        setBackColor(toggleArrayValue(backColor, value));
         break;
     }
   };
@@ -253,51 +252,8 @@ export const useSelecteSearchId = () => {
     }
   };
 
-  /**
-   * 테스트용: getPillDatasByItemSeq 함수 테스트
-   */
-  const testGetPillDatasByItemSeq = async () => {
-    try {
-      console.log('=== getPillDatasByItemSeq 테스트 시작 ===');
+  const pillDataSetting = (key: string, data: number | string) => {
 
-      // 1. 예시 ITEM_SEQ 값들 가져오기
-      const itemSeqs = await getSampleItemSeqs();
-
-      if (itemSeqs.length === 0) {
-        console.log('조회할 데이터가 없습니다.');
-        return;
-      }
-
-      console.log('\n검색할 ITEM_SEQ 배열:', itemSeqs);
-
-      // 2. getPillDatasByItemSeq 실행
-      const results = await getPillDatasByItemSeq(itemSeqs);
-
-      console.log(`\n검색 결과 개수: ${results.length}개`);
-
-      // 3. 결과 출력
-      results.forEach((pill, index) => {
-        console.log('pill 값', pill);
-        console.log(`\n[${index + 1}] ${pill.ITEM_NAME}`);
-        console.log(`  - ITEM_SEQ: ${pill.ITEM_SEQ}`);
-        console.log(`  - 업체명: ${pill.ENTP_NAME}`);
-        console.log(`  - 모양: ${pill.DRUG_SHAPE}`);
-        console.log(
-          `  - 색상(앞/뒤): ${pill.COLOR_CLASS1} / ${pill.COLOR_CLASS2}`,
-        );
-        console.log(
-          `  - 식별표기(앞/뒤): ${pill.PRINT_FRONT || '없음'} / ${pill.PRINT_BACK || '없음'}`,
-        );
-        console.log(
-          `  - 분할선(앞/뒤): ${pill.LINE_FRONT || '없음'} / ${pill.LINE_BACK || '없음'}`,
-        );
-      });
-
-      console.log('\n=== 테스트 완료 ===');
-      return results;
-    } catch (error) {
-      console.error('테스트 실패:', error);
-    }
   };
 
   /**
@@ -307,6 +263,7 @@ export const useSelecteSearchId = () => {
   const searchPillDatas = async () => {
     try {
       console.log('🔍 검색 시작');
+      console.log('선택 결과', getSelectedSearchId());
 
       // 1. 로딩 상태 활성화
       setIsLoading(true);
@@ -318,13 +275,15 @@ export const useSelecteSearchId = () => {
 
       // 3. 검색 실행
       const testShape = ['타원형'];
-      const testColor = ['분홍'];
+      const testColor = ['검정'];
+      const testLineFront = ['(+)형'];
 
       console.log('검색 조건:', { shape: testShape, color: testColor });
 
       const testSearchParam: Partial<IPillDataSearchParam> = {
         DRUG_SHAPE: testShape,
         COLOR_CLASS1: testColor,
+        // DIVIDING: testLineFront,
       };
 
       const results = await getPillDatas(testSearchParam, {
@@ -370,7 +329,6 @@ export const useSelecteSearchId = () => {
     searchButtonClickHandler,
     // 테스트용 함수들
     getSampleItemSeqs,
-    testGetPillDatasByItemSeq,
     searchPillDatas,
   };
 };
