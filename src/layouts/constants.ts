@@ -7,4 +7,5 @@ export const PAGE_TITLES: { [key: string]: string } = {
   '/setting': '설정',
   '/terms': '이용 약관',
   '/pill-search-result-list': '검색 결과',
+  '/pill-save': '보관함',
 };

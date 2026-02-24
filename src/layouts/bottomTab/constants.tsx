@@ -72,7 +72,7 @@ export const TAB_CONFIGS: TabConfig[] = [
         fill={isActive ? '#000000' : '#C1D1D5'}
       />
     ),
-    path: '/storage',
+    path: '/pill-save',
     isCenter: false,
   },
   {
