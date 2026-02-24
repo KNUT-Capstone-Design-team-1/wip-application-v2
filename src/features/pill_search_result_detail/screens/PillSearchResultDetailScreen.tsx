@@ -2,10 +2,26 @@ import { View, ScrollView, Text, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import PillDetailInfo from '../components/organisms/PillDetailInfo';
 import { styles } from '../styles/PillSearchResultDetailScreen';
+import { usePillBox } from '@/src/features/pill_save/hooks/use_pill_box';
 
 const PillSearchResultDetailScreen = () => {
   const { itemDetail, itemImage } = useLocalSearchParams();
   const parsedItemDetail = itemDetail ? JSON.parse(itemDetail as string) : null;
+
+  const { saveState, toggleSave } = usePillBox(
+    parsedItemDetail?.ITEM_SEQ ?? '',
+  );
+
+  const handleSaveToggle = () => {
+    if (!parsedItemDetail) return;
+    toggleSave({
+      ITEM_SEQ: parsedItemDetail.ITEM_SEQ,
+      ITEM_NAME: parsedItemDetail.ITEM_NAME,
+      ENTP_NAME: parsedItemDetail.ENTP_NAME,
+      ITEM_IMAGE: itemImage as string,
+      CHART: parsedItemDetail.CHART,
+    });
+  };
 
   if (!parsedItemDetail) {
     return (
@@ -30,7 +46,11 @@ const PillSearchResultDetailScreen = () => {
         </View>
 
         {/* 알약 정보 */}
-        <PillDetailInfo data={parsedItemDetail} />
+        <PillDetailInfo
+          data={parsedItemDetail}
+          saveState={saveState}
+          onSaveToggle={handleSaveToggle}
+        />
       </View>
     </ScrollView>
   );
