@@ -97,7 +97,8 @@ export const useSelecteSearchId = () => {
 
     switch (key) {
       case 'manufacturerName':
-        setManufacturerName(toggleArrayValue(manufacturerName, value));
+        const newManufacturerName = toggleArrayValue(manufacturerName, value);
+        setManufacturerName(newManufacturerName);
         break;
       case 'dividerLineData':
         setDividerLineData(toggleArrayValue(dividerLineData, value));
@@ -167,6 +168,11 @@ export const useSelecteSearchId = () => {
     const lineBackFiltered = filterArray(rawParam.LINE_BACK || []);
     if (lineBackFiltered) {
       filtered.LINE_BACK = lineBackFiltered;
+    }
+
+    const formCodeFiltered = filterArray(rawParam.FORM_CODE || []);
+    if (formCodeFiltered) {
+      filtered.FORM_CODE = formCodeFiltered;
     }
 
     return filtered;
@@ -262,8 +268,10 @@ export const useSelecteSearchId = () => {
    */
   const searchPillDatas = async () => {
     try {
+      const selectedResult = getSelectedSearchId();
+
       console.log('🔍 검색 시작');
-      console.log('선택 결과', getSelectedSearchId());
+      console.log('선택 결과', selectedResult);
 
       // 1. 로딩 상태 활성화
       setIsLoading(true);
@@ -274,19 +282,21 @@ export const useSelecteSearchId = () => {
       console.log('🚀 페이지 이동 완료');
 
       // 3. 검색 실행
-      const testShape = ['타원형'];
-      const testColor = ['검정'];
-      const testLineFront = ['(+)형'];
-
-      console.log('검색 조건:', { shape: testShape, color: testColor });
-
-      const testSearchParam: Partial<IPillDataSearchParam> = {
-        DRUG_SHAPE: testShape,
-        COLOR_CLASS1: testColor,
+      const searchParam: Partial<IPillDataSearchParam> = {
+        // DRUG_SHAPE: selectedResult.DRUG_SHAPE,
+        // COLOR_CLASS1: selectedResult.COLOR_CLASS1,
+        // FORM_CODE: selectedResult.FORM_CODE,
+        COLOR_CLASS1: selectedResult.COLOR_CLASS1,
+        // COLOR_CLASS2: selectedResult.COLOR_CLASS2,
+        // ITEM_NAME: selectedResult.ITEM_NAME,
+        // PRINT_FRONT: selectedResult.PRINT_FRONT,
+        // PRINT_BACK: selectedResult.PRINT_BACK,
+        // LINE_FRONT: selectedResult.LINE_FRONT,
+        // LINE_BACK: selectedResult.LINE_FRONT,
         // DIVIDING: testLineFront,
       };
 
-      const results = await getPillDatas(testSearchParam, {
+      const results = await getPillDatas(searchParam, {
         page: 1,
         limit: 30,
       });
@@ -303,10 +313,10 @@ export const useSelecteSearchId = () => {
       });
 
       // 5. 데이터 저장 (자동으로 로딩 종료됨)
-      console.log('📦 Store에 데이터 저장 중...', testSearchParam);
+      console.log('📦 Store에 데이터 저장 중...', searchParam);
 
       // 검색한 파라미터 저장 (currentPage: 1로 초기화됨 → loadMorePills는 page: 2부터 시작)
-      setSearchParam(testSearchParam);
+      setSearchParam(searchParam);
       // 검색 결과 저장
       setSearchResultData(results);
       console.log('✅ 완료!');
