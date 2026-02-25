@@ -104,9 +104,9 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       DRUG_SHAPE: searchShape,
       COLOR_CLASS1: searchFrontColor,
       COLOR_CLASS2: searchBackColor,
-      LINE_FRONT: searchManufacturerName,
+      FORM_CODE: searchManufacturerName,
+      LINE_FRONT: searchDividerLineData,
       LINE_BACK: searchDividerLineData,
-      // FORM_CODE: [],
       MARK_CODE_FRONT: '',
       MARK_CODE_BACK: '',
     };
@@ -122,6 +122,8 @@ interface SearchPillData {
   PRINT_BACK: string;
   ITEM_NAME: string;
   ENTP_NAME: string;
+  DRUG_SHAPE: string[];
+  FORM_CODE: string[];
   COLOR_CLASS1: string[];
   COLOR_CLASS2: string[];
   LINE_FRONT: string[];

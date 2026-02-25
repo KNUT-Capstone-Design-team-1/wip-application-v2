@@ -55,7 +55,9 @@ const PillIdentificationSearchModal: React.FC<
     }
 
     const indexes = datas
-      .map((data, index) => (storeArray.includes(data.label) ? index : -1))
+      .map((data, index) =>
+        storeArray.includes(data.value || data.label) ? index : -1,
+      )
       .filter((i) => i !== -1);
 
     return indexes.length > 0 ? indexes : [0];
@@ -131,8 +133,7 @@ const PillIdentificationSearchModal: React.FC<
                         radioButtonPressHandler('전체', key);
                       }
                     } else {
-                      console.log('!!', data, key);
-                      radioButtonPressHandler(data.value, key);
+                      radioButtonPressHandler(data.value || data.label, key);
                     }
                   }}
                 >

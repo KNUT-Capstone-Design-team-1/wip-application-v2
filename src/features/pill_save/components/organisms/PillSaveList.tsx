@@ -48,7 +48,9 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
           <View key={saveData.ITEM_SEQ} style={styles.pillSaveItemWrapper}>
             <PillSaveContent
               saveData={saveData}
-              onPressDetail={() => handlePressDetail(saveData.ITEM_SEQ, saveData.ITEM_IMAGE)}
+              onPressDetail={() =>
+                handlePressDetail(saveData.ITEM_SEQ, saveData.ITEM_IMAGE)
+              }
               onPressDelete={() => handlePressDelete(saveData.ITEM_SEQ)}
             />
           </View>
