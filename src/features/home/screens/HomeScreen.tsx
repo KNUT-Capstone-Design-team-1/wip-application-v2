@@ -17,9 +17,16 @@ const HomeScreen: React.FC = () => {
     loadRecentSearchPills(setRecentSearchPills);
   }, []);
 
+  const handleDataChange = () => {
+    loadRecentSearchPills(setRecentSearchPills);
+  };
+
   return (
     <View style={styles.container}>
-      <LastSearchPill lastSearchPillData={recentSearchPills} />
+      <LastSearchPill
+        lastSearchPillData={recentSearchPills}
+        onDataChange={handleDataChange}
+      />
       <View style={styles.hr}></View>
       <MenuList onPillIdentificationPress={() => setIsModalVisible(true)} />
       <TakeGuide />

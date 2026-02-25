@@ -27,6 +27,11 @@ export const usePillDetail = () => {
       // 최근 항목을 맨 앞에 추가
       const updateList = [sanitizedData, ...filteredList];
 
+      // 7개 초과 시 마지막 항목 제거
+      if (updateList.length > 7) {
+        updateList.pop();
+      }
+
       await AsyncStorage.setItem('recentSearch', JSON.stringify(updateList));
     } catch (error) {
       console.error('❌ Failed to save recent search:', error);

@@ -11,6 +11,9 @@ export const styles = StyleSheet.create({
     color: COLOR_PRIMARY[300],
     marginBottom: 15,
   },
+  scrollView: {
+    maxHeight: 120,
+  },
   searchTagList: {
     display: 'flex',
     flexDirection: 'row',

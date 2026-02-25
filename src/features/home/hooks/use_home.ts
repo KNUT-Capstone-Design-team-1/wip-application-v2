@@ -10,7 +10,7 @@ export const useHome = () => {
       const raw = await AsyncStorage.getItem('recentSearch');
       if (raw) {
         const pills: IPillDetail[] = JSON.parse(raw);
-        setRecentSearchPills(pills.slice(0, 5)); // 최근 5개만 표시
+        setRecentSearchPills(pills); // 전체 표시
       }
     } catch (error) {
       console.error('Failed to load recent search pills:', error);
