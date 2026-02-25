@@ -1,24 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import InfoRow from '../atoms/InfoRow';
 import DetailSection from '../molecules/DetailSection';
 import { styles } from '../../styles/organisms/PillDetailInfo';
+import Save from '../../../../../assets/icons/save.svg';
+import { IPillDetailInfoProps } from "../../types/pill_detail_type";
+import { usePillDetail } from '../../hooks/use_pill_detail';
 
-interface IPillDetailInfoProps {
-  data: any;
-}
+const PillDetailInfo = ({
+  data,
+  saveState,
+  onSaveToggle,
+}: IPillDetailInfoProps) => {
+  const { recentSearch } = usePillDetail();
 
-const PillDetailInfo = ({ data }: IPillDetailInfoProps) => {
   const [moreInfo, setMoreInfo] = useState(false);
   const [showEffect, setShowEffect] = useState(true);
   const [showUsage, setShowUsage] = useState(true);
   const [showWarning, setShowWarning] = useState(true);
+
+  useEffect(() => {
+    recentSearch(data);
+  }, []);
 
   return (
     <View style={styles.infoContainer}>
       {/* 알약 이름 */}
       <View style={styles.nameWrapper}>
         <Text style={styles.name}>{data.ITEM_NAME}</Text>
+        <TouchableOpacity onPress={onSaveToggle}>
+          <Save width={15} height={20} fill={saveState ? '#32D2FF' : 'none'} stroke={'#32D2FF'} />
+        </TouchableOpacity>
       </View>
 
       {/* 기본 정보 */}

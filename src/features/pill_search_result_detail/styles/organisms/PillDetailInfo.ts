@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   infoContainer: {},
   nameWrapper: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
     marginTop: 16,
     position: 'relative',
