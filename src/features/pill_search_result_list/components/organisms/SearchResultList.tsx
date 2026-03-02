@@ -4,11 +4,7 @@ import SearchResultItem from '../molecules/SearchResultItem';
 import { styles } from '../../styles/organisms/SearchResultList';
 import { usePillSearch } from '@/src/hooks/use_pill_search';
 import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list';
-
-interface ISearchResultData {
-  searchResultData: any[];
-  isLoadingMore?: boolean;
-}
+import { ISearchResultData } from '@/src/features/pill_search_result_list/types/pill_search_result_list';
 
 const SearchResultList = ({ searchResultData, isLoadingMore }: ISearchResultData) => {
   const { loadMorePills } = usePillSearch();

@@ -1,10 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/molecules/SearchResultItem';
-
-interface IResultItemProps {
-  resultItem: any;
-  itemClickHandler: (seq: string, itemImage: string) => void;
-}
+import { IResultItemProps } from '@/src/features/pill_search_result_list/types/pill_search_result_list';
 
 const SearchResultItem = ({
   resultItem,
