@@ -26,7 +26,10 @@ const LastSearchPill = ({
       if (raw) {
         const pills: IPillDetail[] = JSON.parse(raw);
         const updatedPills = pills.filter((pill) => pill.ITEM_SEQ !== itemSeq);
-        await AsyncStorage.setItem('recentSearch', JSON.stringify(updatedPills));
+        await AsyncStorage.setItem(
+          'recentSearch',
+          JSON.stringify(updatedPills),
+        );
         onDataChange(); // 데이터 변경 알림
       }
     } catch (error) {
@@ -42,17 +45,25 @@ const LastSearchPill = ({
         contentContainerStyle={styles.searchTagList}
         showsVerticalScrollIndicator={false}
       >
-        {lastSearchPillData.map((pill, index) => {
-          return (
-            <Tag
-              title={pill.ITEM_NAME || ''}
-              key={index}
-              onPressHandler={() => tagPressHandler(pill.ITEM_SEQ || '')}
-              // onDeleteHandler={() => deleteRecentSearch(pill.ITEM_SEQ || '')}
-              showDelete={true}
-            />
-          );
-        })}
+        {lastSearchPillData.length === 0 ? (
+          <View style={styles.notLastSearchPllDataWrapper}>
+            <Text style={styles.notLastSearchPllDataText}>
+              최근 검색한 알약이 없습니다.
+            </Text>
+          </View>
+        ) : (
+          lastSearchPillData.map((pill, index) => {
+            return (
+              <Tag
+                title={pill.ITEM_NAME || ''}
+                key={index}
+                onPressHandler={() => tagPressHandler(pill.ITEM_SEQ || '')}
+                // onDeleteHandler={() => deleteRecentSearch(pill.ITEM_SEQ || '')}
+                showDelete={true}
+              />
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );

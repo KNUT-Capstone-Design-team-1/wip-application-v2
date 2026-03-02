@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '../../../../constants';
+import { COLOR_GRAY, COLOR_PRIMARY } from '../../../../constants';
 
 export const styles = StyleSheet.create({
   searchContainer: {
@@ -12,7 +12,19 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
   },
   scrollView: {
+    minHeight: 50,
     maxHeight: 120,
+  },
+  notLastSearchPllDataWrapper: {
+    flex: 1,
+    height: 50,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notLastSearchPllDataText: {
+    fontWeight: 600,
+    color: COLOR_GRAY[300],
   },
   searchTagList: {
     display: 'flex',
