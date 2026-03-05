@@ -69,3 +69,10 @@ export interface IBottomSheetProps {
   onClose: () => void;
   onNeverShowAgain: () => void;
 }
+
+export interface INotItemProps {
+  mainText: string;
+  subText: string;
+  marginTop?: string;
+  height?: string;
+}
