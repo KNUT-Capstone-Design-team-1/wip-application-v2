@@ -9,7 +9,6 @@ const BottomTab = () => {
 
   // 현재 경로와 탭 경로를 비교하여 활성화 상태 확인
   const isTabActive = (tabPath: string) => {
-    console.log('Checking tab:', tabPath, 'Current pathname:', pathname);
     if (tabPath === '/') return pathname === '/';
     return pathname.startsWith(tabPath);
   };
