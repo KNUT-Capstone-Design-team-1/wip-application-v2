@@ -5,6 +5,7 @@ import PillSaveContent from '../molecules/PillSaveContent';
 import { IPillSaveData, IPillSaveListProps } from '@/src/features/pill_save/types/pill_save_type';
 import { styles } from '../../styles/organisms/PillSaveList';
 import { getPillDatasByItemSeq } from '@/src/services/database/queries/pill_data';
+import NotItem from '@/src/components/common/NotItem';
 
 const SAVE_DATA_KEY = 'saveData';
 
@@ -43,19 +44,27 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
       style={styles.pillSaveListWrapper}
       contentContainerStyle={styles.pillSaveListContent}
     >
-      {pillSaveData.map((saveData, index) => {
-        return (
-          <View key={saveData.ITEM_SEQ} style={styles.pillSaveItemWrapper}>
-            <PillSaveContent
-              saveData={saveData}
-              onPressDetail={() =>
-                handlePressDetail(saveData.ITEM_SEQ, saveData.ITEM_IMAGE)
-              }
-              onPressDelete={() => handlePressDelete(saveData.ITEM_SEQ)}
-            />
-          </View>
-        );
-      })}
+      {pillSaveData.length === 0 ? (
+        <NotItem
+          mainText={'보관된 알약이 없습니다.'}
+          subText={'북마크 아이콘을 누르면 보관함에 저장돼요!'}
+          marginTop={'60%'}
+        />
+      ) : (
+        pillSaveData.map((saveData, index) => {
+          return (
+            <View key={saveData.ITEM_SEQ} style={styles.pillSaveItemWrapper}>
+              <PillSaveContent
+                saveData={saveData}
+                onPressDetail={() =>
+                  handlePressDetail(saveData.ITEM_SEQ, saveData.ITEM_IMAGE)
+                }
+                onPressDelete={() => handlePressDelete(saveData.ITEM_SEQ)}
+              />
+            </View>
+          );
+        })
+      )}
     </ScrollView>
   );
 };

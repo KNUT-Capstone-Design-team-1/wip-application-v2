@@ -5,6 +5,7 @@ import { styles } from '../../styles/organisms/SearchResultList';
 import { usePillSearch } from '@/src/hooks/use_pill_search';
 import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list';
 import { ISearchResultData } from '@/src/features/pill_search_result_list/types/pill_search_result_list';
+import NotItem from "@/src/components/common/NotItem";
 
 const SearchResultList = ({ searchResultData, isLoadingMore }: ISearchResultData) => {
   const { loadMorePills } = usePillSearch();
@@ -38,23 +39,33 @@ const SearchResultList = ({ searchResultData, isLoadingMore }: ISearchResultData
   }, [loadMorePills]);
 
   return (
-    <FlatList
-      style={styles.searchResultListWrapper}
-      data={searchResultData}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      ItemSeparatorComponent={renderSeparator}
-      contentContainerStyle={{ paddingBottom: 20 }}
-      showsVerticalScrollIndicator={true}
-      // 무한 스크롤 설정
-      onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.5}
-      // 성능 최적화
-      initialNumToRender={10}
-      maxToRenderPerBatch={10}
-      windowSize={5}
-      removeClippedSubviews={true}
-    />
+    <View style={{ flex: 1 }}>
+      {searchResultData.length === 0 && !isLoadingMore ? (
+        <NotItem
+          mainText={'이런! 검색 결과가 없어요'}
+          subText={'다른 조건으로 검색해보세요.'}
+          marginTop={'0'}
+        />
+      ) : (
+        <FlatList
+          style={styles.searchResultListWrapper}
+          data={searchResultData}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          ItemSeparatorComponent={renderSeparator}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          showsVerticalScrollIndicator={true}
+          // 무한 스크롤 설정
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          // 성능 최적화
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+        />
+      )}
+    </View>
   );
 };
 
