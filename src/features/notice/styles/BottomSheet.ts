@@ -1,0 +1,97 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  bottomSheetContainer: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'transparent',
+  },
+  darkBackground: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#000',
+    opacity: 0.5,
+  },
+  bottomSheet: {
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 10,
+    width: '100%',
+    height: '42%',
+    backgroundColor: '#5453c8',
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+  },
+  flatList: {
+    flex: 1,
+  },
+  slideItem: {
+    justifyContent: 'flex-start',
+  },
+  bottomSheetContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    padding: 16,
+    gap: 20,
+  },
+  navigationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 20,
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  activeDot: {
+    backgroundColor: '#fff',
+    width: 24,
+  },
+  bottomSheetControl: {
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
+    color: '#444',
+  },
+  sheetCloseToday: {
+    color: 'grey',
+  },
+  title: {
+    fontSize: 18,
+    color: '#fff',
+  },
+  contents: {
+    fontSize: 12,
+    color: '#e3e3e3',
+  },
+  detailButton: {
+    position: 'absolute',
+    bottom: 80,
+    right: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    zIndex: 10,
+  },
+  detailButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#fff',
+    paddingBottom: 2,
+  },
+});
