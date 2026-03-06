@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { COLOR_PRIMARY } from '@/src/constants';
 
 export const styles = StyleSheet.create({
   bottomSheetContainer: {
@@ -19,10 +20,9 @@ export const styles = StyleSheet.create({
   bottomSheet: {
     position: 'absolute',
     bottom: 0,
-    zIndex: 10,
     width: '100%',
     height: '42%',
-    backgroundColor: '#5453c8',
+    backgroundColor: COLOR_PRIMARY['300'],
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
   },
@@ -31,12 +31,7 @@ export const styles = StyleSheet.create({
   },
   slideItem: {
     justifyContent: 'flex-start',
-  },
-  bottomSheetContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    padding: 16,
+    paddingTop: 16,
     gap: 20,
   },
   navigationContainer: {

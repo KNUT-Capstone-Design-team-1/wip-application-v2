@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { styles } from '../styles/BottomSheet';
 import { useBottomSheet } from '../hooks/use_bottom_sheet';
-import { IBottomSheetProps, INoticeData } from "../types/notice_type";
+import { IBottomSheetProps, INoticeData } from '../types/notice_type';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -77,11 +77,11 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: IBottomSheetProps) => 
   };
 
   const renderItem = ({ item }: { item: INoticeData }) => (
-    <View style={[styles.slideItem, { width: SCREEN_WIDTH }]}>
-      <View style={styles.bottomSheetContent}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.contents}>{formatContents(item.contents)}</Text>
-      </View>
+    <View
+      style={[styles.slideItem, { width: SCREEN_WIDTH, paddingHorizontal: 16 }]}
+    >
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.contents}>{formatContents(item.contents)}</Text>
     </View>
   );
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
 import { INoticeData } from '../types/notice_type';
 import { useNoticeStore } from '../store/notice_store';
 import { useShallow } from 'zustand/react/shallow';
@@ -9,7 +9,6 @@ const HIDE_NOTICE_KEY = 'hideNoticeUntil';
 
 export const useBottomSheet = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const navigation: any = useNavigation();
   const [
     isNoticeViewing,
     setIsNoticeViewing,
@@ -70,23 +69,12 @@ export const useBottomSheet = () => {
     setIsNoticeViewing(true);
     handleClose();
 
-    // SettingsStack으로 이동하면서 공지사항 상세 화면을 열되,
-    // 뒤로가기 시 공지사항 화면으로 갈 수 있도록 초기 라우트 설정
-    navigation.reset({
-      index: 1,
-      routes: [
-        { name: 'HomeStack' },
-        {
-          name: 'SettingsStack',
-          state: {
-            routes: [
-              { name: '공지사항' },
-              { name: '공지사항 상세', params: { notice: noticeData } },
-            ],
-            index: 2,
-          },
-        },
-      ],
+    // expo-router를 사용하여 공지사항 상세 화면으로 이동
+    router.push({
+      pathname: '/notice-detail',
+      params: {
+        notice: JSON.stringify(noticeData),
+      },
     });
   };
 

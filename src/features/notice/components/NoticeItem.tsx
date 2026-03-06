@@ -1,16 +1,20 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 import { styles } from '../styles/NoticeItem';
-import { useNavigation } from '@react-navigation/native';
 import { INoticeItemProps } from '../types/notice_type';
 import { formatDate, isModified } from '../../../utils/dateUtils';
 
 const NoticeItem = ({ noticeData }: INoticeItemProps) => {
-  const navigation: any = useNavigation();
 
   const handlePress = () => {
     // 공지사항 상세 화면으로 이동
-    navigation.navigate('공지사항 상세', { notice: noticeData });
+    router.push({
+      pathname: '/notice-detail',
+      params: {
+        notice: JSON.stringify(noticeData),
+      },
+    });
   };
 
   const isContentModified = isModified(

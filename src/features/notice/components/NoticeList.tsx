@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import { View, ScrollView } from 'react-native';
-import { styles } from '../styles/BottomSheet';
+import { styles } from '../styles/NoticeList';
 import { INoticeData } from '../types/notice_type';
 import { INoticeListProps } from '../types/notice_type';
 import NoticeItem from '../components/NoticeItem';
@@ -19,6 +19,10 @@ const NoticeList = ({ noticeData }: INoticeListProps) => {
     data: noticeData,
     itemsPerPage: ITEMS_PER_PAGE,
   });
+
+  useEffect(() => {
+    console.log('currentNotices', currentNotices);
+  }, []);
 
   return (
     <View style={styles.container}>

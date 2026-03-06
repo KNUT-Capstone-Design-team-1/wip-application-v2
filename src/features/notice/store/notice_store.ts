@@ -1,6 +1,9 @@
 import { create } from 'zustand';
-import { INoticeData } from '../types/notice_type';
-import { IInitialNotice, INoticeActions } from "../types/notice_type";
+import {
+  IInitialNotice,
+  INoticeActions,
+  INoticeData,
+} from '../types/notice_type';
 
 const initialNotice: IInitialNotice = {
   noticeData: [],

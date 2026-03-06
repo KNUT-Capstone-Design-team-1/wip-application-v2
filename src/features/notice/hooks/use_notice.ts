@@ -15,17 +15,14 @@ export const useNotices = () => {
   const { setNoticeData, setMainBottomSheetData, setIsNoticeLoading } =
     useNoticeStore((state) => state.actions);
 
-  // 전체 공지사항 데이터 불러와주는 함수
   const getNoticeList = async () => {
     try {
       const url = process.env.EXPO_PUBLIC_CLOUD_FLARE_WIP_NOTICE_URL;
 
-      if (!url) {
+      if(!url) {
         console.error('Notice API URL is not defined');
-        return [];
       }
 
-      // 토큰 생성 및 인증 요청
       const token = await getNoticeToken();
       const response = await axios.get(`${url}/notices`, {
         headers: {
@@ -33,13 +30,9 @@ export const useNotices = () => {
         },
       });
 
-      if (response.data && Array.isArray(response.data)) {
-        const allNotices = response.data as INoticeData[];
-        setNoticeData(allNotices);
-        return noticeDataSort(allNotices);
-      }
+      console.log(response.data.notices);
 
-      return [];
+      return noticeDataSort(response.data.notices);
     } catch (error) {
       console.error('Failed to fetch notices:', error);
       return [];
