@@ -2,7 +2,7 @@ import { INoticeData } from '../types/notice_type';
 import { useNoticeStore } from '../store/notice_store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { getNoticeToken } from '../utils/get_notice_token';
+import { getNoticeToken } from '../utils/notice';
 
 const NOTICE_CACHE_KEY = 'cachedNoticeData';
 
