@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     color: '#999',
   },
   badge: {
-    backgroundColor: '#5451d1',
+    backgroundColor: '#32D2FF',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,

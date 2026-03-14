@@ -29,9 +29,6 @@ const Notice = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>공지사항</Text>
-      </View>
       {noticeData.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>공지사항이 없습니다.</Text>

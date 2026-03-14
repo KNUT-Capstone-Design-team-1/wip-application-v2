@@ -6,7 +6,6 @@ import { INoticeItemProps } from '../types/notice_type';
 import { formatDate, isModified } from '../../../utils/dateUtils';
 
 const NoticeItem = ({ noticeData }: INoticeItemProps) => {
-
   const handlePress = () => {
     // 공지사항 상세 화면으로 이동
     router.push({

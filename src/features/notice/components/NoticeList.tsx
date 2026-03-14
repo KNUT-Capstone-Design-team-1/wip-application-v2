@@ -20,10 +20,6 @@ const NoticeList = ({ noticeData }: INoticeListProps) => {
     itemsPerPage: ITEMS_PER_PAGE,
   });
 
-  useEffect(() => {
-    console.log('currentNotices', currentNotices);
-  }, []);
-
   return (
     <View style={styles.container}>
       <ScrollView
