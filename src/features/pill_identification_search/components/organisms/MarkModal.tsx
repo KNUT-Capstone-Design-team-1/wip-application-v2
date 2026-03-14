@@ -14,10 +14,7 @@ import SearchInput from '../molecules/SearchInput';
 import MarkList from '../molecules/MarkList';
 import Pagination from '../molecules/Pagination';
 import { styles } from '../../styles/organisms/MarkModal';
-
-interface IMarkModalProps {
-  onClose: () => void;
-}
+import { IMarkModalProps } from '@/src/features/pill_identification_search/types/mark_types';
 
 const MarkModal = ({ onClose }: IMarkModalProps) => {
   const {

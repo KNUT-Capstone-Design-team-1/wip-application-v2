@@ -1,3 +1,7 @@
+export interface IMarkModalProps {
+  onClose: () => void;
+}
+
 export interface MarkData {
   code: string;
   title: string;
