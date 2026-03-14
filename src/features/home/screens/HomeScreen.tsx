@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
+import { styles } from '../styles/HomeScreen';
 import LastSearchPill from '../components/organisms/LastSearchPill';
-import { COLOR_GRAY } from '../../../constants';
 import MenuList from '../components/organisms/MenuList';
 import TakeGuide from '../components/organisms/TakeGuide';
 import PillIdentificationSearchModal from '../../pill_identification_search/components/organisms/PillIdentificationSearchModal';
@@ -38,18 +38,5 @@ const HomeScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  hr: {
-    width: '100%',
-    height: 1,
-    backgroundColor: COLOR_GRAY[150],
-    marginTop: 20,
-  },
-});
 
 export default HomeScreen;
