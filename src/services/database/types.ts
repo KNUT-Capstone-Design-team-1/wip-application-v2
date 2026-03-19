@@ -111,12 +111,12 @@ export interface IPillDataSearchParam extends Omit<
   | 'LINE_BACK'
   | 'FORM_CODE'
 > {
-  DRUG_SHAPE: string[];
-  COLOR_CLASS1: string[];
-  COLOR_CLASS2: string[];
-  LINE_FRONT: string[];
-  LINE_BACK: string[];
-  FORM_CODE: string[];
+  DRUG_SHAPE: string[] | null;
+  COLOR_CLASS1: string[] | null;
+  COLOR_CLASS2: string[] | null;
+  LINE_FRONT: string[] | null;
+  LINE_BACK: string[] | null;
+  FORM_CODE: string[] | null;
   PRINT_FRONT_EXACTLY: string; // 표시앞 일치
   PRINT_BACK_EXACTLY: string; // 표시뒤 일치
 }

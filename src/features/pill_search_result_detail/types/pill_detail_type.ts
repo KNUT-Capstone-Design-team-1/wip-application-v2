@@ -7,3 +7,10 @@ export interface IPillDetailInfoProps {
   saveState: boolean;
   onSaveToggle: () => void;
 }
+
+export interface IDetailSectionProps {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  content?: string;
+}

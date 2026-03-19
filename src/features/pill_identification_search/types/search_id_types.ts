@@ -3,12 +3,12 @@ export interface ISearchPillData {
   PRINT_BACK: string;
   ITEM_NAME: string;
   ENTP_NAME: string;
-  DRUG_SHAPE: string[];
-  FORM_CODE: string[];
-  COLOR_CLASS1: string[];
-  COLOR_CLASS2: string[];
-  LINE_FRONT: string[];
-  LINE_BACK: string[];
+  DRUG_SHAPE: string[] | null;
+  FORM_CODE: string[] | null;
+  COLOR_CLASS1: string[] | null;
+  COLOR_CLASS2: string[] | null;
+  LINE_FRONT: string[] | null;
+  LINE_BACK: string[] | null;
   MARK_CODE_FRONT: string;
   MARK_CODE_BACK: string;
 }
@@ -18,11 +18,13 @@ export interface ISearchIdValue {
   sideLabelBackText: string;
   productNameText: string;
   companyName: string;
-  manufacturerName: string[];
-  dividerLineData: string[];
-  shape: string[];
-  frontColor: string[];
-  backColor: string[];
+  manufacturerName: string[] | null;
+  dividerLineData: string[] | null;
+  shape: string[] | null;
+  frontColor: string[] | null;
+  backColor: string[] | null;
+  markCodeFront: string;
+  markCodeBack: string;
 }
 
 export interface ISearchIdStore extends ISearchIdValue{
@@ -35,6 +37,8 @@ export interface ISearchIdStore extends ISearchIdValue{
   setShape: (value: string[]) => void;
   setFrontColor: (value: string[]) => void;
   setBackColor: (value: string[]) => void;
+  setMarkCodeFront: (value: string) => void;
+  setMarkCodeBack: (value: string) => void;
   resetSelectedSearchId: () => void;
   getSelectedSearchId: () => any;
 }

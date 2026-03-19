@@ -7,11 +7,13 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   productNameText: '',
 
   companyName: '',
-  manufacturerName: [],
-  dividerLineData: [],
-  shape: [],
-  frontColor: [],
-  backColor: [],
+  manufacturerName: null,
+  dividerLineData: null,
+  shape: null,
+  frontColor: null,
+  backColor: null,
+  markCodeFront: '',
+  markCodeBack: '',
   setSideLabelFrontText: (value) =>
     set({
       sideLabelFrontText: value,
@@ -48,17 +50,27 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     set({
       backColor: arr,
     }),
+  setMarkCodeFront: (value: string) =>
+    set({
+      markCodeFront: value,
+    }),
+  setMarkCodeBack: (value: string) =>
+    set({
+      markCodeBack: value,
+    }),
   resetSelectedSearchId: () =>
     set({
       sideLabelFrontText: '',
       sideLabelBackText: '',
       productNameText: '',
       companyName: '',
-      manufacturerName: [],
-      dividerLineData: [],
-      shape: [],
-      frontColor: [],
-      backColor: [],
+      manufacturerName: null,
+      dividerLineData: null,
+      shape: null,
+      frontColor: null,
+      backColor: null,
+      markCodeFront: '',
+      markCodeBack: '',
     }),
   getSelectedSearchId: () => {
     const searchIdFrontText = get().sideLabelFrontText,
@@ -69,7 +81,9 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       searchDividerLineData = get().dividerLineData,
       searchShape = get().shape,
       searchFrontColor = get().frontColor,
-      searchBackColor = get().backColor;
+      searchBackColor = get().backColor,
+      searchMarkCodeFront = get().markCodeFront,
+      searchMarkCodeBack = get().markCodeBack;
 
     const data: ISearchPillData = {
       PRINT_FRONT: searchIdFrontText,
@@ -82,8 +96,8 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       FORM_CODE: searchManufacturerName,
       LINE_FRONT: searchDividerLineData,
       LINE_BACK: searchDividerLineData,
-      MARK_CODE_FRONT: '',
-      MARK_CODE_BACK: '',
+      MARK_CODE_FRONT: searchMarkCodeFront,
+      MARK_CODE_BACK: searchMarkCodeBack,
     };
 
     console.log('data', data);

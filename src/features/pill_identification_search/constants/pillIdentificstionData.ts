@@ -88,7 +88,7 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
-        value: '전체',
+        value: null,
       },
       {
         iconUrl: capsult,
@@ -125,7 +125,7 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
-        value: '전체',
+        value: null,
       },
       {
         iconUrl: circle,
@@ -161,7 +161,7 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
-        value: '전체',
+        value: null,
       },
       {
         iconUrl: circle,
@@ -240,7 +240,7 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
-        value: '전체',
+        value: null,
       },
       {
         iconUrl: '',
@@ -349,7 +349,7 @@ export const pillIdentificstionData = {
         iconUrl: all,
         iconColor: '',
         label: '전체',
-        value: '전체',
+        value: null,
       },
       {
         iconUrl: '',
