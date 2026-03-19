@@ -20,19 +20,18 @@ const MarkList = ({ data, onSelect }: IMarkListProps) => {
 
   const renderItem = ({ item }: { item: MarkData }) => (
     <TouchableOpacity
-      style={styles.markItem}
+      style={styles.gridItem}
       onPress={() => onSelect(item)}
       activeOpacity={0.7}
     >
-      <Image
-        source={{ uri: item.base64 }}
-        style={styles.markImage}
-        contentFit="contain"
-      />
-      <View style={styles.markInfo}>
-        <Text style={styles.markTitle}>{item.title}</Text>
-        <Text style={styles.markCode}>코드: {item.code}</Text>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: item.base64 }}
+          style={styles.gridImage}
+          contentFit="contain"
+        />
       </View>
+      <Text style={styles.gridTitle} numberOfLines={2}>{item.title}</Text>
     </TouchableOpacity>
   );
 
@@ -41,7 +40,9 @@ const MarkList = ({ data, onSelect }: IMarkListProps) => {
       data={data}
       renderItem={renderItem}
       keyExtractor={(item) => item.code}
-      contentContainerStyle={styles.listContainer}
+      numColumns={4}
+      contentContainerStyle={styles.gridContainer}
+      columnWrapperStyle={styles.columnWrapper}
       showsVerticalScrollIndicator={true}
     />
   );

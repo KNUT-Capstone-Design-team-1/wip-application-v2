@@ -2,37 +2,51 @@ import { StyleSheet } from 'react-native';
 import { COLOR_GRAY } from '@/src/constants';
 
 export const styles = StyleSheet.create({
-  listContainer: {
+  gridContainer: {
     paddingVertical: 10,
+    paddingHorizontal: 8,
   },
-  markItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    marginBottom: 8,
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  gridItem: {
+    width: '23%',
+    aspectRatio: 1,
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: COLOR_GRAY[150],
+    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  markImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 6,
-    marginRight: 12,
-  },
-  markInfo: {
+  imageContainer: {
     flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  markTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+  gridImage: {
+    width: '100%',
+    height: '100%',
+  },
+  gridTitle: {
+    fontSize: 10,
     color: '#333',
-    marginBottom: 4,
+    textAlign: 'center',
+    marginTop: 4,
+    lineHeight: 12,
   },
-  markCode: {
-    fontSize: 13,
+  footerLoader: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footerText: {
+    fontSize: 12,
     color: COLOR_GRAY[200],
+    marginTop: 8,
   },
   emptyContainer: {
     flex: 1,
