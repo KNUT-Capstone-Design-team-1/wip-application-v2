@@ -1,36 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
-  Dimensions,
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
 import { COLOR_PRIMARY } from '@/src/constants';
-import { useMarkModal } from '../../hooks/use_mark_modal';
 import SearchInput from '../molecules/SearchInput';
 import MarkList from '../molecules/MarkList';
 import Pagination from '../molecules/Pagination';
 import { styles } from '../../styles/organisms/MarkModal';
 import { IMarkModalProps } from '@/src/features/pill_identification_search/types/mark_types';
 
-const MarkModal = ({ onClose }: IMarkModalProps) => {
-  const {
-    searchText,
-    setSearchText,
-    markDataList,
-    loading,
-    error,
-    page,
-    totalPages,
-    currentGroup,
-    setPage,
-    setCurrentGroup,
-    handleSearch,
-    handleMarkSelect,
-  } = useMarkModal();
+const MarkModal = ({
+  onClose,
+  searchText,
+  setSearchText,
+  markDataList,
+  loading,
+  error,
+  handleSearch,
+  handleMarkSelect,
+  loadInitialMarks,
+  currentPage,
+  totalPages,
+  currentGroup,
+  handlePageChange,
+  handleGroupChange,
+}: IMarkModalProps) => {
+  // 모달이 열릴 때 초기 데이터 로드 (100개)
+  useEffect(() => {
+    // 데이터가 없을 때만 로드 (이미 검색한 결과가 있으면 유지)
+    if (markDataList.length === 0 && !loading) {
+      loadInitialMarks('');
+    }
+  }, []);
 
   // 마크 선택 시 Modal 닫기
   const handleSelect = (mark: any) => {
@@ -45,7 +51,7 @@ const MarkModal = ({ onClose }: IMarkModalProps) => {
         onClose();
       }}
     >
-      <View style={styles.overlay}>
+      <Vieㅁw style={styles.overlay}>
         <TouchableWithoutFeedback
           onPress={(e) => {
             e.stopPropagation && e.stopPropagation();
@@ -96,23 +102,26 @@ const MarkModal = ({ onClose }: IMarkModalProps) => {
                   </Text>
                 </View>
               ) : (
-                <MarkList data={markDataList} onSelect={handleSelect} />
+                <MarkList
+                  data={markDataList}
+                  onSelect={handleSelect}
+                />
               )}
             </View>
 
             {/* 페이지네이션 */}
-            {!loading && markDataList.length > 0 && (
+            {!loading && markDataList.length > 0 && totalPages > 1 && (
               <Pagination
                 totalPages={totalPages}
-                page={page}
-                setPage={setPage}
+                page={currentPage}
+                setPage={handlePageChange}
                 currentGroup={currentGroup}
-                setCurrentGroup={setCurrentGroup}
+                setCurrentGroup={handleGroupChange}
               />
             )}
           </View>
         </TouchableWithoutFeedback>
-      </View>
+      </Vieㅁw>
     </TouchableWithoutFeedback>
   );
 };

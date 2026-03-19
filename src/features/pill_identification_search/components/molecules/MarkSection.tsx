@@ -14,13 +14,41 @@ const MarkSection = () => {
     openMarkModal,
     closeMarkModal,
     deleteSelectedMark,
+    searchText,
+    setSearchText,
+    markDataList,
+    loading,
+    error,
+    handleSearch,
+    handleMarkSelect,
+    loadInitialMarks,
+    currentPage,
+    totalPages,
+    currentGroup,
+    handlePageChange,
+    handleGroupChange,
   } = useMarkModal();
 
   return (
     <View style={styles.selectMarkContainer}>
       {/* 마크 선택 Modal */}
       <Modal visible={modalState} transparent animationType="slide">
-        <MarkModal onClose={closeMarkModal} />
+        <MarkModal
+          onClose={closeMarkModal}
+          searchText={searchText}
+          setSearchText={setSearchText}
+          markDataList={markDataList}
+          loading={loading}
+          error={error}
+          handleSearch={handleSearch}
+          handleMarkSelect={handleMarkSelect}
+          loadInitialMarks={loadInitialMarks}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          currentGroup={currentGroup}
+          handlePageChange={handlePageChange}
+          handleGroupChange={handleGroupChange}
+        />
       </Modal>
 
       {/* 선택된 마크 표시 */}
