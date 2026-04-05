@@ -17,10 +17,13 @@ export const useNotices = () => {
 
   const getNoticeList = async () => {
     try {
+      setIsNoticeLoading(true);
+
       const url = process.env.EXPO_PUBLIC_CLOUD_FLARE_WIP_NOTICE_URL;
 
       if(!url) {
         console.error('Notice API URL is not defined');
+        return [];
       }
 
       const token = await getNoticeToken();
@@ -30,12 +33,17 @@ export const useNotices = () => {
         },
       });
 
-      console.log(response.data.notices);
+      const sortedNotices = noticeDataSort(response.data.notices);
 
-      return noticeDataSort(response.data.notices);
+      // Store에 데이터 설정
+      setNoticeData(sortedNotices);
+
+      return sortedNotices;
     } catch (error) {
       console.error('Failed to fetch notices:', error);
       return [];
+    } finally {
+      setIsNoticeLoading(false);
     }
   };
 

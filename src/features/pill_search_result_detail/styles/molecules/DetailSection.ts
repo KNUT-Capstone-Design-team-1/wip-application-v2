@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   },
   detailInfoHeadText: {
     color: '#3c42ec',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     flex: 1,
   },
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   },
   detailInfoText: {
     color: '#333',
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 18,
+    lineHeight: 30,
   },
 });
