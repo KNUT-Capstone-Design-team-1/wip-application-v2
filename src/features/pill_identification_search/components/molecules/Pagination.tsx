@@ -6,16 +6,8 @@ import {
   View,
 } from 'react-native';
 import { styles } from '../../styles/molecules/Pagination';
-
-interface IPaginationProps {
-  totalPages: number;
-  page: number;
-  setPage: (page: number) => void;
-  currentGroup: number;
-  setCurrentGroup: (group: number | ((prev: number) => number)) => void;
-}
-
-const PAGE_GROUP_SIZE = 5; // 한 번에 보여줄 페이지 버튼 개수
+import { IPaginationProps } from "@/src/features/pill_identification_search/types/search_id_types";
+import { PAGE_GROUP_SIZE } from "@/src/features/pill_identification_search/constants/identificationSearch";
 
 const Pagination = ({
   totalPages,
@@ -31,23 +23,22 @@ const Pagination = ({
 
     const buttons = [];
 
-    // 이전 버튼
+    // 이전 버튼 (<)
     if (currentGroup > 0) {
       buttons.push(
         <TouchableOpacity
           key="prev"
           style={styles.pageNavButton}
           onPress={() => {
-            setCurrentGroup((prev: number) => prev - 1);
-            setPage((currentGroup - 1) * PAGE_GROUP_SIZE + 1);
+            setCurrentGroup(currentGroup - 1);
           }}
         >
-          <Text style={styles.pageNavText}>←</Text>
+          <Text style={styles.pageNavText}>{'<'}</Text>
         </TouchableOpacity>,
       );
     }
 
-    // 페이지 버튼들
+    // 페이지 버튼들 (1, 2, 3, 4, 5)
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <TouchableOpacity
@@ -66,19 +57,18 @@ const Pagination = ({
       );
     }
 
-    // 다음 버튼
+    // 다음 버튼 (>)
     if (endPage < totalPages) {
       buttons.push(
         <TouchableOpacity
           key="next"
           style={styles.pageNavButton}
           onPress={() => {
-            setCurrentGroup((prev: number) => prev + 1);
-            setPage((currentGroup + 1) * PAGE_GROUP_SIZE + 1);
+            setCurrentGroup(currentGroup + 1);
           }}
         >
-          <Text style={styles.pageNavText}>→</Text>
-        </TouchableOpacity>
+          <Text style={styles.pageNavText}>{'>'}</Text>
+        </TouchableOpacity>,
       );
     }
 

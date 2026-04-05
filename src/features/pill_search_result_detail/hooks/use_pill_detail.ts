@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IPillDetail } from '@/src/features/pill_search_result_detail/types/pill_detail_type';
+import { getPillDatasByItemSeq } from "@/src/services/database/queries/pill_data";
+import { requestGetPillDetail } from "@/src/services/apis/google_cloud/wip_pill_detail";
 
 export const usePillDetail = () => {
   const recentSearch = async (pillDetailData: IPillDetail) => {
@@ -38,7 +40,38 @@ export const usePillDetail = () => {
     }
   };
 
+  const loadPillDetail = async (itemSeq: string, setLoading, setPillData) => {
+    try {
+      setLoading(true);
+      // 로컬 DB에서 기본 정보 먼저 가져오기 (빠름)
+      const basicData = await getPillDatasByItemSeq([itemSeq]);
+
+      if (basicData.length > 0) {
+        // 기본 정보 먼저 표시
+        setPillData(basicData[0] as any);
+        setLoading(false);
+
+        // 상세 정보(효능/효과, 용법/용량 등)는 백그라운드에서 가져오기
+        try {
+          const detailData = await requestGetPillDetail(itemSeq);
+          setPillData(detailData);
+        } catch (error) {
+          console.log('상세 정보 로드 실패, 기본 정보만 표시');
+        }
+      } else {
+        // DB에 없으면 API 호출
+        const detail = await requestGetPillDetail(itemSeq);
+        setPillData(detail);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Failed to load pill detail:', error);
+      setLoading(false);
+    }
+  };
+
   return {
     recentSearch,
+    loadPillDetail,
   };
 };

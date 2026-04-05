@@ -1,3 +1,11 @@
+export interface IPaginationProps {
+  totalPages: number;
+  page: number;
+  setPage: (page: number) => void;
+  currentGroup: number;
+  setCurrentGroup: (group: number) => void;
+}
+
 export interface ISearchPillData {
   PRINT_FRONT: string;
   PRINT_BACK: string;

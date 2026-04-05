@@ -20,7 +20,10 @@ const PillDetailInfo = ({
   const [showWarning, setShowWarning] = useState(true);
 
   useEffect(() => {
-    recentSearch(data);
+    // recentSearch를 백그라운드에서 실행 (UI 블로킹 방지)
+    recentSearch(data).catch((error) => {
+      console.error('Recent search save failed:', error);
+    });
   }, []);
 
   return (
