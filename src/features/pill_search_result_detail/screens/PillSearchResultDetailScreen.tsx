@@ -1,39 +1,30 @@
 import { View, ScrollView, Text, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import PillDetailInfo from '../components/organisms/PillDetailInfo';
+import PillDetailSkeleton from '../components/organisms/PillDetailSkeleton';
 import { styles } from '../styles/PillSearchResultDetailScreen';
 import { usePillBox } from '@/src/features/pill_save/hooks/use_pill_box';
 import { useEffect, useState } from 'react';
-import { getPillDatasByItemSeq } from '@/src/services/database/queries/pill_data';
+import { usePillDetail } from '../hooks/use_pill_detail';
 import { IPillDetail } from '../types/pill_detail_type';
 
 const PillSearchResultDetailScreen = () => {
   const { itemDetail, itemImage, ITEM_SEQ } = useLocalSearchParams();
   const [pillData, setPillData] = useState<IPillDetail | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { loadPillDetail } = usePillDetail();
 
-  // ITEM_SEQ로 접근한 경우 데이터 조회
+  // 데이터 로드
   useEffect(() => {
-    if (ITEM_SEQ && !itemDetail) {
-      loadPillData(ITEM_SEQ as string);
-    } else if (itemDetail) {
+    if (itemDetail) {
+      // 이전 방식: itemDetail이 전달된 경우 (하위 호환성)
       setPillData(JSON.parse(itemDetail as string));
+      setLoading(false);
+    } else if (ITEM_SEQ) {
+      // 새 방식: ITEM_SEQ만 전달된 경우 API 호출
+      loadPillDetail(ITEM_SEQ as string, setLoading, setPillData);
     }
   }, [ITEM_SEQ, itemDetail]);
-
-  const loadPillData = async (itemSeq: string) => {
-    try {
-      setLoading(true);
-      const results = await getPillDatasByItemSeq([itemSeq]);
-      if (results.length > 0) {
-        setPillData(results[0]);
-      }
-    } catch (error) {
-      console.error('Failed to load pill data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const { saveState, toggleSave } = usePillBox(
     pillData?.ITEM_SEQ ?? '',
@@ -52,9 +43,9 @@ const PillSearchResultDetailScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.pillResultDetailRoot}>
-        <Text>로딩 중...</Text>
-      </View>
+      <ScrollView style={styles.scrollViewWrapper}>
+        <PillDetailSkeleton />
+      </ScrollView>
     );
   }
 
@@ -63,9 +54,9 @@ const PillSearchResultDetailScreen = () => {
       <View style={styles.pillResultDetailRoot}>
         <Text>데이터를 불러올 수 없습니다.</Text>
       </View>
+
     );
   }
-
   return (
     <ScrollView style={styles.scrollViewWrapper}>
       <View style={styles.viewWrapper}>

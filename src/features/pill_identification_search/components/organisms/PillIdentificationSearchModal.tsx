@@ -160,11 +160,7 @@ const PillIdentificationSearchModal: React.FC<
             direction="column"
             selectedIndex={[]}
           >
-            <MarkSection
-              isSelected={false}
-              selectedMarkName={''}
-              selectedMarkIcon={''}
-            />
+            <MarkSection />
           </IdentificationSection>
         </View>
       );
