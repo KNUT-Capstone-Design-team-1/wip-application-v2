@@ -56,7 +56,9 @@ const Toast = ({ message, visible, duration = 2000, onHide }: IToastProps) => {
   }
 
   return (
-    <Animated.View style={[styles.toastContainer, { opacity, transform: [{ translateY }] }]}>
+    <Animated.View
+      style={[styles.toastContainer, { opacity, transform: [{ translateY }] }]}
+    >
       <View style={styles.toastContent}>
         <Text style={styles.toastText}>{message}</Text>
       </View>

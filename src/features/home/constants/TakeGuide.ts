@@ -1,4 +1,4 @@
-import GuideAlert from '@/assets/images/guide-alert.png';
+import GuideAlert from '@assets/images/guide-alert.png';
 
 export const TAKE_GUIDE = {
   title: '약물의 오용과 남용은 건강을 해칠 수 있습니다.',

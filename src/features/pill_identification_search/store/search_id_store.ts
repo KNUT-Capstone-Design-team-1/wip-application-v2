@@ -1,5 +1,8 @@
 import { create } from 'zustand';
-import { ISearchPillData, ISearchIdStore } from "@/src/features/pill_identification_search/types/search_id_types";
+import {
+  ISearchPillData,
+  ISearchIdStore,
+} from '@features/pill_identification_search/types/search_id_types';
 
 export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   sideLabelFrontText: '',

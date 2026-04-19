@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../../styles/molecules/Pagination';
-import { IPaginationProps } from "@/src/features/pill_identification_search/types/search_id_types";
-import { PAGE_GROUP_SIZE } from "@/src/features/pill_identification_search/constants/identificationSearch";
+import { IPaginationProps } from '@features/pill_identification_search/types/search_id_types';
+import { PAGE_GROUP_SIZE } from '@features/pill_identification_search/constants/identificationSearch';
 
 const Pagination = ({
   totalPages,
@@ -53,7 +48,7 @@ const Pagination = ({
           >
             {i}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity>,
       );
     }
 

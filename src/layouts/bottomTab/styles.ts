@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '../../constants';
 
 export const styles = StyleSheet.create({
   bottomTabContainer: {

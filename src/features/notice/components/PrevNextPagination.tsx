@@ -44,7 +44,8 @@ const PrevNextPagination = ({
         <Text
           style={[
             styles.paginationButtonText,
-            currentPage === totalPages - 1 && styles.paginationButtonTextDisabled,
+            currentPage === totalPages - 1 &&
+              styles.paginationButtonTextDisabled,
           ]}
         >
           다음

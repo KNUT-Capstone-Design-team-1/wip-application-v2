@@ -1,5 +1,5 @@
-import { getPillStorage } from '@/src/features/setting/utils/setting';
-import { SEARCH_LIST } from '@/src/features/setting/constants/setting_list';
+import { getPillStorage } from '@features/setting/utils/setting';
+import { SEARCH_LIST } from '@features/setting/constants/setting_list';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ISettingListType } from '../types/setting_type';

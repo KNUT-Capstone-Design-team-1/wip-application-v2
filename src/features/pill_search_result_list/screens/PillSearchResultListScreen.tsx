@@ -33,7 +33,10 @@ const PillSearchResultListScreen = () => {
         </View>
       ) : (
         // 추가 로딩 중에도 SearchResultList를 언마운트하지 않음 (스크롤 유지)
-        <SearchResultList searchResultData={searchResultData} isLoadingMore={isLoading} />
+        <SearchResultList
+          searchResultData={searchResultData}
+          isLoadingMore={isLoading}
+        />
       )}
     </View>
   );

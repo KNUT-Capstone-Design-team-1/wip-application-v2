@@ -2,10 +2,13 @@ import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PillSaveContent from '../molecules/PillSaveContent';
-import { IPillSaveData, IPillSaveListProps } from '@/src/features/pill_save/types/pill_save_type';
+import {
+  IPillSaveData,
+  IPillSaveListProps,
+} from '@features/pill_save/types/pill_save_type';
 import { styles } from '../../styles/organisms/PillSaveList';
-import { getPillDatasByItemSeq } from '@/src/services/database/queries/pill_data';
-import NotItem from '@/src/components/common/NotItem';
+import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
+import NotItem from '@components/common/NotItem';
 
 const SAVE_DATA_KEY = 'saveData';
 

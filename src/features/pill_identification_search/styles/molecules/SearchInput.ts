@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   searchContainer: {

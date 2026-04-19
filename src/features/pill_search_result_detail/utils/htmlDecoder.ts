@@ -7,9 +7,12 @@ export const decodeHtmlContent = (content: string): string => {
   let decoded = content;
 
   // CDATA 섹션 추출 및 처리
-  decoded = decoded.replace(/<!\[CDATA\[(.*?)\]\]>/gs, (match, cdataContent) => {
-    return cdataContent;
-  });
+  decoded = decoded.replace(
+    /<!\[CDATA\[(.*?)\]\]>/gs,
+    (match, cdataContent) => {
+      return cdataContent;
+    },
+  );
 
   // HTML 엔티티 디코딩
   const htmlEntities: { [key: string]: string } = {
@@ -57,8 +60,8 @@ export const decodeHtmlContent = (content: string): string => {
     .replace(/ +/g, ' ')
     // 각 줄 앞뒤 공백 제거
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
     .join('\n')
     // 연속된 줄바꿈을 최대 2개로 제한
     .replace(/\n{3,}/g, '\n\n')
@@ -71,12 +74,18 @@ export const decodeHtmlContent = (content: string): string => {
 /**
  * XML/HTML에서 특정 섹션 추출 (필요한 경우)
  */
-export const extractSection = (content: string, sectionName?: string): string => {
+export const extractSection = (
+  content: string,
+  sectionName?: string,
+): string => {
   if (!content) return '';
 
   // 섹션 이름이 있으면 해당 섹션만 추출
   if (sectionName) {
-    const regex = new RegExp(`<${sectionName}[^>]*>(.*?)</${sectionName}>`, 'is');
+    const regex = new RegExp(
+      `<${sectionName}[^>]*>(.*?)</${sectionName}>`,
+      'is',
+    );
     const match = content.match(regex);
     if (match && match[1]) {
       return decodeHtmlContent(match[1]);

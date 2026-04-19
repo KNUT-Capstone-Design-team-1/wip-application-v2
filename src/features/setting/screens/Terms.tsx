@@ -17,6 +17,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#444',
   },
-})
+});
 
 export default Terms;

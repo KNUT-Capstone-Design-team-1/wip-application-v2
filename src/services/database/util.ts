@@ -1,4 +1,4 @@
-import { base64ToUint8Array } from '@/src/utils';
+import { base64ToUint8Array } from '@utils/index';
 import {
   ITableColumnSchema,
   IWhereQueryClause,

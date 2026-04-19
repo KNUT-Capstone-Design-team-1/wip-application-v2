@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 
 interface ISkeletonBoxProps {
   width?: number | string;
@@ -8,7 +8,12 @@ interface ISkeletonBoxProps {
   style?: any;
 }
 
-const SkeletonBox = ({ width = '100%', height = 20, borderRadius = 4, style }: ISkeletonBoxProps) => {
+const SkeletonBox = ({
+  width = '100%',
+  height = 20,
+  borderRadius = 4,
+  style,
+}: ISkeletonBoxProps) => {
   const opacity = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {

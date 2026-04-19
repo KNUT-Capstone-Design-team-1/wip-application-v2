@@ -1,3 +1,3 @@
-import PillSave from '@/src/features/pill_save/screens/PillSave';
+import PillSave from '@features/pill_save/screens/PillSave';
 
 export default PillSave;

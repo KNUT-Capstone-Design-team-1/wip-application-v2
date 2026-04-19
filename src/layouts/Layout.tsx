@@ -6,9 +6,9 @@ import { PAGE_TITLES } from './constants';
 import Header from './header/Header';
 import SubHeader from './header/SubHeader';
 import BottomTab from '../layouts/bottomTab/BottomTab';
-import BottomSheet from '../features/notice/components/BottomSheet';
-import { useNoticeStore } from '../features/notice/store/notice_store';
-import { useNotices } from '../features/notice/hooks/use_notice';
+import BottomSheet from '@features/notice/components/BottomSheet';
+import { useNoticeStore } from '@features/notice/store/notice_store';
+import { useNotices } from '@features/notice/hooks/use_notice';
 
 const BOTTOM_SHEET_HIDDEN_KEY = 'bottomSheetHiddenUntil';
 

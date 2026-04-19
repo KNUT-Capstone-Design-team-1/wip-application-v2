@@ -35,7 +35,7 @@ export interface ISearchIdValue {
   markCodeBack: string;
 }
 
-export interface ISearchIdStore extends ISearchIdValue{
+export interface ISearchIdStore extends ISearchIdValue {
   setSideLabelFrontText: (value: string) => void;
   setSideLabelBackText: (value: string) => void;
   setProductNameText: (value: string) => void;

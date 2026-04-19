@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { styles } from '../styles/HomeScreen';
 import LastSearchPill from '../components/organisms/LastSearchPill';

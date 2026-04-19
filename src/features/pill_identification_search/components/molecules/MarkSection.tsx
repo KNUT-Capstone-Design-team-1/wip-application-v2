@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import Button from '../atoms/Button';
-import { COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/molecules/MarkSection';
 import { useMarkModal } from '../../hooks/use_mark_modal';
 import MarkModal from '../organisms/MarkModal';

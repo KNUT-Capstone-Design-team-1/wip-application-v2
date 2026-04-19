@@ -31,7 +31,9 @@ const MarkList = ({ data, onSelect }: IMarkListProps) => {
           contentFit="contain"
         />
       </View>
-      <Text style={styles.gridTitle} numberOfLines={2}>{item.title}</Text>
+      <Text style={styles.gridTitle} numberOfLines={2}>
+        {item.title}
+      </Text>
     </TouchableOpacity>
   );
 

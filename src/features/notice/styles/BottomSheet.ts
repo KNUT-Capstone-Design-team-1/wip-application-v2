@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   bottomSheetContainer: {

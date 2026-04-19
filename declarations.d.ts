@@ -4,6 +4,12 @@ declare module '*.svg' {
   const content: React.FC<SvgProps>;
   export default content;
 }
+
+declare module '*.png' {
+  const value: number;
+  export default value;
+}
+
 // react-native-version-check-expo 타입 선언
 // 참고: https://github.com/kimxogus/react-native-version-check/issues/228
 declare module 'react-native-version-check-expo' {

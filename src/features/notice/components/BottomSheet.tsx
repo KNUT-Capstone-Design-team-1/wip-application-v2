@@ -11,11 +11,15 @@ import {
 import { styles } from '../styles/BottomSheet';
 import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
-import { formatContents } from '@/src/features/notice/utils/notice';
+import { formatContents } from '@features/notice/utils/notice';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const BottomSheet = ({ data, onClose, onNeverShowAgain }: IBottomSheetProps) => {
+const BottomSheet = ({
+  data,
+  onClose,
+  onNeverShowAgain,
+}: IBottomSheetProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const flatListRef = useRef<FlatList>(null);
@@ -88,10 +92,7 @@ const BottomSheet = ({ data, onClose, onNeverShowAgain }: IBottomSheetProps) => 
           {data.map((_, index) => (
             <View
               key={index}
-              style={[
-                styles.dot,
-                currentIndex === index && styles.activeDot,
-              ]}
+              style={[styles.dot, currentIndex === index && styles.activeDot]}
             />
           ))}
         </View>

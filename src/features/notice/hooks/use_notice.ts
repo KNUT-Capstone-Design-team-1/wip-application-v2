@@ -21,7 +21,7 @@ export const useNotices = () => {
 
       const url = process.env.EXPO_PUBLIC_CLOUD_FLARE_WIP_NOTICE_URL;
 
-      if(!url) {
+      if (!url) {
         console.error('Notice API URL is not defined');
         return [];
       }

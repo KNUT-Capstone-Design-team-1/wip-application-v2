@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IPillDetail } from '@/src/features/pill_search_result_detail/types/pill_detail_type';
+import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
 import React from 'react';
 
 export const useHome = () => {

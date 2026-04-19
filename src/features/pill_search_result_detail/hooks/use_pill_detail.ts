@@ -1,13 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IPillDetail } from '@/src/features/pill_search_result_detail/types/pill_detail_type';
-import { getPillDatasByItemSeq } from "@/src/services/database/queries/pill_data";
-import { requestGetPillDetail } from "@/src/services/apis/google_cloud/wip_pill_detail";
+import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
+import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
+import { requestGetPillDetail } from '@services/apis/google_cloud/wip_pill_detail';
 
 export const usePillDetail = () => {
   const recentSearch = async (pillDetailData: IPillDetail) => {
     try {
       const recentSearchData = await AsyncStorage.getItem('recentSearch');
-      const savedList: IPillDetail[] = recentSearchData ? JSON.parse(recentSearchData) : [];
+      const savedList: IPillDetail[] = recentSearchData
+        ? JSON.parse(recentSearchData)
+        : [];
 
       // 데이터 정제 - JSON 파싱 에러 방지
       const sanitizedData: IPillDetail = {};
@@ -15,7 +17,10 @@ export const usePillDetail = () => {
         const value = pillDetailData[key];
         if (typeof value === 'string') {
           // 개행문자, 탭, 제어문자 등을 공백으로 치환하고 trim
-          sanitizedData[key] = value.replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
+          sanitizedData[key] = value
+            .replace(/[\r\n\t]+/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
         } else {
           sanitizedData[key] = value;
         }
@@ -56,7 +61,7 @@ export const usePillDetail = () => {
           const detailData = await requestGetPillDetail(itemSeq);
           setPillData(detailData);
         } catch (error) {
-          console.log('상세 정보 로드 실패, 기본 정보만 표시');
+          console.log('상세 정보 로드 실패, 기본 정보만 표시', error);
         }
       } else {
         // DB에 없으면 API 호출

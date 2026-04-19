@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import PillDetailInfo from '../components/organisms/PillDetailInfo';
 import PillDetailSkeleton from '../components/organisms/PillDetailSkeleton';
 import { styles } from '../styles/PillSearchResultDetailScreen';
-import { usePillBox } from '@/src/features/pill_save/hooks/use_pill_box';
+import { usePillBox } from '@features/pill_save/hooks/use_pill_box';
 import { useEffect, useState } from 'react';
 import { usePillDetail } from '../hooks/use_pill_detail';
 import { IPillDetail } from '../types/pill_detail_type';
@@ -26,12 +26,13 @@ const PillSearchResultDetailScreen = () => {
     }
   }, [ITEM_SEQ, itemDetail]);
 
-  const { saveState, toggleSave } = usePillBox(
-    pillData?.ITEM_SEQ ?? '',
-  );
+  const { saveState, toggleSave } = usePillBox(pillData?.ITEM_SEQ ?? '');
 
   const handleSaveToggle = () => {
-    if (!pillData) return;
+    if (!pillData) {
+      return;
+    }
+
     toggleSave({
       ITEM_SEQ: pillData.ITEM_SEQ,
       ITEM_NAME: pillData.ITEM_NAME,
@@ -54,7 +55,6 @@ const PillSearchResultDetailScreen = () => {
       <View style={styles.pillResultDetailRoot}>
         <Text>데이터를 불러올 수 없습니다.</Text>
       </View>
-
     );
   }
   return (

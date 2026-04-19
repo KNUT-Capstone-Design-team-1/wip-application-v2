@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
-import MenuSvg from '@/assets/images/menu.svg';
+// import MenuSvg from '@assets/images/menu.svg';
 import LeftArrow from '@assets/images/arrow-left.svg';
 
 interface SubHeaderProps {
@@ -18,7 +18,7 @@ const SubHeader = ({ title }: SubHeaderProps) => {
   };
 
   // 메뉴 버튼 클릭 핸들러 (추후 구현)
-  const handleMenuPress = () => {};
+  // const handleMenuPress = () => {};
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>

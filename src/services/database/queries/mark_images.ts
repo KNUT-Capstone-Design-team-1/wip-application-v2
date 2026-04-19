@@ -1,4 +1,4 @@
-import { binaryToBase64 } from '../../../../src/utils';
+import { binaryToBase64 } from '@utils/index';
 import { getDatabase } from '../sqlite';
 import {
   IMarkImages,

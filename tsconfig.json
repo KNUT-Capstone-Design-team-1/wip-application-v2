@@ -2,27 +2,24 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"],
-      "@components/*": ["components/*"],
-      "@screens/*": ["screens/*"],
-      "@assets/*": ["assets/*"],
-      "@navigation/*": ["navigation/*"],
-      "@styles/*": ["styles/*"],
-      "@api/*": ["api/*"],
-      "@store/*": ["store/*"],
-      "@utils/*": ["utils/*"],
-      "@constants/*": ["constants/*"]
-    },
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@assets/*": ["./assets/*"],
+      "@features/*": ["./src/features/*"],
+      "@components/*": ["./src/components/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@navigation/*": ["./src/navigation/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@api/*": ["./src/api/*"],
+      "@store/*": ["./src/store/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@services/*": ["./src/services/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@types/*": ["./src/types/*"],
+      "@layouts/*": ["./src/layouts/*"]
+    }
   },
-  "include": [
-    "src",
-    "**/*.tsx",
-    "declarations.d.ts",
-    "new_src/features/setting/styles/molecules/setting_list.ts",
-    "app"
-  ]
+  "include": ["src", "**/*.tsx", "declarations.d.ts", "app"]
 }

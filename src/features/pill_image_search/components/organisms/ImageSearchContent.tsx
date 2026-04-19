@@ -5,7 +5,7 @@ import {
   BEFORE_PILL_IMAGE_SEARCH,
   AFTER_PILL_IMAGE_SEARCH,
 } from '../../constants/pillImageSearch';
-import InfoIcon from '@/assets/icons/info-icon.svg';
+import InfoIcon from '@assets/icons/info-icon.svg';
 import SelectedImagesView from '../atoms/SelectedImagesView';
 
 interface IImageSearchContentProps {

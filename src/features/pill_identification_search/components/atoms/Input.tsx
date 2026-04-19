@@ -1,6 +1,6 @@
 import { View, TextInput } from 'react-native';
 import { InputEvent, useState } from 'react';
-import { COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/atoms/Input';
 
 interface IInputProps {
@@ -33,7 +33,9 @@ export const Input = ({
         onBlur={() => setIsFocused(false)}
         style={styles.input}
         placeholder={placeholder}
-        onChangeText={(text) => inputChangeHandler({ nativeEvent: { text } } as any)}
+        onChangeText={(text) =>
+          inputChangeHandler({ nativeEvent: { text } } as any)
+        }
         value={value}
       />
     </View>

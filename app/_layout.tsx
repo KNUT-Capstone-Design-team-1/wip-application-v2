@@ -1,9 +1,9 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
-import Layout from '../src/layouts/Layout';
+import Layout from '@layouts/Layout';
 import UpdateDB from './UpdateDB';
-import { useAppInitializer } from '../src/hooks/use_app_initializer';
+import { useAppInitializer } from '@hooks/use_app_initializer';
 
 export interface IUpdateProgress {
   status: string;

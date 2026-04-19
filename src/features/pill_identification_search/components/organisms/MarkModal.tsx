@@ -7,12 +7,12 @@ import {
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import { COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_PRIMARY } from '@constants/color';
 import SearchInput from '../molecules/SearchInput';
 import MarkList from '../molecules/MarkList';
 import Pagination from '../molecules/Pagination';
 import { styles } from '../../styles/organisms/MarkModal';
-import { IMarkModalProps } from '@/src/features/pill_identification_search/types/mark_types';
+import { IMarkModalProps } from '@features/pill_identification_search/types/mark_types';
 
 const MarkModal = ({
   onClose,
@@ -51,7 +51,7 @@ const MarkModal = ({
         onClose();
       }}
     >
-      <Vieㅁw style={styles.overlay}>
+      <View style={styles.overlay}>
         <TouchableWithoutFeedback
           onPress={(e) => {
             e.stopPropagation && e.stopPropagation();
@@ -102,10 +102,7 @@ const MarkModal = ({
                   </Text>
                 </View>
               ) : (
-                <MarkList
-                  data={markDataList}
-                  onSelect={handleSelect}
-                />
+                <MarkList data={markDataList} onSelect={handleSelect} />
               )}
             </View>
 
@@ -121,7 +118,7 @@ const MarkModal = ({
             )}
           </View>
         </TouchableWithoutFeedback>
-      </Vieㅁw>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

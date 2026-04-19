@@ -1,8 +1,11 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useMarkStore } from '../store/mark_store';
 import { MarkData } from '../types/mark_types';
-import { getMarkImages } from '@/src/services/database/queries/mark_images';
-import { INITIAL_LOAD_COUNT, ITEMS_PER_PAGE } from "@/src/features/pill_identification_search/constants/identificationSearch";
+import { getMarkImages } from '@services/database/queries/mark_images';
+import {
+  INITIAL_LOAD_COUNT,
+  ITEMS_PER_PAGE,
+} from '@features/pill_identification_search/constants/identificationSearch';
 
 export const useMarkModal = () => {
   const [modalState, setModalState] = useState(false);
@@ -56,7 +59,8 @@ export const useMarkModal = () => {
   }, []);
 
   // 더 많은 데이터 로드 (100개 이후)
-  const loadMoreData = useCallback(async (keyword: string, nextBatch: number) => {
+  const loadMoreData = useCallback(
+    async (keyword: string, nextBatch: number) => {
       setLoading(true);
 
       try {
@@ -106,9 +110,13 @@ export const useMarkModal = () => {
 
       // 현재 로드된 데이터보다 큰 페이지를 요청하면 추가 로드
       const maxLoadedPage = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
-      if (newPage > maxLoadedPage && allMarkData.length % INITIAL_LOAD_COUNT === 0) {
+      if (
+        newPage > maxLoadedPage &&
+        allMarkData.length % INITIAL_LOAD_COUNT === 0
+      ) {
         // 100개 단위로 딱 떨어질 때만 추가 로드
-        const nextBatch = Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
+        const nextBatch =
+          Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
         await loadMoreData(searchText, nextBatch);
       }
     },
@@ -127,7 +135,8 @@ export const useMarkModal = () => {
       // 새 페이지에 필요한 데이터가 없으면 로드
       const maxLoadedPage = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
       if (newPage > maxLoadedPage) {
-        const nextBatch = Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
+        const nextBatch =
+          Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
         await loadMoreData(searchText, nextBatch);
       }
     },
@@ -146,7 +155,10 @@ export const useMarkModal = () => {
     const loadedPages = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
 
     // 데이터가 100개 단위로 딱 떨어지면 더 있을 수 있으므로 +5 페이지 추가
-    if (allMarkData.length > 0 && allMarkData.length % INITIAL_LOAD_COUNT === 0) {
+    if (
+      allMarkData.length > 0 &&
+      allMarkData.length % INITIAL_LOAD_COUNT === 0
+    ) {
       return loadedPages + 5;
     }
 

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '@/src/constants';
+import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   pillSearchResultListRoot: {

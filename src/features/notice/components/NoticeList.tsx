@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { styles } from '../styles/NoticeList';
-import { INoticeData } from '../types/notice_type';
-import { INoticeListProps } from '../types/notice_type';
+import { INoticeData, INoticeListProps } from '../types/notice_type';
+
 import NoticeItem from '../components/NoticeItem';
 import PrevNextPagination from './PrevNextPagination';
 import { usePagination } from '../hooks/use_pagination';

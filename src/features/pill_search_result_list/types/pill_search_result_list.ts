@@ -1,4 +1,4 @@
-import { IPillDataSearchParam } from "@/src/services/database/types";
+import { IPillDataSearchParam } from '@services/database/types';
 
 export interface ISearchResultData {
   searchResultData: any[];

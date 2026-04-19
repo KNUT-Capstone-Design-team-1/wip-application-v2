@@ -1,12 +1,9 @@
 import { useSearchIdStore } from '../store/search_id_store';
-import {
-  getPillDatas,
-} from '@/src/services/database/queries/pill_data';
-import { getDatabase } from '@/src/services/database/sqlite';
-import { IPillDataSearchParam } from '@/src/services/database/types';
+import { getPillDatas } from '@services/database/queries/pill_data';
+import { getDatabase } from '@services/database/sqlite';
+import { IPillDataSearchParam } from '@services/database/types';
 import { router } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
-import { useMarkStore } from '../store/mark_store';
 
 export const useSelecteSearchId = () => {
   const {
@@ -19,11 +16,6 @@ export const useSelecteSearchId = () => {
     setShape,
     setFrontColor,
     setBackColor,
-
-    sideLabelFrontText,
-    sideLabelBackText,
-    productNameText,
-    companyName,
     manufacturerName,
     dividerLineData,
     shape,
@@ -33,7 +25,8 @@ export const useSelecteSearchId = () => {
     getSelectedSearchId,
   } = useSearchIdStore();
 
-  const { setSearchResultData, setIsLoading, setSearchParam } = useSearchResultListStore();
+  const { setSearchResultData, setIsLoading, setSearchParam } =
+    useSearchResultListStore();
 
   const searchIdInputChangeHandler = (text: string, key: string) => {
     switch (key) {

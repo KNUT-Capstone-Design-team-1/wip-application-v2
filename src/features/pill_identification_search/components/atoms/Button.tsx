@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 import TouchableScale from 'react-native-touchable-scale';
-import { COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/atoms/Button';
 
 interface IButtonProps {
@@ -17,7 +17,7 @@ const Button = ({
   color = '#fff',
   width = '50%',
   label,
-  pressHandler
+  pressHandler,
 }: IButtonProps) => {
   return (
     <TouchableScale
@@ -26,10 +26,7 @@ const Button = ({
       pressInFriction={150}
       pressOutTension={0}
       onPress={pressHandler}
-      style={[
-        styles.button,
-        { width: width, backgroundColor: background },
-      ]}
+      style={[styles.button, { width: width, backgroundColor: background }]}
     >
       <Text style={[styles.label, { color: color }]}>{label}</Text>
     </TouchableScale>

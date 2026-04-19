@@ -5,7 +5,9 @@ import { INoticeData } from '../types/notice_type';
 import RenderNoticeContent from './RenderNoticeContent';
 import { formatDate, isModified } from '../../../utils/dateUtils';
 
-const NoticeDetailContent = ({ noticeDetailContent, }: {
+const NoticeDetailContent = ({
+  noticeDetailContent,
+}: {
   noticeDetailContent: INoticeData;
 }) => {
   // 생성일, 수정일 다른지 비교
@@ -29,11 +31,13 @@ const NoticeDetailContent = ({ noticeDetailContent, }: {
       </View>
       <View style={styles.hr} />
       <Text style={styles.noticeContent}>
-        {
-          noticeDetailContent.contents
-            ? <RenderNoticeContent contents={noticeDetailContent.contents} />
-            : <View><Text>'내용이 없습니다.'</Text></View>
-        }
+        {noticeDetailContent.contents ? (
+          <RenderNoticeContent contents={noticeDetailContent.contents} />
+        ) : (
+          <View>
+            <Text>&apos;내용이 없습니다.&apos;</Text>
+          </View>
+        )}
         {/*{noticeDetailContent.contents ?? '내용이 없습니다.'}*/}
       </Text>
     </View>

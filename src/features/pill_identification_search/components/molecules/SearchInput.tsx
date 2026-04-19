@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity, Text } from 'react-native';
-import { COLOR_GRAY } from '@/src/constants';
+import { COLOR_GRAY } from '@constants/color';
 import { styles } from '../../styles/molecules/SearchInput';
 
 interface ISearchInputProps {

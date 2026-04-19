@@ -1,3 +1,3 @@
-import NoticeDetail from '../../src/features/notice/screens/NoticeDetail';
+import NoticeDetail from '@features/notice/screens/NoticeDetail';
 
 export default NoticeDetail;

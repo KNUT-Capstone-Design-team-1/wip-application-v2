@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/molecules/DetailSection';
 import { decodeHtmlContent } from '../../utils/htmlDecoder';
-import { IDetailSectionProps } from '@/src/features/pill_search_result_detail/types/pill_detail_type';
+import { IDetailSectionProps } from '@features/pill_search_result_detail/types/pill_detail_type';
 
 const DetailSection = ({
   title,

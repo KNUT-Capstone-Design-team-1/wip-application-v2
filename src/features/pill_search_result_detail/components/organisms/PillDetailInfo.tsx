@@ -4,7 +4,7 @@ import InfoRow from '../atoms/InfoRow';
 import DetailSection from '../molecules/DetailSection';
 import { styles } from '../../styles/organisms/PillDetailInfo';
 import Save from '../../../../../assets/icons/save.svg';
-import { IPillDetailInfoProps } from "../../types/pill_detail_type";
+import { IPillDetailInfoProps } from '../../types/pill_detail_type';
 import { usePillDetail } from '../../hooks/use_pill_detail';
 
 const PillDetailInfo = ({
@@ -32,7 +32,12 @@ const PillDetailInfo = ({
       <View style={styles.nameWrapper}>
         <Text style={styles.name}>{data.ITEM_NAME}</Text>
         <TouchableOpacity onPress={onSaveToggle}>
-          <Save width={15} height={20} fill={saveState ? '#32D2FF' : 'none'} stroke={'#32D2FF'} />
+          <Save
+            width={15}
+            height={20}
+            fill={saveState ? '#32D2FF' : 'none'}
+            stroke={'#32D2FF'}
+          />
         </TouchableOpacity>
       </View>
 

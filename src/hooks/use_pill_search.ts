@@ -1,8 +1,8 @@
-import { getPillDatas } from '@/src/services/database/queries/pill_data';
-import { IPillDataSearchParam } from '@/src/services/database/types';
-import { useSearchResultListStore } from '@/src/features/pill_search_result_list/store/search_result_list_store';
+import { getPillDatas } from '@services/database/queries/pill_data';
+import { IPillDataSearchParam } from '@services/database/types';
+import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { router } from 'expo-router';
-import { usePillSearchListStore } from '@/src/store/pill_search_list_store';
+import { usePillSearchListStore } from '@store/pill_search_list_store';
 
 /**
  * 알약 검색 공유 Hook
@@ -11,7 +11,8 @@ import { usePillSearchListStore } from '@/src/store/pill_search_list_store';
  * - 검색 상태 관리
  */
 export const usePillSearch = () => {
-  const { setSearchResultData, appendSearchResultData, setIsLoading } = useSearchResultListStore();
+  const { setSearchResultData, appendSearchResultData, setIsLoading } =
+    useSearchResultListStore();
   const { setLimitValue, getLimitValue } = usePillSearchListStore();
 
   /**
@@ -97,7 +98,11 @@ export const usePillSearch = () => {
       // 2. 검색 조건이 하나도 없으면 경고
       if (Object.keys(searchParam).length === 0) {
         console.warn('⚠️ 검색 조건이 없습니다.');
-        return { success: false, results: [], message: '검색 조건을 입력해주세요.' };
+        return {
+          success: false,
+          results: [],
+          message: '검색 조건을 입력해주세요.',
+        };
       }
 
       // 3. 로딩 시작

@@ -1,11 +1,12 @@
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { getPillDatas } from '@/src/services/database/queries/pill_data';
+import { getPillDatas } from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '../store/search_result_list_store';
 
 export const usePillSearchResultList = () => {
   const router = useRouter();
-  const { setSearchParam, setSearchResultData, setIsLoading } = useSearchResultListStore();
+  const { setSearchParam, setSearchResultData, setIsLoading } =
+    useSearchResultListStore();
   const searchItemClickHandler = (seq: string, itemImage: string) => {
     // 페이지 먼저 전환 (ITEM_SEQ만 전달)
     router.push({
@@ -41,7 +42,8 @@ export const usePillSearchResultList = () => {
       setIsLoading(true);
 
       // 기존 검색 파라미터 가져오기
-      const currentSearchParam = useSearchResultListStore.getState().searchParam || {};
+      const currentSearchParam =
+        useSearchResultListStore.getState().searchParam || {};
 
       // 기존 파라미터에 ITEM_NAME 추가/업데이트
       const searchParam = {
@@ -60,7 +62,6 @@ export const usePillSearchResultList = () => {
 
       // 검색 결과를 Store에 저장 (로딩 종료됨)
       setSearchResultData(results);
-
     } catch (error) {
       console.error('검색 실패:', error);
       setSearchResultData([]);
@@ -76,7 +77,8 @@ export const usePillSearchResultList = () => {
       setIsLoading(true);
 
       // Store에서 기존 검색 파라미터 가져오기
-      const currentSearchParam = useSearchResultListStore.getState().searchParam;
+      const currentSearchParam =
+        useSearchResultListStore.getState().searchParam;
 
       if (!currentSearchParam) {
         // 검색 파라미터가 없으면 빈 결과 표시

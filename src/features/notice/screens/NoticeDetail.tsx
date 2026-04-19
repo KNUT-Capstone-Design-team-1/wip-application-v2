@@ -2,8 +2,8 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { styles } from '../styles/NoticeDetail';
 import { useLocalSearchParams } from 'expo-router';
-import NoticeDetailContent from '../components/organisms/NoticeDetailContent';
 import { INoticeData } from '../types/notice_type';
+import NoticeDetailContent from '@features/notice/components/NoticeDetailContent';
 
 const NoticeDetail = () => {
   const params = useLocalSearchParams();

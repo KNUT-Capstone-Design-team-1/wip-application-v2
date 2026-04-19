@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { ISearchResultListStore } from '../types/pill_search_result_list';
 
-export const useSearchResultListStore = create<ISearchResultListStore>((set, get) => ({
+export const useSearchResultListStore = create<ISearchResultListStore>(
+  (set, get) => ({
     searchResultData: [],
     isLoading: false,
     searchParam: null,

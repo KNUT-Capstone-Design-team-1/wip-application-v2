@@ -2,12 +2,15 @@ import { useEffect, useCallback, memo, useRef } from 'react';
 import { View, FlatList } from 'react-native';
 import SearchResultItem from '../molecules/SearchResultItem';
 import { styles } from '../../styles/organisms/SearchResultList';
-import { usePillSearch } from '@/src/hooks/use_pill_search';
+import { usePillSearch } from '@hooks/use_pill_search';
 import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list';
-import { ISearchResultData } from '@/src/features/pill_search_result_list/types/pill_search_result_list';
-import NotItem from "@/src/components/common/NotItem";
+import { ISearchResultData } from '@features/pill_search_result_list/types/pill_search_result_list';
+import NotItem from '@components/common/NotItem';
 
-const SearchResultList = ({ searchResultData, isLoadingMore }: ISearchResultData) => {
+const SearchResultList = ({
+  searchResultData,
+  isLoadingMore,
+}: ISearchResultData) => {
   const { loadMorePills } = usePillSearch();
   const previousDataLength = useRef(searchResultData.length);
   const { searchItemClickHandler, keyExtractor } = usePillSearchResultList();

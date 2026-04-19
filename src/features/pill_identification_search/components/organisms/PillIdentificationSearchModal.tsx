@@ -17,8 +17,8 @@ import IdentificationSection from '../molecules/identificationSection';
 import { Input } from '../atoms/Input';
 import IconButton from '../atoms/IconButton';
 import Button from '../atoms/Button';
-import { COLOR_PRIMARY } from '@/src/constants';
-import MarkSection from '@/src/features/pill_identification_search/components/molecules/MarkSection';
+import { COLOR_PRIMARY } from '@constants/color';
+import MarkSection from '@features/pill_identification_search/components/molecules/MarkSection';
 import { useSelecteSearchId } from '../../hooks/use_selecte_search_id';
 import { useSearchIdStore } from '../../store/search_id_store';
 
@@ -50,7 +50,10 @@ const PillIdentificationSearchModal: React.FC<
     const storeArray: string[] = (storeValues as any)[storeKey] || [];
 
     // store가 비어있거나 '전체'만 있으면 index 0 반환
-    if (storeArray.length === 0 || (storeArray.length === 1 && storeArray[0] === '전체')) {
+    if (
+      storeArray.length === 0 ||
+      (storeArray.length === 1 && storeArray[0] === '전체')
+    ) {
       return [0];
     }
 

@@ -4,7 +4,7 @@ interface IPillSearchListStore {
   limitValue: number;
   setLimitValue: (value: number) => void;
   getLimitValue: () => number;
-};
+}
 
 export const usePillSearchListStore = create<IPillSearchListStore>(
   (set, get) => ({

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 import { View, Text, Image, ImageSourcePropType } from 'react-native';
 import { styles } from '../../styles/atoms/IconButton';
-import { COLOR_PRIMARY } from '@/src/constants';
+import { COLOR_PRIMARY } from '@constants/color';
 
 interface IIConButtonProps {
   isSelected: boolean;
@@ -46,7 +46,7 @@ const IconButton = ({
         <Text
           style={[
             styles.iconSectionLabel,
-            isSelected && { color: COLOR_PRIMARY[400], fontWeight: 600, },
+            isSelected && { color: COLOR_PRIMARY[400], fontWeight: 600 },
           ]}
         >
           {label}

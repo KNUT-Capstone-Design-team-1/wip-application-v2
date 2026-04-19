@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import { TAB_CONFIGS } from '@/src/layouts/bottomTab/constants';
+import { TAB_CONFIGS } from '@layouts/bottomTab/constants';
 import { router, usePathname } from 'expo-router';
 import { styles } from './styles';
 import Svg, { Defs, LinearGradient, Stop } from 'react-native-svg';
@@ -46,9 +46,7 @@ const BottomTab = () => {
               key={index}
               onPress={handlePress}
             >
-              <View style={styles.bottomTabIcon}>
-                {item.icon(isActive)}
-              </View>
+              <View style={styles.bottomTabIcon}>{item.icon(isActive)}</View>
               <Text
                 style={[
                   styles.bottomTabLabel,

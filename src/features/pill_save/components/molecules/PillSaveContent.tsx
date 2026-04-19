@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { IPillSaveContentProps } from '@/src/features/pill_save/types/pill_save_type';
-import CloseIcon from '@/assets/icons/close.svg';
+import { IPillSaveContentProps } from '@features/pill_save/types/pill_save_type';
+import CloseIcon from '@assets/icons/close.svg';
 import { styles } from '../../styles/molecules/PillSaveContent';
 
 const PillSaveContent = ({

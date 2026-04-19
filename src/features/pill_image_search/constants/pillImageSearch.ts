@@ -1,4 +1,4 @@
-import PillSearchGuide from '@/assets/images/pill-search-guide.png';
+import PillSearchGuide from '@assets/images/pill-search-guide.png';
 
 export const BEFORE_PILL_IMAGE_SEARCH = {
   title: '촬영 가이드',

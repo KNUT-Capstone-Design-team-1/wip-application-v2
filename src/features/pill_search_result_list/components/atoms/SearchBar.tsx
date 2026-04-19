@@ -5,7 +5,8 @@ import SearchIcon from '../../../../../assets/icons/search.svg';
 import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list';
 
 const SearchBar = () => {
-  const { searchResultButtonClickHandler, clearSearchAndRestore } = usePillSearchResultList();
+  const { searchResultButtonClickHandler, clearSearchAndRestore } =
+    usePillSearchResultList();
   const [searchInputText, setSearchInputText] = useState<string>('');
 
   const handleClearSearch = () => {

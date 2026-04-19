@@ -4,5 +4,5 @@ export const styles = StyleSheet.create({
   pillSaveRoot: {
     flex: 1,
     backgroundColor: '#fff',
-  }
+  },
 });

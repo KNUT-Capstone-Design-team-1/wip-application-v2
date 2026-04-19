@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IPillSaveData } from '@/src/features/pill_save/types/pill_save_type';
+import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 
 const SAVE_DATA_KEY = 'saveData';
 

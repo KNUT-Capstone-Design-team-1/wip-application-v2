@@ -1,3 +1,5 @@
+import CryptoJS from 'crypto-js';
+
 // BottomSheet 에서 base64 이미지 제거 및 텍스트 길이 제한 함수
 export const formatContents = (contents: string) => {
   // base64 이미지 패턴 제거 (data:image/... 형태)
@@ -12,8 +14,6 @@ export const formatContents = (contents: string) => {
   }
   return textWithoutBase64;
 };
-
-import CryptoJS from 'crypto-js';
 
 /**
  * base64 URL로 인코딩

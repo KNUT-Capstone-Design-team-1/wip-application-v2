@@ -1,12 +1,12 @@
-import { initDatabase } from '@/src/services/database';
-import { logger } from '@/src/utils';
-import { TDataTable } from '@/src/services/database/types';
+import { initDatabase } from '@services/database';
+import { logger } from '../utils';
+import { TDataTable } from '@services/database/types';
 import {
   MarkImagesQuery,
   NearbyPharmaciesQuery,
   PillDataQuery,
-} from '@/src/services/database/queries';
-import { DatabaseUpdateService } from '../../src/services';
+} from '@services/database/queries';
+import { DatabaseUpdateService } from '@services/index';
 
 const DATABASE_INIT_STATUS = {
   COMPLETE: 'COMPLETE',
@@ -77,7 +77,10 @@ export const useAppInitializer = () => {
 
     console.log(await MarkImagesQuery.getMarkImages({}, { page: 0, limit: 1 }));
     console.log(
-      await NearbyPharmaciesQuery.getNearbyPharmacies({}, { page: 0, limit: 1 }),
+      await NearbyPharmaciesQuery.getNearbyPharmacies(
+        {},
+        { page: 0, limit: 1 },
+      ),
     );
     console.log(await PillDataQuery.getPillDatas({}, { page: 0, limit: 1 }));
   };

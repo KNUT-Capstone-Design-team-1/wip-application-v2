@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Image, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import SplashIcon from '../assets/icons/splash-icon.png';
 
-
 interface UpdateDBProps {
   status: string;
   progress: number;
