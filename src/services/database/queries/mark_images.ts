@@ -12,7 +12,7 @@ const ALL_MARK_IMAGES_COLUMNS: (keyof IMarkImages)[] = [
   'code',
   'title',
   'base64',
-];
+] as const;
 
 /**
  * mark_images 테이블 조회를 위한 WHERE param 생성

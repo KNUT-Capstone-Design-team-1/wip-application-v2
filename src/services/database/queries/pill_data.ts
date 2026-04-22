@@ -11,6 +11,7 @@ const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
   'ITEM_SEQ',
   'ITEM_NAME',
   'ENTP_NAME',
+  'ENTP_SEQ',
   'ITEM_PERMIT_DATE',
   'ETC_OTC_CODE',
   'CHART',

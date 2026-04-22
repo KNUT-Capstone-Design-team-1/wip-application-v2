@@ -15,7 +15,7 @@ const ALL_PSYCHOTROPICS_COLUMNS: (keyof IPsychotropics)[] = [
   'isomerCasNumber',
   'molecularFormula',
   'molecularWeight',
-];
+] as const;
 
 /**
  * psychotropics 테이블 조회를 위한 WHERE param 생성

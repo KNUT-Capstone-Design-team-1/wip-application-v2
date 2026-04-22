@@ -15,7 +15,7 @@ const ALL_NARCOTICS_COLUMNS: (keyof INarcotics)[] = [
   'isomerCasNumber',
   'molecularFormula',
   'molecularWeight',
-];
+] as const;
 
 /**
  * narcotics 테이블 조회를 위한 WHERE param 생성

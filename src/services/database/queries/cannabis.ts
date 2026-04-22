@@ -15,7 +15,7 @@ const ALL_CANNABIS_COLUMNS: (keyof ICannabis)[] = [
   'isomerCasNumber',
   'molecularFormula',
   'molecularWeight',
-];
+] as const;
 
 /**
  * cannabis 테이블 조회를 위한 WHERE param 생성

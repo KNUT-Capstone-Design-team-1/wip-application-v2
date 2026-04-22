@@ -19,14 +19,14 @@ const ALL_NEARBY_PHARMACIES_COLUMNS: (keyof INearbyPharmacies)[] = [
   'openData',
   'x',
   'y',
-];
+] as const;
 
 /**
  * nearby_pharmacies 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
  * @returns
  */
-const getNearbyPhamaciesWhereQuery: TWhereQueryClauseFunc = (
+const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
   _params: Partial<TNearbyPharmaciesSearchParam>,
 ): TQuerySearchParamResult<TNearbyPharmaciesSearchParam> => {
   return {
@@ -82,7 +82,7 @@ export const getNearbyPharmacies = async (
   queryOption: { page: number; limit: number },
 ) => {
   const { whereClause, whereValues } = buildWhereClause(
-    getNearbyPhamaciesWhereQuery,
+    getNearbyPharmaciesWhereQuery,
     params,
   );
 
