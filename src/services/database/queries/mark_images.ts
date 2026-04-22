@@ -2,7 +2,7 @@ import { binaryToBase64 } from '@utils/index';
 import { getDatabase } from '../sqlite';
 import {
   IMarkImages,
-  IMarkImagesSearchParam,
+  TMarkImagesSearchParam,
   TQuerySearchParamResult,
   TWhereQueryClauseFunc,
 } from '../types';
@@ -20,8 +20,8 @@ const ALL_MARK_IMAGES_COLUMNS: (keyof IMarkImages)[] = [
  * @returns
  */
 const getMarkImagesWhereQuery: TWhereQueryClauseFunc = (
-  _params: Partial<IMarkImagesSearchParam>,
-): TQuerySearchParamResult<IMarkImagesSearchParam> => {
+  _params: Partial<TMarkImagesSearchParam>,
+): TQuerySearchParamResult<TMarkImagesSearchParam> => {
   return {
     code: {
       query: `code = ?`,
@@ -41,7 +41,7 @@ const getMarkImagesWhereQuery: TWhereQueryClauseFunc = (
  * @returns
  */
 export const getMarkImages = async (
-  params: Partial<IMarkImagesSearchParam> = {},
+  params: Partial<TMarkImagesSearchParam> = {},
   queryOption: { page: number; limit: number },
 ) => {
   const { whereClause, whereValues } = buildWhereClause(

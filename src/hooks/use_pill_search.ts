@@ -1,5 +1,5 @@
 import { getPillDatas } from '@services/database/queries/pill_data';
-import { IPillDataSearchParam } from '@services/database/types';
+import { TPillDataSearchParam } from '@services/database/types';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { router } from 'expo-router';
 import { usePillSearchListStore } from '@store/pill_search_list_store';
@@ -28,7 +28,7 @@ export const usePillSearch = () => {
   /**
    * 검색 조건에서 "전체" 제거 및 빈 값 필터링
    */
-  const filterSearchParam = (rawParam: any): Partial<IPillDataSearchParam> => {
+  const filterSearchParam = (rawParam: any): Partial<TPillDataSearchParam> => {
     const filtered: any = {};
 
     // 문자열 필드들 - 빈 문자열이 아닌 경우만 추가

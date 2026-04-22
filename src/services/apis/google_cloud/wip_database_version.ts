@@ -10,6 +10,9 @@ export interface IDatabaseVersionResponse {
   pill_data: IDatabaseVersion;
   mark_images: IDatabaseVersion;
   nearby_pharmacies: IDatabaseVersion;
+  cannabis: IDatabaseVersion;
+  narcotics: IDatabaseVersion;
+  psychotropics: IDatabaseVersion;
 }
 
 /**

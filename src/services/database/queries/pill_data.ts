@@ -1,7 +1,7 @@
 import { getDatabase } from '../sqlite';
 import {
   IPillData,
-  IPillDataSearchParam,
+  TPillDataSearchParam,
   TQuerySearchParamResult,
   TWhereQueryClauseFunc,
 } from '../types';
@@ -42,8 +42,8 @@ const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
  * @returns
  */
 const getPillDataWhereQuery: TWhereQueryClauseFunc = (
-  params: Partial<IPillDataSearchParam>,
-): TQuerySearchParamResult<IPillDataSearchParam> => {
+  params: Partial<TPillDataSearchParam>,
+): TQuerySearchParamResult<TPillDataSearchParam> => {
   const ETC_FORM_CODE = '기타';
   const NON_ETC_FORM_CODE = ['정제', '연질캡슐', '경질캡슐'];
 
@@ -247,7 +247,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
  * @returns
  */
 export const getPillDatas = async (
-  params: Partial<IPillDataSearchParam>,
+  params: Partial<TPillDataSearchParam>,
   queryOption: { page: number; limit: number },
 ) => {
   const db = await getDatabase();

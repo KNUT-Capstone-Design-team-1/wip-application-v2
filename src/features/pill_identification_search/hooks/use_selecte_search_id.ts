@@ -1,7 +1,7 @@
 import { useSearchIdStore } from '../store/search_id_store';
 import { getPillDatas } from '@services/database/queries/pill_data';
 import { getDatabase } from '@services/database/sqlite';
-import { IPillDataSearchParam } from '@services/database/types';
+import { TPillDataSearchParam } from '@services/database/types';
 import { router } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
 
@@ -103,7 +103,7 @@ export const useSelecteSearchId = () => {
   /**
    * 검색 조건에서 "전체" 제거 및 빈 값 필터링
    */
-  const filterSearchParam = (rawParam: any): Partial<IPillDataSearchParam> => {
+  const filterSearchParam = (rawParam: any): Partial<TPillDataSearchParam> => {
     const filtered: any = {};
 
     // 문자열 필드들 - 빈 문자열이 아닌 경우만 추가
@@ -264,7 +264,7 @@ export const useSelecteSearchId = () => {
       router.push('/pill-search-result-list');
 
       // 3. 검색 실행
-      const searchParam: Partial<IPillDataSearchParam> = {
+      const searchParam: Partial<TPillDataSearchParam> = {
         DRUG_SHAPE: selectedResult.DRUG_SHAPE,
         COLOR_CLASS1: selectedResult.COLOR_CLASS1,
         FORM_CODE: selectedResult.FORM_CODE,

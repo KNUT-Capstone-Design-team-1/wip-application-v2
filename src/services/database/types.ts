@@ -4,9 +4,21 @@ export type TConfigKey =
   | 'markImagesSchemaVersion'
   | 'markImagesDataVersion'
   | 'nearbyPharmaciesSchemaVersion'
-  | 'nearbyPharmaciesDataVersion';
+  | 'nearbyPharmaciesDataVersion'
+  | 'cannabisSchemaVersion'
+  | 'cannabisDataVersion'
+  | 'narcoticsSchemaVersion'
+  | 'narcoticsDataVersion'
+  | 'psychotropicsSchemaVersion'
+  | 'psychotropicsDataVersion';
 
-export type TDataTable = 'pill_data' | 'mark_images' | 'nearby_pharmacies';
+export type TDataTable =
+  | 'pill_data'
+  | 'mark_images'
+  | 'nearby_pharmacies'
+  | 'cannabis'
+  | 'narcotics'
+  | 'psychotropics';
 
 export type DATABSE_UPDATE_RESULT_CODE =
   | 'OK'
@@ -23,7 +35,17 @@ export type DATABSE_UPDATE_RESULT_CODE =
   | 'ERROR-INSERT-TABLE'
   | 'ERROR-UPDATE-DATABASE-VERSION';
 
-// 알약 데이터 테이블 스키마
+/**
+ * 설정 테이블 스키마
+ */
+export interface IConfig {
+  key: TConfigKey;
+  value: string | number;
+}
+
+/**
+ * 알약 데이터 테이블 스키마
+ */
 export interface IPillData {
   ITEM_SEQ: string; // 품목일련번호
   ITEM_NAME: string; // 품목명
@@ -54,14 +76,18 @@ export interface IPillData {
   FORM_CODE: string; // 제형코드명
 }
 
-// 마크 이미지 테이블 스키마
+/**
+ * 마크 이미지 테이블 스키마
+ */
 export interface IMarkImages {
   code: string;
   title: string;
   base64: string;
 }
 
-// 주변 약국 테이블 스키마
+/**
+ * 주변 약국 테이블 스키마
+ */
 export interface INearbyPharmacies {
   id: string; // 암호화요양기호
   name: string; // 요양기관명
@@ -76,13 +102,52 @@ export interface INearbyPharmacies {
   y: string; // Y 좌표
 }
 
-export type TResourceDataSchemas = IPillData | IMarkImages | INearbyPharmacies;
-
-// config 테이블 스키마
-export interface IConfig {
-  key: TConfigKey;
-  value: string | number;
+/**
+ * 대마초 테이블 스키마
+ */
+export interface ICannabis {
+  chemicalNameKr: string; // 품명(국문)
+  chemicalNameEn: string; // 품명(영문)
+  synonyms: string; // 이명
+  casNumber: string; // CAS No
+  isomerCasNumber: string; // 이성질체 CAS No
+  molecularFormula: string; // 분자식
+  molecularWeight: string; // 분자량
 }
+
+/**
+ * 마약 테이블 스키마
+ */
+export interface INarcotics {
+  chemicalNameKr: string; // 품명(국문)
+  chemicalNameEn: string; // 품명(영문)
+  synonyms: string; // 이명
+  casNumber: string; // CAS No
+  isomerCasNumber: string; // 이성질체 CAS No
+  molecularFormula: string; // 분자식
+  molecularWeight: string; // 분자량
+}
+
+/**
+ * 향정신성 테이블 스키마
+ */
+export interface IPsychotropics {
+  chemicalNameKr: string; // 품명(국문)
+  chemicalNameEn: string; // 품명(영문)
+  synonyms: string; // 이명
+  casNumber: string; // CAS No
+  isomerCasNumber: string; // 이성질체 CAS No
+  molecularFormula: string; // 분자식
+  molecularWeight: string; // 분자량
+}
+
+export type TResourceDataSchemas =
+  | IPillData
+  | IMarkImages
+  | INearbyPharmacies
+  | ICannabis
+  | INarcotics
+  | IPsychotropics;
 
 export interface ITableColumnSchema {
   name: string;
@@ -102,7 +167,9 @@ export type TWhereQueryClauseFunc = (
   param: Record<string, any>,
 ) => Record<string, IWhereQueryClause>;
 
-export interface IPillDataSearchParam extends Omit<
+export type TQuerySearchParamResult<T> = Record<keyof T, IWhereQueryClause>;
+
+export type TPillDataSearchParam = Omit<
   IPillData,
   | 'DRUG_SHAPE'
   | 'COLOR_CLASS1'
@@ -110,7 +177,7 @@ export interface IPillDataSearchParam extends Omit<
   | 'LINE_FRONT'
   | 'LINE_BACK'
   | 'FORM_CODE'
-> {
+> & {
   DRUG_SHAPE: string[] | null;
   COLOR_CLASS1: string[] | null;
   COLOR_CLASS2: string[] | null;
@@ -119,16 +186,28 @@ export interface IPillDataSearchParam extends Omit<
   FORM_CODE: string[] | null;
   PRINT_FRONT_EXACTLY: string; // 표시앞 일치
   PRINT_BACK_EXACTLY: string; // 표시뒤 일치
-}
+};
 
-export type TQuerySearchParamResult<T> = Record<keyof T, IWhereQueryClause>;
+export type TMarkImagesSearchParam = Omit<IMarkImages, 'base64'>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface IMarkImagesSearchParam extends Omit<IMarkImages, 'base64'> {}
-
-export interface INearbyPharmaciesSearchParam extends Omit<
+export type TNearbyPharmaciesSearchParam = Omit<
   INearbyPharmacies,
   'postalCode' | 'telephone' | 'openData' | 'x' | 'y'
-> {
+> & {
   coordinate: { x: number; y: number };
-}
+};
+
+export type TCannabisSearchParam = Pick<
+  ICannabis,
+  'chemicalNameKr' | 'chemicalNameEn'
+>;
+
+export type TNarcoticsSearchParam = Pick<
+  INarcotics,
+  'chemicalNameKr' | 'chemicalNameEn'
+>;
+
+export type TPsychotropicsSearchParam = Pick<
+  IPsychotropics,
+  'chemicalNameKr' | 'chemicalNameEn'
+>;

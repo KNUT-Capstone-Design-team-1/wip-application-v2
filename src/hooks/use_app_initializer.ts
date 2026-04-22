@@ -60,6 +60,9 @@ export const useAppInitializer = () => {
       'pill_data',
       'mark_images',
       'nearby_pharmacies',
+      'cannabis',
+      'narcotics',
+      'psychotropics',
     ];
 
     for (let i = 0; i < targetTables.length; i += 1) {

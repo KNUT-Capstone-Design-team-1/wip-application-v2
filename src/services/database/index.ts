@@ -12,6 +12,12 @@ const DEFAULT_CONFIG: IConfig[] = [
   { key: 'markImagesDataVersion', value: 0 },
   { key: 'nearbyPharmaciesSchemaVersion', value: 0 },
   { key: 'nearbyPharmaciesDataVersion', value: 0 },
+  { key: 'cannabisSchemaVersion', value: 0 },
+  { key: 'cannabisDataVersion', value: 0 },
+  { key: 'narcoticsSchemaVersion', value: 0 },
+  { key: 'narcoticsDataVersion', value: 0 },
+  { key: 'psychotropicsSchemaVersion', value: 0 },
+  { key: 'psychotropicsDataVersion', value: 0 },
 ] as const;
 
 /**

@@ -1,4 +1,4 @@
-import { IPillDataSearchParam } from '@services/database/types';
+import { TPillDataSearchParam } from '@services/database/types';
 
 export interface ISearchResultData {
   searchResultData: any[];
@@ -13,7 +13,7 @@ export interface IResultItemProps {
 export interface ISearchResultListStore {
   searchResultData: any[];
   isLoading: boolean;
-  searchParam: Partial<IPillDataSearchParam> | null;
+  searchParam: Partial<TPillDataSearchParam> | null;
   currentPage: number;
   hasMore: boolean;
 

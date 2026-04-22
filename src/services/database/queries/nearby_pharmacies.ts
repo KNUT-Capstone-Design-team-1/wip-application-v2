@@ -1,7 +1,7 @@
 import { getDatabase } from '../sqlite';
 import {
   INearbyPharmacies,
-  INearbyPharmaciesSearchParam,
+  TNearbyPharmaciesSearchParam,
   TQuerySearchParamResult,
   TWhereQueryClauseFunc,
 } from '../types';
@@ -27,8 +27,8 @@ const ALL_NEARBY_PHARMACIES_COLUMNS: (keyof INearbyPharmacies)[] = [
  * @returns
  */
 const getNearbyPhamaciesWhereQuery: TWhereQueryClauseFunc = (
-  _params: Partial<INearbyPharmaciesSearchParam>,
-): TQuerySearchParamResult<INearbyPharmaciesSearchParam> => {
+  _params: Partial<TNearbyPharmaciesSearchParam>,
+): TQuerySearchParamResult<TNearbyPharmaciesSearchParam> => {
   return {
     id: {
       query: `id = ?`,
@@ -78,7 +78,7 @@ const getNearbyPhamaciesWhereQuery: TWhereQueryClauseFunc = (
  * @returns
  */
 export const getNearbyPharmacies = async (
-  params: Partial<INearbyPharmaciesSearchParam>,
+  params: Partial<TNearbyPharmaciesSearchParam>,
   queryOption: { page: number; limit: number },
 ) => {
   const { whereClause, whereValues } = buildWhereClause(
