@@ -13,6 +13,7 @@ export interface IDatabaseVersionResponse {
   cannabis: IDatabaseVersion;
   narcotics: IDatabaseVersion;
   psychotropics: IDatabaseVersion;
+  prohibited_list: IDatabaseVersion;
 }
 
 /**

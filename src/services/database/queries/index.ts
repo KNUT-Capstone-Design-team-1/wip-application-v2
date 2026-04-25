@@ -6,3 +6,4 @@ export * as NearbyPharmaciesQuery from './nearby_pharmacies';
 export * as CannabisQuery from './cannabis';
 export * as NarcoticsQuery from './narcotics';
 export * as PsychotropicsQuery from './psychotropics';
+export * as ProhibitedListQuery from './prohibited_list';

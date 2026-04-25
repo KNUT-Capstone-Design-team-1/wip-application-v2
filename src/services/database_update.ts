@@ -22,6 +22,7 @@ const TABLE_CONFIG_KEYS_MAP: Record<TDataTable, TConfigKey[]> = {
   cannabis: ['cannabisSchemaVersion', 'cannabisDataVersion'],
   narcotics: ['narcoticsSchemaVersion', 'narcoticsDataVersion'],
   psychotropics: ['psychotropicsSchemaVersion', 'psychotropicsDataVersion'],
+  prohibited_list: ['prohibitedListSchemaVersion', 'prohibitedListDataVersion'],
 } as const;
 
 /**

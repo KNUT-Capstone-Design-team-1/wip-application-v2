@@ -8,6 +8,7 @@ import {
   CannabisQuery,
   NarcoticsQuery,
   PsychotropicsQuery,
+  ProhibitedListQuery,
 } from '@services/database/queries';
 import { DatabaseUpdateService } from '@services/index';
 
@@ -66,6 +67,7 @@ export const useAppInitializer = () => {
       'cannabis',
       'narcotics',
       'psychotropics',
+      'prohibited_list',
     ];
 
     for (let i = 0; i < targetTables.length; i += 1) {
@@ -93,6 +95,9 @@ export const useAppInitializer = () => {
     console.log(await NarcoticsQuery.getNarcotics({}, { page: 1, limit: 1 }));
     console.log(
       await PsychotropicsQuery.getPsychotropics({}, { page: 1, limit: 1 }),
+    );
+    console.log(
+      await ProhibitedListQuery.getProhibitedList({}, { page: 1, limit: 1 }),
     );
   };
 
