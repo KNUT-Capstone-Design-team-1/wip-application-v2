@@ -1,15 +1,6 @@
 import { initDatabase } from '@services/database';
 import { logger } from '../utils';
 import { TDataTable } from '@services/database/types';
-import {
-  MarkImagesQuery,
-  NearbyPharmaciesQuery,
-  PillDataQuery,
-  CannabisQuery,
-  NarcoticsQuery,
-  PsychotropicsQuery,
-  ProhibitedListQuery,
-} from '@services/database/queries';
 import { DatabaseUpdateService } from '@services/index';
 
 const DATABASE_INIT_STATUS = {
@@ -82,23 +73,6 @@ export const useAppInitializer = () => {
       );
     }
     console.log(`COMPLETE UPDATE ALL TABLE`);
-
-    console.log(await MarkImagesQuery.getMarkImages({}, { page: 1, limit: 1 }));
-    console.log(
-      await NearbyPharmaciesQuery.getNearbyPharmacies(
-        {},
-        { page: 1, limit: 1 },
-      ),
-    );
-    console.log(await PillDataQuery.getPillDatas({}, { page: 1, limit: 1 }));
-    console.log(await CannabisQuery.getCannabis({}, { page: 1, limit: 1 }));
-    console.log(await NarcoticsQuery.getNarcotics({}, { page: 1, limit: 1 }));
-    console.log(
-      await PsychotropicsQuery.getPsychotropics({}, { page: 1, limit: 1 }),
-    );
-    console.log(
-      await ProhibitedListQuery.getProhibitedList({}, { page: 1, limit: 1 }),
-    );
   };
 
   /**
