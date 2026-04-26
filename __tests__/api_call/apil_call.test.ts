@@ -23,7 +23,7 @@ describe('callAPI', () => {
       const executeSeconds = new Date().getTime() - started.getTime();
 
       console.log(
-        '[MAIN] execute %s seconds. result: %s',
+        '[CALL-API] execute %s seconds. result: %s',
         Math.floor(executeSeconds / 1000),
         JSON.stringify(results, null, 2),
       );
@@ -32,7 +32,7 @@ describe('callAPI', () => {
         console.log((e as AxiosError<string>).response?.data);
         return;
       }
-      console.log('[MAIN] error. %s', (e as Error).stack);
+      console.log('[CALL-API] error. %s', (e as Error).stack);
     }
   });
 });
