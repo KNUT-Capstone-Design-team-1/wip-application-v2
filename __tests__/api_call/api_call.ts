@@ -79,6 +79,11 @@ export async function callAPI() {
           data.unifiedSearch.keywords,
         );
     }
+
+    if (apiList.includes('external-url')) {
+      results['external-url'] =
+        await GoogleCloud.ExternalURLAPI.requestExternalURL();
+    }
   } catch (e) {
     console.log('[CALL-API] Error occurred. %s', (e as Error).stack || e);
     throw e;

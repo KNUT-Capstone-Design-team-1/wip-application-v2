@@ -10,6 +10,7 @@
     "_table-schema",
     "_resource-data",
     "_log",
-    "_unified-search"
+    "_unified-search",
+    "_external-url"
   ]
 }
