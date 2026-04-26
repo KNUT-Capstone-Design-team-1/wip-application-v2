@@ -88,7 +88,23 @@ export const getNearbyPharmacies = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_NEARBY_PHARMACIES_COLUMNS} FROM nearby_pharmacies ${whereClause}
+  // 거리 계산 수식 (Haversine formula)
+  const earthRadius = 6371; // km
+  const x = params.coordinate?.x || 0;
+  const y = params.coordinate?.y || 0;
+
+  const distanceSql = params.coordinate
+    ? `, (${earthRadius} * acos(
+        cos(radians(${y})) * cos(radians(y)) *
+        cos(radians(x) - radians(${x})) +
+        sin(radians(${y})) * sin(radians(y))
+      )) AS distance`
+    : '';
+
+  const orderBySql = params.coordinate ? 'ORDER BY distance ASC' : '';
+
+  const sql = `SELECT ${ALL_NEARBY_PHARMACIES_COLUMNS}${distanceSql} FROM nearby_pharmacies ${whereClause}
+               ${orderBySql}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;
