@@ -25,7 +25,7 @@
       "splash": {
         "image": "./assets/icons/splash-icon.png",
         "resizeMode": "contain",
-        "backgroundColor": "#ffffff",
+        "backgroundColor": "#ffffff"
       },
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
@@ -98,7 +98,8 @@
           "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
         }
       ],
-      ["expo-localization"]
+      ["expo-localization"],
+      "expo-router"
     ],
     "extra": {
       "eas": {
