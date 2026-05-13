@@ -13,6 +13,8 @@ const ALL_PROHIBITED_LIST_COLUMNS: (keyof IProhibitedList)[] = [
   'category',
   'categoryKr',
   'categoryEn',
+  'inGameProhibited',
+  'outGameProhibited',
 ] as const;
 
 /**

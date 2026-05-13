@@ -10,21 +10,44 @@ import { IPillDetail } from '../types/pill_detail_type';
 
 const PillSearchResultDetailScreen = () => {
   const { itemDetail, itemImage, ITEM_SEQ } = useLocalSearchParams();
+  const itemSeqStr = Array.isArray(ITEM_SEQ) ? ITEM_SEQ[0] : ITEM_SEQ;
+  const itemImageStr = Array.isArray(itemImage) ? itemImage[0] : itemImage;
+
   const [pillData, setPillData] = useState<IPillDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const { loadPillDetail } = usePillDetail();
 
   // 데이터 로드
   useEffect(() => {
-    if (itemDetail) {
-      // 이전 방식: itemDetail이 전달된 경우 (하위 호환성)
-      setPillData(JSON.parse(itemDetail as string));
-      setLoading(false);
-    } else if (ITEM_SEQ) {
-      // 새 방식: ITEM_SEQ만 전달된 경우 API 호출
-      loadPillDetail(ITEM_SEQ as string, setLoading, setPillData);
-    }
-  }, [ITEM_SEQ, itemDetail]);
+    const initData = () => {
+      let initialPillData: IPillDetail | null = null;
+
+      if (itemDetail) {
+        try {
+          initialPillData = JSON.parse(itemDetail as string);
+          setPillData(initialPillData);
+          setLoading(false);
+        } catch (error) {
+          console.error('Failed to parse itemDetail:', error);
+        }
+      }
+
+      if (itemSeqStr) {
+        // ITEM_SEQ가 있으면 상세 정보 로드 시도
+        // 이미 initialPillData가 있으면 setLoading(true)를 건너뛰고 싶을 수 있지만,
+        // loadPillDetail 내부에서 처리하도록 함
+        loadPillDetail(
+          itemSeqStr as string,
+          initialPillData ? () => {} : setLoading,
+          setPillData,
+        );
+      } else if (!itemDetail) {
+        setLoading(false);
+      }
+    };
+
+    initData();
+  }, [itemSeqStr, itemDetail]);
 
   const { saveState, toggleSave } = usePillBox(pillData?.ITEM_SEQ ?? '');
 
@@ -37,8 +60,8 @@ const PillSearchResultDetailScreen = () => {
       ITEM_SEQ: pillData.ITEM_SEQ,
       ITEM_NAME: pillData.ITEM_NAME,
       ENTP_NAME: pillData.ENTP_NAME,
-      ITEM_IMAGE: (itemImage as string) || pillData.ITEM_IMAGE,
-      CHART: pillData.CHART,
+      ITEM_IMAGE: itemImageStr || pillData.ITEM_IMAGE || '',
+      CHART: pillData.CHART || '',
     });
   };
 
@@ -62,10 +85,10 @@ const PillSearchResultDetailScreen = () => {
       <View style={styles.viewWrapper}>
         {/* 알약 이미지 */}
         <View style={styles.pillImgWrapper}>
-          {(itemImage || pillData.ITEM_IMAGE) && (
+          {(itemImageStr || pillData.ITEM_IMAGE) && (
             <Image
               style={styles.pillImg}
-              source={{ uri: (itemImage as string) || pillData.ITEM_IMAGE }}
+              source={{ uri: itemImageStr || pillData.ITEM_IMAGE || '' }}
               resizeMode="contain"
             />
           )}
