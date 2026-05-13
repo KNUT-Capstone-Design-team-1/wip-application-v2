@@ -251,7 +251,9 @@ export type TWhereQueryClauseFunc = (
   param: Record<string, any>,
 ) => Record<string, IWhereQueryClause>;
 
-export type TQuerySearchParamResult<T> = Record<keyof T, IWhereQueryClause>;
+export type TQuerySearchParamResult<T> = Partial<
+  Record<keyof T, IWhereQueryClause>
+>;
 
 export type TPillDataSearchParam = Omit<
   IPillData,

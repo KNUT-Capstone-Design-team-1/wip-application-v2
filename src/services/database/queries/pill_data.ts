@@ -10,18 +10,9 @@ import { buildWhereClause } from '../util';
 const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
   'ITEM_SEQ',
   'ITEM_NAME',
-  'ENTP_NAME',
   'ENTP_SEQ',
-  'ITEM_PERMIT_DATE',
-  'ETC_OTC_CODE',
+  'ENTP_NAME',
   'CHART',
-  'BAR_CODE',
-  'MATERIAL_NAME',
-  'VALID_TERM',
-  'STORAGE_METHOD',
-  'PACK_UNIT',
-  'MAIN_ITEM_INGR',
-  'INGR_NAME',
   'ITEM_IMAGE',
   'PRINT_FRONT',
   'PRINT_BACK',
@@ -30,11 +21,55 @@ const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
   'COLOR_CLASS2',
   'LINE_FRONT',
   'LINE_BACK',
+  'LENGTH_LONG',
+  'LENGTH_SHORT',
+  'LENGTH_THICK',
   'IMG_REGIST_TS',
+  'CLASS_NO',
   'CLASS_NAME',
+  'ETC_OTC_CODE',
+  'ITEM_PERMIT_DATE',
+  'FORM_CODE',
+  'DRUG_SHAPE_FRONT',
+  'DRUG_SHAPE_BACK',
+  'MARK_IMAGE_FRONT',
+  'MARK_IMAGE_BACK',
   'MARK_CODE_FRONT',
   'MARK_CODE_BACK',
-  'FORM_CODE',
+  'CHANGE_DATE',
+  'BUSINESS_LICENCE_NUMBER',
+  'ITEM_ENG_NAME',
+  'COVERAGE_ENG_NAME',
+  'BAR_CODE',
+  'APPROVAL_TYPE',
+  'CANCEL_STATUS',
+  'CANCEL_DATE',
+  'ENTP_ENG_NAME',
+  'ENTP_PERMIT_NO',
+  'MATERIAL_NAME',
+  'MATERIAL_ENG_NAME',
+  'EE_DOC_DATA',
+  'UD_DOC_DATA',
+  'NB_DOC_DATA',
+  'ATT_DOC_DATA',
+  'STORAGE_METHOD',
+  'REEXAM_TARGET_YN',
+  'REEXAM_CONT',
+  'VALID_TERM',
+  'PACK_UNIT',
+  'INSURANCE_CODE',
+  'DRUG_CLASS',
+  'FINISH_MATERIAL_YN',
+  'NEW_DRUG_YN',
+  'INDUTY_CODE',
+  'CHANGE_CONTENT',
+  'TOTAL_CONTENT',
+  'MAIN_ITEM_INGR',
+  'INGR_NAME',
+  'ATC_CODE',
+  'ENTP_BIZ_NO',
+  'RARE_DRUG_YN',
+  'OEM_ENTP_NAME',
 ] as const;
 
 /**
@@ -89,7 +124,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
     return `(${whereClause.join(' OR ')})`;
   };
 
-  return {
+  const queryMap: TQuerySearchParamResult<TPillDataSearchParam> = {
     ITEM_SEQ: {
       query: `ITEM_SEQ = ?`,
       values: (itemSeq: string) => [itemSeq],
@@ -174,30 +209,6 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `PRINT_BACK = ?`,
       values: (printBack: string) => [printBack],
     },
-    DRUG_SHAPE: {
-      query: `DRUG_SHAPE IN (${params.DRUG_SHAPE?.map(() => '?').join(', ')})`,
-      values: (drugShape: string[]) => [...drugShape],
-    },
-    COLOR_CLASS1: {
-      query: `(COLOR_CLASS1 IN (${params.COLOR_CLASS1?.map(() => '?').join(', ')}) 
-               OR COLOR_CLASS2 IN (${params.COLOR_CLASS1?.map(() => '?').join(', ')}))`,
-      values: (colorClass1: string[]) => [...colorClass1, ...colorClass1],
-    },
-    COLOR_CLASS2: {
-      query: `(COLOR_CLASS2 IN (${params.COLOR_CLASS2?.map(() => '?').join(', ')}) 
-               OR COLOR_CLASS1 IN (${params.COLOR_CLASS2?.map(() => '?').join(', ')}))`,
-      values: (colorClass2: string[]) => [...colorClass2, ...colorClass2],
-    },
-    LINE_FRONT: {
-      query: `(LINE_FRONT IN (${params.LINE_FRONT?.map(() => '?').join(', ')}) 
-               OR LINE_BACK IN (${params.LINE_FRONT?.map(() => '?').join(', ')}))`,
-      values: (lineFront: string[]) => [...lineFront, ...lineFront],
-    },
-    LINE_BACK: {
-      query: `(LINE_BACK IN (${params.LINE_BACK?.map(() => '?').join(', ')})
-               OR LINE_FRONT IN (${params.LINE_BACK?.map(() => '?').join(', ')}))`,
-      values: (lineBack: string[]) => [...lineBack, ...lineBack],
-    },
     IMG_REGIST_TS: {
       query: `IMG_REGIST_TS = ?`,
       values: (imgRegistTs: string) => [imgRegistTs],
@@ -214,8 +225,190 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `(MARK_CODE_BACK = ? OR MARK_CODE_FRONT = ?)`,
       values: (markCodeBack: string) => [markCodeBack, markCodeBack],
     },
-    FORM_CODE: {
-      query: generateFormCodeQuery(params.FORM_CODE || []),
+    LENGTH_LONG: {
+      query: `LENGTH_LONG = ?`,
+      values: (val: string) => [val],
+    },
+    LENGTH_SHORT: {
+      query: `LENGTH_SHORT = ?`,
+      values: (val: string) => [val],
+    },
+    LENGTH_THICK: {
+      query: `LENGTH_THICK = ?`,
+      values: (val: string) => [val],
+    },
+    CLASS_NO: {
+      query: `CLASS_NO = ?`,
+      values: (val: string) => [val],
+    },
+    DRUG_SHAPE_FRONT: {
+      query: `DRUG_SHAPE_FRONT LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    DRUG_SHAPE_BACK: {
+      query: `DRUG_SHAPE_BACK LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    MARK_IMAGE_FRONT: {
+      query: `MARK_IMAGE_FRONT LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    MARK_IMAGE_BACK: {
+      query: `MARK_IMAGE_BACK LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    CHANGE_DATE: {
+      query: `CHANGE_DATE = ?`,
+      values: (val: string) => [val],
+    },
+    BUSINESS_LICENCE_NUMBER: {
+      query: `BUSINESS_LICENCE_NUMBER = ?`,
+      values: (val: string) => [val],
+    },
+    ITEM_ENG_NAME: {
+      query: `ITEM_ENG_NAME LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    COVERAGE_ENG_NAME: {
+      query: `COVERAGE_ENG_NAME = ?`,
+      values: (val: string) => [val],
+    },
+    APPROVAL_TYPE: {
+      query: `APPROVAL_TYPE = ?`,
+      values: (val: string) => [val],
+    },
+    CANCEL_STATUS: {
+      query: `CANCEL_STATUS = ?`,
+      values: (val: string) => [val],
+    },
+    CANCEL_DATE: {
+      query: `CANCEL_DATE = ?`,
+      values: (val: string) => [val],
+    },
+    ENTP_ENG_NAME: {
+      query: `ENTP_ENG_NAME LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    ENTP_PERMIT_NO: {
+      query: `ENTP_PERMIT_NO = ?`,
+      values: (val: string) => [val],
+    },
+    MATERIAL_ENG_NAME: {
+      query: `MATERIAL_ENG_NAME LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    EE_DOC_DATA: {
+      query: `EE_DOC_DATA LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    UD_DOC_DATA: {
+      query: `UD_DOC_DATA LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    NB_DOC_DATA: {
+      query: `NB_DOC_DATA LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    ATT_DOC_DATA: {
+      query: `ATT_DOC_DATA LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    REEXAM_TARGET_YN: {
+      query: `REEXAM_TARGET_YN = ?`,
+      values: (val: string) => [val],
+    },
+    REEXAM_CONT: {
+      query: `REEXAM_CONT LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    INSURANCE_CODE: {
+      query: `INSURANCE_CODE = ?`,
+      values: (val: string) => [val],
+    },
+    DRUG_CLASS: {
+      query: `DRUG_CLASS = ?`,
+      values: (val: string) => [val],
+    },
+    FINISH_MATERIAL_YN: {
+      query: `FINISH_MATERIAL_YN = ?`,
+      values: (val: string) => [val],
+    },
+    NEW_DRUG_YN: {
+      query: `NEW_DRUG_YN = ?`,
+      values: (val: string) => [val],
+    },
+    INDUTY_CODE: {
+      query: `INDUTY_CODE = ?`,
+      values: (val: string) => [val],
+    },
+    CHANGE_CONTENT: {
+      query: `CHANGE_CONTENT LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    TOTAL_CONTENT: {
+      query: `TOTAL_CONTENT LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+    ATC_CODE: {
+      query: `ATC_CODE = ?`,
+      values: (val: string) => [val],
+    },
+    ENTP_BIZ_NO: {
+      query: `ENTP_BIZ_NO = ?`,
+      values: (val: string) => [val],
+    },
+    RARE_DRUG_YN: {
+      query: `RARE_DRUG_YN = ?`,
+      values: (val: string) => [val],
+    },
+    OEM_ENTP_NAME: {
+      query: `OEM_ENTP_NAME LIKE ?`,
+      values: (val: string) => [`%${val}%`],
+    },
+  };
+
+  if (params.DRUG_SHAPE && params.DRUG_SHAPE.length > 0) {
+    queryMap.DRUG_SHAPE = {
+      query: `DRUG_SHAPE IN (${params.DRUG_SHAPE.map(() => '?').join(', ')})`,
+      values: (drugShape: string[]) => [...drugShape],
+    };
+  }
+
+  if (params.COLOR_CLASS1 && params.COLOR_CLASS1.length > 0) {
+    queryMap.COLOR_CLASS1 = {
+      query: `(COLOR_CLASS1 IN (${params.COLOR_CLASS1.map(() => '?').join(', ')}) 
+               OR COLOR_CLASS2 IN (${params.COLOR_CLASS1.map(() => '?').join(', ')}))`,
+      values: (colorClass1: string[]) => [...colorClass1, ...colorClass1],
+    };
+  }
+
+  if (params.COLOR_CLASS2 && params.COLOR_CLASS2.length > 0) {
+    queryMap.COLOR_CLASS2 = {
+      query: `(COLOR_CLASS2 IN (${params.COLOR_CLASS2.map(() => '?').join(', ')}) 
+               OR COLOR_CLASS1 IN (${params.COLOR_CLASS2.map(() => '?').join(', ')}))`,
+      values: (colorClass2: string[]) => [...colorClass2, ...colorClass2],
+    };
+  }
+
+  if (params.LINE_FRONT && params.LINE_FRONT.length > 0) {
+    queryMap.LINE_FRONT = {
+      query: `(LINE_FRONT IN (${params.LINE_FRONT.map(() => '?').join(', ')}) 
+               OR LINE_BACK IN (${params.LINE_FRONT.map(() => '?').join(', ')}))`,
+      values: (lineFront: string[]) => [...lineFront, ...lineFront],
+    };
+  }
+
+  if (params.LINE_BACK && params.LINE_BACK.length > 0) {
+    queryMap.LINE_BACK = {
+      query: `(LINE_BACK IN (${params.LINE_BACK.map(() => '?').join(', ')})
+               OR LINE_FRONT IN (${params.LINE_BACK.map(() => '?').join(', ')}))`,
+      values: (lineBack: string[]) => [...lineBack, ...lineBack],
+    };
+  }
+
+  if (params.FORM_CODE && params.FORM_CODE.length > 0) {
+    queryMap.FORM_CODE = {
+      query: generateFormCodeQuery(params.FORM_CODE),
       values: (formCode: string[]) => {
         const params: string[] = [];
 
@@ -237,8 +430,10 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
 
         return params;
       },
-    },
-  };
+    };
+  }
+
+  return queryMap;
 };
 
 /**
