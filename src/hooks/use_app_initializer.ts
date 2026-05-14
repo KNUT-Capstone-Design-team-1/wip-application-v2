@@ -4,8 +4,18 @@ import { TDataTable } from '@services/database/types';
 import { DatabaseUpdateService } from '@services/index';
 
 const DATABASE_INIT_STATUS = {
-  COMPLETE: 'COMPLETE',
+  COMPLETE: '완료',
 } as const;
+
+const TABLE_NAME_MAP: Record<TDataTable, string> = {
+  pill_data: '알약 정보',
+  mark_images: '알약 마크',
+  nearby_pharmacies: '주변 약국',
+  cannabis: '대마 정보',
+  narcotics: '마약 정보',
+  psychotropics: '향정신성 의약품 정보',
+  prohibited_list: '금지 약물 정보',
+};
 
 export const useAppInitializer = () => {
   const initializeDataBase = async (
@@ -102,7 +112,7 @@ export const useAppInitializer = () => {
 
     // 테이블 초기화
     setUpdateProgress({
-      status: `${table} 테이블 초기화 중`,
+      status: `${TABLE_NAME_MAP[table]} 테이블 초기화 중`,
       progress: (currentTableIndex - 1) / totalTables,
     });
 
@@ -137,7 +147,7 @@ export const useAppInitializer = () => {
         (currentTableIndex - 1 + tableProgress) / totalTables;
 
       setUpdateProgress({
-        status: `${table} 데이터 다운로드 중`,
+        status: `${TABLE_NAME_MAP[table]} 데이터 다운로드 중`,
         progress: overallProgress,
         currentPage,
         totalPages: totalPage,
