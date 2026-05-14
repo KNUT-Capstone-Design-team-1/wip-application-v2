@@ -3,6 +3,7 @@ export const PAGE_TITLES: { [key: string]: string } = {
   '/pill-image-search': '이미지 검색',
   '/pill-identification-search': '식별 검색',
   '/pharmacy': '약국',
+  '/nearby-pharmacy': '주변 약국',
   '/storage': '보관함',
   '/setting': '설정',
   '/terms': '이용 약관',

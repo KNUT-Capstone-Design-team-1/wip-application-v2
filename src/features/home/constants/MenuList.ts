@@ -14,7 +14,7 @@ export const BUTTON_LIST = [
   },
   {
     img: nearbyPharmacy,
-    path: 'dev',
+    path: '/nearby-pharmacy',
   },
   {
     img: pillSave,

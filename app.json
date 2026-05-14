@@ -38,7 +38,9 @@
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "plugins": [
@@ -99,7 +101,13 @@
         }
       ],
       ["expo-localization"],
-      "expo-router"
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다"
+        }
+      ]
     ],
     "extra": {
       "eas": {
