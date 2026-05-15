@@ -170,135 +170,125 @@ const PillDetailInfo = ({
 
       {/* 상세 정보 섹션 */}
       <View style={styles.detailInfoContainer}>
-        {/* 특수 분류 및 주의 정보 */}
-        {(data.isNarcotic ||
-          data.isCannabis ||
-          data.isPsychotropic ||
-          data.isProhibited ||
-          data.isDrivingWarning) && (
+        {/* 특수 분류 및 주의 정보 (항상 표시) */}
+        <View
+          style={{
+            marginBottom: 20,
+            padding: 15,
+            backgroundColor: '#F8F9FA',
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: '#E9ECEF',
+          }}
+        >
+          <Text
+            style={[
+              styles.infoMoreBtnText,
+              {
+                textAlign: 'left',
+                color: '#333',
+                fontWeight: 'bold',
+                marginBottom: 10,
+              },
+            ]}
+          >
+            [ 주의 및 특수 분류 정보 ]
+          </Text>
+
+          <InfoRow
+            label="운전/기계조작"
+            value={data.isDrivingWarning ? '⚠️ 주의 (O)' : '안전 (X)'}
+          />
+
           <View
             style={{
-              marginBottom: 20,
-              padding: 15,
-              backgroundColor: '#FFF0F0',
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: '#FFCACA',
+              height: 1,
+              backgroundColor: '#E9ECEF',
+              marginVertical: 8,
+            }}
+          />
+
+          <InfoRow
+            label="마약류 (마약)"
+            value={
+              data.isNarcotic
+                ? `확인됨\n- 해당 성분: ${Array.isArray(data.narcoticIngredients) ? data.narcoticIngredients.join(', ') : '-'}`
+                : '해당 없음 (X)'
+            }
+          />
+          <InfoRow
+            label="마약류 (대마)"
+            value={
+              data.isCannabis
+                ? `확인됨\n- 해당 성분: ${Array.isArray(data.cannabisIngredients) ? data.cannabisIngredients.join(', ') : '-'}`
+                : '해당 없음 (X)'
+            }
+          />
+          <InfoRow
+            label="마약류 (향정)"
+            value={
+              data.isPsychotropic
+                ? `확인됨\n- 해당 성분: ${Array.isArray(data.psychotropicIngredients) ? data.psychotropicIngredients.join(', ') : '-'}`
+                : '해당 없음 (X)'
+            }
+          />
+
+          <View
+            style={{
+              height: 1,
+              backgroundColor: '#E9ECEF',
+              marginVertical: 8,
+            }}
+          />
+
+          <InfoRow
+            label="도핑 금지"
+            value={
+              data.isProhibited
+                ? `확인됨 (${data.prohibitedCategory || '금지 약물'})\n- 해당 성분: ${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'}`
+                : '해당 없음 (X)'
+            }
+          />
+
+          {data.isProhibited && (
+            <View
+              style={{ flexDirection: 'row', marginTop: 5, marginLeft: 85 }}
+            >
+              <Text style={{ fontSize: 13, color: '#333', marginRight: 15 }}>
+                경기 기간 중: {data.inGameProhibited ? '❌' : '⭕'}
+              </Text>
+              <Text style={{ fontSize: 13, color: '#333' }}>
+                경기 기간 외: {data.outGameProhibited ? '❌' : '⭕'}
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#004A94',
+              padding: 8,
+              borderRadius: 5,
+              marginTop: 10,
+              alignItems: 'center',
+            }}
+            onPress={() => Linking.openURL('https://kada.health.kr/')}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+              금지약물 확인 (KADA)
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            style={{
+              fontSize: 10,
+              color: '#999',
+              marginTop: 10,
+              textAlign: 'right',
             }}
           >
-            <Text
-              style={[
-                styles.infoMoreBtnText,
-                {
-                  textAlign: 'left',
-                  color: '#FF4D4D',
-                  fontWeight: 'bold',
-                  marginBottom: 10,
-                },
-              ]}
-            >
-              [ 주의 및 특수 분류 정보 ]
-            </Text>
-
-            {data.isDrivingWarning && (
-              <InfoRow label="운전/기계조작" value="⚠️ 주의 (O)" />
-            )}
-
-            {(data.isNarcotic || data.isCannabis || data.isPsychotropic) && (
-              <>
-                <View
-                  style={{
-                    height: 1,
-                    backgroundColor: '#FFCACA',
-                    marginVertical: 8,
-                  }}
-                />
-                {data.isNarcotic && (
-                  <InfoRow
-                    label="마약류 (마약)"
-                    value={`확인됨\n- 해당 성분: ${Array.isArray(data.narcoticIngredients) ? data.narcoticIngredients.join(', ') : '-'}`}
-                  />
-                )}
-                {data.isCannabis && (
-                  <InfoRow
-                    label="마약류 (대마)"
-                    value={`확인됨\n- 해당 성분: ${Array.isArray(data.cannabisIngredients) ? data.cannabisIngredients.join(', ') : '-'}`}
-                  />
-                )}
-                {data.isPsychotropic && (
-                  <InfoRow
-                    label="마약류 (향정)"
-                    value={`확인됨\n- 해당 성분: ${Array.isArray(data.psychotropicIngredients) ? data.psychotropicIngredients.join(', ') : '-'}`}
-                  />
-                )}
-                <Text
-                  style={{
-                    fontSize: 10,
-                    color: '#999',
-                    marginTop: 5,
-                    textAlign: 'right',
-                  }}
-                >
-                  * 출처: 식품의약품안전처 마약정보데이터베이스
-                </Text>
-              </>
-            )}
-
-            {data.isProhibited && (
-              <>
-                <View
-                  style={{
-                    height: 1,
-                    backgroundColor: '#FFCACA',
-                    marginVertical: 8,
-                  }}
-                />
-                <InfoRow
-                  label="도핑 금지"
-                  value={`확인됨 (${data.prohibitedCategory || '금지 약물'})\n- 해당 성분: ${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'}`}
-                />
-                <View style={{ flexDirection: 'row', marginTop: 5 }}>
-                  <Text
-                    style={{ fontSize: 13, color: '#333', marginRight: 15 }}
-                  >
-                    경기 기간 중: {data.inGameProhibited ? '❌' : '⭕'}
-                  </Text>
-                  <Text style={{ fontSize: 13, color: '#333' }}>
-                    경기 기간 외: {data.outGameProhibited ? '❌' : '⭕'}
-                  </Text>
-                </View>
-                <Text style={{ fontSize: 11, color: '#FF4D4D', marginTop: 10 }}>
-                  ※ 예외 적용이 있을 수 있으니, KADA 버튼을 클릭하여 상세 정보를
-                  확인하시기 바랍니다.
-                </Text>
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: '#004A94',
-                    padding: 8,
-                    borderRadius: 5,
-                    marginTop: 10,
-                    alignItems: 'center',
-                  }}
-                  onPress={() => Linking.openURL('https://kada.health.kr/')}
-                >
-                  <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-                    KADA
-                  </Text>
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 10,
-                    color: '#999',
-                    marginTop: 5,
-                    textAlign: 'right',
-                  }}
-                >
-                  * 출처: 한국도핑방지위원회(KADA)
-                </Text>
-              </>
-            )}
-          </View>
-        )}
+            * 출처: 식약처 마약정보DB, 한국도핑방지위원회(KADA)
+          </Text>
+        </View>
 
         <DetailSection
           title="효능/효과"
