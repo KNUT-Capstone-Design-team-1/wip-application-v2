@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
-import { COLOR_PRIMARY } from '../../../../constants';
+import { COLOR_PRIMARY, COLOR_GRAY } from '../../../../constants';
 import CameraIcon from '@assets/icons/camera.svg';
 import AlbumIcon from '@assets/icons/album.svg';
+import SaveIcon from '@assets/icons/save.svg'; // 파일 아이콘 대용으로 사용
 import ImagePreviewSlots from '../organisms/ImagePreviewSlots';
 import CameraScreen from '../organisms/CameraScreen';
-import { pickMultipleImages } from '../../utils/imagePickerUtils';
+import {
+  pickMultipleImages,
+  pickMultipleImagesFromFiles,
+} from '../../utils/imagePickerUtils';
 
 interface PillImages {
   front: string | null;
@@ -61,6 +65,11 @@ const ImageSearchButtons = ({
     await pickMultipleImages(onMultipleImageSelect);
   };
 
+  const handleFilePress = async () => {
+    if (!onMultipleImageSelect) return;
+    await pickMultipleImagesFromFiles(onMultipleImageSelect);
+  };
+
   return (
     <View>
       {/* 커스텀 카메라 화면 */}
@@ -101,6 +110,15 @@ const ImageSearchButtons = ({
         >
           <AlbumIcon width={21} height={17} fill="#fff" />
           <Text style={styles.text}>앨범에서 선택하기</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={[styles.button, { backgroundColor: COLOR_GRAY[500] }]}
+          onPress={handleFilePress}
+        >
+          <SaveIcon width={20} height={20} fill="#fff" />
+          <Text style={styles.text}>파일 탐색기에서 선택하기</Text>
         </TouchableOpacity>
       </View>
 
