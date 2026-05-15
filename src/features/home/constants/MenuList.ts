@@ -18,6 +18,6 @@ export const BUTTON_LIST = [
   },
   {
     img: pillSave,
-    path: '/storage',
+    path: '/pill-save',
   },
 ];
