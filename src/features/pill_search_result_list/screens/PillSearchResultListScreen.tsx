@@ -3,6 +3,7 @@ import { styles } from '../styles/PillSearchResultList';
 import SearchBar from '../components/atoms/SearchBar';
 import SearchResultList from '../components/organisms/SearchResultList';
 import { useSearchResultListStore } from '../store/search_result_list_store';
+import HealthKrFloatingButton from '../components/atoms/HealthKrFloatingButton';
 
 const PillSearchResultListScreen = () => {
   const { searchResultData, isLoading } = useSearchResultListStore();
@@ -38,6 +39,9 @@ const PillSearchResultListScreen = () => {
           isLoadingMore={isLoading}
         />
       )}
+
+      {/* 약학정보원 검색 플로팅 버튼 */}
+      {!isInitialLoading && <HealthKrFloatingButton />}
     </View>
   );
 };

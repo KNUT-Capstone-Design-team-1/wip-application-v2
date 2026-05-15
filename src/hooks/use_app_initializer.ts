@@ -2,6 +2,8 @@ import { initDatabase } from '@services/database';
 import { logger } from '../utils';
 import { TDataTable } from '@services/database/types';
 import { DatabaseUpdateService } from '@services/index';
+import { requestExternalURL } from '@services/apis/google_cloud/wip_external_url';
+import { useExternalUrlStore } from '@store/external_url_store';
 
 const DATABASE_INIT_STATUS = {
   COMPLETE: '완료',
@@ -23,10 +25,25 @@ export const useAppInitializer = () => {
     setIsInitializing: (isInitializing: boolean) => void,
   ) => {
     try {
+      // 외부 URL 정보 가져오기
+      setUpdateProgress({
+        status: '외부 설정 정보 로드 중',
+        progress: 0,
+      });
+      try {
+        const externalUrls = await requestExternalURL();
+        useExternalUrlStore.getState().setUrls(externalUrls);
+        console.log('✅ 외부 URL 로드 완료:', externalUrls);
+      } catch (urlError) {
+        logger.error(
+          `Failed to fetch external URLs. Using defaults. error: ${urlError}`,
+        );
+      }
+
       // 데이터베이스 초기화
       setUpdateProgress({
         status: 'DB 초기화 중',
-        progress: 0,
+        progress: 0.05,
       });
 
       const result = await initDatabase();
