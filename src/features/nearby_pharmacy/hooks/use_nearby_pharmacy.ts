@@ -78,11 +78,11 @@ export const useNearbyPharmacy = () => {
 
         const currentLocation = await Promise.race([
           Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.Balanced,
+            accuracy: Location.Accuracy.Low,
           }),
 
           new Promise<null>((_, reject) =>
-            setTimeout(() => reject(new Error('Location timeout')), 10000),
+            setTimeout(() => reject(new Error('Location timeout')), 20000),
           ),
         ]);
 

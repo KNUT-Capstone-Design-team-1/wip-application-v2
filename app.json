@@ -22,6 +22,11 @@
       }
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBh9jPoKXOelpLI0fvoCcvY_Cmz2cEfayY"
+        }
+      },
       "splash": {
         "image": "./assets/icons/splash-icon.png",
         "resizeMode": "contain",

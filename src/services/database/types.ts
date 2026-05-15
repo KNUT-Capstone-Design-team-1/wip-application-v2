@@ -136,8 +136,8 @@ export interface INearbyPharmacies {
   address: string; // 주소
   telephone: string; // 전화번호
   openData: number; // 개설일자
-  x: string; // X 좌표
-  y: string; // Y 좌표
+  X: string; // X 좌표
+  Y: string; // Y 좌표
 }
 
 /**
