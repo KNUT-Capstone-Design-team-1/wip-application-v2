@@ -17,11 +17,13 @@ export const useSelecteSearchId = () => {
     setShape,
     setFrontColor,
     setBackColor,
+    setIsExactMatch,
     manufacturerName,
     dividerLineData,
     shape,
     frontColor,
     backColor,
+    isExactMatch,
     resetSelectedSearchId,
     getSelectedSearchId,
   } = useSearchIdStore();
@@ -109,13 +111,24 @@ export const useSelecteSearchId = () => {
   const filterSearchParam = (rawParam: any): Partial<TPillDataSearchParam> => {
     const filtered: any = {};
 
+    // 식별 문자 일치 여부에 따른 필드 매핑
+    if (rawParam.isExactMatch) {
+      if (rawParam.PRINT_FRONT && rawParam.PRINT_FRONT.trim()) {
+        filtered.PRINT_FRONT_EXACTLY = rawParam.PRINT_FRONT.trim();
+      }
+      if (rawParam.PRINT_BACK && rawParam.PRINT_BACK.trim()) {
+        filtered.PRINT_BACK_EXACTLY = rawParam.PRINT_BACK.trim();
+      }
+    } else {
+      if (rawParam.PRINT_FRONT && rawParam.PRINT_FRONT.trim()) {
+        filtered.PRINT_FRONT = rawParam.PRINT_FRONT.trim();
+      }
+      if (rawParam.PRINT_BACK && rawParam.PRINT_BACK.trim()) {
+        filtered.PRINT_BACK = rawParam.PRINT_BACK.trim();
+      }
+    }
+
     // 문자열 필드들 - 빈 문자열이 아닌 경우만 추가
-    if (rawParam.PRINT_FRONT && rawParam.PRINT_FRONT.trim()) {
-      filtered.PRINT_FRONT = rawParam.PRINT_FRONT.trim();
-    }
-    if (rawParam.PRINT_BACK && rawParam.PRINT_BACK.trim()) {
-      filtered.PRINT_BACK = rawParam.PRINT_BACK.trim();
-    }
     if (rawParam.ITEM_NAME && rawParam.ITEM_NAME.trim()) {
       filtered.ITEM_NAME = rawParam.ITEM_NAME.trim();
     }
@@ -198,18 +211,6 @@ export const useSelecteSearchId = () => {
 
       console.log(`\n검색 결과: ${results.length}개`);
 
-      // 5. 결과 출력 (처음 3개만)
-      // results.slice(0, 3).forEach((pill, index) => {
-      //   console.log(`\n[${index + 1}] ${pill.ITEM_NAME}`);
-      //   console.log(`  - ITEM_SEQ: ${pill.ITEM_SEQ}`);
-      //   console.log(`  - 업체명: ${pill.ENTP_NAME}`);
-      //   console.log(`  - 모양: ${pill.DRUG_SHAPE}`);
-      //   console.log(`  - 색상: ${pill.COLOR_CLASS1} / ${pill.COLOR_CLASS2}`);
-      //   console.log(
-      //     `  - 식별표기: ${pill.PRINT_FRONT || '없음'} / ${pill.PRINT_BACK || '없음'}`,
-      //   );
-      // });
-
       if (results.length > 3) {
         console.log(`\n... 외 ${results.length - 3}개`);
       }
@@ -267,19 +268,7 @@ export const useSelecteSearchId = () => {
       router.push('/pill-search-result-list');
 
       // 3. 검색 실행
-      const searchParam: Partial<TPillDataSearchParam> = {
-        DRUG_SHAPE: selectedResult.DRUG_SHAPE,
-        COLOR_CLASS1: selectedResult.COLOR_CLASS1,
-        FORM_CODE: selectedResult.FORM_CODE,
-        COLOR_CLASS2: selectedResult.COLOR_CLASS2,
-        ITEM_NAME: selectedResult.ITEM_NAME,
-        PRINT_FRONT: selectedResult.PRINT_FRONT,
-        PRINT_BACK: selectedResult.PRINT_BACK,
-        LINE_FRONT: selectedResult.LINE_FRONT,
-        LINE_BACK: selectedResult.LINE_BACK,
-        MARK_CODE_FRONT: selectedResult.MARK_CODE_FRONT,
-        MARK_CODE_BACK: selectedResult.MARK_CODE_BACK,
-      };
+      const searchParam = filterSearchParam(selectedResult);
 
       console.log('📝 실제 검색 파라미터:', searchParam);
 
@@ -290,26 +279,12 @@ export const useSelecteSearchId = () => {
 
       console.log(`✅ 검색 결과: ${results.length}개`);
 
-      // 4. 결과 미리보기
-      // if (results.length > 0) {
-      //   results.slice(0, 3).forEach((pill, index) => {
-      //     console.log(`\n[${index + 1}] ${pill.ITEM_NAME}`);
-      //     console.log(`  - 제형: ${pill.FORM_CODE}`);
-      //     console.log(`  - 분할선(앞/뒤): ${pill.LINE_FRONT} / ${pill.LINE_BACK}`);
-      //     console.log(`  - 모양: ${pill.DRUG_SHAPE}`);
-      //     console.log(`  - 색상: ${pill.COLOR_CLASS1} / ${pill.COLOR_CLASS2}`);
-      //   });
-      // } else {
-      //   console.log('⚠️ 검색 결과가 없습니다.');
-      // }
-
       // 5. 데이터 저장 (자동으로 로딩 종료됨)
 
       // 검색한 파라미터 저장 (currentPage: 1로 초기화됨 → loadMorePills는 page: 2부터 시작)
       setSearchParam(searchParam);
       // 검색 결과 저장
       setSearchResultData(results);
-      // console.log('✅ 완료!');
 
       return results;
     } catch (error) {
@@ -329,5 +304,7 @@ export const useSelecteSearchId = () => {
     // 테스트용 함수들
     getSampleItemSeqs,
     searchPillDatas,
+    setIsExactMatch,
+    isExactMatch,
   };
 };

@@ -19,6 +19,7 @@ export interface ISearchPillData {
   LINE_BACK: string[] | null;
   MARK_CODE_FRONT: string;
   MARK_CODE_BACK: string;
+  isExactMatch: boolean;
 }
 
 export interface ISearchIdValue {
@@ -33,6 +34,7 @@ export interface ISearchIdValue {
   backColor: string[] | null;
   markCodeFront: string;
   markCodeBack: string;
+  isExactMatch: boolean;
 }
 
 export interface ISearchIdStore extends ISearchIdValue {
@@ -47,6 +49,7 @@ export interface ISearchIdStore extends ISearchIdValue {
   setBackColor: (value: string[]) => void;
   setMarkCodeFront: (value: string) => void;
   setMarkCodeBack: (value: string) => void;
+  setIsExactMatch: (value: boolean) => void;
   resetSelectedSearchId: () => void;
   getSelectedSearchId: () => any;
 }

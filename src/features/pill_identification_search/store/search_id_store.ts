@@ -17,6 +17,8 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   backColor: null,
   markCodeFront: '',
   markCodeBack: '',
+  isExactMatch: false,
+
   setSideLabelFrontText: (value) =>
     set({
       sideLabelFrontText: value,
@@ -61,6 +63,10 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     set({
       markCodeBack: value,
     }),
+  setIsExactMatch: (value: boolean) =>
+    set({
+      isExactMatch: value,
+    }),
   resetSelectedSearchId: () =>
     set({
       sideLabelFrontText: '',
@@ -74,6 +80,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       backColor: null,
       markCodeFront: '',
       markCodeBack: '',
+      isExactMatch: false,
     }),
   getSelectedSearchId: () => {
     const searchIdFrontText = get().sideLabelFrontText,
@@ -86,7 +93,8 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       searchFrontColor = get().frontColor,
       searchBackColor = get().backColor,
       searchMarkCodeFront = get().markCodeFront,
-      searchMarkCodeBack = get().markCodeBack;
+      searchMarkCodeBack = get().markCodeBack,
+      searchIsExactMatch = get().isExactMatch;
 
     const data: ISearchPillData = {
       PRINT_FRONT: searchIdFrontText,
@@ -101,6 +109,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       LINE_BACK: searchDividerLineData,
       MARK_CODE_FRONT: searchMarkCodeFront,
       MARK_CODE_BACK: searchMarkCodeBack,
+      isExactMatch: searchIsExactMatch,
     };
 
     console.log('data', data);

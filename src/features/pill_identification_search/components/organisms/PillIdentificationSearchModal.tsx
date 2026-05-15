@@ -91,23 +91,70 @@ const PillIdentificationSearchModal: React.FC<
             direction="row"
             selectedIndex={[]}
           >
-            <View style={{ flexDirection: 'row', gap: 10, width: '100%' }}>
-              {section.datas.map((data: any, index: number) => (
-                <View key={index} style={{ flex: 1 }}>
-                  <Input
-                    placeholder={data.placeholder}
-                    value={getTextInputValue(key, index)}
-                    width="100%"
-                    height="40"
-                    inputChangeHandler={(event) => {
-                      searchIdInputChangeHandler(
-                        event.nativeEvent.text,
-                        section.datas[index].key,
-                      );
+            <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
+              <View style={{ flexDirection: 'row', gap: 10, width: '100%' }}>
+                {section.datas.map((data: any, index: number) => (
+                  <View key={index} style={{ flex: 1 }}>
+                    <Input
+                      placeholder={data.placeholder}
+                      value={getTextInputValue(key, index)}
+                      width="100%"
+                      height="40"
+                      inputChangeHandler={(event) => {
+                        searchIdInputChangeHandler(
+                          event.nativeEvent.text,
+                          section.datas[index].key,
+                        );
+                      }}
+                    />
+                  </View>
+                ))}
+              </View>
+              {key === 'sideLabelText' && (
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 5,
+                  }}
+                  onPress={() => {
+                    const { isExactMatch, setIsExactMatch } =
+                      useSearchIdStore.getState();
+                    setIsExactMatch(!isExactMatch);
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: 4,
+                      borderWidth: 1.5,
+                      borderColor: COLOR_PRIMARY[100],
+                      backgroundColor: storeValues.isExactMatch
+                        ? COLOR_PRIMARY[100]
+                        : 'transparent',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 8,
                     }}
-                  />
-                </View>
-              ))}
+                  >
+                    {storeValues.isExactMatch && (
+                      <Text
+                        style={{
+                          color: '#fff',
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        ✓
+                      </Text>
+                    )}
+                  </View>
+                  <Text style={{ fontSize: 14, color: '#666' }}>
+                    식별문자 일치 (정확히 일치하는 문자만 검색)
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </IdentificationSection>
         </View>
