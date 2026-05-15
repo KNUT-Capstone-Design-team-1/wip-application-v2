@@ -1,4 +1,5 @@
 import { useSearchIdStore } from '../store/search_id_store';
+import { useMarkStore } from '../store/mark_store';
 import { getPillDatas } from '@services/database/queries/pill_data';
 import { getDatabase } from '@services/database/sqlite';
 import { TPillDataSearchParam } from '@services/database/types';
@@ -24,6 +25,8 @@ export const useSelecteSearchId = () => {
     resetSelectedSearchId,
     getSelectedSearchId,
   } = useSearchIdStore();
+
+  const { resetSelectedMark } = useMarkStore();
 
   const { setSearchResultData, setIsLoading, setSearchParam } =
     useSearchResultListStore();

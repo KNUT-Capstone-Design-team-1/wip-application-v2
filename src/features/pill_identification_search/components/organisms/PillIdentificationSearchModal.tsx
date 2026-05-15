@@ -213,7 +213,10 @@ const PillIdentificationSearchModal: React.FC<
             <Button
               width="48%"
               label="검색하기"
-              pressHandler={searchPillDatas}
+              pressHandler={async () => {
+                onClose(); // 검색 시작 시 모달 닫기
+                await searchPillDatas();
+              }}
             />
           </View>
         </View>

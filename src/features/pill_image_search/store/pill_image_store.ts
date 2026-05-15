@@ -10,6 +10,8 @@ interface PillImageState {
   pillImages: PillImages;
   // UI 상태 (촬영 완료 여부)
   hasImage: boolean;
+  // 검색 중 상태
+  isSearching: boolean;
 
   // 이미지 선택
   setFrontImage: (uri: string) => void;
@@ -18,6 +20,7 @@ interface PillImageState {
 
   // UI 상태 변경
   setHasImage: (hasImage: boolean) => void;
+  setIsSearching: (isSearching: boolean) => void;
 
   // 이미지 삭제
   removeFrontImage: () => void;
@@ -33,6 +36,7 @@ export const usePillImageStore = create<PillImageState>((set) => ({
     back: null,
   },
   hasImage: false,
+  isSearching: false,
 
   setFrontImage: (uri: string) =>
     set((state) => ({
@@ -53,6 +57,8 @@ export const usePillImageStore = create<PillImageState>((set) => ({
 
   setHasImage: (hasImage: boolean) => set({ hasImage }),
 
+  setIsSearching: (isSearching: boolean) => set({ isSearching }),
+
   removeFrontImage: () =>
     set((state) => ({
       pillImages: { ...state.pillImages, front: null },
@@ -69,5 +75,6 @@ export const usePillImageStore = create<PillImageState>((set) => ({
     set({
       pillImages: { front: null, back: null },
       hasImage: false,
+      isSearching: false,
     }),
 }));

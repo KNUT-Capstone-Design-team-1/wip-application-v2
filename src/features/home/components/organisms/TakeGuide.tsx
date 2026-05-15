@@ -11,8 +11,7 @@ const TakeGuide = () => {
       <Text style={styles.guideTitle}>{TAKE_GUIDE.title}</Text>
       <TouchableOpacity
         style={styles.guideMethod}
-        // path 변경 예정
-        onPress={() => router.push('/storage')}
+        onPress={() => router.push('/pill-save')}
         activeOpacity={0.7}
       >
         <Text>{TAKE_GUIDE.guideMethod}</Text>
