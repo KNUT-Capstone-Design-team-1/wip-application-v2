@@ -18,15 +18,16 @@ export const usePillDetail = () => {
       // 데이터 정제 - JSON 파싱 에러 방지
       const sanitizedData = {} as IPillDetail;
       Object.keys(pillDetailData).forEach((key) => {
-        const value = pillDetailData[key];
+        const typedKey = key as keyof IPillDetail;
+        const value = pillDetailData[typedKey];
         if (typeof value === 'string') {
           // 개행문자, 탭, 제어문자 등을 공백으로 치환하고 trim
-          sanitizedData[key] = value
+          (sanitizedData[typedKey] as any) = value
             .replace(/[\r\n\t]+/g, ' ')
             .replace(/\s+/g, ' ')
             .trim();
         } else {
-          sanitizedData[key] = value;
+          (sanitizedData[typedKey] as any) = value;
         }
       });
 
