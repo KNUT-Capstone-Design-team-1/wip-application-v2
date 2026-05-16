@@ -4,6 +4,7 @@ import SearchResultList from '../components/organisms/SearchResultList';
 import { useSearchResultListStore } from '../store/search_result_list_store';
 import HealthKrFloatingButton from '../components/atoms/HealthKrFloatingButton';
 import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
+import SearchConditionTags from '../components/molecules/SearchConditionTags';
 
 const PillSearchResultListScreen = () => {
   const { searchResultData, isLoading } = useSearchResultListStore();
@@ -23,6 +24,9 @@ const PillSearchResultListScreen = () => {
       >
         <UnifiedSearchBar />
       </View>
+
+      <SearchConditionTags />
+
       <Text style={styles.searchCountLabel}>
         검색 결과 {searchResultData.length}건
       </Text>

@@ -7,9 +7,37 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   searchCountLabel: {
-    marginTop: 20,
-    fontWeight: 500,
+    marginTop: 10,
+    fontWeight: '500',
     color: COLOR_GRAY[400],
     fontSize: 12,
+    paddingHorizontal: 20,
+  },
+  searchConditionContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  tagList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tag: {
+    backgroundColor: '#F2F2F7',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tagLabel: {
+    fontSize: 12,
+    color: COLOR_GRAY[400],
+    marginRight: 4,
+    fontWeight: '600',
+  },
+  tagValue: {
+    fontSize: 12,
+    color: COLOR_GRAY[300],
   },
 });

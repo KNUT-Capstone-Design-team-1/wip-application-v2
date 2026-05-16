@@ -8,7 +8,8 @@ import { useRouter, usePathname } from 'expo-router';
 
 export const useUnifiedSearch = () => {
   const [loading, setLoading] = useState(false);
-  const { setSearchResultData, setIsLoading } = useSearchResultListStore();
+  const { setSearchResultData, setIsLoading, setSearchParam } =
+    useSearchResultListStore();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -47,6 +48,8 @@ export const useUnifiedSearch = () => {
 
       const pillDatas = await getPillDatasByItemSeq(searchResult.data.results);
 
+      // 검색 조건 저장
+      setSearchParam({ ITEM_NAME: keyword });
       setSearchResultData(pillDatas);
 
       // 네비게이션 처리. 홈 화면('/')에서 검색하면 결과 화면으로 이동 (뒤로가기 시 홈으로 오게 push 사용)
