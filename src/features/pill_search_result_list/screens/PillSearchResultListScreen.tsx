@@ -1,9 +1,9 @@
 import { View, Text, ActivityIndicator } from 'react-native';
 import { styles } from '../styles/PillSearchResultList';
-import SearchBar from '../components/atoms/SearchBar';
 import SearchResultList from '../components/organisms/SearchResultList';
 import { useSearchResultListStore } from '../store/search_result_list_store';
 import HealthKrFloatingButton from '../components/atoms/HealthKrFloatingButton';
+import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 
 const PillSearchResultListScreen = () => {
   const { searchResultData, isLoading } = useSearchResultListStore();
@@ -13,7 +13,16 @@ const PillSearchResultListScreen = () => {
 
   return (
     <View style={styles.pillSearchResultListRoot}>
-      <SearchBar />
+      <View
+        style={{
+          marginTop: 15,
+          marginBottom: 10,
+          backgroundColor: '#fff',
+          zIndex: 10,
+        }}
+      >
+        <UnifiedSearchBar />
+      </View>
       <Text style={styles.searchCountLabel}>
         검색 결과 {searchResultData.length}건
       </Text>

@@ -2,6 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { usePathname } from 'expo-router';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 import { PAGE_TITLES } from './constants';
 import Header from './header/Header';
 import SubHeader from './header/SubHeader';
@@ -70,6 +71,7 @@ const Layout = ({ children }: LayoutProps) => {
           onNeverShowAgain={handleNeverShowAgain}
         />
       )}
+      <Toast />
     </View>
   );
 };

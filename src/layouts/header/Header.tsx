@@ -1,8 +1,9 @@
 import { View, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { styles } from './styles';
 import LogoSvg from '@assets/images/logo.svg';
-import { router } from 'expo-router';
+import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 // import MenuSvg from '@/assets/images/menu.svg';
 
 const Header = () => {
@@ -17,6 +18,7 @@ const Header = () => {
         <TouchableOpacity onPress={() => router.push('/')}>
           <LogoSvg width={120} height={40} />
         </TouchableOpacity>
+        <UnifiedSearchBar containerStyle={{ marginLeft: 15, flex: 1 }} />
         {/*<TouchableOpacity onPress={handleMenuPress} style={styles.menuButton}>*/}
         {/*  <MenuSvg width={24} height={24} />*/}
         {/*</TouchableOpacity>*/}
