@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
-import { COLOR_GRAY, COLOR_PRIMARY } from '../../../constants';
+import { COLOR_GRAY } from '../../../constants';
 import { usePillImageSelection } from '../hooks/usePillImageSelection';
+import FullSizeLoading from '@components/common/FullSizeLoading';
 
 const PillImageSearch = () => {
   const {
@@ -23,38 +18,33 @@ const PillImageSearch = () => {
     handleSearch,
   } = usePillImageSelection();
 
-  if (isSearching) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
-        <Text style={styles.loadingText}>
-          이미지를 분석하여 알약을 찾는 중입니다...
-        </Text>
-      </View>
-    );
-  }
-
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <ImageSearchContent
-        contentState={hasImage}
-        frontImage={pillImages.front}
-        backImage={pillImages.back}
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+      >
+        <ImageSearchContent
+          contentState={hasImage}
+          frontImage={pillImages.front}
+          backImage={pillImages.back}
+        />
+        <View style={styles.hr}></View>
+        <ImageSearchButtons
+          visible={false}
+          onImageSelect={handleImageSelect}
+          onMultipleImageSelect={handleMultipleImageSelect}
+          pillImages={pillImages}
+          onImageRemove={handleImageRemove}
+          onApply={handleSearch}
+          showApplyButton={isBothImagesSelected}
+        />
+      </ScrollView>
+      <FullSizeLoading
+        visible={isSearching}
+        message="이미지를 분석하여 알약을 찾는 중입니다..."
       />
-      <View style={styles.hr}></View>
-      <ImageSearchButtons
-        visible={false}
-        onImageSelect={handleImageSelect}
-        onMultipleImageSelect={handleMultipleImageSelect}
-        pillImages={pillImages}
-        onImageRemove={handleImageRemove}
-        onApply={handleSearch}
-        showApplyButton={isBothImagesSelected}
-      />
-    </ScrollView>
+    </View>
   );
 };
 

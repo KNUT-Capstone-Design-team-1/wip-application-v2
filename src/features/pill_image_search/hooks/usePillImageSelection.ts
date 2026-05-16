@@ -96,7 +96,6 @@ export const usePillImageSelection = () => {
     try {
       setIsSearching(true);
       setIsLoading(true);
-      router.push('/pill-search-result-list');
 
       // 1. 이미지 파일을 Base64로 변환
       const frontBase64 = await RNFS.readFile(pillImages.front, 'base64');
@@ -125,12 +124,12 @@ export const usePillImageSelection = () => {
 
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
       setSearchResultData(results);
+
+      // 4. 검색 완료 후 결과 화면으로 이동
+      router.push('/pill-search-result-list');
     } catch (error) {
       logger.error(`이미지 검색 실패: ${error}`);
-
       Alert.alert('검색 실패', '이미지 분석 중 오류가 발생했습니다.');
-
-      router.back();
     } finally {
       setIsSearching(false);
       setIsLoading(false);
