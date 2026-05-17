@@ -5,6 +5,15 @@ module.exports = function (api) {
     plugins: [
       'react-native-worklets/plugin',
       '@babel/plugin-transform-class-static-block',
+      [
+        'module-resolver',
+        {
+          root: ['./'],
+          alias: {
+            '@': './src',
+          },
+        },
+      ],
     ],
   };
 };

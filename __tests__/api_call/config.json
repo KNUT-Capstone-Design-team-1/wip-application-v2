@@ -1,0 +1,16 @@
+{
+  "apiList": [
+    "_get-pill-image-feature-extraction",
+    "_get-pill-detail",
+    "_get-notices",
+    "_post-notices",
+    "_put-notices-idx",
+    "_delete-notices-idx",
+    "_database-version",
+    "_table-schema",
+    "_resource-data",
+    "_log",
+    "_unified-search",
+    "_external-url"
+  ]
+}

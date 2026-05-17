@@ -1,0 +1,3 @@
+import pillIdentificationSearch from '@features/pill_identification_search/screens/PillIndentificationSearchScreen';
+
+export default pillIdentificationSearch;

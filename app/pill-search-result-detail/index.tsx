@@ -1,0 +1,3 @@
+import PillSearchResultDetailScreen from '@features/pill_search_result_detail/screens/PillSearchResultDetailScreen';
+
+export default PillSearchResultDetailScreen;

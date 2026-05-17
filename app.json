@@ -2,6 +2,7 @@
   "expo": {
     "name": "이게뭐약",
     "slug": "whatispill",
+    "scheme": "whatispill",
     "owner": "mustbemadness",
     "version": "2.3.1",
     "orientation": "portrait",
@@ -22,18 +23,32 @@
       }
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBh9jPoKXOelpLI0fvoCcvY_Cmz2cEfayY"
+        }
+      },
+      "splash": {
+        "image": "./assets/icons/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
         "monochromeImage": "./assets/icons/adaptive-icon.png",
-        "backgroundColor": "#3b3b90"
+        "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": false,
+      "edgeToEdgeEnabled": true,
       "package": "com.mbm.whatispill",
       "versionCode": 21,
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.INTERNET",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
       ]
     },
     "plugins": [
@@ -42,7 +57,7 @@
         {
           "image": "./assets/icons/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#3b3b90",
+          "backgroundColor": "#ffffff",
           "imageWidth": 200
         }
       ],
@@ -93,7 +108,14 @@
           "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
         }
       ],
-      ["expo-localization"]
+      ["expo-localization"],
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다"
+        }
+      ]
     ],
     "extra": {
       "eas": {
