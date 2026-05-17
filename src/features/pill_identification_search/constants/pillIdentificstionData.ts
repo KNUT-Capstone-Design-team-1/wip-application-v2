@@ -22,8 +22,7 @@ export const SECTION_KEY_TO_STORE_KEY: { [key: string]: string } = {
   manufacturerName: 'manufacturerName',
   dividerLineData: 'dividerLineData',
   shape: 'shape',
-  frontColor: 'frontColor',
-  backColor: 'backColor',
+  colors: 'colors',
 };
 
 // section key → textInput store 변수 매핑 (data index 기준)
@@ -231,119 +230,10 @@ export const pillIdentificstionData = {
       },
     ],
   },
-  // 앞면 색상
-  frontColor: {
+  // 색상
+  colors: {
     type: 'iconButton',
-    title: '앞면 색상',
-    datas: [
-      {
-        iconUrl: all,
-        iconColor: '',
-        label: '전체',
-        value: null,
-      },
-      {
-        iconUrl: '',
-        iconColor: '#fff',
-        label: '흰색',
-        value: '하양',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#FCEC60',
-        label: '노란색',
-        value: '노랑',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#F19D38',
-        label: '주황색',
-        value: '주황',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#ED6FD0',
-        label: '분홍색',
-        value: '분홍',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#EA3323',
-        label: '빨간색',
-        value: '빨강',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#9F4D2E',
-        label: '갈색',
-        value: '갈색',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#97C15C',
-        label: '연두색',
-        value: '연두',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#42943E',
-        label: '초록색',
-        value: '초록',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#377EA5',
-        label: '청록색',
-        value: '청록',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#4B68F6',
-        label: '파란색',
-        value: '파랑',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#1627A6',
-        label: '남색',
-        value: '남색',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#A92274',
-        label: '자주색',
-        value: '자주',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#8E1BAF',
-        label: '보라색',
-        value: '보라',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#9E9E9E',
-        label: '회색',
-        value: '회색',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#1E1E1E',
-        label: '검정색',
-        value: '검정',
-      },
-      {
-        iconUrl: '',
-        iconColor: '#E7E7E7',
-        label: '투명색',
-        value: '투명',
-      },
-    ],
-  },
-  // 뒷면 색상
-  backColor: {
-    type: 'iconButton',
-    title: '뒷면 색상',
+    title: '색상',
     datas: [
       {
         iconUrl: all,

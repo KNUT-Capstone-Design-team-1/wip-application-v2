@@ -15,14 +15,12 @@ export const useSelecteSearchId = () => {
     setManufacturerName,
     setDividerLineData,
     setShape,
-    setFrontColor,
-    setBackColor,
+    setColors,
     setIsExactMatch,
     manufacturerName,
     dividerLineData,
     shape,
-    frontColor,
-    backColor,
+    colors,
     isExactMatch,
     resetSelectedSearchId,
     getSelectedSearchId,
@@ -91,11 +89,8 @@ export const useSelecteSearchId = () => {
       case 'shape':
         setShape(toggleArrayValue(shape, value));
         break;
-      case 'frontColor':
-        setFrontColor(toggleArrayValue(frontColor, value));
-        break;
-      case 'backColor':
-        setBackColor(toggleArrayValue(backColor, value));
+      case 'colors':
+        setColors(toggleArrayValue(colors, value));
         break;
     }
   };

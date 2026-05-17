@@ -30,8 +30,7 @@ export interface ISearchIdValue {
   manufacturerName: string[] | null;
   dividerLineData: string[] | null;
   shape: string[] | null;
-  frontColor: string[] | null;
-  backColor: string[] | null;
+  colors: string[] | null;
   markCodeFront: string;
   markCodeBack: string;
   isExactMatch: boolean;
@@ -45,8 +44,7 @@ export interface ISearchIdStore extends ISearchIdValue {
   setManufacturerName: (value: string[]) => void;
   setDividerLineData: (value: string[]) => void;
   setShape: (value: string[]) => void;
-  setFrontColor: (value: string[]) => void;
-  setBackColor: (value: string[]) => void;
+  setColors: (value: string[]) => void;
   setMarkCodeFront: (value: string) => void;
   setMarkCodeBack: (value: string) => void;
   setIsExactMatch: (value: boolean) => void;

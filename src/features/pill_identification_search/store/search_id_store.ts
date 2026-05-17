@@ -13,8 +13,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
   manufacturerName: null,
   dividerLineData: null,
   shape: null,
-  frontColor: null,
-  backColor: null,
+  colors: null,
   markCodeFront: '',
   markCodeBack: '',
   isExactMatch: false,
@@ -47,13 +46,9 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     set({
       shape: arr,
     }),
-  setFrontColor: (arr: string[]) =>
+  setColors: (arr: string[]) =>
     set({
-      frontColor: arr,
-    }),
-  setBackColor: (arr: string[]) =>
-    set({
-      backColor: arr,
+      colors: arr,
     }),
   setMarkCodeFront: (value: string) =>
     set({
@@ -76,8 +71,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       manufacturerName: null,
       dividerLineData: null,
       shape: null,
-      frontColor: null,
-      backColor: null,
+      colors: null,
       markCodeFront: '',
       markCodeBack: '',
       isExactMatch: false,
@@ -90,8 +84,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       searchManufacturerName = get().manufacturerName,
       searchDividerLineData = get().dividerLineData,
       searchShape = get().shape,
-      searchFrontColor = get().frontColor,
-      searchBackColor = get().backColor,
+      searchColors = get().colors,
       searchMarkCodeFront = get().markCodeFront,
       searchMarkCodeBack = get().markCodeBack,
       searchIsExactMatch = get().isExactMatch;
@@ -102,8 +95,8 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       ITEM_NAME: searchProductNameText,
       ENTP_NAME: searchCompanyName,
       DRUG_SHAPE: searchShape,
-      COLOR_CLASS1: searchFrontColor,
-      COLOR_CLASS2: searchBackColor,
+      COLOR_CLASS1: searchColors,
+      COLOR_CLASS2: searchColors,
       FORM_CODE: searchManufacturerName,
       LINE_FRONT: searchDividerLineData,
       LINE_BACK: searchDividerLineData,
