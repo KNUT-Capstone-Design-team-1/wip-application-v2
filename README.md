@@ -36,7 +36,11 @@ yarn run ios
 # 테스트
 
 ```bash
-yarn test
+# API call test
+yarn test:api
+
+# query test
+yarn test:query
 ```
 
 # 개발

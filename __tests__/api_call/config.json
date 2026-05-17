@@ -1,6 +1,6 @@
 {
   "apiList": [
-    "_get-image-search-v2",
+    "_get-pill-image-feature-extraction",
     "_get-pill-detail",
     "_get-notices",
     "_post-notices",

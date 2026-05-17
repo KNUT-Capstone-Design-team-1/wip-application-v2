@@ -11,8 +11,8 @@ export async function callAPI() {
   const results: Record<string, any> = {};
 
   try {
-    if (apiList.includes('get-image-search-v2')) {
-      results['get-image-search-v2'] =
+    if (apiList.includes('get-pill-image-feature-extraction')) {
+      results['get-pill-image-feature-extraction'] =
         await GoogleCloud.PillImageFeatureExtractionAPI.requestPillImageFeatureExtraction(
           data.pillImageFeatureExtraction,
         );
