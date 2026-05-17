@@ -12,7 +12,7 @@ const SearchConditionTags = () => {
     const tags: { label: string; value: string }[] = [];
 
     if (searchParam.ITEM_NAME) {
-      tags.push({ label: '검색어', value: searchParam.ITEM_NAME });
+      tags.push({ label: '제품명', value: searchParam.ITEM_NAME });
     }
     if (searchParam.ENTP_NAME) {
       tags.push({ label: '회사명', value: searchParam.ENTP_NAME });
