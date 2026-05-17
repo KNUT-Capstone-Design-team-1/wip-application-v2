@@ -1,15 +1,19 @@
 import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Image } from 'react-native';
 import { useSearchResultListStore } from '../../store/search_result_list_store';
 import { styles } from '../../styles/PillSearchResultList';
 
-const SearchConditionTags = () => {
+interface SearchConditionTagsProps {
+  markImages?: { code: string; base64: string }[];
+}
+
+const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
   const { searchParam } = useSearchResultListStore();
 
   if (!searchParam) return null;
 
   const renderTags = () => {
-    const tags: { label: string; value: string }[] = [];
+    const tags: { label: string; value: string; images?: string[] }[] = [];
 
     if (searchParam.ITEM_NAME) {
       tags.push({ label: '제품명', value: searchParam.ITEM_NAME });
@@ -18,10 +22,10 @@ const SearchConditionTags = () => {
       tags.push({ label: '회사명', value: searchParam.ENTP_NAME });
     }
     if (searchParam.PRINT_FRONT) {
-      tags.push({ label: '식별문자 (앞)', value: searchParam.PRINT_FRONT });
+      tags.push({ label: '식별(앞)', value: searchParam.PRINT_FRONT });
     }
     if (searchParam.PRINT_BACK) {
-      tags.push({ label: '식별문자 (뒤)', value: searchParam.PRINT_BACK });
+      tags.push({ label: '식별(뒤)', value: searchParam.PRINT_BACK });
     }
     if (searchParam.DRUG_SHAPE && searchParam.DRUG_SHAPE.length > 0) {
       tags.push({ label: '모양', value: searchParam.DRUG_SHAPE.join(', ') });
@@ -51,12 +55,20 @@ const SearchConditionTags = () => {
       tags.push({ label: '제형', value: searchParam.FORM_CODE.join(', ') });
     }
 
-    const marks = [
-      searchParam.MARK_CODE_FRONT,
-      searchParam.MARK_CODE_BACK,
-    ].filter(Boolean);
+    const marks = Array.from(
+      new Set(
+        [searchParam.MARK_CODE_FRONT, searchParam.MARK_CODE_BACK].filter(
+          Boolean,
+        ),
+      ),
+    ) as string[];
+
     if (marks.length > 0) {
-      tags.push({ label: '마크', value: marks.join(', ') });
+      const images = marks
+        .map((code) => markImages?.find((m) => m.code === code)?.base64)
+        .filter((img): img is string => !!img);
+
+      tags.push({ label: '마크', value: '', images });
     }
 
     if (tags.length === 0) return null;
@@ -65,8 +77,18 @@ const SearchConditionTags = () => {
       <View style={styles.tagList}>
         {tags.map((tag, index) => (
           <View key={`${tag.label}-${index}`} style={styles.tag}>
-            <Text style={styles.tagLabel}>{tag.label}:</Text>
-            <Text style={styles.tagValue}>{tag.value}</Text>
+            <Text style={styles.tagLabel}>{tag.label}</Text>
+            {tag.value ? (
+              <Text style={styles.tagValue}>: {tag.value}</Text>
+            ) : null}
+            {tag.images &&
+              tag.images.map((uri, idx) => (
+                <Image
+                  key={`mark-img-${idx}`}
+                  source={{ uri }}
+                  style={styles.tagImage}
+                />
+              ))}
           </View>
         ))}
       </View>

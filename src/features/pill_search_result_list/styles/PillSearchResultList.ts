@@ -40,4 +40,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: COLOR_GRAY[300],
   },
+  tagImage: {
+    width: 24,
+    height: 24,
+    marginLeft: 6,
+    backgroundColor: 'transparent',
+  },
 });

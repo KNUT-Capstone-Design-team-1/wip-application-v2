@@ -6,6 +6,7 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
     searchResultData: [],
     isLoading: false,
     searchParam: null,
+    markImages: [],
     currentPage: 1,
     hasMore: true,
 
@@ -15,6 +16,10 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
         searchParam: param,
         currentPage: 1,
         hasMore: true,
+      }),
+    setMarkImages: (images) =>
+      set({
+        markImages: images,
       }),
     setSearchResultData: (resultData) =>
       set({

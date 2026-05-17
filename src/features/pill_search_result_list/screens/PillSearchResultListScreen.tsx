@@ -1,13 +1,53 @@
 import { View, Text, ActivityIndicator } from 'react-native';
+import { useEffect } from 'react';
 import { styles } from '../styles/PillSearchResultList';
 import SearchResultList from '../components/organisms/SearchResultList';
 import { useSearchResultListStore } from '../store/search_result_list_store';
 import HealthKrFloatingButton from '../components/atoms/HealthKrFloatingButton';
 import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 import SearchConditionTags from '../components/molecules/SearchConditionTags';
+import { getMarkImages } from '@services/database/queries/mark_images';
 
 const PillSearchResultListScreen = () => {
-  const { searchResultData, isLoading } = useSearchResultListStore();
+  const {
+    searchResultData,
+    isLoading,
+    searchParam,
+    markImages,
+    setMarkImages,
+  } = useSearchResultListStore();
+
+  useEffect(() => {
+    const fetchMarkImages = async () => {
+      const marks = [
+        searchParam?.MARK_CODE_FRONT,
+        searchParam?.MARK_CODE_BACK,
+      ].filter(Boolean) as string[];
+
+      if (marks.length > 0) {
+        try {
+          // 비동기로 마크 이미지 정보를 가져와서 스토어에 저장
+          const results = await Promise.all(
+            marks.map((code) => getMarkImages({ code }, { page: 1, limit: 1 })),
+          );
+          const images = results
+            .flat()
+            .map((r) => ({ code: r.code, base64: r.base64 }));
+          setMarkImages(images);
+        } catch (error) {
+          console.error('마크 이미지 로드 실패:', error);
+        }
+      } else {
+        setMarkImages([]);
+      }
+    };
+
+    fetchMarkImages();
+  }, [
+    searchParam?.MARK_CODE_FRONT,
+    searchParam?.MARK_CODE_BACK,
+    setMarkImages,
+  ]);
 
   // 초기 로딩: 데이터가 없고 로딩 중일 때만 전체 화면 인디케이터 표시
   const isInitialLoading = isLoading && searchResultData.length === 0;
@@ -25,7 +65,7 @@ const PillSearchResultListScreen = () => {
         <UnifiedSearchBar />
       </View>
 
-      <SearchConditionTags />
+      <SearchConditionTags markImages={markImages} />
 
       <Text style={styles.searchCountLabel}>
         검색 결과 {searchResultData.length}건
