@@ -97,14 +97,15 @@ export const usePillImageSelection = () => {
       setIsSearching(true);
       setIsLoading(true);
 
-      // 1. 이미지 파일을 Base64로 변환
-      const frontBase64 = await RNFS.readFile(pillImages.front, 'base64');
-      // 뒷면 이미지도 특징 추출에 사용할 수 있지만, 현재 API는 하나만 받음 (필요 시 수정)
-      // const backBase64 = await RNFS.readFile(pillImages.back, 'base64');
+      // 이미지 파일을 Base64로 변환
+      const front = await RNFS.readFile(pillImages.front, 'base64');
+      const back = await RNFS.readFile(pillImages.back, 'base64');
 
-      // 2. 특징 추출 API 호출
-      const extractionResult =
-        await requestPillImageFeatureExtraction(frontBase64);
+      // 특징 추출 API 호출
+      const extractionResult = await requestPillImageFeatureExtraction({
+        front,
+        back,
+      });
 
       if (!extractionResult) {
         throw new Error('특징 추출 실패');
@@ -112,7 +113,7 @@ export const usePillImageSelection = () => {
 
       const { PRINT, SHAPE, COLOR } = extractionResult;
 
-      // 3. 추출된 특징으로 DB 검색
+      // 추출된 특징으로 DB 검색
       const searchParam = {
         PRINT_FRONT: PRINT.join(' '),
         DRUG_SHAPE: SHAPE,
@@ -125,7 +126,7 @@ export const usePillImageSelection = () => {
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
       setSearchResultData(results);
 
-      // 4. 검색 완료 후 결과 화면으로 이동
+      // 검색 완료 후 결과 화면으로 이동
       router.push('/pill-search-result-list');
     } catch (error) {
       logger.error(`이미지 검색 실패: ${error}`);

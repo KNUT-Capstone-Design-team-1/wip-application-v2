@@ -7,12 +7,19 @@ interface IGeminiPillFeatureExtractionResponse {
   COLOR: string[];
 }
 
+interface IRequestPillImageFeatureExtraction {
+  front: string;
+  back: string;
+}
+
 /**
  * 이미지 특징 추출 요청
- * @param base64 베이스64 이미지 코드
+ * @param payload 요청 데이터
  * @returns
  */
-export const requestPillImageFeatureExtraction = async (base64: string) => {
+export const requestPillImageFeatureExtraction = async (
+  payload: IRequestPillImageFeatureExtraction,
+) => {
   const serviceURL = process.env
     .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_PILL_IMAGE_FEATURE_EXTRACTION_URL as string;
 
@@ -20,7 +27,7 @@ export const requestPillImageFeatureExtraction = async (base64: string) => {
 
   const result = await axios.post<IGeminiPillFeatureExtractionResponse>(
     serviceURL,
-    { base64 },
+    payload,
     {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -14,7 +14,7 @@ export async function callAPI() {
     if (apiList.includes('get-image-search-v2')) {
       results['get-image-search-v2'] =
         await GoogleCloud.PillImageFeatureExtractionAPI.requestPillImageFeatureExtraction(
-          data.pillImageFeatureExtraction.v2base64,
+          data.pillImageFeatureExtraction,
         );
     }
 
