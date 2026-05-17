@@ -18,52 +18,45 @@ const SearchConditionTags = () => {
       tags.push({ label: '회사명', value: searchParam.ENTP_NAME });
     }
     if (searchParam.PRINT_FRONT) {
-      tags.push({ label: '식별(앞)', value: searchParam.PRINT_FRONT });
-    }
-    if (searchParam.PRINT_FRONT_EXACTLY) {
-      tags.push({ label: '식별(앞)', value: searchParam.PRINT_FRONT_EXACTLY });
+      tags.push({ label: '식별문자 (앞)', value: searchParam.PRINT_FRONT });
     }
     if (searchParam.PRINT_BACK) {
-      tags.push({ label: '식별(뒤)', value: searchParam.PRINT_BACK });
-    }
-    if (searchParam.PRINT_BACK_EXACTLY) {
-      tags.push({ label: '식별(뒤)', value: searchParam.PRINT_BACK_EXACTLY });
+      tags.push({ label: '식별문자 (뒤)', value: searchParam.PRINT_BACK });
     }
     if (searchParam.DRUG_SHAPE && searchParam.DRUG_SHAPE.length > 0) {
       tags.push({ label: '모양', value: searchParam.DRUG_SHAPE.join(', ') });
     }
-    if (searchParam.COLOR_CLASS1 && searchParam.COLOR_CLASS1.length > 0) {
-      tags.push({
-        label: '색상(앞)',
-        value: searchParam.COLOR_CLASS1.join(', '),
-      });
+
+    const colors = Array.from(
+      new Set([
+        ...(searchParam.COLOR_CLASS1 || []),
+        ...(searchParam.COLOR_CLASS2 || []),
+      ]),
+    );
+    if (colors.length > 0) {
+      tags.push({ label: '색상', value: colors.join(', ') });
     }
-    if (searchParam.COLOR_CLASS2 && searchParam.COLOR_CLASS2.length > 0) {
-      tags.push({
-        label: '색상(뒤)',
-        value: searchParam.COLOR_CLASS2.join(', '),
-      });
+
+    const lines = Array.from(
+      new Set([
+        ...(searchParam.LINE_FRONT || []),
+        ...(searchParam.LINE_BACK || []),
+      ]),
+    );
+    if (lines.length > 0) {
+      tags.push({ label: '분할선', value: lines.join(', ') });
     }
-    if (searchParam.LINE_FRONT && searchParam.LINE_FRONT.length > 0) {
-      tags.push({
-        label: '분할선(앞)',
-        value: searchParam.LINE_FRONT.join(', '),
-      });
-    }
-    if (searchParam.LINE_BACK && searchParam.LINE_BACK.length > 0) {
-      tags.push({
-        label: '분할선(뒤)',
-        value: searchParam.LINE_BACK.join(', '),
-      });
-    }
+
     if (searchParam.FORM_CODE && searchParam.FORM_CODE.length > 0) {
       tags.push({ label: '제형', value: searchParam.FORM_CODE.join(', ') });
     }
-    if (searchParam.MARK_CODE_FRONT) {
-      tags.push({ label: '마크(앞)', value: searchParam.MARK_CODE_FRONT });
-    }
-    if (searchParam.MARK_CODE_BACK) {
-      tags.push({ label: '마크(뒤)', value: searchParam.MARK_CODE_BACK });
+
+    const marks = [
+      searchParam.MARK_CODE_FRONT,
+      searchParam.MARK_CODE_BACK,
+    ].filter(Boolean);
+    if (marks.length > 0) {
+      tags.push({ label: '마크', value: marks.join(', ') });
     }
 
     if (tags.length === 0) return null;
