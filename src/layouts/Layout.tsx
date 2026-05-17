@@ -22,7 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
   const isMainPage = pathname === '/';
   const pageTitle = PAGE_TITLES[pathname] || '페이지';
   const [showBottomSheet, setShowBottomSheet] = useState(false);
-  const { mainBottomSheetData } = useNoticeStore();
+  const { mainBottomSheetData, actions } = useNoticeStore();
   const { getNoticeBottomSheet } = useNotices();
 
   useEffect(() => {
@@ -36,7 +36,10 @@ const Layout = ({ children }: LayoutProps) => {
     if (hiddenUntil) {
       const hiddenTime = parseInt(hiddenUntil);
       const now = Date.now();
+
       if (now < hiddenTime) {
+        // 아직 24시간이 지나지 않았으면 데이터를 비워서 보여주지 않음
+        actions.setMainBottomSheetData([]);
         return;
       }
     }
@@ -46,6 +49,8 @@ const Layout = ({ children }: LayoutProps) => {
   useEffect(() => {
     if (isMainPage && mainBottomSheetData && mainBottomSheetData.length > 0) {
       setShowBottomSheet(true);
+    } else {
+      setShowBottomSheet(false);
     }
   }, [mainBottomSheetData, isMainPage]);
 
@@ -54,8 +59,14 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   const handleNeverShowAgain = async () => {
-    const oneDayLater = Date.now() + 24 * 60 * 60 * 1000;
-    await AsyncStorage.setItem(BOTTOM_SHEET_HIDDEN_KEY, oneDayLater.toString());
+    // 24시간 (24시간 * 60분 * 60초 * 1000밀리초)
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    const hideUntil = Date.now() + ONE_DAY_MS;
+
+    await AsyncStorage.setItem(BOTTOM_SHEET_HIDDEN_KEY, hideUntil.toString());
+
+    // 상태도 함께 비워줌으로써 다시 나타나는 현상 방지
+    actions.setMainBottomSheetData([]);
     setShowBottomSheet(false);
   };
 
