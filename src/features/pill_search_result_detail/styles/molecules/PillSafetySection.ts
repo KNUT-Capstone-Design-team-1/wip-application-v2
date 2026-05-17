@@ -52,4 +52,12 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: 'right',
   },
+  disclaimerText: {
+    fontSize: 11,
+    color: '#E03131',
+    fontWeight: '600',
+    marginTop: 5,
+    marginBottom: 5,
+    lineHeight: 16,
+  },
 });

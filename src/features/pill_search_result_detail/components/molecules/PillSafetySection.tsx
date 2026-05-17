@@ -11,6 +11,10 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>[ 주의 및 특수 분류 정보 ]</Text>
+      <Text style={styles.disclaimerText}>
+        * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 상세 정보를
+        확인해 주세요.
+      </Text>
 
       <InfoRow
         label="운전/기계조작"
