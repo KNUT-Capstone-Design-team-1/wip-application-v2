@@ -21,7 +21,6 @@ export const useUnifiedSearch = () => {
     setLoading(true);
     setIsLoading(true);
     try {
-      // 1. 통합 검색 API 호출 (string[] 반환됨)
       const keywords = keyword.trim().split(/\s+/);
       const searchResult = await unifiedSearchService.search(keywords);
 
