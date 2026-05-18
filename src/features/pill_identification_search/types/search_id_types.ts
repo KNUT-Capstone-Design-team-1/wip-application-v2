@@ -41,10 +41,10 @@ export interface ISearchIdStore extends ISearchIdValue {
   setSideLabelBackText: (value: string) => void;
   setProductNameText: (value: string) => void;
   setCompanyName: (value: string) => void;
-  setManufacturerName: (value: string[]) => void;
-  setDividerLineData: (value: string[]) => void;
-  setShape: (value: string[]) => void;
-  setColors: (value: string[]) => void;
+  setManufacturerName: (value: string[] | null) => void;
+  setDividerLineData: (value: string[] | null) => void;
+  setShape: (value: string[] | null) => void;
+  setColors: (value: string[] | null) => void;
   setMarkCodeFront: (value: string) => void;
   setMarkCodeBack: (value: string) => void;
   setIsExactMatch: (value: boolean) => void;

@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import Button from '../atoms/Button';
 import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/molecules/MarkSection';
-import { useMarkModal } from '../../hooks/use_mark_modal';
+import { useMarkModal } from '../../hooks/useMarkModal';
 import MarkModal from '../organisms/MarkModal';
 
 const MarkSection = () => {

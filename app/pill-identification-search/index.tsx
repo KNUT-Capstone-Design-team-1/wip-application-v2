@@ -1,3 +1,3 @@
-import pillIdentificationSearch from '@features/pill_identification_search/screens/PillIndentificationSearchScreen';
+import { IdentificationSearchScreen } from '@features/pill_identification_search';
 
-export default pillIdentificationSearch;
+export default IdentificationSearchScreen;

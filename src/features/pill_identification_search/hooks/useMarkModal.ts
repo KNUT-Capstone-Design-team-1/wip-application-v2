@@ -6,6 +6,7 @@ import {
   INITIAL_LOAD_COUNT,
   ITEMS_PER_PAGE,
 } from '@features/pill_identification_search/constants/identificationSearch';
+import logger from '@utils/logger';
 
 export const useMarkModal = () => {
   const [modalState, setModalState] = useState(false);
@@ -44,14 +45,17 @@ export const useMarkModal = () => {
 
     try {
       const searchParams = keyword.trim() ? { title: keyword } : {};
+
       const queryOption = { page: 1, limit: INITIAL_LOAD_COUNT };
 
       const result = await getMarkImages(searchParams, queryOption);
 
       setAllMarkData(result);
-    } catch (err) {
-      console.error('마크 검색 실패:', err);
+    } catch (e) {
+      logger.error(`Failed to load initial mark data: ${e.estack || e}`);
+
       setError('마크 검색에 실패했습니다.');
+
       setAllMarkData([]);
     } finally {
       setLoading(false);
@@ -72,8 +76,10 @@ export const useMarkModal = () => {
         if (result.length > 0) {
           setAllMarkData((prev) => [...prev, ...result]);
         }
-      } catch (err) {
-        console.error('추가 데이터 로드 실패:', err);
+      } catch (e) {
+        logger.error(`Failed to load more mark data: ${e.estack || e}`);
+
+        setError('추가 마크 검색에 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -110,13 +116,16 @@ export const useMarkModal = () => {
 
       // 현재 로드된 데이터보다 큰 페이지를 요청하면 추가 로드
       const maxLoadedPage = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
-      if (
+
+      const shouldLoadMore =
         newPage > maxLoadedPage &&
-        allMarkData.length % INITIAL_LOAD_COUNT === 0
-      ) {
+        allMarkData.length % INITIAL_LOAD_COUNT === 0;
+
+      if (shouldLoadMore) {
         // 100개 단위로 딱 떨어질 때만 추가 로드
         const nextBatch =
           Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
+
         await loadMoreData(searchText, nextBatch);
       }
     },
@@ -130,13 +139,16 @@ export const useMarkModal = () => {
 
       // 새 그룹의 첫 페이지로 이동
       const newPage = newGroup * 5 + 1;
+
       setCurrentPage(newPage);
 
       // 새 페이지에 필요한 데이터가 없으면 로드
       const maxLoadedPage = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
+
       if (newPage > maxLoadedPage) {
         const nextBatch =
           Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
+
         await loadMoreData(searchText, nextBatch);
       }
     },
@@ -146,7 +158,9 @@ export const useMarkModal = () => {
   // 현재 페이지에 표시할 데이터
   const getCurrentPageData = useCallback(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
     const endIndex = startIndex + ITEMS_PER_PAGE;
+
     return allMarkData.slice(startIndex, endIndex);
   }, [allMarkData, currentPage]);
 
@@ -155,10 +169,10 @@ export const useMarkModal = () => {
     const loadedPages = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
 
     // 데이터가 100개 단위로 딱 떨어지면 더 있을 수 있으므로 +5 페이지 추가
-    if (
-      allMarkData.length > 0 &&
-      allMarkData.length % INITIAL_LOAD_COUNT === 0
-    ) {
+    const isExactBatch =
+      allMarkData.length > 0 && allMarkData.length % INITIAL_LOAD_COUNT === 0;
+
+    if (isExactBatch) {
       return loadedPages + 5;
     }
 
@@ -169,19 +183,14 @@ export const useMarkModal = () => {
   const hasSelectedMark = selectedMarkBase64 !== '';
 
   return {
-    // 모달 상태
     modalState,
     openMarkModal,
     closeMarkModal,
-
-    // 선택된 마크
     selectedMarkCode,
     selectedMarkBase64,
     selectedMarkTitle,
     hasSelectedMark,
     deleteSelectedMark,
-
-    // 검색 관련
     searchText,
     setSearchText,
     markDataList: getCurrentPageData(),
@@ -190,8 +199,6 @@ export const useMarkModal = () => {
     handleSearch,
     handleMarkSelect,
     loadInitialMarks,
-
-    // 페이지네이션
     currentPage,
     totalPages,
     currentGroup,

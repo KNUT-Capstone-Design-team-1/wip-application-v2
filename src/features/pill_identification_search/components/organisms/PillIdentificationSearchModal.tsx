@@ -13,14 +13,14 @@ import {
   SECTION_KEY_TO_TEXT_STORE_KEYS,
   pillIdentificstionData,
 } from '../../constants/pillIdentificstionData';
-import IdentificationSection from '../molecules/identificationSection';
-import { Input } from '../atoms/Input';
-import IconButton from '../atoms/IconButton';
+import IdentificationSection from '../molecules/IdentificationSection';
 import Button from '../atoms/Button';
 import { COLOR_PRIMARY } from '@constants/color';
 import MarkSection from '@features/pill_identification_search/components/molecules/MarkSection';
-import { useSelecteSearchId } from '../../hooks/use_selecte_search_id';
+import { useSelectedSearchId } from '../../hooks/useSelectedSearchId';
 import { useSearchIdStore } from '../../store/search_id_store';
+import IdentificationTextInputSection from './IdentificationTextInputSection';
+import IdentificationIconButtonSection from './IdentificationIconButtonSection';
 
 interface IPillIdentificationSearchModalProps {
   visible: boolean;
@@ -35,7 +35,7 @@ const PillIdentificationSearchModal: React.FC<
     radioButtonPressHandler,
     searchPillDatas,
     resetButtonClickHandler,
-  } = useSelecteSearchId();
+  } = useSelectedSearchId();
 
   const storeValues = useSearchIdStore();
 
@@ -80,124 +80,30 @@ const PillIdentificationSearchModal: React.FC<
 
   // 섹션별 렌더링 함수
   const renderSection = (key: string, section: any) => {
-    const title = section.title;
-
     // textInput 타입
     if (section.type === 'textInput') {
       return (
-        <View key={key} style={{ marginBottom: 20 }}>
-          <IdentificationSection
-            title={title}
-            direction="row"
-            selectedIndex={[]}
-          >
-            <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
-              <View style={{ flexDirection: 'row', gap: 10, width: '100%' }}>
-                {section.datas.map((data: any, index: number) => (
-                  <View key={index} style={{ flex: 1 }}>
-                    <Input
-                      placeholder={data.placeholder}
-                      value={getTextInputValue(key, index)}
-                      width="100%"
-                      height="40"
-                      inputChangeHandler={(event) => {
-                        searchIdInputChangeHandler(
-                          event.nativeEvent.text,
-                          section.datas[index].key,
-                        );
-                      }}
-                    />
-                  </View>
-                ))}
-              </View>
-              {key === 'sideLabelText' && (
-                <TouchableOpacity
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginTop: 5,
-                  }}
-                  onPress={() => {
-                    const { isExactMatch, setIsExactMatch } =
-                      useSearchIdStore.getState();
-                    setIsExactMatch(!isExactMatch);
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 18,
-                      height: 18,
-                      borderRadius: 4,
-                      borderWidth: 1.5,
-                      borderColor: COLOR_PRIMARY[100],
-                      backgroundColor: storeValues.isExactMatch
-                        ? COLOR_PRIMARY[100]
-                        : 'transparent',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginRight: 8,
-                    }}
-                  >
-                    {storeValues.isExactMatch && (
-                      <Text
-                        style={{
-                          color: '#fff',
-                          fontSize: 12,
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        ✓
-                      </Text>
-                    )}
-                  </View>
-                  <Text style={{ fontSize: 14, color: '#666' }}>
-                    식별문자 일치 (정확히 일치하는 문자만 검색)
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </IdentificationSection>
-        </View>
+        <IdentificationTextInputSection
+          key={key}
+          sectionKey={key}
+          section={section}
+          getTextInputValue={getTextInputValue}
+          searchIdInputChangeHandler={searchIdInputChangeHandler}
+        />
       );
     }
 
     // iconButton 타입
     if (section.type === 'iconButton') {
       const selectedIndexes = getSelectedIndexesFromStore(key, section.datas);
-
       return (
-        <View key={key} style={{ marginBottom: 20 }}>
-          <IdentificationSection
-            title={title}
-            direction="column"
-            selectedIndex={selectedIndexes}
-          >
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-              {section.datas.map((data: any, index: number) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    if (index === 0) {
-                      // '전체' 버튼: 이미 선택 상태면 무시
-                      if (!selectedIndexes.includes(0)) {
-                        radioButtonPressHandler('전체', key);
-                      }
-                    } else {
-                      radioButtonPressHandler(data.value || data.label, key);
-                    }
-                  }}
-                >
-                  <IconButton
-                    isSelected={selectedIndexes.includes(index)}
-                    iconUrl={data.iconUrl}
-                    iconColor={data.iconColor}
-                    label={data.label}
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </IdentificationSection>
-        </View>
+        <IdentificationIconButtonSection
+          key={key}
+          sectionKey={key}
+          section={section}
+          selectedIndexes={selectedIndexes}
+          radioButtonPressHandler={radioButtonPressHandler}
+        />
       );
     }
 
@@ -206,7 +112,7 @@ const PillIdentificationSearchModal: React.FC<
       return (
         <View key={key} style={{ marginBottom: 20 }}>
           <IdentificationSection
-            title={title}
+            title={section.title}
             direction="column"
             selectedIndex={[]}
           >

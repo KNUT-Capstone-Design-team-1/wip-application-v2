@@ -10,7 +10,9 @@ interface SearchConditionTagsProps {
 const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
   const { searchParam } = useSearchResultListStore();
 
-  if (!searchParam) return null;
+  if (!searchParam) {
+    return null;
+  }
 
   const renderTags = () => {
     const tags: { label: string; value: string; images?: string[] }[] = [];
@@ -18,15 +20,27 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
     if (searchParam.ITEM_NAME) {
       tags.push({ label: '제품명', value: searchParam.ITEM_NAME });
     }
+
     if (searchParam.ENTP_NAME) {
       tags.push({ label: '회사명', value: searchParam.ENTP_NAME });
     }
-    if (searchParam.PRINT_FRONT) {
-      tags.push({ label: '식별(앞)', value: searchParam.PRINT_FRONT });
+
+    if (searchParam.PRINT_FRONT || searchParam.PRINT_FRONT_EXACTLY) {
+      tags.push({
+        label: '식별(앞)',
+        value: (searchParam.PRINT_FRONT ||
+          searchParam.PRINT_FRONT_EXACTLY) as string,
+      });
     }
-    if (searchParam.PRINT_BACK) {
-      tags.push({ label: '식별(뒤)', value: searchParam.PRINT_BACK });
+
+    if (searchParam.PRINT_BACK || searchParam.PRINT_BACK_EXACTLY) {
+      tags.push({
+        label: '식별(뒤)',
+        value: (searchParam.PRINT_BACK ||
+          searchParam.PRINT_BACK_EXACTLY) as string,
+      });
     }
+
     if (searchParam.DRUG_SHAPE && searchParam.DRUG_SHAPE.length > 0) {
       tags.push({ label: '모양', value: searchParam.DRUG_SHAPE.join(', ') });
     }
@@ -37,6 +51,7 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
         ...(searchParam.COLOR_CLASS2 || []),
       ]),
     );
+
     if (colors.length > 0) {
       tags.push({ label: '색상', value: colors.join(', ') });
     }
@@ -47,6 +62,7 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
         ...(searchParam.LINE_BACK || []),
       ]),
     );
+
     if (lines.length > 0) {
       tags.push({ label: '분할선', value: lines.join(', ') });
     }
@@ -71,7 +87,9 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
       tags.push({ label: '마크', value: '', images });
     }
 
-    if (tags.length === 0) return null;
+    if (tags.length === 0) {
+      return null;
+    }
 
     return (
       <View style={styles.tagList}>

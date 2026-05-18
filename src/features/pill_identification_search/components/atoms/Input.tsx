@@ -1,24 +1,39 @@
-import { View, TextInput } from 'react-native';
-import { InputEvent, useState } from 'react';
+import { View, TextInput, DimensionValue } from 'react-native';
+import { useState, useEffect } from 'react';
 import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/atoms/Input';
 
 interface IInputProps {
   placeholder: string;
   value: string;
-  width: string;
-  height: string;
-  inputChangeHandler: (event: InputEvent) => void;
+  width: DimensionValue;
+  height: DimensionValue;
+  inputChangeHandler: (text: string) => void;
 }
 
 export const Input = ({
   placeholder,
-  value,
+  value: initialValue,
   width,
   height,
   inputChangeHandler,
 }: IInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [localValue, setLocalValue] = useState(initialValue);
+
+  // 외부(store)에서 값이 바뀌면 로컬 상태와 동기화 (예: 초기화 시)
+  useEffect(() => {
+    setLocalValue(initialValue);
+  }, [initialValue]);
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
+  const handleSubmit = () => {
+    // 키보드 엔터를 눌렀을 때도 업데이트 (이미 onChangeText에서 하고 있지만 명시적 유지)
+    inputChangeHandler(localValue);
+  };
 
   return (
     <View
@@ -30,13 +45,15 @@ export const Input = ({
     >
       <TextInput
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onBlur={handleBlur}
+        onSubmitEditing={handleSubmit}
         style={styles.input}
         placeholder={placeholder}
-        onChangeText={(text) =>
-          inputChangeHandler({ nativeEvent: { text } } as any)
-        }
-        value={value}
+        onChangeText={(text) => {
+          setLocalValue(text);
+          inputChangeHandler(text);
+        }}
+        value={localValue}
       />
     </View>
   );

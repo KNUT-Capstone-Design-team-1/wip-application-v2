@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 import React, { ReactNode } from 'react';
-import { styles } from '../../styles/molecules/identificationSection';
+import { styles } from '../../styles/molecules/IdentificationSection';
 
 interface IIdentificationSectionProps {
   children: ReactNode;
