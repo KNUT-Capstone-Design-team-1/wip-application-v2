@@ -20,6 +20,7 @@ const mockDb = {
     console.log(sql);
     return Promise.resolve();
   }),
+
   runAsync: jest.fn((sql, params) => {
     lastExecutedSql = sql;
     lastExecutedParams = params || [];
@@ -28,6 +29,7 @@ const mockDb = {
     console.log('Params:', JSON.stringify(params));
     return Promise.resolve({ changes: 1, lastInsertRowId: 1 });
   }),
+
   getAllAsync: jest.fn((sql, params) => {
     lastExecutedSql = sql;
     lastExecutedParams = params || [];
@@ -36,6 +38,7 @@ const mockDb = {
     console.log('Params:', JSON.stringify(params));
     return Promise.resolve([]);
   }),
+
   getFirstAsync: jest.fn((sql, params) => {
     lastExecutedSql = sql;
     lastExecutedParams = params || [];

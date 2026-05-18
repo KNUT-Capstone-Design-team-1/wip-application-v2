@@ -32,6 +32,7 @@ describe('callAPI', () => {
         console.log((e as AxiosError<string>).response?.data);
         return;
       }
+
       console.log('[CALL-API] error. %s', (e as Error).stack);
     }
   });
