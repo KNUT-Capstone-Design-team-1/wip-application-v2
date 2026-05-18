@@ -3,8 +3,8 @@ import { useRouter } from 'expo-router';
 import { styles } from '../../styles/organisms/MenuList';
 import { BUTTON_LIST } from '../../constants/MenuList';
 import ImageButton from '../../components/atoms/ImageButton';
-import Toast from '@features/shared/components/Toast';
-import { useToast } from '@features/shared/hooks/use_toast';
+import Toast from '@components/common/Toast';
+import { useToast } from '@hooks/use_toast';
 
 interface IMenuListProps {
   onPillIdentificationPress?: () => void;

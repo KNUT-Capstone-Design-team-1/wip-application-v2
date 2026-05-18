@@ -4,8 +4,8 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Clipboard from 'expo-clipboard';
 import { useNearbyPharmacy } from '../hooks/use_nearby_pharmacy';
 import { INearbyPharmacies } from '@services/database/types';
-import Toast from '@features/shared/components/Toast';
-import { useToast } from '@features/shared/hooks/use_toast';
+import Toast from '@components/common/Toast';
+import { useToast } from '@hooks/use_toast';
 import { styles } from '../styles/NearbyPharmacyScreen';
 import { COLOR_PRIMARY } from '@constants/color';
 

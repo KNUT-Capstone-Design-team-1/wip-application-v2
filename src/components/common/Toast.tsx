@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, Animated } from 'react-native';
-import { styles } from '../styles/Toast';
+import { styles } from './styles/Toast';
 
 interface IToastProps {
   message: string;
