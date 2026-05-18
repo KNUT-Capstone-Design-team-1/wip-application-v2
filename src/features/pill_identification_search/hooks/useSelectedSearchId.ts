@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
 import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
+import { ISearchIdState, ISearchPillData } from '../types/search_id_types';
 
 export const useSelectedSearchId = () => {
   const store = useSearchIdStore();
@@ -94,7 +95,7 @@ export const useSelectedSearchId = () => {
       return results;
     } catch (e) {
       logger.error(
-        `[PILL-IDENTIFICATION-SEARCH-HOOK] Failed to search pill datas: ${e.estack || e}`,
+        `[PILL-IDENTIFICATION-SEARCH-HOOK] Failed to search pill datas: ${e.stack || e}`,
       );
 
       setIsLoading(false);
@@ -124,7 +125,10 @@ export const useSelectedSearchId = () => {
 /**
  *  현재 스토어에서 키에 해당하는 값을 안전하게 가져옴
  */
-const getCurrentValueByKey = (store: any, key: string): string[] | null => {
+const getCurrentValueByKey = (
+  store: ISearchIdState,
+  key: string,
+): string[] | null => {
   switch (key) {
     case 'manufacturerName':
       return store.manufacturerName;
@@ -144,7 +148,7 @@ const getCurrentValueByKey = (store: any, key: string): string[] | null => {
   }
 };
 
-// 배열 토글 로직 (순수 함수)
+// 배열 토글 로직
 const getToggledArrayValue = (
   currentArray: string[] | null,
   value: string,
@@ -168,79 +172,92 @@ const getToggledArrayValue = (
 };
 
 // 검색 파라미터 빌드 로직
-const buildSearchParam = (raw: any): Partial<TPillDataSearchParam> => {
-  const filtered: any = {};
+const buildSearchParam = (
+  raw: ISearchPillData,
+): Partial<TPillDataSearchParam> => {
+  const filtered: Partial<TPillDataSearchParam> = {};
 
-  // 식별 문자 처리
-  const processPrint = (
-    text: string,
-    isExact: boolean,
-    normalKey: string,
-    exactKey: string,
-  ) => {
-    const trimmed = text?.trim();
-    if (!trimmed) {
-      return;
-    }
+  // 식별 문자 처리 (앞면)
+  const frontTrimmed = raw.PRINT_FRONT?.trim();
 
-    if (isExact) {
-      filtered[exactKey] = trimmed;
-    } else {
-      filtered[normalKey] = trimmed;
-    }
-  };
+  if (frontTrimmed && raw.isExactMatch) {
+    filtered.PRINT_FRONT_EXACTLY = frontTrimmed;
+  }
 
-  processPrint(
-    raw.PRINT_FRONT,
-    raw.isExactMatch,
-    'PRINT_FRONT',
-    'PRINT_FRONT_EXACTLY',
-  );
+  if (frontTrimmed && !raw.isExactMatch) {
+    filtered.PRINT_FRONT = frontTrimmed;
+  }
 
-  processPrint(
-    raw.PRINT_BACK,
-    raw.isExactMatch,
-    'PRINT_BACK',
-    'PRINT_BACK_EXACTLY',
-  );
+  // 식별 문자 처리 (뒷면)
+  const backTrimmed = raw.PRINT_BACK?.trim();
+
+  if (backTrimmed && raw.isExactMatch) {
+    filtered.PRINT_BACK_EXACTLY = backTrimmed;
+  }
+
+  if (backTrimmed && !raw.isExactMatch) {
+    filtered.PRINT_BACK = backTrimmed;
+  }
 
   // 문자열 필드 처리
-  const textFields = [
-    'ITEM_NAME',
-    'ENTP_NAME',
-    'MARK_CODE_FRONT',
-    'MARK_CODE_BACK',
-  ];
+  if (raw.ITEM_NAME?.trim()) {
+    filtered.ITEM_NAME = raw.ITEM_NAME.trim();
+  }
 
-  textFields.forEach((key) => {
-    const val = raw[key]?.trim();
+  if (raw.ENTP_NAME?.trim()) {
+    filtered.ENTP_NAME = raw.ENTP_NAME.trim();
+  }
 
-    if (val) {
-      filtered[key] = val;
-    }
-  });
+  if (raw.MARK_CODE_FRONT?.trim()) {
+    filtered.MARK_CODE_FRONT = raw.MARK_CODE_FRONT.trim();
+  }
+
+  if (raw.MARK_CODE_BACK?.trim()) {
+    filtered.MARK_CODE_BACK = raw.MARK_CODE_BACK.trim();
+  }
 
   // 배열 필드 처리
-  const arrayFields = [
-    'DRUG_SHAPE',
-    'COLOR_CLASS1',
-    'COLOR_CLASS2',
-    'LINE_FRONT',
-    'LINE_BACK',
-    'FORM_CODE',
-  ];
-
-  arrayFields.forEach((key) => {
-    const arr = raw[key] || [];
+  const processArray = (arr: string[] | null): string[] | undefined => {
+    if (!arr) {
+      return undefined;
+    }
 
     const valid = arr.filter(
-      (item: string) => item !== SEARCH_ALL_LABEL && item.trim(),
+      (item) => item !== SEARCH_ALL_LABEL && item.trim(),
     );
 
-    if (valid.length > 0) {
-      filtered[key] = valid;
-    }
-  });
+    return valid.length > 0 ? valid : undefined;
+  };
+
+  const drugShape = processArray(raw.DRUG_SHAPE);
+  if (drugShape) {
+    filtered.DRUG_SHAPE = drugShape;
+  }
+
+  const colorClass1 = processArray(raw.COLOR_CLASS1);
+  if (colorClass1) {
+    filtered.COLOR_CLASS1 = colorClass1;
+  }
+
+  const colorClass2 = processArray(raw.COLOR_CLASS2);
+  if (colorClass2) {
+    filtered.COLOR_CLASS2 = colorClass2;
+  }
+
+  const lineFront = processArray(raw.LINE_FRONT);
+  if (lineFront) {
+    filtered.LINE_FRONT = lineFront;
+  }
+
+  const lineBack = processArray(raw.LINE_BACK);
+  if (lineBack) {
+    filtered.LINE_BACK = lineBack;
+  }
+
+  const formCode = processArray(raw.FORM_CODE);
+  if (formCode) {
+    filtered.FORM_CODE = formCode;
+  }
 
   return filtered;
 };

@@ -1,4 +1,4 @@
-import IdentificationSearchScreen from './screens/PillIndentificationSearchScreen';
+import IdentificationSearchScreen from './screens/PillIdentificationSearchScreen';
 import PillIdentificationSearchModal from './components/organisms/PillIdentificationSearchModal';
 
 export { IdentificationSearchScreen, PillIdentificationSearchModal };

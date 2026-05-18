@@ -4,10 +4,11 @@ import { useSearchIdStore } from '../../store/search_id_store';
 import { COLOR_PRIMARY } from '@constants/color';
 import { Input } from '../atoms/Input';
 import IdentificationSection from '../molecules/IdentificationSection';
+import { IIdentificationSection } from '@features/pill_identification_search/types/search_id_types';
 
 interface IIdentificationTextInputSectionProps {
   sectionKey: string;
-  section: any;
+  section: IIdentificationSection;
   searchIdInputChangeHandler: (text: string, key: string) => void;
   getTextInputValue: (sectionKey: string, dataIndex: number) => string;
 }
@@ -23,6 +24,10 @@ const IdentificationTextInputSection: React.FC<
   const isExactMatch = useSearchIdStore((state) => state.isExactMatch);
   const setIsExactMatch = useSearchIdStore((state) => state.setIsExactMatch);
 
+  if (!section.datas) {
+    return null;
+  }
+
   return (
     <View style={{ marginBottom: 20 }}>
       <IdentificationSection
@@ -32,7 +37,7 @@ const IdentificationTextInputSection: React.FC<
       >
         <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
           <View style={{ flexDirection: 'row', gap: 10, width: '100%' }}>
-            {section.datas.map((data: any, index: number) => (
+            {section.datas.map((data, index) => (
               <View key={index} style={{ flex: 1 }}>
                 <Input
                   placeholder={data.placeholder}
@@ -40,7 +45,9 @@ const IdentificationTextInputSection: React.FC<
                   width="100%"
                   height={40}
                   inputChangeHandler={(text) => {
-                    searchIdInputChangeHandler(text, section.datas[index].key);
+                    if (data.key) {
+                      searchIdInputChangeHandler(text, data.key);
+                    }
                   }}
                 />
               </View>

@@ -97,40 +97,48 @@ export const usePillImageSelection = () => {
       setIsSearching(true);
       setIsLoading(true);
 
-      // 이미지 파일을 Base64로 변환
-      const front = await RNFS.readFile(pillImages.front, 'base64');
-      const back = await RNFS.readFile(pillImages.back, 'base64');
+      // 이미지 파일을 Base64로 변환 (병렬 처리)
+      const [frontBase64, backBase64] = await Promise.all([
+        RNFS.readFile(pillImages.front, 'base64'),
+        RNFS.readFile(pillImages.back, 'base64'),
+      ]);
 
       // 특징 추출 API 호출
       const extractionResult = await requestPillImageFeatureExtraction({
-        front,
-        back,
+        front: frontBase64,
+        back: backBase64,
       });
 
       if (!extractionResult) {
-        throw new Error('특징 추출 실패');
+        throw new Error(`No extractionResult`);
       }
 
       const { PRINT, SHAPE, COLOR } = extractionResult;
 
-      // 추출된 특징으로 DB 검색
+      // 추출된 특징으로 DB 검색 파라미터 구성
       const searchParam = {
         PRINT_FRONT: PRINT.join(' '),
         DRUG_SHAPE: SHAPE,
         COLOR_CLASS1: COLOR,
       };
 
-      console.log('추출된 특징 기반 검색 시작:', searchParam);
+      logger.info(
+        `[IMAGE-SEARCH] Extracted features: ${JSON.stringify(searchParam)}`,
+      );
+
       setSearchParam(searchParam);
 
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
       setSearchResultData(results);
 
-      // 검색 완료 후 결과 화면으로 이동
-      router.push('/pill-search-result-list');
-    } catch (error) {
-      logger.error(`이미지 검색 실패: ${error}`);
-      Alert.alert('검색 실패', '이미지 분석 중 오류가 발생했습니다.');
+      router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
+    } catch (e) {
+      logger.error(`[IMAGE-SEARCH] Failed to image search. ${e.stack || e}`);
+
+      Alert.alert(
+        '검색 실패',
+        '이미지 분석 중 오류가 발생했습니다. 다시 시도해 주세요.',
+      );
     } finally {
       setIsSearching(false);
       setIsLoading(false);

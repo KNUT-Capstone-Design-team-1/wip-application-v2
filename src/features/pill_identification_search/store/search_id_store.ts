@@ -34,19 +34,19 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
     set({
       companyName: value,
     }),
-  setManufacturerName: (arr: string[]) =>
+  setManufacturerName: (arr: string[] | null) =>
     set({
       manufacturerName: arr,
     }),
-  setDividerLineData: (arr: string[]) =>
+  setDividerLineData: (arr: string[] | null) =>
     set({
       dividerLineData: arr,
     }),
-  setShape: (arr: string[]) =>
+  setShape: (arr: string[] | null) =>
     set({
       shape: arr,
     }),
-  setColors: (arr: string[]) =>
+  setColors: (arr: string[] | null) =>
     set({
       colors: arr,
     }),

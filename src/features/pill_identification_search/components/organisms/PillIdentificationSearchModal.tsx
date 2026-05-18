@@ -7,20 +7,17 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import { styles } from '../../styles/organisms/PillIdentificationSearchModal';
-import {
-  SECTION_KEY_TO_STORE_KEY,
-  SECTION_KEY_TO_TEXT_STORE_KEYS,
-  pillIdentificstionData,
-} from '../../constants/pillIdentificstionData';
-import IdentificationSection from '../molecules/IdentificationSection';
-import Button from '../atoms/Button';
 import { COLOR_PRIMARY } from '@constants/color';
+import { IIdentificationSection } from '@features/pill_identification_search/types/search_id_types';
+import { pillIdentificationData } from '@features/pill_identification_search/constants/pillIdentificationData';
+import { useSelectedSearchId } from '@features/pill_identification_search/hooks/useSelectedSearchId';
+import { useSearchIdForm } from '@features/pill_identification_search/hooks/useSearchIdForm';
+import IdentificationSection from '@features/pill_identification_search/components/molecules/IdentificationSection';
 import MarkSection from '@features/pill_identification_search/components/molecules/MarkSection';
-import { useSelectedSearchId } from '../../hooks/useSelectedSearchId';
-import { useSearchIdStore } from '../../store/search_id_store';
-import IdentificationTextInputSection from './IdentificationTextInputSection';
-import IdentificationIconButtonSection from './IdentificationIconButtonSection';
+import Button from '@features/pill_identification_search/components/atoms/Button';
+import IdentificationTextInputSection from '@features/pill_identification_search/components/organisms/IdentificationTextInputSection';
+import IdentificationIconButtonSection from '@features/pill_identification_search/components/organisms/IdentificationIconButtonSection';
+import { styles } from '@features/pill_identification_search/styles/organisms/PillIdentificationSearchModal';
 
 interface IPillIdentificationSearchModalProps {
   visible: boolean;
@@ -37,49 +34,10 @@ const PillIdentificationSearchModal: React.FC<
     resetButtonClickHandler,
   } = useSelectedSearchId();
 
-  const storeValues = useSearchIdStore();
-
-  // store 배열에서 선택된 label 목록을 인덱스 배열로 변환
-  const getSelectedIndexesFromStore = (
-    sectionKey: string,
-    datas: any[],
-  ): number[] => {
-    const storeKey = SECTION_KEY_TO_STORE_KEY[sectionKey];
-    if (!storeKey) return [0];
-
-    const storeArray: string[] = (storeValues as any)[storeKey] || [];
-
-    // store가 비어있거나 '전체'만 있으면 index 0 반환
-    if (
-      storeArray.length === 0 ||
-      (storeArray.length === 1 && storeArray[0] === '전체')
-    ) {
-      return [0];
-    }
-
-    const indexes = datas
-      .map((data, index) =>
-        storeArray.includes(data.value || data.label) ? index : -1,
-      )
-      .filter((i) => i !== -1);
-
-    return indexes.length > 0 ? indexes : [0];
-  };
-
-  // store에서 textInput 값 가져오기
-  const getTextInputValue = (sectionKey: string, dataIndex: number): string => {
-    const storeKeys = SECTION_KEY_TO_TEXT_STORE_KEYS[sectionKey];
-    if (!storeKeys || !storeKeys[dataIndex]) return '';
-    return (storeValues as any)[storeKeys[dataIndex]] || '';
-  };
-
-  // 초기화 핸들러
-  const handleReset = () => {
-    resetButtonClickHandler();
-  };
+  const { getSelectedIndexesFromStore, getTextInputValue } = useSearchIdForm();
 
   // 섹션별 렌더링 함수
-  const renderSection = (key: string, section: any) => {
+  const renderSection = (key: string, section: IIdentificationSection) => {
     // textInput 타입
     if (section.type === 'textInput') {
       return (
@@ -95,7 +53,10 @@ const PillIdentificationSearchModal: React.FC<
 
     // iconButton 타입
     if (section.type === 'iconButton') {
-      const selectedIndexes = getSelectedIndexesFromStore(key, section.datas);
+      const selectedIndexes = getSelectedIndexesFromStore(
+        key,
+        section.datas || [],
+      );
       return (
         <IdentificationIconButtonSection
           key={key}
@@ -149,7 +110,7 @@ const PillIdentificationSearchModal: React.FC<
             contentContainerStyle={styles.scrollContentContainer}
             showsVerticalScrollIndicator={false}
           >
-            {Object.entries(pillIdentificstionData).map(([key, section]) =>
+            {Object.entries(pillIdentificationData).map(([key, section]) =>
               renderSection(key, section),
             )}
           </ScrollView>
@@ -159,7 +120,7 @@ const PillIdentificationSearchModal: React.FC<
             <Button
               width="48%"
               label="초기화"
-              pressHandler={handleReset}
+              pressHandler={resetButtonClickHandler}
               background={'#fff'}
               color={COLOR_PRIMARY[100]}
             />

@@ -4,7 +4,7 @@ import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/atoms/Input';
 
 interface IInputProps {
-  placeholder: string;
+  placeholder?: string;
   value: string;
   width: DimensionValue;
   height: DimensionValue;
@@ -12,7 +12,7 @@ interface IInputProps {
 }
 
 export const Input = ({
-  placeholder,
+  placeholder = '',
   value: initialValue,
   width,
   height,

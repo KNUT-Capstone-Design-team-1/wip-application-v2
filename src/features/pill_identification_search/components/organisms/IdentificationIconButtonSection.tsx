@@ -2,10 +2,11 @@ import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import IconButton from '../atoms/IconButton';
 import IdentificationSection from '../molecules/IdentificationSection';
+import { IIdentificationSection } from '@features/pill_identification_search/types/search_id_types';
 
 interface IIdentificationIconButtonSectionProps {
   sectionKey: string;
-  section: any;
+  section: IIdentificationSection;
   selectedIndexes: number[];
   radioButtonPressHandler: (value: string, key: string) => void;
 }
@@ -13,6 +14,10 @@ interface IIdentificationIconButtonSectionProps {
 const IdentificationIconButtonSection: React.FC<
   IIdentificationIconButtonSectionProps
 > = ({ sectionKey, section, selectedIndexes, radioButtonPressHandler }) => {
+  if (!section.datas) {
+    return null;
+  }
+
   return (
     <View style={{ marginBottom: 20 }}>
       <IdentificationSection
@@ -21,25 +26,26 @@ const IdentificationIconButtonSection: React.FC<
         selectedIndex={selectedIndexes}
       >
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          {section.datas.map((data: any, index: number) => (
+          {section.datas.map((data, index) => (
             <TouchableOpacity
               key={index}
               onPress={() => {
-                if (index === 0) {
-                  // '전체' 버튼: 이미 선택 상태면 무시
-                  if (!selectedIndexes.includes(0)) {
-                    radioButtonPressHandler('전체', sectionKey);
-                  }
-                } else {
-                  radioButtonPressHandler(data.value || data.label, sectionKey);
+                if (index === 0 && !selectedIndexes.includes(0)) {
+                  radioButtonPressHandler('전체', sectionKey); // '전체' 버튼: 이미 선택 상태면 무시
+                  return;
                 }
+
+                radioButtonPressHandler(
+                  (data.value || data.label) as string,
+                  sectionKey,
+                );
               }}
             >
               <IconButton
                 isSelected={selectedIndexes.includes(index)}
                 iconUrl={data.iconUrl}
                 iconColor={data.iconColor}
-                label={data.label}
+                label={data.label || ''}
               />
             </TouchableOpacity>
           ))}

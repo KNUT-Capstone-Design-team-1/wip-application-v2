@@ -16,6 +16,7 @@ import rectangle from '@assets/images/shape/rectangle.png';
 import straight from '@assets/images/shape/straight.png';
 import triangle from '@assets/images/shape/triangle.png';
 import total from '@assets/images/shape/total.png';
+import { IIdentificationSearchData } from '../types/search_id_types';
 
 // section key → store 배열 변수 매핑
 export const SECTION_KEY_TO_STORE_KEY: { [key: string]: string } = {
@@ -33,7 +34,7 @@ export const SECTION_KEY_TO_TEXT_STORE_KEYS: { [key: string]: string[] } = {
 };
 
 // 식별 검색에 들어갈 데이터들
-export const pillIdentificstionData = {
+export const pillIdentificationData: IIdentificationSearchData = {
   // 앞면, 뒷면 식별 문자
   sideLabelText: {
     type: 'textInput',
@@ -339,9 +340,9 @@ export const pillIdentificstionData = {
       },
     ],
   },
-  // 마크명
+  // 마크
   mark: {
     type: 'other',
-    title: '마크명',
+    title: '마크',
   },
 };

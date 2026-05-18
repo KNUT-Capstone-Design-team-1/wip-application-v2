@@ -1,11 +1,3 @@
-export interface IPaginationProps {
-  totalPages: number;
-  page: number;
-  setPage: (page: number) => void;
-  currentGroup: number;
-  setCurrentGroup: (group: number) => void;
-}
-
 export interface ISearchPillData {
   PRINT_FRONT: string;
   PRINT_BACK: string;
@@ -22,7 +14,7 @@ export interface ISearchPillData {
   isExactMatch: boolean;
 }
 
-export interface ISearchIdValue {
+export interface ISearchIdState {
   sideLabelFrontText: string;
   sideLabelBackText: string;
   productNameText: string;
@@ -36,18 +28,41 @@ export interface ISearchIdValue {
   isExactMatch: boolean;
 }
 
-export interface ISearchIdStore extends ISearchIdValue {
+export interface ISearchIdActions {
   setSideLabelFrontText: (value: string) => void;
   setSideLabelBackText: (value: string) => void;
   setProductNameText: (value: string) => void;
   setCompanyName: (value: string) => void;
-  setManufacturerName: (value: string[] | null) => void;
-  setDividerLineData: (value: string[] | null) => void;
-  setShape: (value: string[] | null) => void;
-  setColors: (value: string[] | null) => void;
+  setManufacturerName: (arr: string[] | null) => void;
+  setDividerLineData: (arr: string[] | null) => void;
+  setShape: (arr: string[] | null) => void;
+  setColors: (arr: string[] | null) => void;
   setMarkCodeFront: (value: string) => void;
   setMarkCodeBack: (value: string) => void;
   setIsExactMatch: (value: boolean) => void;
   resetSelectedSearchId: () => void;
-  getSelectedSearchId: () => any;
+  getSelectedSearchId: () => ISearchPillData;
+}
+
+export interface ISearchIdStore extends ISearchIdState, ISearchIdActions {}
+
+export interface IIdentificationSectionData {
+  key?: string;
+  placeholder?: string;
+  width?: string | number;
+  parsingDataName?: string;
+  iconUrl?: any;
+  iconColor?: string;
+  label?: string;
+  value?: string | null;
+}
+
+export interface IIdentificationSection {
+  type: 'textInput' | 'iconButton' | 'other';
+  title: string;
+  datas?: IIdentificationSectionData[];
+}
+
+export interface IIdentificationSearchData {
+  [key: string]: IIdentificationSection;
 }
