@@ -11,7 +11,7 @@ export const loadExternalConfig = async () => {
 
     useExternalUrlStore.getState().setUrls(externalUrls);
 
-    console.log(`Complete load external URLs: ${externalUrls}`);
+    console.log(`Complete load external URLs: ${JSON.stringify(externalUrls)}`);
 
     return true;
   } catch (e) {
