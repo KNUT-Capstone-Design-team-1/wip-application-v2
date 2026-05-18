@@ -76,7 +76,7 @@ export const useAppInitializer = () => {
    * 개별 데이터 테이블 업데이트 필요 여부 체크
    */
   const checkRequireTableUpdate = async (table: TDataTable) => {
-    console.log(`Updating ${table} table`);
+    console.log(`Try updating ${table} table`);
 
     const updateCheck =
       await DatabaseUpdateService.checkRequireTableUpdate(table);
