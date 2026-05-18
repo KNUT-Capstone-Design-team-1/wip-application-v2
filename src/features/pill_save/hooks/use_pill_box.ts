@@ -1,46 +1,45 @@
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState, useCallback } from 'react';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
+import { pillSaveService } from '@features/pill_save/services/pill_save_service';
+import logger from '@utils/logger';
 
-const SAVE_DATA_KEY = 'saveData';
-
+/**
+ * 개별 알약 저장 상태 관리 및 토글 훅
+ */
 export const usePillBox = (itemSeq: string) => {
   const [saveState, setSaveState] = useState(false);
 
-  useEffect(() => {
-    const checkSaved = async () => {
-      const raw = await AsyncStorage.getItem(SAVE_DATA_KEY);
+  /**
+   * 저장 여부 확인
+   */
+  const checkSavedStatus = useCallback(async () => {
+    try {
+      const isSaved = await pillSaveService.isPillSaved(itemSeq);
 
-      if (!raw) return;
+      setSaveState(isSaved);
+    } catch (e) {
+      logger.error(`Failed to check saved status. ${e.stack || e}`);
 
-      const savedList: IPillSaveData[] = JSON.parse(raw);
-      setSaveState(savedList.some((item) => item.ITEM_SEQ === itemSeq));
-    };
-    checkSaved();
+      setSaveState(false);
+    }
   }, [itemSeq]);
 
-  const toggleSave = async (saveItem: IPillSaveData) => {
-    const raw = await AsyncStorage.getItem(SAVE_DATA_KEY);
-    const savedList: IPillSaveData[] = raw ? JSON.parse(raw) : [];
-    const alreadySaved = savedList.some((item) => item.ITEM_SEQ === itemSeq);
+  useEffect(() => {
+    checkSavedStatus();
+  }, [checkSavedStatus]);
 
-    if (alreadySaved) {
-      const next = savedList.filter((item) => item.ITEM_SEQ !== itemSeq);
+  /**
+   * 저장 상태 토글
+   */
+  const toggleSave = useCallback(async (saveItem: IPillSaveData) => {
+    try {
+      const nextStatus = await pillSaveService.toggleSave(saveItem);
 
-      await AsyncStorage.setItem(SAVE_DATA_KEY, JSON.stringify(next));
-      setSaveState(false);
-    } else {
-      // CHART 필드의 줄바꿈/공백 정리
-      const sanitizedItem = {
-        ...saveItem,
-        CHART: saveItem.CHART?.replace(/\s+/g, ' ').trim() || '',
-      };
-      savedList.push(sanitizedItem);
-      await AsyncStorage.setItem(SAVE_DATA_KEY, JSON.stringify(savedList));
-
-      setSaveState(true);
+      setSaveState(nextStatus);
+    } catch (e) {
+      logger.error(`Failed to toggle save status. ${e.stack || e}`);
     }
-  };
+  }, []);
 
   return { saveState, toggleSave };
 };

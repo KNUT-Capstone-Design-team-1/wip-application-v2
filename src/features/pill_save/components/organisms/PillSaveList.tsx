@@ -1,75 +1,94 @@
-import { ScrollView, View } from 'react-native';
+import { memo, useCallback } from 'react';
+import { View, FlatList, ListRenderItem } from 'react-native';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import PillSaveContent from '../molecules/PillSaveContent';
+import PillSaveContent from '@features/pill_save/components/molecules/PillSaveContent';
 import {
   IPillSaveData,
   IPillSaveListProps,
 } from '@features/pill_save/types/pill_save_type';
-import { styles } from '../../styles/organisms/PillSaveList';
+import { styles } from '@features/pill_save/styles/organisms/PillSaveList';
 import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
 import NotItem from '@components/common/NotItem';
 
-const SAVE_DATA_KEY = 'saveData';
+/**
+ * 저장된 데이터가 없을 때 표시할 화면
+ */
+const EmptyBox = () => (
+  <NotItem
+    mainText={'보관된 알약이 없습니다.'}
+    subText={'북마크 아이콘을 누르면 보관함에 저장돼요!'}
+    marginTop={'60%'}
+  />
+);
 
 const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
-  const handlePressDetail = async (itemSeq: string, itemImage: string) => {
-    const result = await getPillDatasByItemSeq([itemSeq]);
-    if (result.length > 0) {
-      const pillData = result[0];
+  /**
+   * 상세 페이지로 이동
+   */
+  const handlePressDetail = useCallback(
+    async (itemSeq: string, itemImage: string) => {
+      const result = await getPillDatasByItemSeq([itemSeq]);
+      if (result.length > 0) {
+        router.push({
+          pathname: '/pill-search-result-detail',
+          params: {
+            itemDetail: JSON.stringify(result[0]),
+            itemImage: itemImage,
+          },
+        });
+      }
+    },
+    [],
+  );
 
-      router.push({
-        pathname: '/pill-search-result-detail',
-        params: {
-          itemDetail: JSON.stringify(pillData),
-          itemImage: itemImage,
-        },
-      });
-    }
-  };
+  /**
+   * 리스트 아이템 렌더링
+   */
+  const renderItem: ListRenderItem<IPillSaveData> = useCallback(
+    ({ item }) => {
+      if (item.ITEM_SEQ === 'EMPTY_ITEM') {
+        return <View style={{ flex: 1, margin: 6 }} />;
+      }
 
-  const handlePressDelete = async (itemSeq: string) => {
-    const raw = await AsyncStorage.getItem(SAVE_DATA_KEY);
+      return (
+        <PillSaveContent
+          saveData={item}
+          onPressDetail={() =>
+            handlePressDetail(item.ITEM_SEQ, item.ITEM_IMAGE)
+          }
+          onPressDelete={() => onDataChange?.(item.ITEM_SEQ)}
+        />
+      );
+    },
+    [handlePressDetail, onDataChange],
+  );
 
-    if (!raw) return;
+  if (pillSaveData.length === 0) {
+    return <EmptyBox />;
+  }
 
-    const savedList = JSON.parse(raw);
-    const updatedList = savedList.filter((item: IPillSaveData) => {
-      return item.ITEM_SEQ !== itemSeq;
-    });
-
-    await AsyncStorage.setItem(SAVE_DATA_KEY, JSON.stringify(updatedList));
-    onDataChange?.();
-  };
+  // 2열 정렬을 맞추기 위해 홀수일 경우 빈 아이템 추가
+  const formattedData =
+    pillSaveData.length % 2 !== 0
+      ? [...pillSaveData, { ITEM_SEQ: 'EMPTY_ITEM' } as IPillSaveData]
+      : pillSaveData;
 
   return (
-    <ScrollView
+    <FlatList
       style={styles.pillSaveListWrapper}
       contentContainerStyle={styles.pillSaveListContent}
-    >
-      {pillSaveData.length === 0 ? (
-        <NotItem
-          mainText={'보관된 알약이 없습니다.'}
-          subText={'북마크 아이콘을 누르면 보관함에 저장돼요!'}
-          marginTop={'60%'}
-        />
-      ) : (
-        pillSaveData.map((saveData, index) => {
-          return (
-            <View key={saveData.ITEM_SEQ} style={styles.pillSaveItemWrapper}>
-              <PillSaveContent
-                saveData={saveData}
-                onPressDetail={() =>
-                  handlePressDetail(saveData.ITEM_SEQ, saveData.ITEM_IMAGE)
-                }
-                onPressDelete={() => handlePressDelete(saveData.ITEM_SEQ)}
-              />
-            </View>
-          );
-        })
-      )}
-    </ScrollView>
+      data={formattedData}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.ITEM_SEQ}
+      numColumns={2}
+      columnWrapperStyle={styles.pillSaveColumnWrapper}
+      showsVerticalScrollIndicator={false}
+      initialNumToRender={10}
+      maxToRenderPerBatch={10}
+      windowSize={5}
+      removeClippedSubviews={true}
+    />
   );
 };
 
-export default PillSaveList;
+export default memo(PillSaveList);

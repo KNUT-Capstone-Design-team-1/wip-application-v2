@@ -3,13 +3,16 @@ import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   pillSaveContentWrapper: {
+    flex: 1,
+    margin: 6,
     flexDirection: 'column',
     borderRadius: 10,
     borderColor: COLOR_GRAY[100],
     borderWidth: 1,
-    width: '100%',
     backgroundColor: '#fff',
-    minHeight: 240,
+    minHeight: 220,
+    paddingBottom: 12,
+    overflow: 'hidden',
   },
   closeButton: {
     position: 'absolute',
@@ -24,13 +27,12 @@ export const styles = StyleSheet.create({
     height: 95,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: COLOR_GRAY[100],
     marginBottom: 8,
   },
   pillInfoWrapper: {
     flex: 1,
-    marginBottom: 8,
     paddingHorizontal: 10,
   },
   pillName: {
@@ -49,14 +51,5 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     color: '#999',
     lineHeight: 14,
-  },
-  detailButton: {
-    alignSelf: 'flex-end',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  detailButtonText: {
-    fontSize: 12,
-    color: '#32D2FF',
   },
 });

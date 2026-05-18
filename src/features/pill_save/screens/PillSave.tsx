@@ -1,51 +1,40 @@
-import { View, Text } from 'react-native';
-import { styles } from '../styles/PillSave';
-import PillSaveList from '../components/organisms/PillSaveList';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
-import { IPillSaveData } from '../types/pill_save_type';
+import { View, Text, ActivityIndicator } from 'react-native';
+import { styles } from '@features/pill_save/styles/PillSave';
+import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
+import { usePillSaveList } from '@features/pill_save/hooks/use_pill_save_list';
+import { COLOR_PRIMARY } from '@constants/color';
+
+/**
+ * 저장된 알약 개수 표시 헤더
+ */
+const SaveCountHeader = ({ count }: { count: number }) => (
+  <View style={styles.header}>
+    <Text style={styles.countText}>전체 개수 {count}개</Text>
+  </View>
+);
+
+/**
+ * 로딩 화면
+ */
+const LoadingView = () => (
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
+    <Text style={styles.loadingText}>데이터를 불러오는 중...</Text>
+  </View>
+);
 
 const PillSave = () => {
-  const [pillSaveData, setPillSaveData] = useState<IPillSaveData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { pillSaveData, loading, deleteSaveData } = usePillSaveList();
 
-  const getSaveData = async () => {
-    try {
-      setLoading(true);
-      const saveData = await AsyncStorage.getItem('saveData');
-
-      if (saveData) {
-        const parsedData = JSON.parse(saveData);
-        setPillSaveData(Array.isArray(parsedData) ? parsedData : []);
-      } else {
-        setPillSaveData([]);
-      }
-    } catch (error) {
-      console.error('Failed to load save data:', error);
-      setPillSaveData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getSaveData();
-  }, []);
+  if (loading) {
+    return <LoadingView />;
+  }
 
   return (
     <View style={styles.pillSaveRoot}>
-      <View>
-        <Text>전체 개수 {pillSaveData.length}</Text>
-      </View>
-      {loading ? (
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text>로딩 중...</Text>
-        </View>
-      ) : (
-        <PillSaveList pillSaveData={pillSaveData} onDataChange={getSaveData} />
-      )}
+      <SaveCountHeader count={pillSaveData.length} />
+
+      <PillSaveList pillSaveData={pillSaveData} onDataChange={deleteSaveData} />
     </View>
   );
 };

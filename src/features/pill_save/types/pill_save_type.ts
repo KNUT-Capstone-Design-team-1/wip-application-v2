@@ -8,7 +8,7 @@ export interface IPillSaveData {
 
 export interface IPillSaveListProps {
   pillSaveData: IPillSaveData[];
-  onDataChange?: () => void;
+  onDataChange?: (itemSeq: string) => void;
 }
 
 export interface IPillSaveContentProps {

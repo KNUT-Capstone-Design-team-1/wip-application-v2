@@ -3,18 +3,13 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   pillSaveListWrapper: {
     flex: 1,
-    width: '100%',
   },
   pillSaveListContent: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-    columnGap: 5,
-    rowGap: 10,
-    flexWrap: 'wrap',
+    paddingTop: 14,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
   },
-  pillSaveItemWrapper: {
-    width: '49%',
+  pillSaveColumnWrapper: {
+    justifyContent: 'flex-start',
   },
 });
