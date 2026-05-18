@@ -23,45 +23,6 @@ export const TAB_CONFIGS: TabConfig[] = [
     path: '/',
     isCenter: false,
   },
-  // {
-  //   key: 'pillIdentificationSearch',
-  //   label: '식별검색',
-  //   icon: (isActive: boolean) => (
-  //     <PillIdentificationSearchSvg
-  //       width={ICON_SIZE}
-  //       height={ICON_SIZE}
-  //       fill={isActive ? 'url(#iconGradient)' : COLOR.white}
-  //     />
-  //   ),
-  //   path: '/pillIdentificationSearch',
-  //   isCenter: false,
-  // },
-  // {
-  //   key: '/pill-image-search',
-  //   label: '이미지검색',
-  //   icon: (isActive: boolean) => (
-  //     <PillImageSearchSvg
-  //       width={CENTER_ICON_SIZE}
-  //       height={CENTER_ICON_SIZE}
-  //       fill={COLOR.white}
-  //     />
-  //   ),
-  //   path: '/pillImageSearch',
-  //   isCenter: true,
-  // },
-  // {
-  //   key: 'pharmacy',
-  //   label: '약국',
-  //   icon: (isActive: boolean) => (
-  //     <PharmacySvg
-  //       width={ICON_SIZE}
-  //       height={ICON_SIZE}
-  //       fill={isActive ? 'url(#iconGradient)' : COLOR.white}
-  //     />
-  //   ),
-  //   path: '/pharmacy',
-  //   isCenter: false,
-  // },
   {
     key: 'storage',
     label: '보관함',
