@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Save from '../../../../../assets/icons/save.svg';
 import { styles } from '../../styles/molecules/PillBasicHeader';
@@ -28,4 +29,4 @@ const PillBasicHeader = ({
   );
 };
 
-export default PillBasicHeader;
+export default memo(PillBasicHeader);

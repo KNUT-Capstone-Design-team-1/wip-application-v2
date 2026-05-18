@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../styles/atoms/InfoRow';
 
@@ -7,7 +8,9 @@ interface IInfoRowProps {
 }
 
 const InfoRow = ({ label, value }: IInfoRowProps) => {
-  if (!value || value === 'null') return null;
+  if (!value || value === 'null') {
+    return null;
+  }
 
   return (
     <View style={styles.infoRow}>
@@ -17,4 +20,4 @@ const InfoRow = ({ label, value }: IInfoRowProps) => {
   );
 };
 
-export default InfoRow;
+export default memo(InfoRow);

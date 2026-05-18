@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text } from 'react-native';
 import InfoRow from '../atoms/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
@@ -98,4 +99,4 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
   );
 };
 
-export default PillSpecsSection;
+export default memo(PillSpecsSection);

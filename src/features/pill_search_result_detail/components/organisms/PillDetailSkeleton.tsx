@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 import SkeletonBox from '../atoms/SkeletonBox';
 import { styles } from '../../styles/organisms/PillDetailSkeleton';
@@ -50,4 +50,4 @@ const PillDetailSkeleton = () => {
   );
 };
 
-export default PillDetailSkeleton;
+export default memo(PillDetailSkeleton);

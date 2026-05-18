@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState, useCallback } from 'react';
 import DetailSection from './DetailSection';
 import { IPillDetail } from '../../types/pill_detail_type';
 
@@ -11,30 +11,34 @@ const PillDescriptionSection = ({ data }: IPillDescriptionSectionProps) => {
   const [showUsage, setShowUsage] = useState(true);
   const [showWarning, setShowWarning] = useState(true);
 
+  const toggleEffect = useCallback(() => setShowEffect((prev) => !prev), []);
+  const toggleUsage = useCallback(() => setShowUsage((prev) => !prev), []);
+  const toggleWarning = useCallback(() => setShowWarning((prev) => !prev), []);
+
   return (
     <>
       <DetailSection
         title="효능/효과"
         isOpen={showEffect}
-        onToggle={() => setShowEffect(!showEffect)}
+        onToggle={toggleEffect}
         content={data.EE_DOC_DATA}
       />
 
       <DetailSection
         title="용법/용량"
         isOpen={showUsage}
-        onToggle={() => setShowUsage(!showUsage)}
+        onToggle={toggleUsage}
         content={data.UD_DOC_DATA}
       />
 
       <DetailSection
         title="사용상 주의사항"
         isOpen={showWarning}
-        onToggle={() => setShowWarning(!showWarning)}
+        onToggle={toggleWarning}
         content={data.NB_DOC_DATA}
       />
     </>
   );
 };
 
-export default PillDescriptionSection;
+export default memo(PillDescriptionSection);

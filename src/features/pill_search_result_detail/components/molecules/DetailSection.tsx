@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/molecules/DetailSection';
 import { decodeHtmlContent } from '../../utils/htmlDecoder';
@@ -9,14 +10,24 @@ const DetailSection = ({
   onToggle,
   content,
 }: IDetailSectionProps) => {
-  if (!content) return null;
+  const decodedContent = useMemo(() => {
+    if (!content) {
+      return '';
+    }
+    return decodeHtmlContent(content);
+  }, [content]);
 
-  // HTML 태그를 일반 텍스트로 변환
-  const decodedContent = decodeHtmlContent(content);
+  if (!content) {
+    return null;
+  }
 
   return (
     <View style={styles.detailSectionWrapper}>
-      <TouchableOpacity style={styles.detailInfoHeadWrapper} onPress={onToggle}>
+      <TouchableOpacity
+        style={styles.detailInfoHeadWrapper}
+        onPress={onToggle}
+        activeOpacity={0.7}
+      >
         <Text style={styles.detailInfoHeadText}>{title}</Text>
         <Text style={styles.arrowIcon}>{isOpen ? '▼' : '▲'}</Text>
       </TouchableOpacity>
@@ -29,4 +40,4 @@ const DetailSection = ({
   );
 };
 
-export default DetailSection;
+export default memo(DetailSection);
