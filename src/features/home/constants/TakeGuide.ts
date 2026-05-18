@@ -1,7 +1,7 @@
 import GuideAlert from '@assets/images/guide-alert.png';
 
 export const TAKE_GUIDE = {
-  title: '약물의 오용과 남용은 건강을 해칠 수 있습니다.',
-  guideMethod: '올바른 복용 방법 보러 가기 >',
+  title:
+    '본 서비스에서 제공하는 정보는 참고용이며, 약물 복용 여부는 반드시 의사 또는 약사와 상담 후 결정하시기 바랍니다.',
   icon: GuideAlert,
 };

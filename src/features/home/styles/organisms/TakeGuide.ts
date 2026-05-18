@@ -5,21 +5,21 @@ export const styles = StyleSheet.create({
   guideWrapper: {
     position: 'relative',
     width: '100%',
-    height: 57,
+    minHeight: 57,
     backgroundColor: '#FFFDF4',
     marginTop: 82.5,
+    paddingHorizontal: 54,
+    paddingVertical: 12,
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   guideTitle: {
     color: COLOR.alert,
     fontSize: 13,
     fontWeight: 700,
-  },
-  guideMethod: {
-    fontSize: 12,
-    color: '#000000',
-    marginTop: 8,
+    textAlign: 'center',
+    lineHeight: 18,
   },
   guideAlertIcon: {
     width: 32,
