@@ -89,19 +89,18 @@ export const insertData = async (
     const sql = `INSERT INTO ${table} (${columns.join(', ')}) 
                  VALUES (${columns.map(() => '?').join(', ')})`;
 
-    const statement = await db.prepareAsync(sql);
-
-    try {
-      await db.withTransactionAsync(async () => {
+    await db.withTransactionAsync(async () => {
+      const statement = await db.prepareAsync(sql);
+      try {
         for (const row of batch) {
           const preparedRow = prepareRowForInsert(row);
           const values = entries.map(([key]) => preparedRow[key]);
 
           await statement.executeAsync(values);
         }
-      });
-    } finally {
-      await statement.finalizeAsync();
-    }
+      } finally {
+        await statement.finalizeAsync();
+      }
+    });
   }
 };
