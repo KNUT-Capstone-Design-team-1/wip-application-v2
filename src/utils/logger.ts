@@ -1,4 +1,4 @@
-import { LogAPI } from '../services/apis/google_cloud';
+import { requestWriteLog } from '../services/apis/google_cloud/wip_log';
 import { TLogLevel } from '../constants';
 
 /**
@@ -9,7 +9,7 @@ import { TLogLevel } from '../constants';
 const writeLog = async (logLevel: TLogLevel, logContents: string) => {
   try {
     console.log(`[${logLevel}] ${logContents}`);
-    await LogAPI.requestWriteLog(logLevel, logContents);
+    await requestWriteLog(logLevel, logContents);
   } catch (e) {
     console.log(`Failed to write log. ${e?.stack || e}`);
   }
