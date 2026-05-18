@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { usePillDetail } from './use_pill_detail';
+import { usePillDetail } from '@features/pill_search_result_detail/hooks/use_pill_detail';
 import { usePillBox } from '@features/pill_save/hooks/use_pill_box';
-import { IPillDetail } from '../types/pill_detail_type';
+import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
+import logger from '@utils/logger';
 
 export const usePillDetailScreen = () => {
   const { itemDetail, itemImage, ITEM_SEQ } = useLocalSearchParams();
@@ -32,8 +33,8 @@ export const usePillDetailScreen = () => {
   // 최근 검색 저장
   useEffect(() => {
     if (pillData?.ITEM_SEQ) {
-      recentSearch(pillData).catch((error) => {
-        console.error('Recent search save failed:', error);
+      recentSearch(pillData).catch((e) => {
+        logger.error(`Failed to save recent search. ${e.stack || e}`);
       });
     }
   }, [pillData?.ITEM_SEQ, pillData?.EE_DOC_DATA, recentSearch]);
@@ -45,10 +46,12 @@ export const usePillDetailScreen = () => {
       if (itemDetail) {
         try {
           initialPillData = JSON.parse(itemDetail as string);
+
           setPillData(initialPillData);
+
           setLoading(false);
-        } catch (error) {
-          console.error('Failed to parse itemDetail:', error);
+        } catch (e) {
+          logger.error(`Failed to parse itemDetail. ${e.stack || e}`);
         }
       }
 
@@ -58,7 +61,11 @@ export const usePillDetailScreen = () => {
           initialPillData ? () => {} : setLoading,
           setPillData,
         );
-      } else if (!itemDetail) {
+
+        return;
+      }
+
+      if (!itemDetail) {
         setLoading(false);
       }
     };

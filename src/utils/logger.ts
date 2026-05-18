@@ -11,7 +11,7 @@ const writeLog = async (logLevel: TLogLevel, logContents: string) => {
     console.log(`[${logLevel}] ${logContents}`);
     await LogAPI.requestWriteLog(logLevel, logContents);
   } catch (e) {
-    console.log(`Failed to write log. %s`, (e as Error)?.stack || e);
+    console.log(`Failed to write log. ${e?.stack || e}`);
   }
 };
 

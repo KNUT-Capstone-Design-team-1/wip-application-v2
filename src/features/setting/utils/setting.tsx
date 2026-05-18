@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import logger from '@utils/logger';
 
 export const getPillStorage = async () => {
   try {
@@ -11,8 +12,8 @@ export const getPillStorage = async () => {
     const parseSavePillData = JSON.parse(savePillData);
 
     return Array.isArray(parseSavePillData) ? parseSavePillData.length : 0;
-  } catch (error) {
-    console.error('Failed to get pill storage:', error);
+  } catch (e) {
+    logger.error(`Failed to get pill storage. ${e.stack || e}`);
     return 0;
   }
 };

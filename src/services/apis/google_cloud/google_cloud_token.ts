@@ -1,3 +1,4 @@
+import logger from '@utils/logger';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import forge from 'node-forge';
@@ -26,8 +27,8 @@ export const getToken = () => {
     });
 
     return forge.util.encode64(encrypted);
-  } catch (error) {
-    console.error('Error encrypting token:', error);
+  } catch (e) {
+    logger.error(`Failed to generate GCP token: ${e.stack || e}`);
     return '';
   }
 };

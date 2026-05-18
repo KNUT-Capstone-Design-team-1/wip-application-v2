@@ -85,7 +85,7 @@ export async function callAPI() {
         await GoogleCloud.ExternalURLAPI.requestExternalURL();
     }
   } catch (e) {
-    console.log('[CALL-API] Error occurred. %s', (e as Error).stack || e);
+    console.log('[CALL-API] Error occurred.', (e as Error).stack || e);
     throw e;
   } finally {
     return results;

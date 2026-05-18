@@ -23,9 +23,7 @@ describe('callAPI', () => {
       const executeSeconds = new Date().getTime() - started.getTime();
 
       console.log(
-        '[CALL-API] execute %s seconds. result: %s',
-        Math.floor(executeSeconds / 1000),
-        JSON.stringify(results, null, 2),
+        `[CALL-API] execute ${Math.floor(executeSeconds / 1000)} seconds. result: ${JSON.stringify(results, null, 2)}`,
       );
     } catch (e) {
       if (isAxiosError(e)) {
@@ -33,7 +31,7 @@ describe('callAPI', () => {
         return;
       }
 
-      console.log('[CALL-API] error. %s', (e as Error).stack);
+      console.log(`[CALL-API] error. ${(e as Error).stack || e}`);
     }
   });
 });

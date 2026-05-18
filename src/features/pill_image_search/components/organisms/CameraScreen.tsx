@@ -57,6 +57,7 @@ const CameraScreen = ({
           device={device}
           isActive={visible}
           photo={true}
+          photoQualityBalance="balanced"
         />
 
         {/* 상단 이미지 슬롯 오버레이 */}

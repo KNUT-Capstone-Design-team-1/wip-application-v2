@@ -68,8 +68,7 @@ export const useAppInitializer = () => {
     }
 
     console.log(
-      'Complete update all data tables. %s',
-      ALL_DATA_TABLES.join(', '),
+      `Complete update all data tables. ${ALL_DATA_TABLES.join(', ')}`,
     );
   };
 
@@ -77,13 +76,13 @@ export const useAppInitializer = () => {
    * 개별 데이터 테이블 업데이트 필요 여부 체크
    */
   const checkRequireTableUpdate = async (table: TDataTable) => {
-    console.log('Updating %s table', table);
+    console.log(`Updating ${table} table`);
 
     const updateCheck =
       await DatabaseUpdateService.checkRequireTableUpdate(table);
 
     if (updateCheck.code !== 'REQUIRE-UPDATE') {
-      console.log('No update required for %s', table);
+      console.log(`No update required for ${table}`);
       return null;
     }
 
@@ -106,7 +105,7 @@ export const useAppInitializer = () => {
     const result = await DatabaseUpdateService.initTable(table);
 
     if (result !== 'OK') {
-      console.log('Failed init table: %s', table);
+      console.log(`Failed init table ${table}`);
       return false;
     }
 
@@ -131,7 +130,7 @@ export const useAppInitializer = () => {
       );
 
       if (insertResult.code !== 'OK') {
-        console.log('Failed to insert data into: %s', table);
+        console.log(`Failed to insert data into ${table}`);
         break;
       }
 
@@ -181,7 +180,7 @@ export const useAppInitializer = () => {
       newDataVersion,
     );
 
-    console.log('Complete update table: %s', table);
+    console.log(`Complete update table ${table}`);
   };
 
   useEffect(() => {

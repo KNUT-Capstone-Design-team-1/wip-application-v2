@@ -1,3 +1,4 @@
+import logger from '@utils/logger';
 import { useState, useCallback, useRef } from 'react';
 import { Camera } from 'react-native-vision-camera';
 
@@ -14,6 +15,7 @@ export const useCameraCapture = ({
   onComplete,
 }: UseCameraCaptureProps) => {
   const [showCamera, setShowCamera] = useState(false);
+
   const cameraRef = useRef<Camera>(null);
 
   /**
@@ -37,18 +39,15 @@ export const useCameraCapture = ({
     if (!cameraRef.current) return;
 
     try {
-      const photo = await cameraRef.current.takePhoto({
-        qualityPrioritization: 'balanced',
-      });
+      const photo = await cameraRef.current.takePhoto();
       const imageUri = `file://${photo.path}`;
 
       console.log('촬영 완료:', imageUri);
       onCapture(imageUri);
 
-      // 촬영 완료 콜백
-      onComplete?.();
-    } catch (error) {
-      console.error('촬영 실패:', error);
+      onComplete?.(); // 촬영 완료 콜백
+    } catch (e) {
+      logger.error(`Failed to capture photo. ${e.stack || e}`);
     }
   }, [onCapture, onComplete]);
 

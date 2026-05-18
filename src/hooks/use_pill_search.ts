@@ -1,8 +1,9 @@
+import { router } from 'expo-router';
 import { getPillDatas } from '@services/database/queries/pill_data';
 import { TPillDataSearchParam } from '@services/database/types';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
-import { router } from 'expo-router';
 import { usePillSearchListStore } from '@store/pill_search_list_store';
+import logger from '@utils/logger';
 
 /**
  * 알약 검색 공유 Hook
@@ -89,15 +90,12 @@ export const usePillSearch = () => {
     options: { navigateToResult?: boolean } = {},
   ) => {
     try {
-      console.log('🔍 알약 검색 시작');
+      const searchParam = filterSearchParam(rawSearchParam); // "전체" 제거 및 빈 값 필터링
 
-      // 1. "전체" 제거 및 빈 값 필터링
-      const searchParam = filterSearchParam(rawSearchParam);
-      console.log('필터링된 검색 조건:', searchParam);
+      console.log(`Search Param: ${searchParam}`);
 
-      // 2. 검색 조건이 하나도 없으면 경고
+      // 검색 조건이 하나도 없으면 경고
       if (Object.keys(searchParam).length === 0) {
-        console.warn('⚠️ 검색 조건이 없습니다.');
         return {
           success: false,
           results: [],
@@ -105,50 +103,50 @@ export const usePillSearch = () => {
         };
       }
 
-      // 3. 로딩 시작
+      // 로딩 시작
       setIsLoading(true);
 
-      // 4. searchParam 먼저 저장 (loadMorePills가 null 체크하므로 router.push 전에 저장)
+      // searchParam 먼저 저장
       useSearchResultListStore.setState({
         searchParam,
         currentPage: 1,
         hasMore: true,
       });
 
-      // 5. 결과 페이지로 이동 (옵션)
+      // 결과 페이지로 이동 (옵션)
       if (options.navigateToResult) {
         router.push('/pill-search-result-list');
-        console.log('🚀 결과 페이지로 이동');
       }
 
-      // 6. 현재 페이지 가져오기 및 증가
+      // 현재 페이지 가져오기 및 증가
       const currentPage = getCurrentPageAndIncrement();
 
-      // 7. 데이터베이스 검색
+      // 데이터베이스 검색
       const results = await getPillDatas(searchParam, {
         page: currentPage,
         limit: 30,
       });
 
-      console.log(`✅ 검색 결과: ${results.length}개`);
+      console.log(`Search result: ${JSON.stringify(results)}`);
 
-      // 8. Store에 저장 (자동으로 로딩 종료)
+      // Store에 저장 (자동으로 로딩 종료)
       setSearchResultData(results);
 
-      // 9. hasMore 업데이트
+      // hasMore 업데이트
       useSearchResultListStore.setState({
         hasMore: results.length === 30,
       });
 
       return { success: true, results, message: '검색 완료' };
-    } catch (error) {
-      console.error('❌ 검색 실패:', error);
+    } catch (e) {
+      logger.error(`Failed to search pills. ${e.stack || e}`);
+
       setIsLoading(false);
 
       return {
         success: false,
         results: [],
-        message: error instanceof Error ? error.message : '알 수 없는 에러',
+        message: e?.message || '알 수 없는 에러',
       };
     }
   };
@@ -188,10 +186,9 @@ export const usePillSearch = () => {
         currentPage: nextPage,
         hasMore: newResults.length === 30,
       });
-
-      setIsLoading(false);
-    } catch (error) {
-      console.error('❌ 추가 로드 실패:', error);
+    } catch (e) {
+      logger.error(`Failed to load more pills. ${e.stack || e}`);
+    } finally {
       setIsLoading(false);
     }
   };
