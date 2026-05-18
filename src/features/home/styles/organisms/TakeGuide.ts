@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR } from '../../../../constants';
+import { COLOR } from '@constants/index';
 
 export const styles = StyleSheet.create({
   guideWrapper: {

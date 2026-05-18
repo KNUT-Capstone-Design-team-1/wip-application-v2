@@ -18,7 +18,6 @@ interface ImageButtonProps {
 const ImageButton = ({
   imageSource,
   onPress,
-  disabled,
   width,
   height,
 }: ImageButtonProps) => {

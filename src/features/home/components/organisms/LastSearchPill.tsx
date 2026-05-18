@@ -4,37 +4,19 @@ import Tag from '../atoms/Tag';
 import { styles } from '../../styles/organisms/LastSearchPill';
 import { IPillDetail } from '../../../pill_search_result_detail/types/pill_detail_type';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LastSearchPill = ({
   lastSearchPillData,
-  onDataChange,
+  onDelete,
 }: {
   lastSearchPillData: IPillDetail[];
-  onDataChange: () => void;
+  onDelete: (itemSeq: string) => void;
 }) => {
   const tagPressHandler = (itemSeq: string) => {
     router.push({
       pathname: '/pill-search-result-detail',
       params: { ITEM_SEQ: itemSeq },
     });
-  };
-
-  const deleteRecentSearch = async (itemSeq: string) => {
-    try {
-      const raw = await AsyncStorage.getItem('recentSearch');
-      if (raw) {
-        const pills: IPillDetail[] = JSON.parse(raw);
-        const updatedPills = pills.filter((pill) => pill.ITEM_SEQ !== itemSeq);
-        await AsyncStorage.setItem(
-          'recentSearch',
-          JSON.stringify(updatedPills),
-        );
-        onDataChange(); // 데이터 변경 알림
-      }
-    } catch (error) {
-      console.error('Failed to delete recent search:', error);
-    }
   };
 
   return (
@@ -58,7 +40,7 @@ const LastSearchPill = ({
                 title={pill.ITEM_NAME || ''}
                 key={index}
                 onPressHandler={() => tagPressHandler(pill.ITEM_SEQ || '')}
-                // onDeleteHandler={() => deleteRecentSearch(pill.ITEM_SEQ || '')}
+                onDeleteHandler={() => onDelete(pill.ITEM_SEQ || '')}
                 showDelete={true}
               />
             );

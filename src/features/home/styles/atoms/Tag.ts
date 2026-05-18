@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '../../../../constants';
+import { COLOR_GRAY } from '@constants/index';
 
 export const styles = StyleSheet.create({
   tagContainer: {
