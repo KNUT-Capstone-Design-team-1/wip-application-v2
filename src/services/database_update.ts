@@ -145,7 +145,7 @@ export const insertData = async (
     }
   } catch (e) {
     logger.error(
-      `[INSERT-PILL-DATA] Error Occurred from request ${table} table resource. ${(e as Error).stack || e}`,
+      `[INSERT-DATA] Error Occurred from request ${table} table resource. ${(e as Error).stack || e}`,
     );
 
     return { code: 'ERROR-GET-RESOURCE', totalPage: 0 };
@@ -157,7 +157,7 @@ export const insertData = async (
     await InitTableQuery.insertData(table, resource);
   } catch (e) {
     logger.error(
-      `[INSERT-PILL-DATA] Error Occurred from insert ${table} table resource. ${(e as Error).stack || e}`,
+      `[INSERT-DATA] Error Occurred from insert ${table} table resource. ${(e as Error).stack || e}`,
     );
 
     return { code: 'ERROR-INSERT-TABLE', totalPage };

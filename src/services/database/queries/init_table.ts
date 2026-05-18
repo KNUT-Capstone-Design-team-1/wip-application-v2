@@ -77,26 +77,31 @@ export const insertData = async (
   for (let i = 0; i < data.length; i += insertBatchSize) {
     const batch = data.slice(i, i + insertBatchSize);
 
-    await db.withTransactionAsync(async () => {
-      for (const row of batch) {
-        const preparedRow = prepareRowForInsert(row);
+    // Identify columns from the first row of the batch to create a prepared statement
+    const firstRow = prepareRowForInsert(batch[0]);
+    const entries = Object.entries(firstRow).filter(([, v]) => v !== undefined);
 
-        const entries = Object.entries(preparedRow).filter(
-          ([, v]) => v !== undefined,
-        );
+    if (!entries.length) {
+      continue;
+    }
 
-        if (!entries.length) {
-          continue;
+    const columns = entries.map(([key]) => `"${key}"`);
+    const sql = `INSERT INTO ${table} (${columns.join(', ')}) 
+                 VALUES (${columns.map(() => '?').join(', ')})`;
+
+    const statement = await db.prepareAsync(sql);
+
+    try {
+      await db.withTransactionAsync(async () => {
+        for (const row of batch) {
+          const preparedRow = prepareRowForInsert(row);
+          const values = entries.map(([key]) => preparedRow[key]);
+
+          await statement.executeAsync(values);
         }
-
-        const columns = entries.map(([key]) => `"${key}"`);
-        const values = entries.map(([, v]) => v);
-
-        const sql = `INSERT INTO ${table} (${columns.join(', ')}) 
-                     VALUES (${columns.map(() => '?').join(', ')})`;
-
-        await db.runAsync(sql, values);
-      }
-    });
+      });
+    } finally {
+      await statement.finalizeAsync();
+    }
   }
 };
