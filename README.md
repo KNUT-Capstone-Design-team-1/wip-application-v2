@@ -1,108 +1,204 @@
-# 이게뭐약
+# Introduction
 
-- AI를 활용한 알약 검색 애플리케이션
+AI를 활용한 알약 검색 애플리케이션입니다.
 
-# Requirement
+---
 
-- node 20 이상
-- JDK11
+# Requirements
 
-# 초기설정
+- Node.js `20+`
+- `JDK 11`
+
+---
+
+# Initialize
+
+프로젝트 최초 실행 시 필요한 설정입니다.
 
 ```bash
-# 전역 라이브러리 설치
-yarn add -g yarn eas-cli
+# EAS CLI 설치
+npm install -g eas-cli
 
 # 패키지 설치
 yarn install
 
-# eas server를 사용하기 위한 로그인
+# EAS 로그인
 eas login
 
-# 환경변수 다운로드
+# 환경 변수 다운로드
 eas env:pull
-
-# 앱 빌드, 실행 전 문제점 점검
-npx expo-doctor
-
-# 앱 빌드 준비
-yarn run rebuild
-
-# 실행 (안드로이드 | IOS)
-yarn run android
-yarn run ios
 ```
 
-# 테스트
+## Credential 다운로드
 
 ```bash
-# API call test
+eas credentials
+```
+
+이후 아래 순서대로 진행합니다.
+
+1. `Android` 또는 `iOS` 선택
+2. Profile 선택
+3. `credentials.json: Upload/Download credentials ...` 선택
+4. `Download credentials ...` 선택
+5. `Go back` → `Exit`
+
+---
+
+# Execute
+
+앱 실행 및 개발 환경 검증 명령어입니다.
+
+```bash
+# 프로젝트 상태 점검
+npx expo-doctor
+
+# Native 프로젝트 재생성
+yarn rebuild
+
+# Android 실행
+yarn android
+
+# iOS 실행
+yarn ios
+```
+
+---
+
+# Test
+
+```bash
+# API 테스트
 yarn test:api
 
-# query test
+# Query 테스트
 yarn test:query
 ```
 
-# 개발
+---
+
+# Development
+
+개발 중 자주 사용하는 명령어입니다.
 
 ```bash
-# 라이브러리 추가 (사용시 expo와 호환되는 라이브러리 버전 설치 없으면 자동으로 yarn add 진행)
+# Expo 호환 라이브러리 설치
 npx expo install {library}
 
 # 코드 검사
 npx expo lint
 ```
 
-# 로컬 환경 빌드
+> `expo install` 사용 시 Expo SDK 버전에 맞는 라이브러리 버전이 자동으로 설치됩니다.
+
+---
+
+# Build
 
 ```bash
-# eas credential 다운로드
-eas credentials
-# 선택 Android or Ios
-# 선택 profile
-# 선택 credentials.json: Upload/Download credentials ...
-# 선택 Download credentials ...
-# Go back and Exit
-
-# apk build for dev (linux 혹은 macos 에서만 사용가능)
+# Android APK 빌드
 yarn apk
+
+# iOS IPA 빌드
 yarn ipa
 ```
 
-# 트러블 슈팅
+> `apk`, `ipa` 빌드는 Linux 또는 macOS 환경에서만 사용 가능합니다.
 
-**대부분의 오류**
+---
+
+# Trouble Shooting
+
+## 프로젝트 초기화
+
+빌드 또는 의존성 문제가 발생할 경우:
 
 ```bash
 rm -rf android
 rm -rf ios
 rm -rf node_modules
+
 yarn cache clean
 yarn install
-yarn run rebuild
+yarn rebuild
 ```
 
-**expo를 통해 설치하는 라이브러리의 버전이 낮을 경우**
+---
 
-- [Expo Docs](https://docs.expo.dev/) 해당 라이브러리를 검색
+## Expo 라이브러리 버전이 낮은 경우
 
-**expo의 라이브러리가 다른 라이브러리와 충돌일 경우**
+- Expo SDK와 호환되는 버전만 지원될 수 있습니다.
 
-- 충돌 라이브러리를 expo로 교체 또는 충돌 부분을 수정
-- expo-doctor 또는 디버깅 후 충돌 부분(의존 관계 라이브러리)을 수정
+- 공식 문서에서 지원 버전을 확인하세요.
 
-**yarn run rebuild 또는 npx expo prebuild --clean 관련 에러**
+- [Expo Docs](https://docs.expo.dev/?utm_source=chatgpt.com)
 
-- `Failed to delete android, ios code: ENOTEMPTY: directory not empty, rmdir`
-- 명령 재시도
+---
 
-**eas 서버에서 빌드 중 yarn install 부분 Error: Couldn't allocate enough memory 발생**
+## Expo 라이브러리 충돌
 
-- yarn fetch 중 nodejs에 설정된 메모리의 부족으로 인해 발생하는 문제 (일시적인 문제)
-- yarn.lock이나 yarn cache에 관련된 수정이 발생한 이후 첫 빌드에서 발생 종종 발생 예정
-- eas 서버로 다시 빌드 요청
+다른 라이브러리와 충돌하는 경우:
 
-# 참고
+- Expo 호환 라이브러리로 교체
+- 충돌 라이브러리 수정
+- `expo-doctor` 실행 후 의존성 문제 확인
 
-- [초기 설정 상세 문서](./docs/HOW_TO_SETTING.md)
-- [빌드 방법 상세 문서](./docs/HOW_TO_BUILD.md)
+```bash
+npx expo-doctor
+```
+
+---
+
+## `yarn rebuild` 또는 `expo prebuild --clean` 에러
+
+다음 오류가 발생할 수 있습니다.
+
+```text
+Failed to delete android, ios
+code: ENOTEMPTY: directory not empty, rmdir
+```
+
+### 해결 방법
+
+명령어를 다시 실행합니다.
+
+```bash
+yarn rebuild
+```
+
+또는
+
+```bash
+npx expo prebuild --clean
+```
+
+---
+
+## EAS Build 중 메모리 부족 오류
+
+다음 오류가 발생할 수 있습니다.
+
+```text
+Error: Couldn't allocate enough memory
+```
+
+### 원인
+
+- `yarn fetch` 과정에서 Node.js 메모리 부족
+- `yarn.lock` 또는 cache 변경 직후 첫 빌드에서 자주 발생
+
+### 해결 방법
+
+- EAS Build 재실행
+- 잠시 후 다시 시도
+
+---
+
+# References
+
+- [EAS Environment Variables Docs](https://docs.expo.dev/eas/environment-variables/?utm_source=chatgpt.com)
+- [Expo app.json Props](https://docs.expo.dev/versions/latest/config/app/?utm_source=chatgpt.com)
+- [EAS CLI README](https://github.com/expo/eas-cli/blob/main/packages/eas-cli/README.md?utm_source=chatgpt.com)
+- [EAS eas.json Docs](https://docs.expo.dev/eas/json/?utm_source=chatgpt.com)
+- [Expo Local Credentials Docs](https://docs.expo.dev/app-signing/local-credentials/?utm_source=chatgpt.com)
+- [Expo ESLint Guide](https://docs.expo.dev/guides/using-eslint/?utm_source=chatgpt.com)
