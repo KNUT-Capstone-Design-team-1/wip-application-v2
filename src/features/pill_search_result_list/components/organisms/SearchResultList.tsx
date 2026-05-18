@@ -1,79 +1,102 @@
-import { useEffect, useCallback, memo, useRef } from 'react';
-import { View, FlatList } from 'react-native';
-import SearchResultItem from '../molecules/SearchResultItem';
-import { styles } from '../../styles/organisms/SearchResultList';
+import { useCallback, memo } from 'react';
+import { View, FlatList, ListRenderItem } from 'react-native';
+import SearchResultItem from '@features/pill_search_result_list/components/molecules/SearchResultItem';
+import { styles } from '@features/pill_search_result_list/styles/organisms/SearchResultList';
 import { usePillSearch } from '@hooks/use_pill_search';
-import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list';
+import { usePillSearchResultList } from '@features/pill_search_result_list/hooks/use_pill_search_result_list';
 import { ISearchResultData } from '@features/pill_search_result_list/types/pill_search_result_list';
 import NotItem from '@components/common/NotItem';
+import { IPillData } from '@services/database/types';
+
+/**
+ * 검색 결과가 없을 때 표시할 컴포넌트
+ */
+const EmptyResult = () => (
+  <NotItem
+    mainText={'이런! 검색 결과가 없어요'}
+    subText={'다른 조건으로 검색해보세요.'}
+    marginTop={'0'}
+  />
+);
+
+/**
+ * 알약 리스트를 렌더링하는 FlatList 컴포넌트
+ */
+const ResultFlatList = ({
+  data,
+  onLoadMore,
+  onItemClick,
+  keyExtractor,
+}: {
+  data: IPillData[];
+  onLoadMore: () => void;
+  onItemClick: (seq: string, itemImage: string) => void;
+  keyExtractor: (item: IPillData, index: number) => string;
+}) => {
+  const renderItem: ListRenderItem<IPillData> = useCallback(
+    ({ item, index }) => (
+      <View style={index === 0 ? { marginTop: -10 } : undefined}>
+        <SearchResultItem resultItem={item} itemClickHandler={onItemClick} />
+      </View>
+    ),
+    [onItemClick],
+  );
+
+  const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
+
+  return (
+    <FlatList
+      style={styles.searchResultListWrapper}
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      ItemSeparatorComponent={renderSeparator}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      showsVerticalScrollIndicator={true}
+      onEndReached={onLoadMore}
+      onEndReachedThreshold={0.5}
+      // 성능 최적화 설정
+      initialNumToRender={10}
+      maxToRenderPerBatch={10}
+      windowSize={10}
+      removeClippedSubviews={true}
+      getItemLayout={(_, index) => ({
+        length: 100, // SearchResultItem의 대략적인 높이 (패딩 포함)
+        offset: 100 * index,
+        index,
+      })}
+    />
+  );
+};
 
 const SearchResultList = ({
   searchResultData,
   isLoadingMore,
 }: ISearchResultData) => {
   const { loadMorePills } = usePillSearch();
-  const previousDataLength = useRef(searchResultData.length);
   const { searchItemClickHandler, keyExtractor } = usePillSearchResultList();
 
-  useEffect(() => {
-    // const isNewDataAdded = searchResultData.length > previousDataLength.current;
-    // console.log('🔄 SearchResultList 리렌더링 - 데이터 개수:', searchResultData.length, isNewDataAdded ? '(데이터 추가됨)' : '');
-    previousDataLength.current = searchResultData.length;
-  }, [searchResultData]);
-
-  const renderItem = useCallback(
-    ({ item, index }: { item: any; index: number }) => (
-      <View style={index === 0 ? { marginTop: -10 } : undefined}>
-        <SearchResultItem
-          resultItem={item}
-          itemClickHandler={() =>
-            searchItemClickHandler(item.ITEM_SEQ, item.ITEM_IMAGE)
-          }
-        />
-      </View>
-    ),
-    [searchItemClickHandler],
-  );
-
-  const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
-
-  const handleLoadMore = useCallback(() => {
-    loadMorePills();
-  }, [loadMorePills]);
+  const isEmpty = searchResultData.length === 0 && !isLoadingMore;
 
   return (
     <View style={{ flex: 1 }}>
-      {searchResultData.length === 0 && !isLoadingMore ? (
-        <NotItem
-          mainText={'이런! 검색 결과가 없어요'}
-          subText={'다른 조건으로 검색해보세요.'}
-          marginTop={'0'}
-        />
+      {isEmpty ? (
+        <EmptyResult />
       ) : (
-        <FlatList
-          style={styles.searchResultListWrapper}
+        <ResultFlatList
           data={searchResultData}
-          renderItem={renderItem}
+          onLoadMore={loadMorePills}
+          onItemClick={searchItemClickHandler}
           keyExtractor={keyExtractor}
-          ItemSeparatorComponent={renderSeparator}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          showsVerticalScrollIndicator={true}
-          // 무한 스크롤 설정
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          // 성능 최적화
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          removeClippedSubviews={true}
         />
       )}
     </View>
   );
 };
 
-// 깊은 비교로 불필요한 리렌더링 방지
 export default memo(SearchResultList, (prevProps, nextProps) => {
-  // 데이터 길이와 참조가 같으면 리렌더링하지 않음
-  return prevProps.searchResultData === nextProps.searchResultData;
+  return (
+    prevProps.searchResultData === nextProps.searchResultData &&
+    prevProps.isLoadingMore === nextProps.isLoadingMore
+  );
 });

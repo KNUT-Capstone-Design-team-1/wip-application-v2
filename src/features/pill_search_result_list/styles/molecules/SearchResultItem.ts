@@ -33,4 +33,25 @@ export const styles = StyleSheet.create({
     color: COLOR['item'],
   },
   searchItemPrintFront: {},
+  fallbackImageContainer: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fallbackImageText: {
+    color: '#ccc',
+    fontSize: 10,
+  },
+  infoFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  infoSeparator: {
+    width: 1,
+    height: 10,
+    backgroundColor: '#eee',
+    marginHorizontal: 8,
+  },
 });

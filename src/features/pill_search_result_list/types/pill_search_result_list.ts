@@ -1,28 +1,28 @@
-import { TPillDataSearchParam } from '@services/database/types';
+import { IPillData, TPillDataSearchParam } from '@services/database/types';
 
 export interface ISearchResultData {
-  searchResultData: any[];
+  searchResultData: IPillData[];
   isLoadingMore?: boolean;
 }
 
 export interface IResultItemProps {
-  resultItem: any;
+  resultItem: IPillData;
   itemClickHandler: (seq: string, itemImage: string) => void;
 }
 
 export interface ISearchResultListStore {
-  searchResultData: any[];
+  searchResultData: IPillData[];
   isLoading: boolean;
   searchParam: Partial<TPillDataSearchParam> | null;
   markImages: { code: string; base64: string }[];
   currentPage: number;
   hasMore: boolean;
 
-  setSearchParam: (param: any) => void;
+  setSearchParam: (param: Partial<TPillDataSearchParam> | null) => void;
   setMarkImages: (images: { code: string; base64: string }[]) => void;
-  setSearchResultData: (resultData: any[]) => void;
-  appendSearchResultData: (newData: any[]) => void; // 데이터 추가 (덮어쓰지 않음)
+  setSearchResultData: (resultData: IPillData[]) => void;
+  appendSearchResultData: (newData: IPillData[]) => void;
   setIsLoading: (loading: boolean) => void;
-  getSearchResultData: () => any[];
-  getSearchParam: () => any;
+  getSearchResultData: () => IPillData[];
+  getSearchParam: () => Partial<TPillDataSearchParam> | null;
 }

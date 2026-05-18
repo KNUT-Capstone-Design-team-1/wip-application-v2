@@ -1,117 +1,124 @@
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { getPillDatas } from '@services/database/queries/pill_data';
-import { useSearchResultListStore } from '../store/search_result_list_store';
+import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
+import { IPillData, TPillDataSearchParam } from '@services/database/types';
+import logger from '@utils/logger';
 
 export const usePillSearchResultList = () => {
   const router = useRouter();
   const { setSearchParam, setSearchResultData, setIsLoading } =
     useSearchResultListStore();
-  const searchItemClickHandler = (seq: string, itemImage: string) => {
-    // 페이지 먼저 전환 (ITEM_SEQ만 전달)
-    router.push({
-      pathname: '/pill-search-result-detail',
-      params: {
-        ITEM_SEQ: seq,
-        itemImage: itemImage,
-      },
-    });
-  };
 
-  const keyExtractor = useCallback((item: any, index: number) => {
-    // ITEM_SEQ를 우선 사용하여 안정적인 key 보장
-    if (item.ITEM_SEQ) {
-      return String(item.ITEM_SEQ);
-    }
-    // ITEM_SEQ가 없는 경우 여러 필드 조합으로 고유 key 생성
-    return `pill-${item.ITEM_NAME || 'unknown'}-${item.ENTP_NAME || ''}-${index}`;
+  /**
+   * 아이템 클릭 시 상세 페이지로 이동
+   */
+  const searchItemClickHandler = useCallback(
+    (seq: string, itemImage: string) => {
+      router.push({
+        pathname: '/pill-search-result-detail',
+        params: { ITEM_SEQ: seq, itemImage: itemImage },
+      });
+    },
+    [router],
+  );
+
+  /**
+   * FlatList의 고유 키 추출
+   */
+  const keyExtractor = useCallback((item: IPillData, index: number) => {
+    return item.ITEM_SEQ || `pill-${item.ITEM_NAME}-${index}`;
   }, []);
 
-  /*
-    검색 결과에서 검색 버튼 클릭 or enter 버튼 클릭 시 store 에 값 저장
-    input 내용 기준으로 getPillDatas 함수를 실행해서 검색 input 내용은 ITEM_NAME 기준으로 다시 검색되도록
-  * */
-  const searchResultButtonClickHandler = async (searchText: string) => {
-    try {
-      // 검색어가 비어있으면 검색하지 않음
+  /**
+   * 텍스트 기반 검색 실행 로직
+   */
+  const executeSearchByText = useCallback(
+    async (searchText: string, currentParam: Partial<TPillDataSearchParam>) => {
+      const searchParam = { ...currentParam, ITEM_NAME: searchText.trim() };
+
+      setSearchParam(searchParam);
+
+      const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
+
+      setSearchResultData(results);
+    },
+    [setSearchParam, setSearchResultData],
+  );
+
+  /**
+   * 검색 결과 내 재검색 버튼 클릭 핸들러
+   */
+  const searchResultButtonClickHandler = useCallback(
+    async (searchText: string) => {
       if (!searchText.trim()) {
         return;
       }
 
-      // 로딩 시작
-      setIsLoading(true);
+      try {
+        setIsLoading(true);
 
-      // 기존 검색 파라미터 가져오기
-      const currentSearchParam =
-        useSearchResultListStore.getState().searchParam || {};
+        const currentParam =
+          useSearchResultListStore.getState().searchParam || {};
 
-      // 기존 파라미터에 ITEM_NAME 추가/업데이트
-      const searchParam = {
-        ...currentSearchParam,
-        ITEM_NAME: searchText.trim(),
-      };
+        await executeSearchByText(searchText, currentParam);
+      } catch (e) {
+        logger.error(`Failed to execute search by text: ${e.stack || e}`);
 
-      // Store에 검색 파라미터 저장 (currentPage: 1로 초기화됨)
-      setSearchParam(searchParam);
+        setSearchResultData([]);
+        setIsLoading(false);
+      }
+    },
+    [setIsLoading, executeSearchByText, setSearchResultData],
+  );
 
-      // 데이터베이스에서 검색
-      const results = await getPillDatas(searchParam, {
-        page: 1,
-        limit: 30,
-      });
+  /**
+   * 기존 식별 검색 조건으로 복원 로직
+   */
+  const executeRestoreSearch = useCallback(
+    async (currentParam: Partial<TPillDataSearchParam>) => {
+      const { ITEM_NAME, ...restParams } = currentParam;
 
-      // 검색 결과를 Store에 저장 (로딩 종료됨)
+      if (Object.keys(restParams).length === 0) {
+        setSearchResultData([]);
+
+        setIsLoading(false);
+        return;
+      }
+
+      setSearchParam(restParams);
+
+      const results = await getPillDatas(restParams, { page: 1, limit: 30 });
+
       setSearchResultData(results);
-    } catch (error) {
-      console.error('검색 실패:', error);
-      setSearchResultData([]);
-      setIsLoading(false);
-    }
-  };
+    },
+    [setSearchParam, setSearchResultData, setIsLoading],
+  );
 
-  /*
-    X 버튼 클릭 시 기존 식별 검색으로 재검색
-  * */
-  const clearSearchAndRestore = async () => {
+  /**
+   * 검색어 초기화 및 이전 검색 결과 복원 핸들러
+   */
+  const clearSearchAndRestore = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      // Store에서 기존 검색 파라미터 가져오기
-      const currentSearchParam =
-        useSearchResultListStore.getState().searchParam;
+      const currentParam = useSearchResultListStore.getState().searchParam;
 
-      if (!currentSearchParam) {
-        // 검색 파라미터가 없으면 빈 결과 표시
+      if (!currentParam) {
         setSearchResultData([]);
+
         setIsLoading(false);
         return;
       }
 
-      // ITEM_NAME 제거하고 나머지 파라미터로 검색 (식별 검색 파라미터만 유지)
-      const { ITEM_NAME, ...restParams } = currentSearchParam;
+      await executeRestoreSearch(currentParam);
+    } catch (e) {
+      logger.error(`Failed to restore search: ${e.stack || e}`);
 
-      // 식별 검색 파라미터가 없으면 종료
-      if (Object.keys(restParams).length === 0) {
-        setSearchResultData([]);
-        setIsLoading(false);
-        return;
-      }
-
-      // 식별 검색 파라미터로 재검색
-      setSearchParam(restParams);
-
-      const results = await getPillDatas(restParams, {
-        page: 1,
-        limit: 30,
-      });
-
-      setSearchResultData(results);
-    } catch (error) {
-      console.error('검색 복원 실패:', error);
       setSearchResultData([]);
       setIsLoading(false);
     }
-  };
+  }, [setIsLoading, executeRestoreSearch, setSearchResultData]);
 
   return {
     keyExtractor,

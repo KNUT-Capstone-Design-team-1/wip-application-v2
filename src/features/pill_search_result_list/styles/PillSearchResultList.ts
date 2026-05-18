@@ -46,4 +46,21 @@ export const styles = StyleSheet.create({
     marginLeft: 6,
     backgroundColor: 'transparent',
   },
+  searchBarWrapper: {
+    marginTop: 15,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    zIndex: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
 });
