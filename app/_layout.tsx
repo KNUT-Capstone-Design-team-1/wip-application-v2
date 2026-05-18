@@ -1,38 +1,23 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
 import Layout from '@layouts/Layout';
-import UpdateDB from './UpdateDB';
-import { useAppInitializer } from '@hooks/use_app_initializer';
-
-export interface IUpdateProgress {
-  status: string;
-  progress: number;
-  currentPage?: number;
-  totalPages?: number;
-}
+import {
+  useAppInitializer,
+  DatabaseUpdateView,
+} from '@features/database_update';
 
 /**
- * 전역 스크린 옵션
- * @returns
+ * 앱의 최상위 레이아웃 컴포넌트
+ * 앱 초기화 상태에 따라 데이터베이스 업데이트 화면 또는 메인 앱 화면을 렌더링
  */
 const RootLayout = () => {
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [updateProgress, setUpdateProgress] = useState<IUpdateProgress>({
-    status: 'DB 초기화 중',
-    progress: 0,
-  });
-  const { initializeDataBase } = useAppInitializer();
-
-  useEffect(() => {
-    initializeDataBase(setUpdateProgress, setIsInitializing);
-  }, []);
+  const { isInitializing, updateProgress } = useAppInitializer();
 
   // 초기화 중이면 로딩 화면 표시
   if (isInitializing) {
     return (
       <SafeAreaProvider>
-        <UpdateDB
+        <DatabaseUpdateView
           status={updateProgress.status}
           progress={updateProgress.progress}
           currentPage={updateProgress.currentPage}

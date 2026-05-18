@@ -23,6 +23,26 @@ export type TDataTable =
   | 'psychotropics'
   | 'prohibited_list';
 
+export const ALL_DATA_TABLES: TDataTable[] = [
+  'pill_data',
+  'mark_images',
+  'nearby_pharmacies',
+  'cannabis',
+  'narcotics',
+  'psychotropics',
+  'prohibited_list',
+] as const;
+
+export const TABLE_NAME_MAP: Record<TDataTable, string> = {
+  pill_data: '알약 정보',
+  mark_images: '알약 마크',
+  nearby_pharmacies: '주변 약국',
+  cannabis: '대마 정보',
+  narcotics: '마약 정보',
+  psychotropics: '향정신성 의약품 정보',
+  prohibited_list: '금지 약물 정보',
+} as const;
+
 export type DATABSE_UPDATE_RESULT_CODE =
   | 'OK'
   | 'NO-UPDATED'

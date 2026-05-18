@@ -1,6 +1,7 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from './sqlite';
 import { IConfig } from './types';
+import logger from '@utils/logger';
 
 /**
  * 기본 config
@@ -44,13 +45,18 @@ export const initConfigTable = async (db: SQLiteDatabase) => {
 
 /**
  * 데이터베이스 초기화 (필수 테이블 초기화)
- * - config 테이블만 초기화한다
- * - 그 외 테이블들은 서버리스 API를 통해 스키마를 관리한다
+ * - 비필수 테이블들은 서버리스 API를 통해 스키마를 관리
  */
 export const initDatabase = async () => {
-  const db = await getDatabase();
+  try {
+    const db = await getDatabase();
 
-  await initConfigTable(db);
+    await initConfigTable(db);
 
-  return true;
+    return true;
+  } catch (e) {
+    logger.error(`Failed to initialize database: ${e.stack || e}`);
+
+    return false;
+  }
 };
