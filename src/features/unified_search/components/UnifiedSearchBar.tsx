@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import {
   View,
   TextInput,
@@ -20,34 +20,39 @@ interface IUnifiedSearchBarProps {
 
 const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
   const [keyword, setKeyword] = useState('');
-  const keywordRef = useRef('');
   const { search, loading } = useUnifiedSearch();
 
-  const handleSearch = (targetKeyword?: string) => {
-    const finalKeyword = (targetKeyword || keywordRef.current).trim();
-    if (finalKeyword) {
-      Keyboard.dismiss();
-      search(finalKeyword);
-    }
-  };
+  const handleSearch = useCallback(
+    (targetKeyword?: string) => {
+      const finalKeyword = (targetKeyword ?? keyword).trim();
 
-  const handleClear = () => {
+      if (finalKeyword) {
+        Keyboard.dismiss();
+        search(finalKeyword);
+      }
+    },
+    [keyword, search],
+  );
+
+  const handleClear = useCallback(() => {
     setKeyword('');
-    keywordRef.current = '';
-  };
+  }, []);
 
-  const handleTextChange = (text: string) => {
-    // 엔터(줄바꿈)가 포함되어 들어오면 즉시 검색 실행
-    if (text.includes('\n')) {
-      const cleanedText = text.replace(/\n/g, '');
-      setKeyword(cleanedText);
-      keywordRef.current = cleanedText;
-      handleSearch(cleanedText);
-      return;
-    }
-    setKeyword(text);
-    keywordRef.current = text;
-  };
+  const handleTextChange = useCallback(
+    (text: string) => {
+      // 엔터(줄바꿈)가 포함되어 들어오면 즉시 검색 실행
+      if (text.includes('\n')) {
+        const cleanedText = text.replace(/\n/g, '');
+
+        setKeyword(cleanedText);
+        handleSearch(cleanedText);
+
+        return;
+      }
+      setKeyword(text);
+    },
+    [handleSearch],
+  );
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -79,4 +84,4 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
   );
 };
 
-export default UnifiedSearchBar;
+export default memo(UnifiedSearchBar);

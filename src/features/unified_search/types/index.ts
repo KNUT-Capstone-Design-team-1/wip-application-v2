@@ -1,6 +1,8 @@
 export interface IUnifiedSearchResponse {
   success: boolean;
-  data: string[];
+  data: {
+    results: string[];
+  };
   message: string;
 }
 
