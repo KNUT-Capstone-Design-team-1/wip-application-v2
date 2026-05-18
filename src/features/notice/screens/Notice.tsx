@@ -10,13 +10,8 @@ const Notice = () => {
   const { getNoticeList } = useNotices();
 
   useEffect(() => {
-    loadNotices();
-    console.log('noticeData', noticeData.length);
-  }, []);
-
-  const loadNotices = async () => {
-    await getNoticeList();
-  };
+    getNoticeList(); // 마운트 시 공지사항 데이터를 로드
+  }, [getNoticeList]);
 
   if (isNoticeLoading) {
     return (

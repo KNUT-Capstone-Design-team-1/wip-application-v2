@@ -13,7 +13,7 @@ type TNoticeListResponse = {
   success: boolean;
   notices: INotice[];
   total: number;
-}[];
+};
 
 type TNoticeWritePayload = Pick<INotice, 'title' | 'contents' | 'mustRead'>;
 

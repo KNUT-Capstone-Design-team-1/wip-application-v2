@@ -15,22 +15,20 @@ export interface INoticeApiResponseItem {
   total: number;
 }
 
-export interface IInitialNotice {
+export interface INoticeStore {
+  // State
   noticeData: INoticeData[];
-  noticeDetail: INoticeData;
+  noticeDetail: INoticeData | null;
   mainBottomSheetData: INoticeData[];
   isDetailViewing: boolean;
   isNoticeLoading: boolean;
-}
 
-export interface INoticeActions {
-  actions: {
-    setNoticeData: (notices: INoticeData[]) => void;
-    setMainBottomSheetData: (state: INoticeData[]) => void;
-    setNoticeDetail: (notice: INoticeData) => void;
-    setIsDetailViewing: (viewingState: boolean) => void;
-    setIsNoticeLoading: (loading: boolean) => void;
-  };
+  // Actions
+  setNoticeData: (notices: INoticeData[]) => void;
+  setMainBottomSheetData: (state: INoticeData[]) => void;
+  setNoticeDetail: (notice: INoticeData | null) => void;
+  setIsDetailViewing: (viewingState: boolean) => void;
+  setIsNoticeLoading: (loading: boolean) => void;
 }
 
 // NoticeItem.tsx
