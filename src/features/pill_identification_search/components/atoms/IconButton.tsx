@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, Image, ImageSourcePropType } from 'react-native';
 import { styles } from '../../styles/atoms/IconButton';
 import { COLOR_PRIMARY } from '@constants/color';
@@ -10,51 +10,49 @@ interface IIConButtonProps {
   label: string;
 }
 
-const IconButton = ({
-  isSelected,
-  iconUrl,
-  iconColor,
-  label,
-}: IIConButtonProps) => {
-  // iconUrl이 실제로 존재하는지 체크 (빈 문자열이나 null/undefined 제외)
-  // TS2367 에러를 피하기 위해 any로 캐스팅하여 비교합니다.
-  const hasIcon = !!iconUrl && (iconUrl as any) !== '';
+const IconButton = memo(
+  ({ isSelected, iconUrl, iconColor, label }: IIConButtonProps) => {
+    // iconUrl이 실제 값이 있는지 체크 (TS2367 에러를 피하기 위해 any로 캐스팅하여 비교)
+    const hasIcon = !!iconUrl && (iconUrl as any) !== '';
 
-  // 흰색일 때 테두리 추가
-  const isWhite =
-    iconColor === '#fff' || iconColor === '#ffffff' || iconColor === 'white';
+    // 흰색일 때 테두리 추가
+    const isWhite =
+      iconColor === '#fff' || iconColor === '#ffffff' || iconColor === 'white';
 
-  return (
-    <View
-      style={[
-        styles.iconButtonWrapper,
-        isSelected && { borderColor: COLOR_PRIMARY[100], borderWidth: 2 },
-      ]}
-    >
-      {/* iconUrl이 있으면 이미지, 없으면 색상으로 채우기 */}
+    return (
       <View
         style={[
-          styles.iconButtonTop,
-          !hasIcon && iconColor && { backgroundColor: iconColor },
-          !hasIcon && isWhite && { borderWidth: 1, borderColor: '#E0E0E0' },
+          styles.iconButtonWrapper,
+          isSelected && { borderColor: COLOR_PRIMARY[100], borderWidth: 2 },
         ]}
       >
-        {hasIcon && (
-          <Image source={iconUrl} style={styles.icon} resizeMode="contain" />
-        )}
-      </View>
-      <View style={styles.iconButtonBottom}>
-        <Text
+        {/* iconUrl이 있으면 이미지, 없으면 색상으로 채우기 */}
+        <View
           style={[
-            styles.iconSectionLabel,
-            isSelected && { color: COLOR_PRIMARY[400], fontWeight: 600 },
+            styles.iconButtonTop,
+            !hasIcon && iconColor && { backgroundColor: iconColor },
+            !hasIcon && isWhite && { borderWidth: 1, borderColor: '#E0E0E0' },
           ]}
         >
-          {label}
-        </Text>
+          {hasIcon && (
+            <Image source={iconUrl} style={styles.icon} resizeMode="contain" />
+          )}
+        </View>
+        <View style={styles.iconButtonBottom}>
+          <Text
+            style={[
+              styles.iconSectionLabel,
+              isSelected && { color: COLOR_PRIMARY[400], fontWeight: 600 },
+            ]}
+          >
+            {label}
+          </Text>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  },
+);
+
+IconButton.displayName = 'IconButton';
 
 export default IconButton;

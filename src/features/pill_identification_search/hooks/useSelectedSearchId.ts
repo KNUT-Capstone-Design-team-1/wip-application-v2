@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSearchIdStore } from '../store/search_id_store';
 import { useMarkStore } from '../store/mark_store';
 import { getPillDatas } from '@services/database/queries/pill_data';
@@ -6,82 +7,152 @@ import { router } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
 import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
-import { ISearchIdState, ISearchPillData } from '../types/search_id_types';
+import { ISearchPillData } from '../types/search_id_types';
 
 export const useSelectedSearchId = () => {
-  const store = useSearchIdStore();
   const { resetSelectedMark } = useMarkStore();
   const { setSearchResultData, setIsLoading, setSearchParam } =
     useSearchResultListStore();
 
+  // 개별 액션들만 가져와서 핸들러들이 스토어 전체 변경에 반응하지 않도록 함
+  const setSideLabelFrontText = useSearchIdStore(
+    (state) => state.setSideLabelFrontText,
+  );
+
+  const setSideLabelBackText = useSearchIdStore(
+    (state) => state.setSideLabelBackText,
+  );
+
+  const setProductNameText = useSearchIdStore(
+    (state) => state.setProductNameText,
+  );
+
+  const setCompanyName = useSearchIdStore((state) => state.setCompanyName);
+
+  const setManufacturerName = useSearchIdStore(
+    (state) => state.setManufacturerName,
+  );
+
+  const setDividerLineData = useSearchIdStore(
+    (state) => state.setDividerLineData,
+  );
+
+  const setShape = useSearchIdStore((state) => state.setShape);
+
+  const setColors = useSearchIdStore((state) => state.setColors);
+
+  const resetSelectedSearchId = useSearchIdStore(
+    (state) => state.resetSelectedSearchId,
+  );
+
+  const getSelectedSearchId = useSearchIdStore(
+    (state) => state.getSelectedSearchId,
+  );
+
+  const setIsExactMatch = useSearchIdStore((state) => state.setIsExactMatch);
+
+  const isExactMatch = useSearchIdStore((state) => state.isExactMatch);
+
+  // 현재 값들을 가져오기 위한 셀렉터들 (핸들러 내부에서 최신 값을 참조하기 위함)
+  const manufacturerName = useSearchIdStore((state) => state.manufacturerName);
+
+  const dividerLineData = useSearchIdStore((state) => state.dividerLineData);
+
+  const shape = useSearchIdStore((state) => state.shape);
+
+  const colors = useSearchIdStore((state) => state.colors);
+
   /**
    * 텍스트 입력 핸들러
    */
-  const searchIdInputChangeHandler = (text: string, key: string) => {
-    switch (key) {
-      case 'front':
-        store.setSideLabelFrontText(text);
-        break;
+  const searchIdInputChangeHandler = useCallback(
+    (text: string, key: string) => {
+      switch (key) {
+        case 'front':
+          setSideLabelFrontText(text);
+          break;
 
-      case 'back':
-        store.setSideLabelBackText(text);
-        break;
+        case 'back':
+          setSideLabelBackText(text);
+          break;
 
-      case 'product':
-        store.setProductNameText(text);
-        break;
+        case 'product':
+          setProductNameText(text);
+          break;
 
-      case 'company':
-        store.setCompanyName(text);
-        break;
+        case 'company':
+          setCompanyName(text);
+          break;
 
-      default:
-        logger.warn(
-          `[SEARCH-ID-INPUT-CHANGE-HANDLER] Unknown input key: ${key}`,
-        );
-    }
-  };
+        default:
+          logger.warn(
+            `[SEARCH-ID-INPUT-CHANGE-HANDLER] Unknown input key: ${key}`,
+          );
+      }
+    },
+    [
+      setSideLabelFrontText,
+      setSideLabelBackText,
+      setProductNameText,
+      setCompanyName,
+    ],
+  );
 
   /**
    * 라디오/체크박스 버튼 핸들러
    */
-  const radioButtonPressHandler = (value: string, key: string) => {
-    const updateStore = (nextValue: string[] | null) => {
+  const radioButtonPressHandler = useCallback(
+    (value: string, key: string) => {
+      let currentValue: string[] | null = null;
+      let setter: (arr: string[] | null) => void = () => {};
+
       switch (key) {
         case 'manufacturerName':
-          store.setManufacturerName(nextValue);
+          currentValue = manufacturerName;
+          setter = setManufacturerName;
           break;
 
         case 'dividerLineData':
-          store.setDividerLineData(nextValue);
+          currentValue = dividerLineData;
+          setter = setDividerLineData;
           break;
 
         case 'shape':
-          store.setShape(nextValue);
+          currentValue = shape;
+          setter = setShape;
           break;
 
         case 'colors':
-          store.setColors(nextValue);
+          currentValue = colors;
+          setter = setColors;
           break;
 
         default:
           logger.warn(`[RADIO-BUTTON-PRESS-HANDLER] Unknown input key: ${key}`);
-          break;
+          return;
       }
-    };
 
-    const currentValue = getCurrentValueByKey(store, key);
-    const nextValue = getToggledArrayValue(currentValue, value);
-
-    updateStore(nextValue);
-  };
+      const nextValue = getToggledArrayValue(currentValue, value);
+      setter(nextValue);
+    },
+    [
+      manufacturerName,
+      setManufacturerName,
+      dividerLineData,
+      setDividerLineData,
+      shape,
+      setShape,
+      colors,
+      setColors,
+    ],
+  );
 
   /**
    * 검색 실행 로직
    */
-  const searchPillDatas = async () => {
+  const searchPillDatas = useCallback(async () => {
     try {
-      const rawParam = store.getSelectedSearchId();
+      const rawParam = getSelectedSearchId();
       const searchParam = buildSearchParam(rawParam);
 
       setIsLoading(true);
@@ -102,50 +173,24 @@ export const useSelectedSearchId = () => {
 
       return [];
     }
-  };
+  }, [getSelectedSearchId, setIsLoading, setSearchParam, setSearchResultData]);
 
   /**
    * 초기화 버튼 핸들러
    */
-  const resetButtonClickHandler = () => {
-    store.resetSelectedSearchId();
+  const resetButtonClickHandler = useCallback(() => {
+    resetSelectedSearchId();
     resetSelectedMark();
-  };
+  }, [resetSelectedSearchId, resetSelectedMark]);
 
   return {
     searchIdInputChangeHandler,
     radioButtonPressHandler,
     resetButtonClickHandler,
     searchPillDatas,
-    setIsExactMatch: store.setIsExactMatch,
-    isExactMatch: store.isExactMatch,
+    setIsExactMatch,
+    isExactMatch,
   };
-};
-
-/**
- *  현재 스토어에서 키에 해당하는 값을 안전하게 가져옴
- */
-const getCurrentValueByKey = (
-  store: ISearchIdState,
-  key: string,
-): string[] | null => {
-  switch (key) {
-    case 'manufacturerName':
-      return store.manufacturerName;
-
-    case 'dividerLineData':
-      return store.dividerLineData;
-
-    case 'shape':
-      return store.shape;
-
-    case 'colors':
-      return store.colors;
-
-    default:
-      logger.warn(`[GET-CURRENT-VALUE-BY-KEY] Unknown input key: ${key}`);
-      return null;
-  }
 };
 
 // 배열 토글 로직
