@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import * as Location from 'expo-location';
+import Toast from 'react-native-toast-message';
 import { getNearbyPharmacies } from '@services/database/queries/nearby_pharmacies';
 import { INearbyPharmacies } from '@services/database/types';
 import logger from '@utils/logger';
@@ -119,8 +120,14 @@ export const useNearbyPharmacy = () => {
     } catch (e) {
       logger.error(`Failed to initialize location. ${e.stack || e}`);
 
+      Toast.show({
+        type: 'error',
+        text1: '위치 확인에 실패했습니다. 다시 시도해주세요.',
+        position: 'bottom',
+      });
+
       if (!isDataLoaded.current) {
-        setErrorMsg('위치 정보를 가져오는 중 오류가 발생했습니다.'); // 어떤 방식으로도 데이터를 가져오지 못했을 때만 에러 메시지 설정
+        setErrorMsg('위치 확인에 실패했습니다. 다시 시도해주세요.'); // 어떤 방식으로도 데이터를 가져오지 못했을 때만 에러 메시지 설정
       }
     } finally {
       setLoading(false);
