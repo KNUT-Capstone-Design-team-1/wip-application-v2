@@ -1,9 +1,12 @@
+import logger from '@utils/logger';
 import { getDatabase } from '../sqlite';
 import { ITableColumnSchema, TDataTable, TResourceDataSchemas } from '../types';
 import {
   getColumnPlaceholderForTableCreate,
   prepareRowForInsert,
 } from '../util';
+
+const INSERT_BATCH_SIZE = 50;
 
 /**
  * 테이블 유무 확인
@@ -57,10 +60,108 @@ export const createTable = async (
 };
 
 /**
- * 테이블에 데이터 INSERT
- * !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
- * @param table 테이블 이름
- * @param data 삽입할 데이터
+ * batch 데이터에서 INSERT 대상 column 목록을 추출한다.
+ *
+ * @param batch INSERT 대상 batch 데이터
+ */
+const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
+  const columnSet = new Set<string>();
+
+  for (const row of batch) {
+    const preparedRow = prepareRowForInsert(row);
+
+    Object.entries(preparedRow).forEach(([key, value]) => {
+      if (value !== undefined) {
+        columnSet.add(key);
+      }
+    });
+  }
+
+  return [...columnSet];
+};
+
+/**
+ * INSERT SQL 문을 생성한다.
+ * @param table INSERT 대상 테이블
+ * @param columns INSERT 대상 column 목록
+ */
+const createInsertSql = (table: TDataTable, columns: string[]): string => {
+  const escapedColumns = columns.map((column) => `"${column}"`);
+
+  return `INSERT INTO ${table} (${escapedColumns.join(', ')}) 
+          VALUES (${columns.map(() => '?').join(', ')})`;
+};
+
+/**
+ * row 데이터를 SQL parameter 배열로 변환한다.
+ * @param row INSERT 대상 row 데이터
+ * @param columns INSERT 대상 column 목록
+ */
+const createInsertValues = (
+  row: Partial<TResourceDataSchemas>,
+  columns: string[],
+) => {
+  const preparedRow = prepareRowForInsert(row);
+
+  return columns.map((column) => preparedRow[column] ?? null);
+};
+
+/**
+ * prepared statement 를 안전하게 종료한다.
+ * @param statement finalize 대상 statement
+ */
+const finalizeStatement = async (
+  statement: Awaited<ReturnType<typeof getDatabase>>['prepareAsync'] extends (
+    ...args: never[]
+  ) => Promise<infer T>
+    ? T | null
+    : never,
+) => {
+  if (!statement) {
+    return;
+  }
+
+  try {
+    await statement.finalizeAsync();
+  } catch (e) {
+    logger.warn(`Failed to finalize statement. ${e.stack || e}`);
+  }
+};
+
+/**
+ * batch 데이터를 transaction 내부에서 INSERT 한다.
+ * @param db SQLite database instance
+ * @param sql INSERT SQL
+ * @param columns INSERT 대상 column 목록
+ * @param batch INSERT 대상 batch 데이터
+ */
+const executeBatchInsert = async (
+  db: Awaited<ReturnType<typeof getDatabase>>,
+  sql: string,
+  columns: string[],
+  batch: Partial<TResourceDataSchemas>[],
+) => {
+  let statement: Awaited<ReturnType<typeof db.prepareAsync>> | null = null;
+
+  try {
+    statement = await db.prepareAsync(sql);
+
+    await db.withTransactionAsync(async () => {
+      for (const row of batch) {
+        const values = createInsertValues(row, columns);
+
+        await statement!.executeAsync(values);
+      }
+    });
+  } finally {
+    await finalizeStatement(statement);
+  }
+};
+
+/**
+ * 대량 데이터를 batch 단위로 나누어 INSERT 한다.
+ * @param table INSERT 대상 테이블
+ * @param data INSERT 대상 데이터 목록
  */
 export const insertData = async (
   table: TDataTable,
@@ -72,35 +173,17 @@ export const insertData = async (
 
   const db = await getDatabase();
 
-  const insertBatchSize = 50;
+  for (let i = 0; i < data.length; i += INSERT_BATCH_SIZE) {
+    const batch = data.slice(i, i + INSERT_BATCH_SIZE);
 
-  for (let i = 0; i < data.length; i += insertBatchSize) {
-    const batch = data.slice(i, i + insertBatchSize);
+    const columns = getBatchColumns(batch);
 
-    // Identify columns from the first row of the batch to create a prepared statement
-    const firstRow = prepareRowForInsert(batch[0]);
-    const entries = Object.entries(firstRow).filter(([, v]) => v !== undefined);
-
-    if (!entries.length) {
+    if (columns.length === 0) {
       continue;
     }
 
-    const columns = entries.map(([key]) => `"${key}"`);
-    const sql = `INSERT INTO ${table} (${columns.join(', ')}) 
-                 VALUES (${columns.map(() => '?').join(', ')})`;
+    const sql = createInsertSql(table, columns);
 
-    await db.withTransactionAsync(async () => {
-      const statement = await db.prepareAsync(sql);
-      try {
-        for (const row of batch) {
-          const preparedRow = prepareRowForInsert(row);
-          const values = entries.map(([key]) => preparedRow[key]);
-
-          await statement.executeAsync(values);
-        }
-      } finally {
-        await statement.finalizeAsync();
-      }
-    });
+    await executeBatchInsert(db, sql, columns, batch);
   }
 };
