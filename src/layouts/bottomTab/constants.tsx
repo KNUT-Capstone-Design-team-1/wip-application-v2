@@ -1,12 +1,12 @@
 import React from 'react';
 import HomeSvg from '@assets/images/home.svg';
-import StorageSvg from '@assets/images/storage.svg';
 import SettingSvg from '@assets/images/setting.svg';
 import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
+import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
 import { TabConfig } from './types';
 
-export const ICON_SIZE = 24;
-export const CENTER_ICON_SIZE = 32;
+export const ICON_SIZE = 22;
+export const CENTER_ICON_SIZE = 22;
 export const GRADIENT_COLORS = ['#137DFF', '#32D2FF'] as const;
 export const ACTIVE_COLOR = '#32D2FF';
 
@@ -18,23 +18,23 @@ export const TAB_CONFIGS: TabConfig[] = [
       <HomeSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? '#000000' : '#C1D1D5'}
+        fill={isActive ? '#FFFFFF' : '#888888'}
       />
     ),
     path: '/',
     isCenter: false,
   },
   {
-    key: 'storage',
-    label: '보관함',
+    key: 'pill-identification-search',
+    label: '식별검색',
     icon: (isActive: boolean) => (
-      <StorageSvg
+      <PillIdentificationSearchSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? '#000000' : '#C1D1D5'}
+        fill={isActive ? '#FFFFFF' : '#888888'}
       />
     ),
-    path: '/pill-save',
+    path: '/pill-identification-search',
     isCenter: false,
   },
   {
@@ -44,11 +44,11 @@ export const TAB_CONFIGS: TabConfig[] = [
       <PillImageSearchSvg
         width={CENTER_ICON_SIZE}
         height={CENTER_ICON_SIZE}
-        fill="#FFFFFF"
+        fill={isActive ? '#FFFFFF' : '#888888'}
       />
     ),
     path: '/pill-image-search',
-    isCenter: true,
+    isCenter: false,
   },
   {
     key: 'setting',
@@ -57,7 +57,7 @@ export const TAB_CONFIGS: TabConfig[] = [
       <SettingSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? '#000000' : '#C1D1D5'}
+        fill={isActive ? '#FFFFFF' : '#888888'}
       />
     ),
     path: '/setting',

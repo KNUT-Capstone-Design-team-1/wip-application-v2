@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { styles } from '../styles/HomeScreen';
 import LastSearchPill from '../components/organisms/LastSearchPill';
 import MenuList from '../components/organisms/MenuList';
 import TakeGuide from '../components/organisms/TakeGuide';
-import { PillIdentificationSearchModal } from '../../pill_identification_search';
 import { useHome } from '../hooks/useHome';
+import { useRouter } from 'expo-router';
 
 const HomeScreen: React.FC = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const router = useRouter();
+
   const { recentSearchPills, loadRecentSearchPills, deleteRecentSearch } =
     useHome();
 
@@ -23,13 +24,12 @@ const HomeScreen: React.FC = () => {
         onDelete={deleteRecentSearch}
       />
       <View style={styles.hr}></View>
-      <MenuList onPillIdentificationPress={() => setIsModalVisible(true)} />
-      <TakeGuide />
-
-      <PillIdentificationSearchModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+      <MenuList
+        onPillIdentificationPress={() =>
+          router.push('/pill-identification-search')
+        }
       />
+      <TakeGuide />
     </View>
   );
 };

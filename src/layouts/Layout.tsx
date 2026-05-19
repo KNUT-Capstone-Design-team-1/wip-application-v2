@@ -4,7 +4,7 @@ import Toast from 'react-native-toast-message';
 import { PAGE_TITLES } from './constants';
 import Header from './header/Header';
 import SubHeader from './header/SubHeader';
-import BottomTab from '../layouts/bottomTab/BottomTab';
+import BottomTab from '@layouts/bottomTab/BottomTab';
 import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomSheet';
 
 interface LayoutProps {

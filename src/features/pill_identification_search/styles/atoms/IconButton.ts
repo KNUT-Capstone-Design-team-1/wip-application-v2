@@ -4,11 +4,12 @@ import { COLOR_GRAY } from '@constants/color';
 export const styles = StyleSheet.create({
   iconButtonWrapper: {
     position: 'relative',
-    width: 80,
-    height: 80,
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 15,
     borderWidth: 1,
     borderColor: COLOR_GRAY[150],
+    backgroundColor: '#fff',
   },
   iconButtonTop: {
     width: '100%',
@@ -22,8 +23,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    width: '40%',
-    height: '40%',
+    width: '50%',
+    height: '50%',
   },
   iconButtonBottom: {
     width: '100%',
@@ -33,9 +34,11 @@ export const styles = StyleSheet.create({
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
     overflow: 'hidden',
+    paddingHorizontal: 2,
   },
   iconSectionLabel: {
     color: COLOR_GRAY[200],
     textAlign: 'center',
+    fontSize: 11,
   },
 });

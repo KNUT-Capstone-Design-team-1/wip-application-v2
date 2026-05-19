@@ -22,7 +22,15 @@ const BottomTab = () => {
           const handlePress = () => {
             // 같은 route인 경우 스택 쌓지 않음
             if (isActive) return;
-            router.push(item.path);
+
+            // 홈으로 이동할 때는 push를 사용하여 스택의 최상단으로 보내고,
+            // 다른 탭으로 이동할 때는 replace를 사용하여 현재 탭 화면을 교체합니다.
+            // 이렇게 하면 어떤 탭에서든 뒤로가기를 누르면 홈으로 돌아갑니다.
+            if (item.path === '/') {
+              router.push('/');
+            } else {
+              router.replace(item.path as any);
+            }
           };
 
           return (

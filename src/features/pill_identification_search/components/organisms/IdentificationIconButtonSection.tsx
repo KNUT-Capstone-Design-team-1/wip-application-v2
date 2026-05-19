@@ -25,10 +25,18 @@ const IdentificationIconButtonSection: React.FC<
         direction="column"
         selectedIndex={selectedIndexes}
       >
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-start',
+            gap: 6,
+          }}
+        >
           {section.datas.map((data, index) => (
             <TouchableOpacity
               key={index}
+              style={{ width: '23.5%', marginBottom: 4 }}
               onPress={() => {
                 if (index === 0 && !selectedIndexes.includes(0)) {
                   radioButtonPressHandler('전체', sectionKey); // '전체' 버튼: 이미 선택 상태면 무시

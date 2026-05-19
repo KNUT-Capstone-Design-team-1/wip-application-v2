@@ -6,34 +6,12 @@ import { TabItemProps } from './types';
 import { GRADIENT_COLORS, ACTIVE_COLOR } from './constants';
 
 export const TabItem = React.memo(
-  ({ icon, label, isActive, onPress, isCenter }: TabItemProps) => {
-    // 중앙 탭 (이미지검색) - 큰 원형 그라데이션 배경
-    if (isCenter) {
-      return (
-        <TouchableOpacity
-          style={styles.centerTabItem}
-          onPress={onPress}
-          accessible={true}
-          accessibilityLabel={`${label} 탭`}
-          accessibilityRole="tab"
-          accessibilityState={{ selected: isActive }}
-        >
-          <LinearGradient
-            colors={GRADIENT_COLORS}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.centerIconContainer}
-          >
-            {icon}
-          </LinearGradient>
-          <Text style={[styles.label, isActive && { color: ACTIVE_COLOR }]}>
-            {label}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
+  ({ icon, label, isActive, onPress }: TabItemProps) => {
+    // 활성화 상태인 경우에만 파란색 그라데이션 적용, 비활성화는 회색
+    const gradientColors = isActive
+      ? GRADIENT_COLORS
+      : (['#F0F0F0', '#E0E0E0'] as const);
 
-    // 일반 탭
     return (
       <TouchableOpacity
         style={styles.tabItem}
@@ -43,11 +21,18 @@ export const TabItem = React.memo(
         accessibilityRole="tab"
         accessibilityState={{ selected: isActive }}
       >
-        <View style={styles.iconContainer}>{icon}</View>
+        <LinearGradient
+          colors={gradientColors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.iconGradientContainer}
+        >
+          {icon}
+        </LinearGradient>
         <Text
           style={[
             styles.label,
-            isActive && { color: ACTIVE_COLOR, fontWeight: '600' },
+            isActive && { color: ACTIVE_COLOR, fontWeight: '700' },
           ]}
         >
           {label}

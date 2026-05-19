@@ -16,8 +16,9 @@ const IconButton = ({
   iconColor,
   label,
 }: IIConButtonProps) => {
-  // iconUrl이 빈 문자열이 아니고 실제 값이 있는지 체크
-  const hasIcon = iconUrl && iconUrl !== '';
+  // iconUrl이 실제로 존재하는지 체크 (빈 문자열이나 null/undefined 제외)
+  // TS2367 에러를 피하기 위해 any로 캐스팅하여 비교합니다.
+  const hasIcon = !!iconUrl && (iconUrl as any) !== '';
 
   // 흰색일 때 테두리 추가
   const isWhite =
