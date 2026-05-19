@@ -2,6 +2,7 @@ import React from 'react';
 import HomeSvg from '@assets/images/home.svg';
 import StorageSvg from '@assets/images/storage.svg';
 import SettingSvg from '@assets/images/setting.svg';
+import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import { TabConfig } from './types';
 
 export const ICON_SIZE = 24;
@@ -35,6 +36,19 @@ export const TAB_CONFIGS: TabConfig[] = [
     ),
     path: '/pill-save',
     isCenter: false,
+  },
+  {
+    key: 'pill-search',
+    label: '이미지검색',
+    icon: (isActive: boolean) => (
+      <PillImageSearchSvg
+        width={CENTER_ICON_SIZE}
+        height={CENTER_ICON_SIZE}
+        fill="#FFFFFF"
+      />
+    ),
+    path: '/pill-image-search',
+    isCenter: true,
   },
   {
     key: 'setting',

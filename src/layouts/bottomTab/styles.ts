@@ -50,4 +50,52 @@ export const styles = StyleSheet.create({
     color: '#000000',
     fontWeight: '700',
   },
+  tabItem: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    gap: 6,
+  },
+  iconContainer: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  label: {
+    color: '#C1D1D5',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  centerTabItem: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    gap: 6,
+    marginTop: -20,
+  },
+  centerIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+    // 그림자 효과 (iOS)
+    shadowColor: '#137DFF',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    // 그림자 효과 (Android)
+    elevation: 8,
+  },
 });
