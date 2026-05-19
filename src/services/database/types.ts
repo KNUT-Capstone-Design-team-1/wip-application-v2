@@ -306,19 +306,31 @@ export type TNearbyPharmaciesSearchParam = Omit<
 export type TCannabisSearchParam = Pick<
   ICannabis,
   'chemicalNameKr' | 'chemicalNameEn'
->;
+> & {
+  containedInKr?: string;
+  containedInEn?: string;
+};
 
 export type TNarcoticsSearchParam = Pick<
   INarcotics,
   'chemicalNameKr' | 'chemicalNameEn'
->;
+> & {
+  containedInKr?: string;
+  containedInEn?: string;
+};
 
 export type TPsychotropicsSearchParam = Pick<
   IPsychotropics,
   'chemicalNameKr' | 'chemicalNameEn'
->;
+> & {
+  containedInKr?: string;
+  containedInEn?: string;
+};
 
 export type TProhibitedListSearchParam = Pick<
   IProhibitedList,
   'genericKr' | 'genericEn' | 'category' | 'categoryKr' | 'categoryEn'
->;
+> & {
+  containedInKr?: string;
+  containedInEn?: string;
+};

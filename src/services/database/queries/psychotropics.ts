@@ -34,6 +34,14 @@ const getPsychotropicsWhereQuery: TWhereQueryClauseFunc = (
       query: `chemicalNameEn LIKE ?`,
       values: (chemicalNameEn: string) => [`%${chemicalNameEn}%`],
     },
+    containedInKr: {
+      query: `? LIKE '%' || chemicalNameKr || '%'`,
+      values: (containedInKr: string) => [containedInKr],
+    },
+    containedInEn: {
+      query: `? LIKE '%' || chemicalNameEn || '%'`,
+      values: (containedInEn: string) => [containedInEn],
+    },
   };
 };
 

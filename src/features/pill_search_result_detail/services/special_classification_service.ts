@@ -18,6 +18,112 @@ interface ISpecialClassificationResult {
 }
 
 /**
+ * 성분명 문자열을 정제하고 배열로 분리
+ * 구분자: ;, | 및 공백(\s)
+ */
+const parseIngredients = (ingredientsStr?: string): string[] => {
+  if (!ingredientsStr) {
+    return [];
+  }
+
+  return ingredientsStr
+    .split(/[;,|\s]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+};
+
+/**
+ * 특정 성분이 특정 분류에 속하는지 확인하는 범용 함수
+ */
+const checkSubstance = async (
+  ingredientsKr: string[],
+  ingredientsEn: string[],
+  queryFn: (
+    params: any,
+    options: { page: number; limit: number },
+  ) => Promise<any[]>,
+  krParamKey: string,
+  enParamKey: string,
+): Promise<string[]> => {
+  const matched = new Set<string>();
+
+  for (const name of ingredientsKr) {
+    const found = await queryFn({ [krParamKey]: name }, { page: 1, limit: 1 });
+
+    if (found.length > 0) {
+      matched.add(name);
+    }
+  }
+
+  for (const name of ingredientsEn) {
+    const found = await queryFn({ [enParamKey]: name }, { page: 1, limit: 1 });
+
+    if (found.length > 0) {
+      matched.add(name);
+    }
+  }
+
+  return Array.from(matched);
+};
+
+/**
+ * 금지 약물(도핑) 여부 확인 (추가 정보 포함)
+ */
+const checkProhibitedSubstance = async (
+  ingredientsKr: string[],
+  ingredientsEn: string[],
+) => {
+  const matched = new Set<string>();
+
+  let category: string | undefined;
+  let inGame: boolean | undefined;
+  let outGame: boolean | undefined;
+
+  const updateProhibitedInfo = (found: any[], name: string) => {
+    if (found.length > 0) {
+      matched.add(name);
+
+      if (!category) {
+        category = found[0].categoryKr;
+      }
+
+      if (inGame === undefined) {
+        inGame = found[0].inGameProhibited === 1;
+      }
+
+      if (outGame === undefined) {
+        outGame = found[0].outGameProhibited === 1;
+      }
+    }
+  };
+
+  for (const name of ingredientsKr) {
+    const found = await getProhibitedList(
+      { genericKr: name },
+      { page: 1, limit: 1 },
+    );
+
+    updateProhibitedInfo(found, name);
+  }
+
+  for (const name of ingredientsEn) {
+    const found = await getProhibitedList(
+      { genericEn: name },
+      { page: 1, limit: 1 },
+    );
+
+    updateProhibitedInfo(found, name);
+  }
+
+  return {
+    ingredients: Array.from(matched),
+    category,
+    inGame,
+    outGame,
+  };
+};
+
+/**
  * 성분명을 기반으로 특수 분류(마약, 대마, 향정, 도핑) 여부 확인
  * @param materialName 국문 성분명
  * @param materialEngName 영문 성분명
@@ -26,146 +132,60 @@ export const checkSpecialClassifications = async (
   materialName?: string,
   materialEngName?: string,
 ): Promise<ISpecialClassificationResult> => {
-  const result: ISpecialClassificationResult = {
-    isNarcotic: false,
-    narcoticIngredients: [],
-    isCannabis: false,
-    cannabisIngredients: [],
-    isPsychotropic: false,
-    psychotropicIngredients: [],
-    isProhibited: false,
-    prohibitedIngredients: [],
-  };
+  const ingredientsKr = parseIngredients(materialName);
+  const ingredientsEn = parseIngredients(materialEngName);
 
-  if (!materialName && !materialEngName) {
-    return result;
+  if (ingredientsKr.length === 0 && ingredientsEn.length === 0) {
+    return {
+      isNarcotic: false,
+      narcoticIngredients: [],
+      isCannabis: false,
+      cannabisIngredients: [],
+      isPsychotropic: false,
+      psychotropicIngredients: [],
+      isProhibited: false,
+      prohibitedIngredients: [],
+    };
   }
 
-  // 성분명 정제 및 분리 (보통 ';' 또는 ','로 구분됨)
-  const ingredientsKr = materialName
-    ? materialName
-        .split(/[;,]/)
-        .map((s) => s.trim())
-        .filter(Boolean)
-    : [];
-  const ingredientsEn = materialEngName
-    ? materialEngName
-        .split(/[;,]/)
-        .map((s) => s.trim())
-        .filter(Boolean)
-    : [];
-
-  // 각 성분에 대해 루프를 돌며 확인 (병렬 처리)
-  const checkNarcotics = async () => {
-    const matched: string[] = [];
-    for (const name of ingredientsKr) {
-      const found = await getNarcotics(
-        { chemicalNameKr: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) matched.push(name);
-    }
-    for (const name of ingredientsEn) {
-      const found = await getNarcotics(
-        { chemicalNameEn: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) matched.push(name);
-    }
-    return matched;
-  };
-
-  const checkCannabis = async () => {
-    const matched: string[] = [];
-    for (const name of ingredientsKr) {
-      const found = await getCannabis(
-        { chemicalNameKr: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) matched.push(name);
-    }
-    for (const name of ingredientsEn) {
-      const found = await getCannabis(
-        { chemicalNameEn: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) matched.push(name);
-    }
-    return matched;
-  };
-
-  const checkPsychotropics = async () => {
-    const matched: string[] = [];
-    for (const name of ingredientsKr) {
-      const found = await getPsychotropics(
-        { chemicalNameKr: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) matched.push(name);
-    }
-    for (const name of ingredientsEn) {
-      const found = await getPsychotropics(
-        { chemicalNameEn: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) matched.push(name);
-    }
-    return matched;
-  };
-
-  const checkProhibited = async () => {
-    const matched: string[] = [];
-    let category: string | undefined;
-    let inGame: boolean | undefined;
-    let outGame: boolean | undefined;
-
-    for (const name of ingredientsKr) {
-      const found = await getProhibitedList(
-        { genericKr: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) {
-        matched.push(name);
-        if (!category) category = found[0].categoryKr;
-        if (inGame === undefined) inGame = found[0].inGameProhibited === 1;
-        if (outGame === undefined) outGame = found[0].outGameProhibited === 1;
-      }
-    }
-    for (const name of ingredientsEn) {
-      const found = await getProhibitedList(
-        { genericEn: name },
-        { page: 1, limit: 1 },
-      );
-      if (found.length > 0) {
-        matched.push(name);
-        if (!category) category = found[0].categoryKr;
-        if (inGame === undefined) inGame = found[0].inGameProhibited === 1;
-        if (outGame === undefined) outGame = found[0].outGameProhibited === 1;
-      }
-    }
-    return { ingredients: matched, category, inGame, outGame };
-  };
-
   const [narcotic, cannabis, psychotropic, prohibited] = await Promise.all([
-    checkNarcotics(),
-    checkCannabis(),
-    checkPsychotropics(),
-    checkProhibited(),
+    checkSubstance(
+      ingredientsKr,
+      ingredientsEn,
+      getNarcotics,
+      'chemicalNameKr',
+      'chemicalNameEn',
+    ),
+    checkSubstance(
+      ingredientsKr,
+      ingredientsEn,
+      getCannabis,
+      'chemicalNameKr',
+      'chemicalNameEn',
+    ),
+    checkSubstance(
+      ingredientsKr,
+      ingredientsEn,
+      getPsychotropics,
+      'chemicalNameKr',
+      'chemicalNameEn',
+    ),
+    checkProhibitedSubstance(ingredientsKr, ingredientsEn),
   ]);
 
-  result.isNarcotic = narcotic.length > 0;
-  result.narcoticIngredients = narcotic;
-  result.isCannabis = cannabis.length > 0;
-  result.cannabisIngredients = cannabis;
-  result.isPsychotropic = psychotropic.length > 0;
-  result.psychotropicIngredients = psychotropic;
-  result.isProhibited = prohibited.ingredients.length > 0;
-  result.prohibitedIngredients = prohibited.ingredients;
-  result.prohibitedCategory = prohibited.category;
-  result.inGameProhibited = prohibited.inGame;
-  result.outGameProhibited = prohibited.outGame;
-
-  return result;
+  return {
+    isNarcotic: narcotic.length > 0,
+    narcoticIngredients: narcotic,
+    isCannabis: cannabis.length > 0,
+    cannabisIngredients: cannabis,
+    isPsychotropic: psychotropic.length > 0,
+    psychotropicIngredients: psychotropic,
+    isProhibited: prohibited.ingredients.length > 0,
+    prohibitedIngredients: prohibited.ingredients,
+    prohibitedCategory: prohibited.category,
+    inGameProhibited: prohibited.inGame,
+    outGameProhibited: prohibited.outGame,
+  };
 };
 
 /**
@@ -176,7 +196,20 @@ export const checkDrivingWarning = (
   udData?: string,
   nbData?: string,
 ): boolean => {
-  const keywords = ['운전', '기계 조작', '기계조작'];
+  const keywords = [
+    '운전',
+    '기계 조작',
+    '기계조작',
+    '정신',
+    '졸음',
+    '수면',
+    '저하',
+    '반응속도',
+    '의식',
+    '어지러움',
+    '자동차',
+  ];
+
   const combinedData = `${eeData || ''} ${udData || ''} ${nbData || ''}`;
 
   return keywords.some((keyword) => combinedData.includes(keyword));

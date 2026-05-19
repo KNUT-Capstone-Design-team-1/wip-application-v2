@@ -46,6 +46,14 @@ const getProhibitedListWhereQuery: TWhereQueryClauseFunc = (
       query: `categoryEn LIKE ?`,
       values: (categoryEn: string) => [`%${categoryEn}%`],
     },
+    containedInKr: {
+      query: `? LIKE '%' || genericKr || '%'`,
+      values: (containedInKr: string) => [containedInKr],
+    },
+    containedInEn: {
+      query: `? LIKE '%' || genericEn || '%'`,
+      values: (containedInEn: string) => [containedInEn],
+    },
   };
 };
 
