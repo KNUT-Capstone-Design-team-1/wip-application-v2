@@ -108,7 +108,6 @@ Prioritize readability, maintainability, predictability, and minimal complexity.
 # Decision Making
 
 When multiple implementations are possible:
-
 1. Prefer the simpler solution.
 2. Prefer the more readable solution.
 3. Prefer the solution with lower maintenance cost.
