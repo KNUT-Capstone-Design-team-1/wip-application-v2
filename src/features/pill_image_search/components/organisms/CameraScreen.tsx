@@ -10,6 +10,7 @@ import {
 import {
   Camera,
   useCameraDevice,
+  useCameraFormat,
   useCameraPermission,
 } from 'react-native-vision-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -33,6 +34,10 @@ const CameraScreen = ({
   backImage,
 }: CameraScreenProps) => {
   const device = useCameraDevice('back');
+  const format = useCameraFormat(device, [
+    { photoAspectRatio: 1 / 1 },
+    { photoResolution: { width: 768, height: 768 } },
+  ]);
   const { hasPermission, requestPermission } = useCameraPermission();
   const insets = useSafeAreaInsets();
 
@@ -53,15 +58,6 @@ const CameraScreen = ({
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
-        <Camera
-          ref={cameraRef}
-          style={StyleSheet.absoluteFill}
-          device={device}
-          isActive={visible}
-          photo={true}
-          photoQualityBalance="balanced"
-        />
-
         {/* 상단 이미지 슬롯 오버레이 */}
         <View
           style={[styles.topOverlay, { paddingTop: Math.max(insets.top, 20) }]}
@@ -101,6 +97,16 @@ const CameraScreen = ({
             </View>
           </View>
         </View>
+
+        <Camera
+          ref={cameraRef}
+          style={{ flex: 1 }}
+          device={device}
+          isActive={visible}
+          photo={true}
+          format={format}
+          photoQualityBalance="balanced"
+        />
 
         {/* 하단 촬영 버튼 */}
         <View
