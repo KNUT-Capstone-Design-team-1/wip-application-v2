@@ -12,6 +12,7 @@ import {
   useCameraDevice,
   useCameraPermission,
 } from 'react-native-vision-camera';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '../../styles/organisms/CameraScreen';
 import { useCameraCapture } from '../../hooks/useCameraCapture';
 
@@ -33,6 +34,7 @@ const CameraScreen = ({
 }: CameraScreenProps) => {
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
+  const insets = useSafeAreaInsets();
 
   const { cameraRef, capturePhoto } = useCameraCapture({
     onCapture,
@@ -61,8 +63,13 @@ const CameraScreen = ({
         />
 
         {/* 상단 이미지 슬롯 오버레이 */}
-        <View style={styles.topOverlay}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+        <View
+          style={[styles.topOverlay, { paddingTop: Math.max(insets.top, 20) }]}
+        >
+          <TouchableOpacity
+            style={[styles.closeButton, { top: Math.max(insets.top, 20) + 10 }]}
+            onPress={onClose}
+          >
             <Text style={styles.closeButtonText}>✕</Text>
           </TouchableOpacity>
 
@@ -96,7 +103,12 @@ const CameraScreen = ({
         </View>
 
         {/* 하단 촬영 버튼 */}
-        <View style={styles.bottomOverlay}>
+        <View
+          style={[
+            styles.bottomOverlay,
+            { paddingBottom: Math.max(insets.bottom, 40) },
+          ]}
+        >
           <TouchableOpacity style={styles.captureButton} onPress={capturePhoto}>
             <View style={styles.captureButtonInner} />
           </TouchableOpacity>

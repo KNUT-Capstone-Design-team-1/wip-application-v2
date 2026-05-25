@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    marginBottom: -30,
     paddingHorizontal: '5%',
   },
 });

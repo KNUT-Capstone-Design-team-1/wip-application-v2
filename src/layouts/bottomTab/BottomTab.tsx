@@ -1,4 +1,5 @@
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_CONFIGS } from '@layouts/bottomTab/constants';
 import { router, usePathname } from 'expo-router';
 import { styles } from './styles';
@@ -6,6 +7,7 @@ import { TabItem } from './TabItem';
 
 const BottomTab = () => {
   const pathname = usePathname();
+  const insets = useSafeAreaInsets();
 
   // 현재 경로와 탭 경로를 비교하여 활성화 상태 확인
   const isTabActive = (tabPath: string) => {
@@ -14,7 +16,12 @@ const BottomTab = () => {
   };
 
   return (
-    <View style={styles.bottomTabContainer}>
+    <View
+      style={[
+        styles.bottomTabContainer,
+        { paddingBottom: Math.max(insets.bottom, 12) },
+      ]}
+    >
       <View style={styles.bottomTabList}>
         {TAB_CONFIGS.map((item, index) => {
           const isActive = isTabActive(item.path);

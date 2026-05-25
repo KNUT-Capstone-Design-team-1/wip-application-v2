@@ -116,6 +116,14 @@
         {
           "locationWhenInUsePermission": "$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다"
         }
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "enforceContrast": false,
+          "hidden": false,
+          "style": "dark"
+        }
       ]
     ],
     "extra": {
