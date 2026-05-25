@@ -7,10 +7,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   topOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     paddingHorizontal: 20,
     paddingBottom: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -74,10 +70,6 @@ export const styles = StyleSheet.create({
     color: '#fff',
   },
   bottomOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     paddingTop: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center',
