@@ -60,4 +60,17 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
     lineHeight: 16,
   },
+  disclaimerContainer: {
+    marginBottom: 10,
+  },
+  reportButton: {
+    alignSelf: 'flex-start',
+    marginTop: 2,
+  },
+  reportButtonText: {
+    fontSize: 11,
+    color: '#E03131',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
 });

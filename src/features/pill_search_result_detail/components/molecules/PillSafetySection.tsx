@@ -1,21 +1,54 @@
-import { memo } from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { memo, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Linking, Alert } from 'react-native';
 import InfoRow from '../atoms/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
+import { useExternalUrlStore } from '@store/external_url_store';
+import logger from '@utils/logger';
 
 interface IPillSafetySectionProps {
   data: IPillDetail;
 }
 
 const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
+  const { reportEmail } = useExternalUrlStore();
+
+  const handleReport = useCallback(async () => {
+    const subject = encodeURIComponent(
+      `[잘못된 정보 신고] ${data.ITEM_NAME} (${data.ITEM_SEQ})`,
+    );
+    const body = encodeURIComponent(
+      `안녕하세요.\n\n'${data.ITEM_NAME}' (코드: ${data.ITEM_SEQ}) 의 주의 및 특수 분류 정보가 잘못되었음을 신고합니다.\n\n[신고 내용]\n(여기에 잘못된 부분과 올바른 정보를 입력해 주세요.)\n\n감사합니다.`,
+    );
+
+    const url = `mailto:${reportEmail}?subject=${subject}&body=${body}`;
+
+    try {
+      await Linking.openURL(url);
+    } catch (e) {
+      logger.error(
+        `Failed to open email client for reporting. URL: ${url}. ${e.stack || e}`,
+      );
+
+      Alert.alert(
+        '신고하기 실패',
+        `이메일 앱을 열 수 없습니다. ${reportEmail} 로 직접 메일을 보내주세요.`,
+      );
+    }
+  }, [data.ITEM_NAME, data.ITEM_SEQ, reportEmail]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>[ 주의 및 특수 분류 정보 ]</Text>
-      <Text style={styles.disclaimerText}>
-        * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 상세 정보를
-        확인해 주세요.
-      </Text>
+      <View style={styles.disclaimerContainer}>
+        <Text style={styles.disclaimerText}>
+          * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 상세
+          정보를 확인해 주세요.
+        </Text>
+        <TouchableOpacity style={styles.reportButton} onPress={handleReport}>
+          <Text style={styles.reportButtonText}>잘못된 정보 신고하기</Text>
+        </TouchableOpacity>
+      </View>
 
       <InfoRow
         label="운전/기계조작"

@@ -4,6 +4,7 @@ import { getToken } from './google_cloud_token';
 export interface IExternalURLResponse {
   kada: string;
   health: string;
+  reportEmail: string;
 }
 
 /**
