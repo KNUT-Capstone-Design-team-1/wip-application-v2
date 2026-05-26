@@ -90,7 +90,17 @@ const IdentificationTextInputSection = memo(
                     </Text>
                   )}
                 </View>
-                <Text style={{ fontSize: 14, color: '#666' }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#666',
+                    paddingVertical: 0,
+                    includeFontPadding: false,
+                    textAlignVertical: 'center',
+                    lineHeight: 18,
+                    transform: [{ translateY: -1.5 }],
+                  }}
+                >
                   식별문자 일치 (정확히 일치하는 문자만 검색)
                 </Text>
               </TouchableOpacity>

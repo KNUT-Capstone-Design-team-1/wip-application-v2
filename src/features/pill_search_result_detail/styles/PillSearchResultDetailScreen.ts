@@ -7,14 +7,10 @@ export const styles = StyleSheet.create({
   },
   scrollViewWrapper: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
     flex: 1,
   },
   viewWrapper: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
     flex: 1,
     overflow: 'hidden',
     paddingHorizontal: 15,

@@ -14,5 +14,8 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 600,
     height: '100%',
+    includeFontPadding: false,
+    paddingVertical: 0,
+    textAlignVertical: 'center',
   },
 });
