@@ -4,6 +4,8 @@ import { usePillDetail } from '@features/pill_search_result_detail/hooks/use_pil
 import { usePillBox } from '@features/pill_save/hooks/use_pill_box';
 import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
 import logger from '@utils/logger';
+import { useRecentSearchPillStore } from '@store/recent_search_pill_store';
+import { TRecentSearchPill } from '@common_types/recent_search_pill';
 
 export const usePillDetailScreen = () => {
   const { itemDetail, itemImage, ITEM_SEQ } = useLocalSearchParams();
@@ -12,7 +14,8 @@ export const usePillDetailScreen = () => {
 
   const [pillData, setPillData] = useState<IPillDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loadPillDetail, recentSearch } = usePillDetail();
+  const { loadPillDetail } = usePillDetail();
+  const { setRecentSearchPills } = useRecentSearchPillStore();
 
   const { saveState, toggleSave } = usePillBox(pillData?.ITEM_SEQ ?? '');
 
@@ -33,11 +36,12 @@ export const usePillDetailScreen = () => {
   // 최근 검색 저장
   useEffect(() => {
     if (pillData?.ITEM_SEQ) {
-      recentSearch(pillData).catch((e) => {
-        logger.error(`Failed to save recent search. ${e.stack || e}`);
-      });
+      setRecentSearchPills({
+        ITEM_SEQ: pillData.ITEM_SEQ,
+        ITEM_NAME: pillData.ITEM_NAME,
+      } as TRecentSearchPill);
     }
-  }, [pillData?.ITEM_SEQ, pillData?.EE_DOC_DATA, recentSearch]);
+  }, [pillData?.ITEM_SEQ]);
 
   useEffect(() => {
     const initData = async () => {

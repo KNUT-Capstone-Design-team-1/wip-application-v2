@@ -7,22 +7,17 @@ import TakeGuide from '../components/organisms/TakeGuide';
 import { useHome } from '../hooks/useHome';
 import { useRouter } from 'expo-router';
 
+/*
+TODO
+- 뒤로 가기 완전 종료 로직 필요
+*/
+
 const HomeScreen: React.FC = () => {
   const router = useRouter();
 
-  const { recentSearchPills, loadRecentSearchPills, deleteRecentSearch } =
-    useHome();
-
-  useEffect(() => {
-    loadRecentSearchPills();
-  }, [loadRecentSearchPills]);
-
   return (
     <View style={styles.container}>
-      <LastSearchPill
-        lastSearchPillData={recentSearchPills}
-        onDelete={deleteRecentSearch}
-      />
+      <LastSearchPill />
       <View style={styles.hr}></View>
       <MenuList
         onPillIdentificationPress={() =>

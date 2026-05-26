@@ -18,7 +18,7 @@
       "@constants/*": ["./src/constants/*"],
       "@services/*": ["./src/services/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@types/*": ["./src/types/*"],
+      "@common_types/*": ["./src/types/*"],
       "@layouts/*": ["./src/layouts/*"]
     }
   },

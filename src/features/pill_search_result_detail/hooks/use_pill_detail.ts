@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
 import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
 import { requestGetPillDetail } from '@services/apis/google_cloud/wip_pill_detail';
@@ -10,52 +9,6 @@ import {
 import logger from '@utils/logger';
 
 export const usePillDetail = () => {
-  /**
-   * 데이터 정제 - JSON 파싱 에러 방지
-   */
-  const sanitizePillDetailData = (data: IPillDetail): IPillDetail => {
-    return Object.entries(data).reduce((acc, [key, value]) => {
-      const typedKey = key as keyof IPillDetail;
-
-      if (typeof value === 'string') {
-        return {
-          ...acc,
-          [typedKey]: value
-            .replace(/[\r\n\t]+/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim(),
-        };
-      }
-
-      return { ...acc, [typedKey]: value };
-    }, {} as IPillDetail);
-  };
-
-  /**
-   * 최근 검색한 알약 정보를 로컬 스토리지에 저장
-   */
-  const recentSearch = useCallback(async (pillDetailData: IPillDetail) => {
-    try {
-      const recentSearchData = await AsyncStorage.getItem('recentSearch');
-      const savedList: IPillDetail[] = recentSearchData
-        ? JSON.parse(recentSearchData)
-        : [];
-
-      const sanitizedData = sanitizePillDetailData(pillDetailData);
-
-      // 중복 제거 및 최신화
-      const filteredList = savedList.filter(
-        (item: IPillDetail) => item.ITEM_SEQ !== sanitizedData.ITEM_SEQ,
-      );
-
-      const updateList = [sanitizedData, ...filteredList].slice(0, 7);
-
-      await AsyncStorage.setItem('recentSearch', JSON.stringify(updateList));
-    } catch (e) {
-      logger.error(`Failed to save recent search. ${e.stack || e}`);
-    }
-  }, []);
-
   /**
    * 백그라운드에서 상세 정보를 불러와 기존 기본 정보와 병합
    */
@@ -168,5 +121,5 @@ export const usePillDetail = () => {
     [fetchDetailFromApi, processBasicData],
   );
 
-  return { recentSearch, loadPillDetail };
+  return { loadPillDetail };
 };
