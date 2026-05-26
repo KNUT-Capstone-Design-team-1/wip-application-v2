@@ -8,10 +8,7 @@
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "newArchEnabled": true,
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mbm.whatispill",
@@ -23,10 +20,7 @@
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다",
         "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME)에서 알약 검색에 필요한 이미지를 가져오기 위해 사진 권한이 필요합니다",
-        "LSApplicationQueriesSchemes": [
-          "mailto",
-          "mailto"
-        ],
+        "LSApplicationQueriesSchemes": ["mailto", "mailto"],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -101,13 +95,56 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/NotoSansKR-Black.ttf",
-            "./assets/fonts/NotoSansKR-Bold.ttf",
-            "./assets/fonts/NotoSansKR-ExtraBold.ttf",
-            "./assets/fonts/NotoSansKR-Light.ttf",
-            "./assets/fonts/NotoSansKR-Medium.ttf",
-            "./assets/fonts/NotoSansKR-Regular.ttf",
-            "./assets/fonts/NotoSansKR-SemiBold.ttf"
+            {
+              "fontFamily": "Paperlogy",
+              "fontDefinitions": [
+                {
+                  "path": "./assets/fonts/PaperLogy-1Thin.ttf",
+                  "weight": 100
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-2ExtraLight.ttf",
+                  "weight": 200
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-3Light.ttf",
+                  "weight": 300
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-4Regular.ttf",
+                  "weight": 400
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-5Medium.ttf",
+                  "weight": 500
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-6SemiBold.ttf",
+                  "weight": 600
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-7Bold.ttf",
+                  "weight": 700
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-8ExtraBold.ttf",
+                  "weight": 800
+                },
+                {
+                  "path": "./assets/fonts/PaperLogy-9Black.ttf",
+                  "weight": 900
+                }
+              ]
+            },
+            {
+              "fontFamily": "Jalnan2",
+              "fontDefinitions": [
+                {
+                  "path": "./assets/fonts/Jalnan2.otf",
+                  "weight": 400
+                }
+              ]
+            }
           ]
         }
       ],
@@ -118,9 +155,7 @@
           "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
         }
       ],
-      [
-        "expo-localization"
-      ],
+      ["expo-localization"],
       "expo-router",
       [
         "expo-location",
