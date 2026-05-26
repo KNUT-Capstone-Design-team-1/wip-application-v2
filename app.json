@@ -8,7 +8,10 @@
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "newArchEnabled": true,
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mbm.whatispill",
@@ -20,7 +23,11 @@
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다",
         "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME)에서 알약 검색에 필요한 이미지를 가져오기 위해 사진 권한이 필요합니다",
-        "LSApplicationQueriesSchemes": ["mailto"]
+        "LSApplicationQueriesSchemes": [
+          "mailto",
+          "mailto"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -49,7 +56,8 @@
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.READ_MEDIA_IMAGES",
-        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
@@ -72,7 +80,8 @@
             "buildToolsVersion": "35.0.0",
             "useLegacyPackaging": true,
             "enableProguardInReleaseBuilds": true,
-            "extraProguardRules": "-keep class io.realm.** { *; }\n-keep class io.realm.react.** { *; }\n-dontwarn java.beans.**\n-dontwarn javax.xml.bind.**"
+            "extraProguardRules": "-keep class io.realm.** { *; }\n-keep class io.realm.react.** { *; }\n-dontwarn java.beans.**\n-dontwarn javax.xml.bind.**",
+            "enableMinifyInReleaseBuilds": true
           }
         }
       ],
@@ -109,7 +118,9 @@
           "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
         }
       ],
-      ["expo-localization"],
+      [
+        "expo-localization"
+      ],
       "expo-router",
       [
         "expo-location",
