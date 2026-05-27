@@ -8,6 +8,7 @@ export const PAGE_TITLES: { [key: string]: string } = {
   '/setting': '설정',
   '/terms': '이용 약관',
   '/pill-search-result-list': '검색 결과',
+  '/pill-search-result-detail': '상세정보',
   '/notice': '공지사항',
   '/notice-detail': '공지사항 상세',
 };

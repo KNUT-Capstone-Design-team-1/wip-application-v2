@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   text: {
+    fontFamily: 'Paperlogy',
     fontWeight: 500,
     fontSize: 16,
   },

@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
     paddingBottom: 50, // 하단 여백 추가
   },
   termsText: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 400,
     fontSize: 16,
     lineHeight: 24, // 가독성을 위해 줄 간격 추가
     color: '#444',

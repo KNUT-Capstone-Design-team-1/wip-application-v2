@@ -6,8 +6,9 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   noticeTitle: {
+    fontFamily: 'Paperlogy',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: 700,
     marginBottom: 8,
     color: '#333',
   },
@@ -17,6 +18,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   noticeDate: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 400,
     fontSize: 12,
     color: '#999',
     marginBottom: 12,
@@ -27,6 +30,8 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   noticeContent: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
     marginTop: 20,
     fontSize: 14,
     lineHeight: 20,

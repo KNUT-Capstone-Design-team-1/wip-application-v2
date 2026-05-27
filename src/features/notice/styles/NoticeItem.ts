@@ -11,12 +11,15 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   noticeTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Paperlogy',
+    fontSize: 14,
+    fontWeight: 700,
     color: '#333',
     marginBottom: 4,
   },
   noticeDate: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 400,
     fontSize: 12,
     color: '#999',
   },
@@ -27,8 +30,9 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
   badgeText: {
+    fontFamily: 'Jalnan2',
     color: '#fff',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: 200,
   },
 });

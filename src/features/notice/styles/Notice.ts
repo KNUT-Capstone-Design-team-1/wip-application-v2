@@ -22,6 +22,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   loadingText: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
     marginTop: 16,
     fontSize: 16,
     color: '#666',
@@ -32,6 +34,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
     fontSize: 16,
     color: '#999',
   },
