@@ -18,7 +18,7 @@ export const TAB_CONFIGS: TabConfig[] = [
       <HomeSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? '#FFFFFF' : '#888888'}
+        fill={isActive ? '#000' : '#fff'}
       />
     ),
     path: '/',
@@ -31,7 +31,7 @@ export const TAB_CONFIGS: TabConfig[] = [
       <PillIdentificationSearchSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? '#FFFFFF' : '#888888'}
+        fill={isActive ? '#000' : '#fff'}
       />
     ),
     path: '/pill-identification-search',
@@ -44,7 +44,7 @@ export const TAB_CONFIGS: TabConfig[] = [
       <PillImageSearchSvg
         width={CENTER_ICON_SIZE}
         height={CENTER_ICON_SIZE}
-        fill={isActive ? '#FFFFFF' : '#888888'}
+        fill={isActive ? '#000' : '#fff'}
       />
     ),
     path: '/pill-image-search',
@@ -57,7 +57,7 @@ export const TAB_CONFIGS: TabConfig[] = [
       <SettingSvg
         width={ICON_SIZE}
         height={ICON_SIZE}
-        fill={isActive ? '#FFFFFF' : '#888888'}
+        fill={isActive ? '#000' : '#fff'}
       />
     ),
     path: '/setting',

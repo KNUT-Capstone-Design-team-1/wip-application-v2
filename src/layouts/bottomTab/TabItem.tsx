@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './styles';
 import { TabItemProps } from './types';
@@ -21,20 +22,33 @@ export const TabItem = React.memo(
         accessibilityRole="tab"
         accessibilityState={{ selected: isActive }}
       >
-        <LinearGradient
-          colors={gradientColors}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.iconGradientContainer}
-        >
-          {icon}
-        </LinearGradient>
-        <Text
-          style={[
-            styles.label,
-            isActive && { color: ACTIVE_COLOR, fontWeight: '700' },
-          ]}
-        >
+        {isActive ? (
+          <MaskedView
+            style={{ width: 22, height: 22 }}
+            maskElement={
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: 'transparent',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {icon}
+              </View>
+            }
+          >
+            <LinearGradient
+              colors={gradientColors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ flex: 1 }}
+            />
+          </MaskedView>
+        ) : (
+          <>{icon}</>
+        )}
+        <Text style={[styles.label, isActive && { color: ACTIVE_COLOR }]}>
           {label}
         </Text>
       </TouchableOpacity>
