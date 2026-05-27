@@ -1,8 +1,6 @@
-import { View, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { styles } from './styles';
-import LogoSvg from '@assets/images/logo.svg';
 import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 
 const Header = () => {
@@ -11,10 +9,10 @@ const Header = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.content}>
-        <TouchableOpacity onPress={() => router.push('/')}>
-          <LogoSvg width={120} height={40} />
-        </TouchableOpacity>
-        <UnifiedSearchBar containerStyle={{ marginLeft: 15, flex: 1 }} />
+        <View style={styles.logoWrapper}>
+          <Text style={styles.logoText}>이게뭐약</Text>
+        </View>
+        <UnifiedSearchBar containerStyle={{ marginLeft: 45, flex: 1 }} />
       </View>
     </View>
   );

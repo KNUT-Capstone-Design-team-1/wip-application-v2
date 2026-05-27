@@ -2,9 +2,9 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   menuListWrapper: {
+    flex: 1,
     width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,

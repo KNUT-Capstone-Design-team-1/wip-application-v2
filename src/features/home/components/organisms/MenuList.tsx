@@ -2,9 +2,9 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles } from '../../styles/organisms/MenuList';
 import { BUTTON_LIST } from '../../constants/MenuList';
-import ImageButton from '../../components/atoms/ImageButton';
 import Toast from '@components/common/Toast';
 import { useToast } from '@hooks/use_toast';
+import MenuButton from '../molecules/MenuButton';
 
 interface IMenuListProps {
   onPillIdentificationPress?: () => void;
@@ -32,11 +32,14 @@ const MenuList = ({ onPillIdentificationPress }: IMenuListProps) => {
     <>
       <View style={styles.menuListWrapper}>
         {BUTTON_LIST.map((button, index) => (
-          <ImageButton
+          <MenuButton
             key={index}
             imageSource={button.img}
-            width={166}
+            width={'48%'}
             height={140}
+            title={button.title}
+            content={button.content}
+            backgroundColor={button.backgroundColor}
             onPress={() => handlePress(button.path, index)}
           />
         ))}

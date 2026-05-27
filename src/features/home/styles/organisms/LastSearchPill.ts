@@ -1,30 +1,30 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/index';
+import { FONT_PAPERLOGY_WEIGHT } from '@constants/font';
 
 export const styles = StyleSheet.create({
   searchContainer: {
     width: '100%',
-    marginTop: 20,
   },
   searchTitle: {
     fontSize: 16,
     color: COLOR_PRIMARY[300],
-    marginBottom: 15,
+    marginBottom: 8,
+    ...FONT_PAPERLOGY_WEIGHT['regular'],
   },
   scrollView: {
-    minHeight: 50,
-    maxHeight: 120,
+    height: 60,
   },
   notLastSearchPllDataWrapper: {
     flex: 1,
-    height: 50,
+    height: 60,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
   notLastSearchPllDataText: {
-    fontWeight: 600,
-    color: COLOR_GRAY[300],
+    color: COLOR_GRAY[200],
+    ...FONT_PAPERLOGY_WEIGHT['medium'],
   },
   searchTagList: {
     display: 'flex',

@@ -1,5 +1,6 @@
 import { View, TouchableOpacity, Text } from 'react-native';
-import { styles } from '../../styles/atoms/Tag';
+import { IconStyles, styles } from '../../styles/atoms/Tag';
+import { X } from 'lucide-react-native';
 
 interface ITagProps {
   title: string;
@@ -29,7 +30,7 @@ const Tag = ({
           onPress={onDeleteHandler}
           activeOpacity={0.7}
         >
-          <Text style={styles.deleteText}>×</Text>
+          <X {...IconStyles['deleteIcon']} />
         </TouchableOpacity>
       )}
     </View>

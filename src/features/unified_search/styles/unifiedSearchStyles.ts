@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_GRAY } from '@constants/index';
+import { FONT_PAPERLOGY_WEIGHT } from '@constants/font';
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,10 +8,10 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 48,
-    borderWidth: 1.5,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    height: 40,
+    borderWidth: 1,
     borderColor: COLOR_GRAY[200],
     // 그림자 추가 (iOS)
     shadowColor: '#000',
@@ -22,21 +23,26 @@ export const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 14,
+    lineHeight: 18,
+    includeFontPadding: false,
+    paddingVertical: 0,
     color: '#333',
-    paddingVertical: 10,
-    paddingRight: 5,
-  },
-  searchIcon: {
-    marginRight: 8,
+    ...FONT_PAPERLOGY_WEIGHT['regular'],
   },
   clearButton: {
-    padding: 5,
-    marginLeft: 5,
-  },
-  clearText: {
-    fontSize: 20,
-    color: COLOR_GRAY[300],
-    fontWeight: 'bold',
+    paddingVertical: 5,
   },
 });
+
+export const IconStyles = {
+  clearIcon: {
+    size: 14,
+    color: COLOR_GRAY[300],
+    strokeWidth: 2,
+  },
+  searchIcon: {
+    size: 14,
+    color: COLOR_GRAY[300],
+  },
+};

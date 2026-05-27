@@ -4,7 +4,6 @@ import { styles } from '../styles/HomeScreen';
 import LastSearchPill from '../components/organisms/LastSearchPill';
 import MenuList from '../components/organisms/MenuList';
 import TakeGuide from '../components/organisms/TakeGuide';
-import { useHome } from '../hooks/useHome';
 import { useRouter } from 'expo-router';
 
 /*

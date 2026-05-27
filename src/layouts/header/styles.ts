@@ -1,21 +1,26 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_PRIMARY } from '../../constants';
+import { FONT_JALNAN2_WEIGHT, FONT_PAPERLOGY_WEIGHT } from '@constants/font';
 
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: COLOR.white,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
   },
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: 48,
+    minHeight: 50,
   },
-  logo: {
-    height: 32,
-    width: 100,
+  logoWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+  },
+  logoText: {
+    fontSize: 18,
+    ...FONT_JALNAN2_WEIGHT['regular'],
   },
   menuButton: {
     width: 40,
@@ -34,16 +39,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backText: {
-    fontSize: 24,
-    color: COLOR_PRIMARY[200],
-    fontWeight: '600',
-  },
   headerTitle: {
     flex: 1,
     fontSize: 18,
-    fontWeight: '600',
     color: COLOR_PRIMARY[200],
     textAlign: 'center',
+    ...FONT_PAPERLOGY_WEIGHT['bold'],
   },
 });
