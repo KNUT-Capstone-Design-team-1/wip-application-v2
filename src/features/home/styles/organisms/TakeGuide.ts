@@ -6,12 +6,14 @@ export const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     minHeight: 57,
-    backgroundColor: '#FFFDF4',
     marginTop: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  guideContentWrapper: {
+    marginHorizontal: 18,
+    marginVertical: 10,
+    borderRadius: 12,
   },
   guideTitle: {
     color: COLOR.alert,
@@ -25,7 +27,7 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 30,
     position: 'absolute',
-    left: 17,
-    top: -13,
+    left: -14,
+    top: -25,
   },
 });
