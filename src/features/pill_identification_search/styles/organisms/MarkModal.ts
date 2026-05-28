@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 const { width, height } = Dimensions.get('window');
 
@@ -11,8 +11,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalBox: {
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: COLOR['white'],
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     borderRadius: 16,
     width: Math.min(width * 0.92, 400),
     height: Math.min(height * 0.65, 600),
@@ -20,25 +21,21 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 14,
-    right: 14,
+    top: 6,
+    right: 6,
     padding: 6,
     zIndex: 10,
   },
-  closeButtonText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLOR_GRAY[200],
-  },
   title: {
+    fontFamily: 'Paperlogy',
     fontSize: 18,
     textAlign: 'center',
-    fontWeight: '700',
-    color: '#333',
-    marginBottom: 20,
+    fontWeight: 700,
+    color: COLOR_PRIMARY[400],
+    marginBottom: 16,
   },
   searchWrapper: {
-    marginBottom: 15,
+    marginBottom: 16,
   },
   errorContainer: {
     backgroundColor: '#fee',
@@ -47,13 +44,15 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   errorText: {
-    color: '#c33',
+    fontFamily: 'Paperlogy',
+    fontWeight: 700,
+    color: COLOR['error'],
     fontSize: 13,
     textAlign: 'center',
   },
   markListContainer: {
     flex: 1,
-    marginBottom: 10,
+    marginBottom: 16,
   },
   loadingContainer: {
     flex: 1,
@@ -61,8 +60,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 700,
     marginTop: 10,
-    fontSize: 14,
+    fontSize: 16,
     color: COLOR_GRAY[200],
   },
   emptyState: {
@@ -72,7 +73,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyText: {
-    fontSize: 14,
+    fontFamily: 'Paperlogy',
+    fontWeight: 700,
+    fontSize: 16,
     color: COLOR_GRAY[200],
     textAlign: 'center',
   },

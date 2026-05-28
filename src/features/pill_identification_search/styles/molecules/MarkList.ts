@@ -1,11 +1,8 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
-  gridContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-  },
+  gridContainer: {},
   columnWrapper: {
     justifyContent: 'space-between',
     marginBottom: 12,
@@ -15,9 +12,10 @@ export const styles = StyleSheet.create({
     aspectRatio: 1,
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLOR_GRAY[150],
-    padding: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -32,8 +30,10 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   gridTitle: {
-    fontSize: 10,
-    color: '#333',
+    fontFamily: 'Paperlogy',
+    fontWeight: 600,
+    fontSize: 12,
+    color: COLOR_PRIMARY[400],
     textAlign: 'center',
     marginTop: 4,
     lineHeight: 12,
@@ -55,7 +55,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyText: {
-    fontSize: 14,
+    fontFamily: 'Paperlogy',
+    fontWeight: 700,
+    fontSize: 16,
     color: COLOR_GRAY[200],
   },
 });

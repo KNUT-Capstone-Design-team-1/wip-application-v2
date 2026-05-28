@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text } from 'react-native';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/molecules/SearchInput';
+import { Search } from 'lucide-react-native';
 
 interface ISearchInputProps {
   value: string;
@@ -18,24 +19,36 @@ const SearchInput = ({
   placeholder = '검색어를 입력하세요',
   disabled = false,
 }: ISearchInputProps) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <View style={styles.searchContainer}>
+    <View
+      style={[
+        styles.searchContainer,
+        disabled && styles.searchContainerDisabled,
+        isFocused
+          ? { borderColor: COLOR_PRIMARY[100] }
+          : { borderColor: COLOR_GRAY[250] },
+      ]}
+    >
       <TextInput
-        style={[styles.searchInput, disabled && styles.searchInputDisabled]}
+        style={styles.searchInput}
         placeholder={placeholder}
         placeholderTextColor={COLOR_GRAY[200]}
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSearch}
         returnKeyType="search"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         editable={!disabled}
       />
       <TouchableOpacity
-        style={[styles.searchButton, disabled && styles.searchButtonDisabled]}
+        style={styles.searchButton}
         onPress={onSearch}
         disabled={disabled}
       >
-        <Text style={styles.searchButtonText}>검색</Text>
+        <Search size={18} strokeWidth={2} color={COLOR_GRAY[400]} />
       </TouchableOpacity>
     </View>
   );

@@ -4,32 +4,27 @@ import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 export const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
-    gap: 10,
+    borderWidth: 1.5,
+    borderRadius: 20,
+    paddingLeft: 16,
+    gap: 4,
+  },
+  searchContainerDisabled: {
+    backgroundColor: COLOR_GRAY[100],
+    color: COLOR_GRAY[200],
   },
   searchInput: {
     flex: 1,
     height: 44,
-    borderWidth: 1,
-    borderColor: COLOR_GRAY[250],
-    borderRadius: 8,
-    paddingHorizontal: 12,
+    fontFamily: 'Paperlogy',
+    fontWeight: 600,
     fontSize: 14,
-    backgroundColor: '#fff',
-  },
-  searchInputDisabled: {
-    backgroundColor: COLOR_GRAY[100],
-    color: COLOR_GRAY[200],
   },
   searchButton: {
-    width: 60,
-    height: 44,
-    backgroundColor: COLOR_PRIMARY[100],
-    borderRadius: 8,
+    width: 42,
+    height: 42,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  searchButtonDisabled: {
-    backgroundColor: COLOR_GRAY[200],
   },
   searchButtonText: {
     color: '#fff',

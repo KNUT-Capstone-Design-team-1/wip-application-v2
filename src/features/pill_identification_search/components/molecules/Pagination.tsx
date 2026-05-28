@@ -3,6 +3,8 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../../styles/molecules/Pagination';
 import { IPaginationProps } from '@features/pill_identification_search/types/search_id_types';
 import { PAGE_GROUP_SIZE } from '@features/pill_identification_search/constants/identificationSearch';
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { COLOR_PRIMARY } from '@constants/color';
 
 const Pagination = ({
   totalPages,
@@ -19,19 +21,18 @@ const Pagination = ({
     const buttons = [];
 
     // 이전 버튼 (<)
-    if (currentGroup > 0) {
-      buttons.push(
-        <TouchableOpacity
-          key="prev"
-          style={styles.pageNavButton}
-          onPress={() => {
-            setCurrentGroup(currentGroup - 1);
-          }}
-        >
-          <Text style={styles.pageNavText}>{'<'}</Text>
-        </TouchableOpacity>,
-      );
-    }
+    buttons.push(
+      <TouchableOpacity
+        key="prev"
+        style={[styles.pageNavButton, currentGroup <= 0 && { opacity: 0 }]}
+        onPress={() => {
+          setCurrentGroup(currentGroup - 1);
+        }}
+        disabled={currentGroup <= 0}
+      >
+        <ChevronLeft size={16} color={COLOR_PRIMARY[400]} strokeWidth={2} />
+      </TouchableOpacity>,
+    );
 
     // 페이지 버튼들 (1, 2, 3, 4, 5)
     for (let i = startPage; i <= endPage; i++) {
@@ -53,19 +54,18 @@ const Pagination = ({
     }
 
     // 다음 버튼 (>)
-    if (endPage < totalPages) {
-      buttons.push(
-        <TouchableOpacity
-          key="next"
-          style={styles.pageNavButton}
-          onPress={() => {
-            setCurrentGroup(currentGroup + 1);
-          }}
-        >
-          <Text style={styles.pageNavText}>{'>'}</Text>
-        </TouchableOpacity>,
-      );
-    }
+    buttons.push(
+      <TouchableOpacity
+        key="next"
+        style={[styles.pageNavButton, endPage >= totalPages && { opacity: 0 }]}
+        onPress={() => {
+          setCurrentGroup(currentGroup + 1);
+        }}
+        disabled={endPage >= totalPages}
+      >
+        <ChevronRight size={16} color={COLOR_PRIMARY[400]} strokeWidth={2} />
+      </TouchableOpacity>,
+    );
 
     return buttons;
   };

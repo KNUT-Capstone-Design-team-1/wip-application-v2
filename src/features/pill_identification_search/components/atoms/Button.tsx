@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { DimensionValue, Text } from 'react-native';
 import TouchableScale from 'react-native-touchable-scale';
 import { COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/atoms/Button';
@@ -7,7 +7,7 @@ import { styles } from '../../styles/atoms/Button';
 interface IButtonProps {
   background?: string;
   color?: string;
-  width?: string | number;
+  width?: DimensionValue;
   label: string;
   pressHandler: () => void;
 }

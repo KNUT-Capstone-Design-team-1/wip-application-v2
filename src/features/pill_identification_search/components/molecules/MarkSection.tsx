@@ -2,15 +2,17 @@ import React from 'react';
 import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import Button from '../atoms/Button';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/molecules/MarkSection';
 import { useMarkModal } from '../../hooks/useMarkModal';
 import MarkModal from '../organisms/MarkModal';
+import { X } from 'lucide-react-native';
 
 const MarkSection = () => {
   const {
     modalState,
     selectedMarkBase64,
+    selectedMarkTitle,
     openMarkModal,
     closeMarkModal,
     deleteSelectedMark,
@@ -52,23 +54,26 @@ const MarkSection = () => {
       </Modal>
 
       {/* 선택된 마크 표시 */}
-      <View style={styles.markResultContainer}>
-        <Text style={styles.markResult}>선택된 마크:</Text>
-        {selectedMarkBase64 === '' ? (
-          <Text style={styles.markResult}>선택 없음</Text>
-        ) : (
+      {selectedMarkBase64 && (
+        <View style={styles.markResultContainer}>
           <View style={styles.markImageWrapper}>
-            <TouchableOpacity onPress={deleteSelectedMark}>
-              <Text style={styles.selectedMarkDelete}>✕</Text>
-            </TouchableOpacity>
             <Image
               source={{ uri: selectedMarkBase64 }}
               style={styles.markImage}
               contentFit="contain"
             />
           </View>
-        )}
-      </View>
+          <View style={{ justifyContent: 'center' }}>
+            <Text style={styles.markTitle}>{selectedMarkTitle}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.selectedMarkDelete}
+            onPress={deleteSelectedMark}
+          >
+            <X size={18} color={COLOR_GRAY[400]} strokeWidth={2} />
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* 마크 선택 버튼 */}
       <Button

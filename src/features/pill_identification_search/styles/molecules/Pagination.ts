@@ -1,45 +1,47 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 15,
   },
   pageNavButton: {
-    borderWidth: 1,
-    borderColor: COLOR_GRAY[200],
-    fontSize: 15,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    marginHorizontal: 5,
-    backgroundColor: COLOR_GRAY[100],
-  },
-  pageNavText: {
-    color: '#333',
-    fontWeight: '600',
-  },
-  pageButton: {
-    borderWidth: 1,
+    width: 32,
+    height: 32,
+    borderWidth: 2,
     borderColor: COLOR_GRAY[150],
     borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginHorizontal: 3,
-    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+    backgroundColor: COLOR['white'],
+  },
+  pageButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: COLOR_GRAY[150],
+    borderRadius: 8,
+    marginHorizontal: 4,
+    backgroundColor: COLOR['white'],
   },
   pageButtonActive: {
     backgroundColor: COLOR_PRIMARY[100],
     borderColor: COLOR_PRIMARY[100],
   },
   pageButtonText: {
-    color: COLOR_GRAY[300],
-    fontWeight: '600',
+    fontFamily: 'Paperlogy',
+    fontSize: 14,
+    color: COLOR_PRIMARY[400],
+    fontWeight: 500,
   },
   pageButtonTextActive: {
-    color: '#fff',
-    fontWeight: '700',
+    fontFamily: 'Paperlogy',
+    fontSize: 14,
+    fontWeight: 500,
+    color: COLOR['white'],
   },
 });

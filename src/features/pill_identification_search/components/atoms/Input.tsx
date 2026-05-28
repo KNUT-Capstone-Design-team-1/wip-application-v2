@@ -1,6 +1,6 @@
 import { View, TextInput, DimensionValue } from 'react-native';
 import { useState, useEffect } from 'react';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/atoms/Input';
 
 interface IInputProps {
@@ -49,6 +49,7 @@ export const Input = ({
         onSubmitEditing={handleSubmit}
         style={styles.input}
         placeholder={placeholder}
+        placeholderTextColor={COLOR_GRAY[200]}
         onChangeText={(text) => {
           setLocalValue(text);
           inputChangeHandler(text);

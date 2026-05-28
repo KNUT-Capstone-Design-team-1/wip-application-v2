@@ -66,3 +66,11 @@ export interface IIdentificationSection {
 export interface IIdentificationSearchData {
   [key: string]: IIdentificationSection;
 }
+
+export interface IPaginationProps {
+  totalPages: number;
+  page: number;
+  setPage: (page: number) => void;
+  currentGroup: number;
+  setCurrentGroup: (group: number) => void;
+}

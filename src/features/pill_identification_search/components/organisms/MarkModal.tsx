@@ -7,12 +7,22 @@ import {
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import SearchInput from '../molecules/SearchInput';
 import MarkList from '../molecules/MarkList';
 import Pagination from '../molecules/Pagination';
 import { styles } from '../../styles/organisms/MarkModal';
 import { IMarkModalProps } from '@features/pill_identification_search/types/mark_types';
+import { X } from 'lucide-react-native';
+
+/*
+TODO: Error 용도
+- 없는 마크: 검색 input 하단에 error color로 표시
+- 서버 문제: toast 처리
+TODO: 마크 표시 형식 및 마크 크기 변경 필요
+- Modal 방식으로 인해 한 페이지에 표시할 수 있는 마크의 갯수가 제한됨
+- BottomSheet 방식이나 다른 방식으로 페이지 전체에 표시하고, 마크 item의 크기를 개선 필요
+*/
 
 const MarkModal = ({
   onClose,
@@ -64,7 +74,7 @@ const MarkModal = ({
               style={styles.closeButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Text style={styles.closeButtonText}>×</Text>
+              <X size={24} color={COLOR_GRAY[200]} strokeWidth={3} />
             </TouchableOpacity>
 
             {/* 타이틀 */}

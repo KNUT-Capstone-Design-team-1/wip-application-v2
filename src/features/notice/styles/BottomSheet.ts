@@ -67,10 +67,14 @@ export const styles = StyleSheet.create({
     color: 'grey',
   },
   title: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 700,
     fontSize: 18,
     color: '#fff',
   },
   contents: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
     fontSize: 12,
     color: '#e3e3e3',
   },
@@ -83,6 +87,8 @@ export const styles = StyleSheet.create({
     zIndex: 10,
   },
   detailButtonText: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
     color: '#fff',
     fontSize: 14,
     borderBottomWidth: 1,

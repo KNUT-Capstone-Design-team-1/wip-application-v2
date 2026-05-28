@@ -15,10 +15,6 @@ const IconButton = memo(
     // iconUrl이 실제 값이 있는지 체크 (TS2367 에러를 피하기 위해 any로 캐스팅하여 비교)
     const hasIcon = !!iconUrl && (iconUrl as any) !== '';
 
-    // 흰색일 때 테두리 추가
-    const isWhite =
-      iconColor === '#fff' || iconColor === '#ffffff' || iconColor === 'white';
-
     return (
       <View
         style={[
@@ -30,8 +26,10 @@ const IconButton = memo(
         <View
           style={[
             styles.iconButtonTop,
-            !hasIcon && iconColor && { backgroundColor: iconColor },
-            !hasIcon && isWhite && { borderWidth: 1, borderColor: '#E0E0E0' },
+            !hasIcon &&
+              iconColor && {
+                backgroundColor: iconColor,
+              },
           ]}
         >
           {hasIcon && (
@@ -42,7 +40,7 @@ const IconButton = memo(
           <Text
             style={[
               styles.iconSectionLabel,
-              isSelected && { color: COLOR_PRIMARY[400], fontWeight: 600 },
+              isSelected && { color: COLOR_PRIMARY[400], fontWeight: 700 },
             ]}
           >
             {label}

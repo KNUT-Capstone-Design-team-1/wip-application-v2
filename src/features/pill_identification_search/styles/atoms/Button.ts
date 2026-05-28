@@ -3,15 +3,16 @@ import { COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   button: {
-    display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
-    borderRadius: 20,
+    padding: 5,
+    borderRadius: 14,
     borderColor: COLOR_PRIMARY[100],
-    borderWidth: 2,
+    borderWidth: 1,
   },
   label: {
+    fontFamily: 'Paperlogy',
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: 700,
   },
 });

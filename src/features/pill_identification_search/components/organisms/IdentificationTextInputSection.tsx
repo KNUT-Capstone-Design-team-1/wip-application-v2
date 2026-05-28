@@ -9,6 +9,7 @@ import {
   ISearchIdStore,
 } from '@features/pill_identification_search/types/search_id_types';
 import { SECTION_KEY_TO_TEXT_STORE_KEYS } from '../../constants/pillIdentificationData';
+import { styles } from '../../styles/organisms/IdentificationTextInputSection';
 
 interface IIdentificationTextInputSectionProps {
   sectionKey: string;
@@ -39,8 +40,8 @@ const IdentificationTextInputSection = memo(
           direction="row"
           selectedIndex={[]}
         >
-          <View style={{ flexDirection: 'column', gap: 10, width: '100%' }}>
-            <View style={{ flexDirection: 'row', gap: 10, width: '100%' }}>
+          <View style={styles.textInputColumnWrapper}>
+            <View style={styles.textInputRowWrapper}>
               {section.datas.map((data, index) => {
                 const storeKey = storeKeys[index] as keyof ISearchIdStore;
                 return (
@@ -56,51 +57,24 @@ const IdentificationTextInputSection = memo(
             </View>
             {sectionKey === 'sideLabelText' && (
               <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 5,
-                }}
+                style={styles.textInputLabelCheckbox}
                 onPress={() => setIsExactMatch(!isExactMatch)}
               >
                 <View
-                  style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: 4,
-                    borderWidth: 1.5,
-                    borderColor: COLOR_PRIMARY[100],
-                    backgroundColor: isExactMatch
-                      ? COLOR_PRIMARY[100]
-                      : 'transparent',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight: 8,
-                  }}
+                  style={[
+                    styles.textInputLabelCheckboxWrapper,
+                    {
+                      backgroundColor: isExactMatch
+                        ? COLOR_PRIMARY[100]
+                        : 'transparent',
+                    },
+                  ]}
                 >
                   {isExactMatch && (
-                    <Text
-                      style={{
-                        color: '#fff',
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      ✓
-                    </Text>
+                    <Text style={styles.textInputLabelCheckboxText}>✓</Text>
                   )}
                 </View>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#666',
-                    paddingVertical: 0,
-                    includeFontPadding: false,
-                    textAlignVertical: 'center',
-                    lineHeight: 18,
-                    transform: [{ translateY: -1.5 }],
-                  }}
-                >
+                <Text style={styles.textInputLabelText}>
                   식별문자 일치 (정확히 일치하는 문자만 검색)
                 </Text>
               </TouchableOpacity>

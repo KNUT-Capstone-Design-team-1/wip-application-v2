@@ -26,8 +26,9 @@ export const styles = StyleSheet.create({
     position: 'relative',
   },
   modalTitle: {
+    fontFamily: 'Paperlogy',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 700,
     color: COLOR_PRIMARY[100],
   },
   closeButton: {
@@ -37,8 +38,9 @@ export const styles = StyleSheet.create({
     padding: 5,
   },
   closeButtonText: {
+    fontFamily: 'Paperlogy',
     fontSize: 24,
-    marginTop: -10,
+    fontWeight: 700,
     color: COLOR_GRAY[200],
   },
   scrollView: {
