@@ -11,7 +11,7 @@ interface IPillSafetySectionProps {
 }
 
 const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
-  const { reportEmail } = useExternalUrlStore();
+  const { reportEmail, nifdsUrl, kadaUrl } = useExternalUrlStore();
 
   const handleReport = useCallback(async () => {
     const subject = encodeURIComponent(
@@ -42,8 +42,8 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       <Text style={styles.title}>[ 주의 및 특수 분류 정보 ]</Text>
       <View style={styles.disclaimerContainer}>
         <Text style={styles.disclaimerText}>
-          * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 상세
-          정보를 확인해 주세요.
+          * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 최신
+          정보는 마약 정보 데이터베이스 및 KADA 홈페이지를 확인해 주세요.
         </Text>
         <TouchableOpacity style={styles.reportButton} onPress={handleReport}>
           <Text style={styles.reportButtonText}>잘못된 정보 신고하기</Text>
@@ -82,6 +82,15 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         }
       />
 
+      <TouchableOpacity
+        style={styles.externalLinkButton}
+        onPress={() => Linking.openURL(nifdsUrl)}
+      >
+        <Text style={styles.externalLinkButtonText}>
+          마약 정보 데이터베이스
+        </Text>
+      </TouchableOpacity>
+
       <View style={styles.divider} />
 
       <InfoRow
@@ -94,10 +103,12 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       />
 
       <TouchableOpacity
-        style={styles.kadaButton}
-        onPress={() => Linking.openURL('https://kada.health.kr/')}
+        style={styles.externalLinkButton}
+        onPress={() => Linking.openURL(kadaUrl)}
       >
-        <Text style={styles.kadaButtonText}>금지약물 확인 (KADA)</Text>
+        <Text style={styles.externalLinkButtonText}>
+          도핑 금지 약물 확인 (KADA)
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.sourceText}>

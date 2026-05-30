@@ -35,16 +35,18 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: '#333',
   },
-  kadaButton: {
+  externalLinkButton: {
     backgroundColor: '#004A94',
     padding: 8,
     borderRadius: 5,
-    marginTop: 10,
+    marginTop: 8,
+    marginBottom: 4,
     alignItems: 'center',
   },
-  kadaButtonText: {
+  externalLinkButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 13,
   },
   sourceText: {
     fontSize: 10,
