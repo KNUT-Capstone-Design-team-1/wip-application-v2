@@ -8,10 +8,7 @@
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "newArchEnabled": true,
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mbm.whatispill",
@@ -23,10 +20,7 @@
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다",
         "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME)에서 알약 검색에 필요한 이미지를 가져오기 위해 사진 권한이 필요합니다",
-        "LSApplicationQueriesSchemes": [
-          "mailto",
-          "mailto"
-        ],
+        "LSApplicationQueriesSchemes": ["mailto", "mailto"],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -161,9 +155,7 @@
           "cameraPermission": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다"
         }
       ],
-      [
-        "expo-localization"
-      ],
+      ["expo-localization"],
       "expo-router",
       [
         "expo-location",
@@ -178,14 +170,7 @@
           "hidden": false,
           "style": "dark"
         }
-      ],
-      [
-        "expo-sqlite",
-        {
-          "useSQLCipher": true
-        }
-      ],
-      "expo-secure-store"
+      ]
     ],
     "extra": {
       "eas": {
