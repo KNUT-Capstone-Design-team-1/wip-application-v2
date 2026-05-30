@@ -256,7 +256,6 @@ export type TResourceDataSchemas =
 export interface ITableColumnSchema {
   name: string;
   type: 'TEXT' | 'BLOB' | 'INTEGER' | 'DOUBLE';
-  size: number; // byte
   nullable: boolean;
   defaultValue: string | number | null;
   isPK: boolean;
