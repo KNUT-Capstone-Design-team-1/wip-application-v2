@@ -88,7 +88,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         label="도핑 금지"
         value={
           data.isProhibited
-            ? `주의: 해당 성분 (${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'})\n- 적용 범위 및 상세 정보는 KADA 홈페이지 참고`
+            ? `주의 성분 (${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'})\n적용 범위 및 상세 정보는 KADA 홈페이지 참고`
             : '해당 없음 (X)'
         }
       />
