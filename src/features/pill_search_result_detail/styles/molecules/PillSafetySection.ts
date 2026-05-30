@@ -75,4 +75,8 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     textDecorationLine: 'underline',
   },
+  warningText: {
+    color: '#E03131',
+    fontWeight: 'bold',
+  },
 });

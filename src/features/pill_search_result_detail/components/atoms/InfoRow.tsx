@@ -1,10 +1,10 @@
-import { memo } from 'react';
+import { memo, ReactNode } from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../styles/atoms/InfoRow';
 
 interface IInfoRowProps {
   label: string;
-  value?: string;
+  value?: string | ReactNode;
 }
 
 const InfoRow = ({ label, value }: IInfoRowProps) => {

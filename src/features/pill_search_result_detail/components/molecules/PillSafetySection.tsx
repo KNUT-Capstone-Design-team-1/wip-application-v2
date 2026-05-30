@@ -52,7 +52,13 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
 
       <InfoRow
         label="운전/기계조작"
-        value={data.isDrivingWarning ? '⚠️ 주의 (O)' : '안전 (X)'}
+        value={
+          data.isDrivingWarning ? (
+            <Text style={styles.warningText}>⚠️ 주의 (O)</Text>
+          ) : (
+            '안전 (X)'
+          )
+        }
       />
 
       <View style={styles.divider} />
@@ -60,25 +66,55 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       <InfoRow
         label="마약류 (마약)"
         value={
-          data.isNarcotic
-            ? `확인됨\n- 해당 성분: ${Array.isArray(data.narcoticIngredients) ? data.narcoticIngredients.join(', ') : '-'}`
-            : '해당 없음 (X)'
+          data.isNarcotic ? (
+            <Text>
+              <Text style={styles.warningText}>확인됨</Text>
+              {`\n해당 성분: `}
+              <Text style={styles.warningText}>
+                {Array.isArray(data.narcoticIngredients)
+                  ? data.narcoticIngredients.join(', ')
+                  : '-'}
+              </Text>
+            </Text>
+          ) : (
+            '해당 없음 (X)'
+          )
         }
       />
       <InfoRow
         label="마약류 (대마)"
         value={
-          data.isCannabis
-            ? `확인됨\n- 해당 성분: ${Array.isArray(data.cannabisIngredients) ? data.cannabisIngredients.join(', ') : '-'}`
-            : '해당 없음 (X)'
+          data.isCannabis ? (
+            <Text>
+              <Text style={styles.warningText}>확인됨</Text>
+              {`\n해당 성분: `}
+              <Text style={styles.warningText}>
+                {Array.isArray(data.cannabisIngredients)
+                  ? data.cannabisIngredients.join(', ')
+                  : '-'}
+              </Text>
+            </Text>
+          ) : (
+            '해당 없음 (X)'
+          )
         }
       />
       <InfoRow
         label="마약류 (향정)"
         value={
-          data.isPsychotropic
-            ? `확인됨\n- 해당 성분: ${Array.isArray(data.psychotropicIngredients) ? data.psychotropicIngredients.join(', ') : '-'}`
-            : '해당 없음 (X)'
+          data.isPsychotropic ? (
+            <Text>
+              <Text style={styles.warningText}>확인됨</Text>
+              {`\n해당 성분: `}
+              <Text style={styles.warningText}>
+                {Array.isArray(data.psychotropicIngredients)
+                  ? data.psychotropicIngredients.join(', ')
+                  : '-'}
+              </Text>
+            </Text>
+          ) : (
+            '해당 없음 (X)'
+          )
         }
       />
 
@@ -96,9 +132,19 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       <InfoRow
         label="도핑 금지"
         value={
-          data.isProhibited
-            ? `주의 성분 (${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'})\n적용 범위 및 상세 정보는 KADA 홈페이지 참고`
-            : '해당 없음 (X)'
+          data.isProhibited ? (
+            <Text>
+              <Text style={styles.warningText}>주의 성분 </Text>(
+              <Text style={styles.warningText}>
+                {Array.isArray(data.prohibitedIngredients)
+                  ? data.prohibitedIngredients.join(', ')
+                  : '-'}
+              </Text>
+              {`)\n적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
+            </Text>
+          ) : (
+            '해당 없음 (X)'
+          )
         }
       />
 
