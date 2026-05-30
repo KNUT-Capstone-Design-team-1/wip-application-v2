@@ -17,16 +17,19 @@ interface ISpecialClassificationResult {
 /**
  * 성분명 문자열을 정제하고 배열로 분리
  * 구분자: ;, | 및 공백(\s)
+ * 특정 노이즈 단어(이, 약, 중, 등 등) 필터링
  */
-const parseIngredients = (ingredientsStr?: string): string[] => {
+export const parseIngredients = (ingredientsStr?: string): string[] => {
   if (!ingredientsStr) {
     return [];
   }
 
+  const noiseWords = ['이', '약', '중', '등', '및', '외'];
+
   return ingredientsStr
     .split(/[;,|\s]+/)
     .map((s) => s.trim())
-    .filter(Boolean);
+    .filter((s) => s.length > 0 && !noiseWords.includes(s));
 };
 
 /**
