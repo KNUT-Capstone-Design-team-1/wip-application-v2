@@ -12,9 +12,6 @@ interface ISpecialClassificationResult {
   psychotropicIngredients: string[];
   isProhibited: boolean;
   prohibitedIngredients: string[];
-  prohibitedCategory?: string;
-  inGameProhibited?: boolean;
-  outGameProhibited?: boolean;
 }
 
 /**
@@ -69,58 +66,25 @@ const checkSubstance = async (
 /**
  * 금지 약물(도핑) 여부 확인 (추가 정보 포함)
  */
-const checkProhibitedSubstance = async (
-  ingredientsKr: string[],
-  ingredientsEn: string[],
-) => {
+const checkProhibitedSubstance = async (ingredientsEn: string[]) => {
   const matched = new Set<string>();
-
-  let category: string | undefined;
-  let inGame: boolean | undefined;
-  let outGame: boolean | undefined;
 
   const updateProhibitedInfo = (found: any[], name: string) => {
     if (found.length > 0) {
       matched.add(name);
-
-      if (!category) {
-        category = found[0].categoryKr;
-      }
-
-      if (inGame === undefined) {
-        inGame = found[0].inGameProhibited === 1;
-      }
-
-      if (outGame === undefined) {
-        outGame = found[0].outGameProhibited === 1;
-      }
     }
   };
 
-  for (const name of ingredientsKr) {
-    const found = await getProhibitedList(
-      { genericKr: name },
-      { page: 1, limit: 1 },
-    );
-
-    updateProhibitedInfo(found, name);
-  }
-
   for (const name of ingredientsEn) {
     const found = await getProhibitedList(
-      { genericEn: name },
+      { contents: name },
       { page: 1, limit: 1 },
     );
 
     updateProhibitedInfo(found, name);
   }
 
-  return {
-    ingredients: Array.from(matched),
-    category,
-    inGame,
-    outGame,
-  };
+  return { ingredients: Array.from(matched) };
 };
 
 /**
@@ -170,7 +134,7 @@ export const checkSpecialClassifications = async (
       'chemicalNameKr',
       'chemicalNameEn',
     ),
-    checkProhibitedSubstance(ingredientsKr, ingredientsEn),
+    checkProhibitedSubstance(ingredientsEn),
   ]);
 
   return {
@@ -182,9 +146,6 @@ export const checkSpecialClassifications = async (
     psychotropicIngredients: psychotropic,
     isProhibited: prohibited.ingredients.length > 0,
     prohibitedIngredients: prohibited.ingredients,
-    prohibitedCategory: prohibited.category,
-    inGameProhibited: prohibited.inGame,
-    outGameProhibited: prohibited.outGame,
   };
 };
 

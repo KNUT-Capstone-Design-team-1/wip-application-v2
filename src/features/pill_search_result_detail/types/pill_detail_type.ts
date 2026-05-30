@@ -58,9 +58,6 @@ export interface IPillDetail {
   psychotropicIngredients?: string[];
   isProhibited?: boolean;
   prohibitedIngredients?: string[];
-  prohibitedCategory?: string;
-  inGameProhibited?: boolean;
-  outGameProhibited?: boolean;
   isDrivingWarning?: boolean;
 }
 

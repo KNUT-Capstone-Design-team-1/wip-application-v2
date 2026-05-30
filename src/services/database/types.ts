@@ -203,45 +203,7 @@ export interface IPsychotropics {
  * 도핑 금지 약물
  */
 export interface IProhibitedList {
-  genericKr: string; // 일반명(국문)
-  genericEn: string; // 일반명(영문)
-  category:
-    | 'S0'
-    | 'S1'
-    | 'S2'
-    | 'S3'
-    | 'S4'
-    | 'S5'
-    | 'S6'
-    | 'S7'
-    | 'S8'
-    | 'S9'
-    | 'P1'
-    | 'M1'; // WADA 금지 약물 분류 코드
-  categoryKr:
-    | '동화작용제'
-    | '펩티드호르몬, 성장인자, 관련 약물 및 유사제'
-    | '베타-2 작용제'
-    | '호르몬 및 대사변조제'
-    | '이뇨제 및 은폐제'
-    | '흥분제'
-    | '마약'
-    | '카나비노이드'
-    | '글로코코르티코이드'
-    | '베타차단제'; // WADA 금지 약물 분류명(국문)
-  categoryEn:
-    | 'Anabolic Agents'
-    | 'Peptide Hormones, Growth Factors, Related Substances, And Mimetics'
-    | 'Beta-2 Agonists'
-    | 'Hormone And Metabolic Modulators'
-    | 'Diuretics And Masking Agents'
-    | 'Stimulants'
-    | 'Narcotics'
-    | 'Cannabinoids'
-    | 'Glucocorticoids'
-    | 'Beta-Blockers'; // WADA 금지 약물 분류명(영문)
-  inGameProhibited: 0 | 1; // 게임 내 금지 여부 (0: 허용, 1: 금지)
-  outGameProhibited: 0 | 1; // 게임 외 금지 여부 (0: 허용, 1: 금지)
+  contents: string; // 내용
 }
 
 export type TResourceDataSchemas =
@@ -326,10 +288,4 @@ export type TPsychotropicsSearchParam = Pick<
   containedInEn?: string;
 };
 
-export type TProhibitedListSearchParam = Pick<
-  IProhibitedList,
-  'genericKr' | 'genericEn' | 'category' | 'categoryKr' | 'categoryEn'
-> & {
-  containedInKr?: string;
-  containedInEn?: string;
-};
+export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'>;

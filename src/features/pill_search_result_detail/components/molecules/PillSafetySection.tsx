@@ -88,21 +88,10 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         label="도핑 금지"
         value={
           data.isProhibited
-            ? `확인됨 (${data.prohibitedCategory || '금지 약물'})\n- 해당 성분: ${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'}`
+            ? `주의: 해당 성분 (${Array.isArray(data.prohibitedIngredients) ? data.prohibitedIngredients.join(', ') : '-'})\n- 적용 범위 및 상세 정보는 KADA 홈페이지 참고`
             : '해당 없음 (X)'
         }
       />
-
-      {data.isProhibited && (
-        <View style={styles.prohibitedContainer}>
-          <Text style={styles.prohibitedTextMargin}>
-            경기 기간 중: {data.inGameProhibited ? '❌' : '⭕'}
-          </Text>
-          <Text style={styles.prohibitedText}>
-            경기 기간 외: {data.outGameProhibited ? '❌' : '⭕'}
-          </Text>
-        </View>
-      )}
 
       <TouchableOpacity
         style={styles.kadaButton}

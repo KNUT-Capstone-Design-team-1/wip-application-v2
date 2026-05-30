@@ -8,13 +8,7 @@ import {
 import { buildWhereClause } from '../util';
 
 const ALL_PROHIBITED_LIST_COLUMNS: (keyof IProhibitedList)[] = [
-  'genericKr',
-  'genericEn',
-  'category',
-  'categoryKr',
-  'categoryEn',
-  'inGameProhibited',
-  'outGameProhibited',
+  'contents',
 ] as const;
 
 /**
@@ -26,33 +20,9 @@ const getProhibitedListWhereQuery: TWhereQueryClauseFunc = (
   _params: Partial<TProhibitedListSearchParam>,
 ): TQuerySearchParamResult<TProhibitedListSearchParam> => {
   return {
-    genericKr: {
-      query: `genericKr LIKE ?`,
-      values: (genericKr: string) => [`%${genericKr}%`],
-    },
-    genericEn: {
-      query: `genericEn LIKE ?`,
-      values: (genericEn: string) => [`%${genericEn}%`],
-    },
-    category: {
-      query: `category LIKE ?`,
-      values: (category: string) => [`%${category}%`],
-    },
-    categoryKr: {
-      query: `categoryKr LIKE ?`,
-      values: (categoryKr: string) => [`%${categoryKr}%`],
-    },
-    categoryEn: {
-      query: `categoryEn LIKE ?`,
-      values: (categoryEn: string) => [`%${categoryEn}%`],
-    },
-    containedInKr: {
-      query: `? LIKE '%' || genericKr || '%'`,
-      values: (containedInKr: string) => [containedInKr],
-    },
-    containedInEn: {
-      query: `? LIKE '%' || genericEn || '%'`,
-      values: (containedInEn: string) => [containedInEn],
+    contents: {
+      query: `contents LIKE ?`,
+      values: (contents: string) => [`%${contents}%`],
     },
   };
 };

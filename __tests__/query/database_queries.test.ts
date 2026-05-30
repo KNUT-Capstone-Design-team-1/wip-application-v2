@@ -132,11 +132,11 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
   describe('6. ProhibitedList (도핑 금지 약물)', () => {
     test('금지 약물 카테고리 검색 확인', async () => {
       await ProhibitedListQuery.getProhibitedList(
-        { categoryKr: '흥분제' },
+        { contents: 'Gestrinone' },
         { page: 1, limit: 10 },
       );
-      expect(lastExecutedSql).toContain('WHERE categoryKr LIKE ?');
-      expect(lastExecutedParams).toContain('%흥분제%');
+      expect(lastExecutedSql).toContain('WHERE contents LIKE ?');
+      expect(lastExecutedParams).toContain('%Gestrinone%');
     });
   });
 });
