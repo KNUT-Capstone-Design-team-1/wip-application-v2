@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, Image } from 'react-native';
 import { useSearchResultListStore } from '../../store/search_result_list_store';
-import { styles } from '../../styles/PillSearchResultList';
+import { styles } from '../../styles/molecules/SearchConditionTags';
 
 interface SearchConditionTagsProps {
   markImages?: { code: string; base64: string }[];
@@ -95,9 +95,9 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
       <View style={styles.tagList}>
         {tags.map((tag, index) => (
           <View key={`${tag.label}-${index}`} style={styles.tag}>
-            <Text style={styles.tagLabel}>{tag.label}</Text>
+            <Text style={styles.tagLabel}>{tag.label}:</Text>
             {tag.value ? (
-              <Text style={styles.tagValue}>: {tag.value}</Text>
+              <Text style={styles.tagValue}>{tag.value}</Text>
             ) : null}
             {tag.images &&
               tag.images.map((uri, idx) => (

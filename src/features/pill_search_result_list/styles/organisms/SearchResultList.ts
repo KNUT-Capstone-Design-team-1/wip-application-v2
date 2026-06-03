@@ -3,7 +3,6 @@ import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   searchResultListWrapper: {
-    display: 'flex',
     marginTop: 20,
     flexDirection: 'column',
   },

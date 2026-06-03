@@ -26,24 +26,42 @@ const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
 /**
  * 알약 상세 정보 텍스트 컴포넌트
  */
-const PillInfo = ({ pill }: { pill: IPillData }) => (
-  <View style={styles.searchItemContents}>
-    <Text style={styles.searchItemTitle} numberOfLines={1}>
-      {pill.ITEM_NAME}
-    </Text>
-    <Text style={styles.searchItemEntpName} numberOfLines={1}>
-      {pill.ENTP_NAME}
-    </Text>
+const PillInfo = ({ pill }: { pill: IPillData }) => {
+  const itemNames = pill.ITEM_NAME.split(/(?=\()/, 2);
 
-    <View style={styles.infoFooter}>
-      <Text style={styles.searchItemEtcOtcCode}>{pill.ETC_OTC_CODE}</Text>
-      <View style={styles.infoSeparator} />
-      <Text style={styles.searchItemPrintFront}>
-        식별표기: {pill.PRINT_FRONT || '없음'}
+  return (
+    <View style={styles.searchItemContents}>
+      <Text style={styles.searchItemTitle} numberOfLines={1}>
+        {itemNames[0]}
       </Text>
+      {itemNames[1] && (
+        <Text
+          style={[styles.searchItemTitle, { fontSize: 12 }]}
+          numberOfLines={1}
+        >
+          {itemNames[1]}
+        </Text>
+      )}
+      <Text style={styles.searchItemClassName} numberOfLines={1}>
+        {pill.CLASS_NAME}
+      </Text>
+      <View style={styles.infoPrintWrapper}>
+        <Text style={styles.searchItemPrintText}>
+          {pill.PRINT_FRONT || '없음'}
+        </Text>
+        <View style={styles.infoSeparator} />
+        <Text style={styles.searchItemPrintText}>
+          {pill.PRINT_BACK || '없음'}
+        </Text>
+      </View>
+      <View style={styles.infoEntpWrapper}>
+        <Text style={styles.searchItemEntpName} numberOfLines={1}>
+          {pill.ENTP_NAME}
+        </Text>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const SearchResultItem = ({
   resultItem,

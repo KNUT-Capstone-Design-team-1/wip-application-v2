@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   floatingButton: {
@@ -12,16 +12,21 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 30,
-    elevation: 5,
-    shadowColor: '#000',
+    // ios
+    shadowColor: COLOR['black'],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    // android
+    elevation: 5,
+    gap: 8,
   },
   buttonText: {
-    color: '#fff',
+    fontFamily: 'Paperlogy',
+    color: COLOR['white'],
     fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 8,
+    fontWeight: 600,
+    includeFontPadding: false,
+    paddingVertical: 0,
   },
 });
