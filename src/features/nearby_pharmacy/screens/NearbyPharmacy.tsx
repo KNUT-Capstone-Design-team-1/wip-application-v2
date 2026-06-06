@@ -11,6 +11,13 @@ import { COLOR_PRIMARY } from '@constants/color';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
 
+/*
+TODO: Custom marker 필요
+TODO: marker 위치가 정확한지 확인 필요
+TODO: 현재 위치를 기준으로 반경 몇 m이내의 약국만 표시된다는 안내 필요
+TODO: 확대/축소 기준에 맞게 클러스터링 필요
+*/
+
 /**
  * 주변 약국 지도 화면
  */
@@ -97,6 +104,7 @@ const NearbyPharmacyScreen = () => {
         initialRegion={initialRegion}
         showsUserLocation={true}
         showsMyLocationButton={true}
+        toolbarEnabled={false}
       >
         <PharmacyMarkers
           pharmacies={pharmacies}

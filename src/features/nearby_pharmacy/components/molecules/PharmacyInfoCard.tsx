@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
+import { Copy, X } from 'lucide-react-native';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 const PharmacyInfoCard = ({
   pharmacy,
@@ -12,15 +14,27 @@ const PharmacyInfoCard = ({
     <View style={styles.infoContainer}>
       <View style={styles.infoContent}>
         <Text style={styles.pharmacyName}>{pharmacy.name}</Text>
-        <TouchableOpacity onPress={() => onCopyPress(pharmacy.telephone)}>
-          <Text style={styles.pharmacyPhone}>
-            {pharmacy.telephone || '전화번호 없음'} (누르면 복사)
+        <TouchableOpacity
+          style={styles.pharmacyPhoneCopyButton}
+          disabled={!pharmacy.telephone}
+          onPress={() => onCopyPress(pharmacy.telephone)}
+        >
+          <Text
+            style={[
+              styles.pharmacyPhone,
+              !pharmacy.telephone && { color: COLOR_GRAY[300] },
+            ]}
+          >
+            {pharmacy.telephone || '전화번호 없음'}
           </Text>
+          {pharmacy.telephone && (
+            <Copy size={14} color={COLOR_PRIMARY[200]} strokeWidth={3} />
+          )}
         </TouchableOpacity>
         <Text style={styles.pharmacyAddress}>{pharmacy.address}</Text>
       </View>
       <TouchableOpacity style={styles.closeButton} onPress={onClosePress}>
-        <Text style={styles.closeButtonText}>닫기</Text>
+        <X size={16} color={COLOR_PRIMARY[400]} strokeWidth={4} />
       </TouchableOpacity>
     </View>
   );
