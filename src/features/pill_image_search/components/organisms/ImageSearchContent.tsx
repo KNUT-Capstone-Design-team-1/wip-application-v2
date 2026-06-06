@@ -7,6 +7,8 @@ import {
 } from '../../constants/pillImageSearch';
 import InfoIcon from '@assets/icons/info-icon.svg';
 import SelectedImagesView from '../atoms/SelectedImagesView';
+import { Info } from 'lucide-react-native';
+import { COLOR, COLOR_PRIMARY } from '@constants/color';
 
 interface IImageSearchContentProps {
   contentState: boolean;
@@ -34,9 +36,7 @@ const ImageSearchContent = ({
     <View style={styles.contentContainer}>
       <Text style={styles.title}>{content.title}</Text>
       <View style={styles.contentTitleWrapper}>
-        <View style={styles.infoIcon}>
-          <InfoIcon width={8} height={10} fill="#fff" />
-        </View>
+        <Info size={24} color={COLOR['white']} fill={COLOR_PRIMARY[300]} />
         <Text style={styles.contentTitle}>{content.contentTitle}</Text>
       </View>
       <Text style={styles.contentDescription}>

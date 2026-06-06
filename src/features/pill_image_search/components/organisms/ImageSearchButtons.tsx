@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
-import { COLOR_PRIMARY, COLOR_GRAY } from '../../../../constants';
-import CameraIcon from '@assets/icons/camera.svg';
-import AlbumIcon from '@assets/icons/album.svg';
-import SaveIcon from '@assets/icons/save.svg'; // 파일 아이콘 대용으로 사용
+import { COLOR_PRIMARY, COLOR_GRAY, COLOR } from '@constants/color';
 import ImagePreviewSlots from '../organisms/ImagePreviewSlots';
 import CameraScreen from '../organisms/CameraScreen';
 import {
   pickMultipleImages,
   pickMultipleImagesFromFiles,
 } from '../../utils/imagePickerUtils';
+import { Camera, FolderClosed, FolderOpen, Image } from 'lucide-react-native';
 
 interface PillImages {
   front: string | null;
@@ -71,7 +69,7 @@ const ImageSearchButtons = ({
   };
 
   return (
-    <View>
+    <>
       {/* 커스텀 카메라 화면 */}
       <CameraScreen
         visible={showCamera}
@@ -99,7 +97,7 @@ const ImageSearchButtons = ({
           style={[styles.button, { backgroundColor: COLOR_PRIMARY[400] }]}
           onPress={handleCameraPress}
         >
-          <CameraIcon width={20} height={16} fill="#fff" />
+          <Camera size={24} fill={COLOR['white']} color={COLOR_PRIMARY[400]} />
           <Text style={styles.text}>촬영하기</Text>
         </TouchableOpacity>
 
@@ -108,16 +106,16 @@ const ImageSearchButtons = ({
           style={[styles.button, { backgroundColor: COLOR_PRIMARY[200] }]}
           onPress={handleAlbumPress}
         >
-          <AlbumIcon width={21} height={17} fill="#fff" />
+          <Image size={24} color={COLOR['white']} />
           <Text style={styles.text}>앨범에서 선택하기</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           activeOpacity={0.7}
-          style={[styles.button, { backgroundColor: COLOR_GRAY[500] }]}
+          style={[styles.button, { backgroundColor: COLOR_GRAY[400] }]}
           onPress={handleFilePress}
         >
-          <SaveIcon width={20} height={20} fill="#fff" />
+          <FolderClosed size={24} color={COLOR['white']} />
           <Text style={styles.text}>파일 탐색기에서 선택하기</Text>
         </TouchableOpacity>
       </View>
@@ -130,7 +128,7 @@ const ImageSearchButtons = ({
             activeOpacity={0.7}
             style={[
               styles.button,
-              { backgroundColor: '#00D9FF', borderRadius: 50 },
+              { backgroundColor: COLOR_PRIMARY[200], borderRadius: 50 },
             ]}
             onPress={onApply}
           >
@@ -138,7 +136,7 @@ const ImageSearchButtons = ({
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet, Modal, Text } from 'react-native';
-import { COLOR_PRIMARY } from '@constants/index';
+import { View, ActivityIndicator, Modal, Text } from 'react-native';
+import { styles } from './styles/FullSizeLoading';
+import { COLOR_PRIMARY } from '@constants/color';
 
 interface IFullSizeLoadingProps {
   visible: boolean;
@@ -24,31 +25,5 @@ const FullSizeLoading = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    backgroundColor: '#fff',
-    padding: 25,
-    borderRadius: 15,
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  message: {
-    marginTop: 15,
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-  },
-});
 
 export default FullSizeLoading;

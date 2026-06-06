@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '../../../../constants';
+import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,9 +7,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
+    fontFamily: 'Paperlogy',
     fontSize: 18,
-    fontWeight: '700',
-    color: COLOR_PRIMARY[300],
+    fontWeight: 700,
+    color: COLOR_PRIMARY[400],
     marginBottom: 20,
   },
   imagesWrapper: {
@@ -22,8 +23,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
+    fontFamily: 'Paperlogy',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 600,
     color: COLOR_PRIMARY[300],
     marginBottom: 8,
   },
@@ -32,8 +34,8 @@ export const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 12,
-    borderWidth: 3,
-    borderColor: COLOR_PRIMARY[400],
+    borderWidth: 2,
+    borderColor: COLOR_GRAY[100],
     overflow: 'hidden',
   },
   image: {
@@ -42,18 +44,13 @@ export const styles = StyleSheet.create({
   },
   checkmark: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 28,
-    height: 28,
+    top: 6,
+    right: 6,
+    width: 20,
+    height: 20,
     borderRadius: 14,
-    backgroundColor: '#4CAF50',
+    backgroundColor: COLOR['normal'],
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  checkmarkText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
   },
 });

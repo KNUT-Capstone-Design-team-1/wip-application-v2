@@ -3,12 +3,13 @@ import { COLOR_GRAY, COLOR_PRIMARY } from '../../../../constants';
 
 export const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
+    marginBottom: 20,
   },
   title: {
+    fontFamily: 'Paperlogy',
     fontSize: 16,
-    fontWeight: '600',
-    color: COLOR_PRIMARY[300],
+    fontWeight: 700,
+    color: COLOR_PRIMARY[400],
     marginBottom: 12,
   },
   slotsWrapper: {
@@ -19,7 +20,9 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
+    fontFamily: 'Paperlogy',
     fontSize: 14,
+    fontWeight: 600,
     color: COLOR_PRIMARY[300],
     marginBottom: 8,
     textAlign: 'center',
@@ -33,7 +36,6 @@ export const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
   },
   removeButton: {
     position: 'absolute',
@@ -41,15 +43,8 @@ export const styles = StyleSheet.create({
     right: 4,
     width: 24,
     height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  removeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
   emptySlot: {
     aspectRatio: 1,
@@ -60,9 +55,5 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_GRAY[150],
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 32,
-    color: COLOR_GRAY[300],
   },
 });

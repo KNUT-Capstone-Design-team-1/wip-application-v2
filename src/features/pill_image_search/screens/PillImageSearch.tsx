@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
-import { COLOR_GRAY } from '../../../constants';
 import { usePillImageSelection } from '../hooks/usePillImageSelection';
 import FullSizeLoading from '@components/common/FullSizeLoading';
+import { styles } from '../styles/PillImageSearch';
+
+// TODO: Scroll 제거 필요 (ScrollView를 교체하던지 아니면 Scroll이 안되게 막던지)
+// TODO: 검색 중 취소 로직 필요 (사용자의 뒤로가기, 외부에서 종료)
 
 const PillImageSearch = () => {
   const {
@@ -29,7 +32,7 @@ const PillImageSearch = () => {
           frontImage={pillImages.front}
           backImage={pillImages.back}
         />
-        <View style={styles.hr}></View>
+        <View style={styles.hr} />
         <ImageSearchButtons
           visible={false}
           onImageSelect={handleImageSelect}
@@ -47,34 +50,5 @@ const PillImageSearch = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  contentContainer: {
-    paddingHorizontal: '5%',
-    paddingBottom: 40,
-  },
-  hr: {
-    width: '100%',
-    height: 1,
-    backgroundColor: COLOR_GRAY[150],
-    marginTop: 30,
-    marginBottom: 30,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  loadingText: {
-    marginTop: 15,
-    fontSize: 16,
-    color: '#666',
-  },
-});
 
 export default PillImageSearch;

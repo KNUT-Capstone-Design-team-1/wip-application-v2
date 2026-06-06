@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '../../../../constants';
+import { COLOR, COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   imageSearchButtonsWrapper: {
     display: 'flex',
-    gap: 10,
+    gap: 12,
   },
   button: {
     display: 'flex',
@@ -12,14 +12,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
-    fontSize: 16,
     width: '100%',
     height: 45,
     borderRadius: 10,
   },
   text: {
+    fontFamily: 'Paperlogy',
+    fontSize: 16,
     fontWeight: 700,
-    color: '#fff',
+    color: COLOR['white'],
   },
   searchButton: {
     marginTop: 20,
@@ -30,15 +31,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchButtonText: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#fff',
+    fontFamily: 'Paperlogy',
+    fontSize: 18,
+    fontWeight: 700,
+    color: COLOR['white'],
   },
   hr: {
     width: '100%',
     height: 1,
-    backgroundColor: COLOR_GRAY[150],
-    marginTop: 30,
-    marginBottom: 30,
+    backgroundColor: COLOR_GRAY[100],
+    marginVertical: 24,
   },
 });

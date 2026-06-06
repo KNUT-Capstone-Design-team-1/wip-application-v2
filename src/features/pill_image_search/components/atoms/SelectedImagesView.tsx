@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { styles } from '../../styles/atoms/SelectedImagesView';
+import { Check } from 'lucide-react-native';
+import { COLOR } from '@constants/color';
 
 interface SelectedImagesViewProps {
   frontImage: string | null;
@@ -22,7 +24,7 @@ const SelectedImagesView = ({
             <View style={styles.imageBox}>
               <Image source={{ uri: frontImage }} style={styles.image} />
               <View style={styles.checkmark}>
-                <Text style={styles.checkmarkText}>✓</Text>
+                <Check size={14} color={COLOR['white']} strokeWidth={4} />
               </View>
             </View>
           )}
@@ -35,7 +37,7 @@ const SelectedImagesView = ({
             <View style={styles.imageBox}>
               <Image source={{ uri: backImage }} style={styles.image} />
               <View style={styles.checkmark}>
-                <Text style={styles.checkmarkText}>✓</Text>
+                <Check size={14} color={COLOR['white']} strokeWidth={4} />
               </View>
             </View>
           )}

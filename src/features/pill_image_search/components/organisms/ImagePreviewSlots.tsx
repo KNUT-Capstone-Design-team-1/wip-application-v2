@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/organisms/ImagePreviewSlots';
+import { Plus, X } from 'lucide-react-native';
+import { COLOR, COLOR_GRAY } from '@constants/color';
 
 interface ImagePreviewSlotsProps {
   frontImage: string | null;
@@ -27,12 +29,12 @@ const ImagePreviewSlots = ({
                 style={styles.removeButton}
                 onPress={() => onRemove('front')}
               >
-                <Text style={styles.removeButtonText}>✕</Text>
+                <X size={24} color={COLOR['white']} strokeWidth={2} />
               </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.emptySlot}>
-              <Text style={styles.emptyText}>+</Text>
+              <Plus size={24} color={COLOR_GRAY[400]} strokeWidth={3} />
             </View>
           )}
         </View>
@@ -47,12 +49,12 @@ const ImagePreviewSlots = ({
                 style={styles.removeButton}
                 onPress={() => onRemove('back')}
               >
-                <Text style={styles.removeButtonText}>✕</Text>
+                <X size={24} color={COLOR['white']} strokeWidth={2} />
               </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.emptySlot}>
-              <Text style={styles.emptyText}>+</Text>
+              <Plus size={24} color={COLOR_GRAY[400]} strokeWidth={3} />
             </View>
           )}
         </View>

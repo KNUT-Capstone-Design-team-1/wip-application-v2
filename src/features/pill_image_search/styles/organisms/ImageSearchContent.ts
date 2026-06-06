@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
     color: COLOR_PRIMARY[300],
   },
   title: {
+    fontFamily: 'Paperlogy',
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 700,
@@ -20,7 +21,8 @@ export const styles = StyleSheet.create({
   contentTitleWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 4,
+    marginBottom: 4,
   },
   infoIcon: {
     width: 16,
@@ -31,18 +33,21 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contentTitle: {
+    fontFamily: 'Paperlogy',
     textAlign: 'center',
     fontSize: 16,
+    fontWeight: 500,
   },
   contentDescription: {
+    fontFamily: 'Paperlogy',
     textAlign: 'center',
     fontSize: 14,
-    color: COLOR.normal,
+    color: COLOR['normal'],
+    fontWeight: 500,
   },
   contentImage: {
     width: '90%',
     height: 150,
     marginTop: 10,
-    // marginBottom: 20,
   },
 });

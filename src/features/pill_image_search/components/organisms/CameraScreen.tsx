@@ -16,6 +16,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '../../styles/organisms/CameraScreen';
 import { useCameraCapture } from '../../hooks/useCameraCapture';
+import { Plus, X } from 'lucide-react-native';
+import { COLOR } from '@constants/color';
 
 interface CameraScreenProps {
   visible: boolean;
@@ -66,7 +68,7 @@ const CameraScreen = ({
             style={[styles.closeButton, { top: Math.max(insets.top, 20) + 10 }]}
             onPress={onClose}
           >
-            <Text style={styles.closeButtonText}>✕</Text>
+            <X size={24} color={COLOR['white']} strokeWidth={3} />
           </TouchableOpacity>
 
           <Text style={styles.title}>알약 검색</Text>
@@ -79,7 +81,7 @@ const CameraScreen = ({
                 <Image source={{ uri: frontImage }} style={styles.slotImage} />
               ) : (
                 <View style={styles.emptySlot}>
-                  <Text style={styles.emptyText}>+</Text>
+                  <Plus size={24} color={COLOR['white']} strokeWidth={2} />
                 </View>
               )}
             </View>
@@ -91,7 +93,7 @@ const CameraScreen = ({
                 <Image source={{ uri: backImage }} style={styles.slotImage} />
               ) : (
                 <View style={styles.emptySlot}>
-                  <Text style={styles.emptyText}>+</Text>
+                  <Plus size={24} color={COLOR['white']} strokeWidth={2} />
                 </View>
               )}
             </View>
