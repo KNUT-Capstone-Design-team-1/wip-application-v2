@@ -30,6 +30,9 @@ export const usePillDetailScreen = () => {
       ENTP_NAME: pillData.ENTP_NAME,
       ITEM_IMAGE: itemImageStr || pillData.ITEM_IMAGE || '',
       CHART: pillData.CHART || '',
+      CLASS_NAME: pillData.CLASS_NAME || '',
+      PRINT_FRONT: pillData.PRINT_FRONT || '',
+      PRINT_BACK: pillData.PRINT_BACK || '',
     });
   }, [pillData, toggleSave, itemImageStr]);
 

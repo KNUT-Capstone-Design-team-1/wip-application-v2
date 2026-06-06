@@ -4,6 +4,8 @@ import PillSaveList from '@features/pill_save/components/organisms/PillSaveList'
 import { usePillSaveList } from '@features/pill_save/hooks/use_pill_save_list';
 import { COLOR_PRIMARY } from '@constants/color';
 
+// TODO: 보관함을 통해서 알약 상세정보 접근 시 효능효과, 용법용량, 사용상 주의사항 내용이 링크로 나오는 문제 확인됨.
+
 /**
  * 저장된 알약 개수 표시 헤더
  */

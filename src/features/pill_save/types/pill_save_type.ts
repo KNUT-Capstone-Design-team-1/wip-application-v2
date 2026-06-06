@@ -4,6 +4,9 @@ export interface IPillSaveData {
   ITEM_NAME: string;
   ITEM_SEQ: string;
   ITEM_IMAGE: string;
+  CLASS_NAME: string;
+  PRINT_FRONT: string;
+  PRINT_BACK: string;
 }
 
 export interface IPillSaveListProps {
