@@ -1,15 +1,17 @@
+import { COLOR } from '@constants/color';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLOR['white'],
   },
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 30,
-    backgroundColor: '#f5f5f5',
+    paddingVertical: 16,
+    backgroundColor: COLOR['white'],
+    borderRadius: 18,
   },
   infoContainer: {
     padding: 20,

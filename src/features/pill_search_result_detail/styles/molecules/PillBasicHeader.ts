@@ -4,8 +4,8 @@ export const styles = StyleSheet.create({
   nameWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 16,
-    position: 'relative',
   },
   name: {
     color: '#000',
@@ -14,4 +14,5 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     paddingRight: 20,
   },
+  saveButton: {},
 });

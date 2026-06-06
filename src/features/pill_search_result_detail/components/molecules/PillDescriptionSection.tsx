@@ -1,6 +1,8 @@
 import { memo, useState, useCallback } from 'react';
 import DetailSection from './DetailSection';
 import { IPillDetail } from '../../types/pill_detail_type';
+import { View } from 'react-native';
+import { styles } from '../../styles/molecules/PillDescriptionSection';
 
 interface IPillDescriptionSectionProps {
   data: IPillDetail;
@@ -24,6 +26,8 @@ const PillDescriptionSection = ({ data }: IPillDescriptionSectionProps) => {
         content={data.EE_DOC_DATA}
       />
 
+      <View style={styles.sectionDivider} />
+
       <DetailSection
         title="용법/용량"
         isOpen={showUsage}
@@ -31,6 +35,7 @@ const PillDescriptionSection = ({ data }: IPillDescriptionSectionProps) => {
         content={data.UD_DOC_DATA}
       />
 
+      <View style={styles.sectionDivider} />
       <DetailSection
         title="사용상 주의사항"
         isOpen={showWarning}

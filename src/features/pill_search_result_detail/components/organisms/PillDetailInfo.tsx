@@ -7,6 +7,8 @@ import PillBasicHeader from '../molecules/PillBasicHeader';
 import PillSpecsSection from '../molecules/PillSpecsSection';
 import PillSafetySection from '../molecules/PillSafetySection';
 import PillDescriptionSection from '../molecules/PillDescriptionSection';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import { COLOR_GRAY } from '@constants/color';
 
 const PillDetailInfo = ({
   data,
@@ -35,6 +37,11 @@ const PillDetailInfo = ({
         <Text style={styles.infoMoreBtnText}>
           {moreInfo ? '접기' : '더보기'}
         </Text>
+        {moreInfo ? (
+          <ChevronUp size={24} color={COLOR_GRAY[300]} strokeWidth={2} />
+        ) : (
+          <ChevronDown size={24} color={COLOR_GRAY[300]} strokeWidth={2} />
+        )}
       </TouchableOpacity>
 
       {/* 상세 정보 섹션 */}

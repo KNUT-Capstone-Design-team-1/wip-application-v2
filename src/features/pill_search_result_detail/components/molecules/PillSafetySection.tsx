@@ -6,6 +6,10 @@ import { styles } from '../../styles/molecules/PillSafetySection';
 import { useExternalUrlStore } from '@store/external_url_store';
 import logger from '@utils/logger';
 
+/*
+TODO: 잘못된 정보 신고하기 시 메일 앱으로 이동 전 Dialog/Alert를 표시하여 사용자에게 이동여부를 묻는 중간단계가 필요
+*/
+
 interface IPillSafetySectionProps {
   data: IPillDetail;
 }
@@ -40,16 +44,6 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>[ 주의 및 특수 분류 정보 ]</Text>
-      <View style={styles.disclaimerContainer}>
-        <Text style={styles.disclaimerText}>
-          * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 최신
-          정보는 마약 정보 데이터베이스 및 KADA 홈페이지를 확인해 주세요.
-        </Text>
-        <TouchableOpacity style={styles.reportButton} onPress={handleReport}>
-          <Text style={styles.reportButtonText}>잘못된 정보 신고하기</Text>
-        </TouchableOpacity>
-      </View>
-
       <InfoRow
         label="운전/기계조작"
         value={
@@ -61,13 +55,11 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         }
       />
 
-      <View style={styles.divider} />
-
       <InfoRow
         label="마약류 (마약)"
         value={
           data.isNarcotic ? (
-            <Text>
+            <>
               <Text style={styles.warningText}>확인됨</Text>
               {`\n해당 성분: `}
               <Text style={styles.warningText}>
@@ -75,7 +67,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
                   ? data.narcoticIngredients.join(', ')
                   : '-'}
               </Text>
-            </Text>
+            </>
           ) : (
             '해당 없음 (X)'
           )
@@ -85,7 +77,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         label="마약류 (대마)"
         value={
           data.isCannabis ? (
-            <Text>
+            <>
               <Text style={styles.warningText}>확인됨</Text>
               {`\n해당 성분: `}
               <Text style={styles.warningText}>
@@ -93,7 +85,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
                   ? data.cannabisIngredients.join(', ')
                   : '-'}
               </Text>
-            </Text>
+            </>
           ) : (
             '해당 없음 (X)'
           )
@@ -103,7 +95,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         label="마약류 (향정)"
         value={
           data.isPsychotropic ? (
-            <Text>
+            <>
               <Text style={styles.warningText}>확인됨</Text>
               {`\n해당 성분: `}
               <Text style={styles.warningText}>
@@ -111,7 +103,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
                   ? data.psychotropicIngredients.join(', ')
                   : '-'}
               </Text>
-            </Text>
+            </>
           ) : (
             '해당 없음 (X)'
           )
@@ -127,21 +119,19 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         </Text>
       </TouchableOpacity>
 
-      <View style={styles.divider} />
-
       <InfoRow
         label="도핑 금지"
         value={
           data.isProhibited ? (
-            <Text>
-              <Text style={styles.warningText}>주의 성분 </Text>(
+            <>
+              <Text style={styles.warningText}>주의 성분 </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.prohibitedIngredients)
                   ? data.prohibitedIngredients.join(', ')
                   : '-'}
               </Text>
               {`)\n적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
-            </Text>
+            </>
           ) : (
             '해당 없음 (X)'
           )
@@ -156,6 +146,16 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
           도핑 금지 약물 확인 (KADA)
         </Text>
       </TouchableOpacity>
+
+      <View style={styles.disclaimerContainer}>
+        <Text style={styles.disclaimerText}>
+          * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 최신
+          정보는 마약 정보 데이터베이스 및 KADA 홈페이지를 확인해 주세요.
+        </Text>
+        <TouchableOpacity style={styles.reportButton} onPress={handleReport}>
+          <Text style={styles.reportButtonText}>잘못된 정보 신고하기</Text>
+        </TouchableOpacity>
+      </View>
 
       <Text style={styles.sourceText}>
         * 출처: 식약처 마약정보DB, 한국도핑방지위원회(KADA)

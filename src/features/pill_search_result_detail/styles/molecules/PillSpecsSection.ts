@@ -1,19 +1,19 @@
+import { COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   infoWrapper: {
-    gap: 6,
+    gap: 2,
     paddingBottom: 0,
     paddingVertical: 12,
   },
-  spacer: {
-    height: 10,
-  },
   sectionTitle: {
-    color: '#aaa',
+    fontFamily: 'Paperlogy',
+    color: COLOR_PRIMARY[200],
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 700,
     textAlign: 'left',
-    marginBottom: 5,
+    marginBottom: 4,
+    marginTop: 12,
   },
 });

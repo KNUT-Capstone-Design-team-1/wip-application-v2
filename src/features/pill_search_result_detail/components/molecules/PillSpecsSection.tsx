@@ -31,8 +31,6 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
           <InfoRow label="영문명" value={data.ITEM_ENG_NAME} />
           <InfoRow label="전문/일반" value={data.ETC_OTC_CODE} />
           <InfoRow label="분류 번호" value={data.CLASS_NO} />
-
-          <View style={styles.spacer} />
           <Text style={styles.sectionTitle}>[ 상세 제원 ]</Text>
           <InfoRow
             label="색상"
@@ -46,19 +44,18 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
             label="크기 (mm)"
             value={`장축: ${data.LENGTH_LONG || '-'} / 단축: ${data.LENGTH_SHORT || '-'} / 두께: ${data.LENGTH_THICK || '-'}`}
           />
-
-          <View style={styles.spacer} />
           <Text style={styles.sectionTitle}>[ 성분 및 저장 ]</Text>
           <InfoRow
             label="원료 성분"
-            value={data.MATERIAL_NAME?.replace(/;/g, '\n')}
+            value={data.MATERIAL_NAME?.replace(/[;|]/g, '\n')}
           />
           <InfoRow label="영문 성분명" value={data.MATERIAL_ENG_NAME} />
-          <InfoRow label="첨가제" value={data.INGR_NAME} />
+          <InfoRow
+            label="첨가제"
+            value={data.INGR_NAME?.replace(/[;|]/g, '\n')}
+          />
           <InfoRow label="총량" value={data.TOTAL_CONTENT} />
           <InfoRow label="저장 방법" value={data.STORAGE_METHOD} />
-
-          <View style={styles.spacer} />
           <Text style={styles.sectionTitle}>[ 관리 정보 ]</Text>
           <InfoRow label="표준 코드" value={data.BAR_CODE} />
           <InfoRow
@@ -83,9 +80,10 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
           )}
 
           <InfoRow label="변경 일자" value={data.CHANGE_DATE} />
-          <InfoRow label="변경 내용" value={data.CHANGE_CONTENT} />
-
-          <View style={styles.spacer} />
+          <InfoRow
+            label="변경 내용"
+            value={data.CHANGE_CONTENT?.replace(/[/]/g, '\n')}
+          />
           <Text style={styles.sectionTitle}>[ 기타 ]</Text>
           <InfoRow label="재심사 대상" value={data.REEXAM_TARGET_YN} />
           <InfoRow label="재심사 기간" value={data.REEXAM_CONT} />

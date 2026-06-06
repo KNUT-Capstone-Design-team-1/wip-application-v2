@@ -1,34 +1,32 @@
+import { COLOR, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  detailSectionWrapper: {
-    marginBottom: 8,
-  },
+  detailSectionWrapper: {},
   detailInfoHeadWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
-    paddingVertical: 12,
+    paddingVertical: 4,
   },
   detailInfoHeadText: {
-    color: '#3c42ec',
-    fontSize: 22,
-    fontWeight: '700',
+    fontFamily: 'Paperlogy',
+    color: COLOR_PRIMARY[200],
+    fontSize: 18,
+    fontWeight: 700,
     flex: 1,
   },
-  arrowIcon: {
-    color: '#3c42ec',
-    fontSize: 12,
-  },
   detailInfoContent: {
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    backgroundColor: '#f9f9f9',
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    backgroundColor: COLOR['white'],
     borderRadius: 8,
   },
   detailInfoText: {
-    color: '#333',
-    fontSize: 18,
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
+    color: COLOR['black'],
+    fontSize: 16,
     lineHeight: 30,
   },
 });

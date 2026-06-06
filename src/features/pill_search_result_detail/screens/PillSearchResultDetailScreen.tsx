@@ -19,7 +19,9 @@ const PillSearchResultDetailScreen = () => {
   if (!pillData) {
     return (
       <View style={styles.pillResultDetailRoot}>
-        <Text>데이터를 불러올 수 없습니다.</Text>
+        <Text style={styles.pillResultDetailNotFoundText}>
+          데이터를 불러올 수 없습니다.
+        </Text>
       </View>
     );
   }
@@ -29,12 +31,18 @@ const PillSearchResultDetailScreen = () => {
       <View style={styles.viewWrapper}>
         {/* 알약 이미지 */}
         <View style={styles.pillImgWrapper}>
-          {(itemImageStr || pillData.ITEM_IMAGE) && (
+          {itemImageStr || pillData.ITEM_IMAGE ? (
             <Image
               style={styles.pillImg}
               source={{ uri: itemImageStr || pillData.ITEM_IMAGE || '' }}
               resizeMode="contain"
             />
+          ) : (
+            <View style={styles.pillDetailNoImageWrapper}>
+              <Text style={styles.pillDetailNoImageText}>
+                이미지가 없습니다
+              </Text>
+            </View>
           )}
         </View>
 
