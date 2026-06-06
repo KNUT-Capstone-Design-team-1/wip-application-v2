@@ -1,66 +1,61 @@
+import { COLOR, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    backgroundColor: COLOR['white'],
   },
   logoContainer: {
+    flex: 5,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  spinnerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
   infoContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginTop: 20,
   },
   statusText: {
+    fontFamily: 'Paperlogy',
     fontSize: 18,
-    fontWeight: '500',
-    color: '#32D2FF',
-    marginBottom: 20,
+    fontWeight: 700,
+    color: COLOR_PRIMARY[100],
+    marginBottom: 12,
   },
   progressBarContainer: {
     width: 250,
     height: 10,
-    backgroundColor: '#fff',
+    backgroundColor: COLOR['white'],
     borderRadius: 5,
     overflow: 'hidden',
-    marginBottom: 12,
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#32D2FF',
+    backgroundColor: COLOR_PRIMARY[100],
     borderRadius: 5,
   },
   detailsContainer: {
     alignItems: 'center',
   },
   percentText: {
+    fontFamily: 'Paperlogy',
     fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+    color: COLOR['white'],
+    fontWeight: 700,
     marginBottom: 4,
   },
   pageText: {
+    fontFamily: 'Paperlogy',
     fontSize: 14,
-    color: '#fff',
+    fontWeight: 700,
+    color: COLOR['white'],
     opacity: 0.9,
-  },
-  spinner: {
-    marginVertical: 30,
   },
 });
