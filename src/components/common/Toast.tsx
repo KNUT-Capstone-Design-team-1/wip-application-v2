@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, Animated } from 'react-native';
 import { styles } from './styles/Toast';
+import { px } from '@utils/responsive';
 
 interface IToastProps {
   message: string;
@@ -11,7 +12,7 @@ interface IToastProps {
 
 const Toast = ({ message, visible, duration = 2000, onHide }: IToastProps) => {
   const opacity = React.useRef(new Animated.Value(0)).current;
-  const translateY = React.useRef(new Animated.Value(50)).current;
+  const translateY = React.useRef(new Animated.Value(px(50))).current;
 
   useEffect(() => {
     if (visible) {
@@ -38,7 +39,7 @@ const Toast = ({ message, visible, duration = 2000, onHide }: IToastProps) => {
             useNativeDriver: true,
           }),
           Animated.timing(translateY, {
-            toValue: 50,
+            toValue: px(50),
             duration: 300,
             useNativeDriver: true,
           }),

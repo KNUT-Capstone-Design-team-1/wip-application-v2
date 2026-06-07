@@ -1,5 +1,6 @@
-import { COLOR, COLOR_GRAY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,20 +11,20 @@ export const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: COLOR['white'],
-    paddingVertical: 32,
-    paddingHorizontal: 24,
-    borderRadius: 16,
+    paddingVertical: px(32),
+    paddingHorizontal: px(24),
+    borderRadius: px(16),
     alignItems: 'center',
     elevation: 5,
     shadowColor: COLOR['black'],
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: px(2) },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: px(3.84),
   },
   message: {
     fontFamily: 'Paperlogy',
-    marginTop: 15,
-    fontSize: 16,
+    marginTop: px(15),
+    fontSize: fontPx(16),
     color: COLOR['black'],
     fontWeight: 600,
   },

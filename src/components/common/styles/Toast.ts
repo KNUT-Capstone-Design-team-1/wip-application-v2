@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   toastContainer: {
     position: 'absolute',
-    bottom: 100,
+    bottom: px(100),
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -12,14 +13,14 @@ export const styles = StyleSheet.create({
   },
   toastContent: {
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingHorizontal: px(20),
+    paddingVertical: px(12),
+    borderRadius: px(8),
     maxWidth: '80%',
   },
   toastText: {
     color: '#ffffff',
-    fontSize: 14,
+    fontSize: fontPx(14),
     fontWeight: '500',
     textAlign: 'center',
   },

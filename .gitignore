@@ -212,3 +212,7 @@ credentials
 # expo prebuild
 android
 ios
+
+# docs
+/docs/tasks
+/docs/results
