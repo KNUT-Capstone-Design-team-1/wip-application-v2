@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
@@ -7,12 +8,12 @@ export const styles = StyleSheet.create({
   },
   markResultContainer: {
     flexDirection: 'row',
-    marginBottom: 10,
-    gap: 16,
-    padding: 8,
+    marginBottom: px(10),
+    gap: px(16),
+    padding: px(8),
     borderWidth: 1,
     borderColor: COLOR_GRAY[100],
-    borderRadius: 15,
+    borderRadius: px(15),
     backgroundColor: '#fff',
     // ios
     shadowColor: '#000',
@@ -36,15 +37,15 @@ export const styles = StyleSheet.create({
   markTitle: {
     fontFamily: 'Paperlogy',
     fontWeight: 700,
-    fontSize: 14,
+    fontSize: fontPx(14),
     color: COLOR_GRAY[400],
     textAlign: 'center',
   },
   selectedMarkDelete: {
     position: 'absolute',
-    padding: 4,
+    padding: px(4),
     zIndex: 5,
-    right: 2,
-    top: 2,
+    right: px(2),
+    top: px(2),
   },
 });

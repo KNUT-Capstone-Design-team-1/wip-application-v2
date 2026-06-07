@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
@@ -6,7 +7,7 @@ export const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     aspectRatio: 1,
-    borderRadius: 15,
+    borderRadius: px(15),
     borderWidth: 2,
     borderColor: COLOR_GRAY[150],
     backgroundColor: '#fff',
@@ -29,16 +30,16 @@ export const styles = StyleSheet.create({
     height: '30%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: px(15),
+    borderBottomRightRadius: px(15),
     overflow: 'hidden',
-    paddingHorizontal: 2,
+    paddingHorizontal: px(2),
   },
   iconSectionLabel: {
     color: COLOR_GRAY[300],
     textAlign: 'center',
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    fontSize: 13,
+    fontSize: fontPx(13),
   },
 });

@@ -3,6 +3,7 @@ import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { styles } from '../../styles/molecules/SearchInput';
 import { Search } from 'lucide-react-native';
+import { fontPx } from '@utils/responsive';
 
 interface ISearchInputProps {
   value: string;
@@ -48,7 +49,7 @@ const SearchInput = ({
         onPress={onSearch}
         disabled={disabled}
       >
-        <Search size={18} strokeWidth={2} color={COLOR_GRAY[400]} />
+        <Search size={fontPx(18)} strokeWidth={2} color={COLOR_GRAY[400]} />
       </TouchableOpacity>
     </View>
   );

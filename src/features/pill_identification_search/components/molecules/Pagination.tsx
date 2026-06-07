@@ -5,6 +5,7 @@ import { IPaginationProps } from '@features/pill_identification_search/types/sea
 import { PAGE_GROUP_SIZE } from '@features/pill_identification_search/constants/identificationSearch';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { COLOR_PRIMARY } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 
 const Pagination = ({
   totalPages,
@@ -30,7 +31,11 @@ const Pagination = ({
         }}
         disabled={currentGroup <= 0}
       >
-        <ChevronLeft size={16} color={COLOR_PRIMARY[400]} strokeWidth={2} />
+        <ChevronLeft
+          size={fontPx(16)}
+          color={COLOR_PRIMARY[400]}
+          strokeWidth={2}
+        />
       </TouchableOpacity>,
     );
 
@@ -63,7 +68,11 @@ const Pagination = ({
         }}
         disabled={endPage >= totalPages}
       >
-        <ChevronRight size={16} color={COLOR_PRIMARY[400]} strokeWidth={2} />
+        <ChevronRight
+          size={fontPx(16)}
+          color={COLOR_PRIMARY[400]}
+          strokeWidth={2}
+        />
       </TouchableOpacity>,
     );
 

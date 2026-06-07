@@ -14,6 +14,7 @@ import Pagination from '../molecules/Pagination';
 import { styles } from '../../styles/organisms/MarkModal';
 import { IMarkModalProps } from '@features/pill_identification_search/types/mark_types';
 import { X } from 'lucide-react-native';
+import { px, fontPx } from '@utils/responsive';
 
 /*
 TODO: Error 용도
@@ -72,9 +73,14 @@ const MarkModal = ({
             <TouchableOpacity
               onPress={onClose}
               style={styles.closeButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              hitSlop={{
+                top: px(10),
+                bottom: px(10),
+                left: px(10),
+                right: px(10),
+              }}
             >
-              <X size={24} color={COLOR_GRAY[200]} strokeWidth={3} />
+              <X size={fontPx(24)} color={COLOR_GRAY[200]} strokeWidth={3} />
             </TouchableOpacity>
 
             {/* 타이틀 */}

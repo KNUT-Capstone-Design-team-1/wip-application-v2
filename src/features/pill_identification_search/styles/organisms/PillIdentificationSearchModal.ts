@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 import { COLOR_PRIMARY, COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
@@ -9,37 +10,37 @@ export const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: px(20),
+    borderTopRightRadius: px(20),
     height: '97%',
-    paddingTop: 20,
+    paddingTop: px(20),
     flexDirection: 'column',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 15,
+    paddingHorizontal: px(20),
+    paddingBottom: px(15),
     borderBottomWidth: 1,
     borderBottomColor: COLOR_GRAY[150],
     position: 'relative',
   },
   modalTitle: {
     fontFamily: 'Paperlogy',
-    fontSize: 18,
+    fontSize: fontPx(18),
     fontWeight: 700,
     color: COLOR_PRIMARY[100],
   },
   closeButton: {
     position: 'absolute',
-    right: 20,
-    top: 0,
-    padding: 5,
+    right: px(20),
+    top: px(0),
+    padding: px(5),
   },
   closeButtonText: {
     fontFamily: 'Paperlogy',
-    fontSize: 24,
+    fontSize: fontPx(24),
     fontWeight: 700,
     color: COLOR_GRAY[200],
   },
@@ -47,12 +48,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContentContainer: {
-    padding: 20,
+    padding: px(20),
   },
   bottomButtons: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: px(20),
+    paddingVertical: px(15),
     borderTopWidth: 1,
     borderTopColor: COLOR_GRAY[150],
     justifyContent: 'space-between',

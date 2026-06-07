@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
@@ -7,25 +8,25 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pageNavButton: {
-    width: 32,
-    height: 32,
+    width: px(32),
+    height: px(32),
     borderWidth: 2,
     borderColor: COLOR_GRAY[150],
-    borderRadius: 8,
+    borderRadius: px(8),
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 4,
+    marginHorizontal: px(4),
     backgroundColor: COLOR['white'],
   },
   pageButton: {
-    width: 32,
-    height: 32,
+    width: px(32),
+    height: px(32),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: COLOR_GRAY[150],
-    borderRadius: 8,
-    marginHorizontal: 4,
+    borderRadius: px(8),
+    marginHorizontal: px(4),
     backgroundColor: COLOR['white'],
   },
   pageButtonActive: {
@@ -34,13 +35,13 @@ export const styles = StyleSheet.create({
   },
   pageButtonText: {
     fontFamily: 'Paperlogy',
-    fontSize: 14,
+    fontSize: fontPx(14),
     color: COLOR_PRIMARY[400],
     fontWeight: 500,
   },
   pageButtonTextActive: {
     fontFamily: 'Paperlogy',
-    fontSize: 14,
+    fontSize: fontPx(14),
     fontWeight: 500,
     color: COLOR['white'],
   },

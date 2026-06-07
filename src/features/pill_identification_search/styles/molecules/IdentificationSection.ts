@@ -1,15 +1,16 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   identificationSection: {
     width: '100%',
-    gap: 10,
-    marginBottom: 16,
+    gap: px(10),
+    marginBottom: px(16),
   },
   titleText: {
     fontFamily: 'Paperlogy',
-    fontSize: 16,
+    fontSize: fontPx(16),
     fontWeight: 600,
     color: COLOR_GRAY[300],
   },

@@ -7,6 +7,7 @@ import { styles } from '../../styles/molecules/MarkSection';
 import { useMarkModal } from '../../hooks/useMarkModal';
 import MarkModal from '../organisms/MarkModal';
 import { X } from 'lucide-react-native';
+import { fontPx } from '@utils/responsive';
 
 const MarkSection = () => {
   const {
@@ -70,7 +71,7 @@ const MarkSection = () => {
             style={styles.selectedMarkDelete}
             onPress={deleteSelectedMark}
           >
-            <X size={18} color={COLOR_GRAY[400]} strokeWidth={2} />
+            <X size={fontPx(18)} color={COLOR_GRAY[400]} strokeWidth={2} />
           </TouchableOpacity>
         </View>
       )}
