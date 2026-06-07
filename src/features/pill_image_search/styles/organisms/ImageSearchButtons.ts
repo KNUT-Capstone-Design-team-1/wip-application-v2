@@ -1,45 +1,46 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   imageSearchButtonsWrapper: {
     display: 'flex',
-    gap: 12,
+    gap: px(12),
   },
   button: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: px(8),
     width: '100%',
-    height: 45,
-    borderRadius: 10,
+    height: px(45),
+    borderRadius: px(10),
   },
   text: {
     fontFamily: 'Paperlogy',
-    fontSize: 16,
+    fontSize: fontPx(16),
     fontWeight: 700,
     color: COLOR['white'],
   },
   searchButton: {
-    marginTop: 20,
+    marginTop: px(20),
     width: '100%',
-    height: 54,
-    borderRadius: 27,
+    height: px(54),
+    borderRadius: px(27),
     justifyContent: 'center',
     alignItems: 'center',
   },
   searchButtonText: {
     fontFamily: 'Paperlogy',
-    fontSize: 18,
+    fontSize: fontPx(18),
     fontWeight: 700,
     color: COLOR['white'],
   },
   hr: {
     width: '100%',
-    height: 1,
+    height: px(1),
     backgroundColor: COLOR_GRAY[100],
-    marginVertical: 24,
+    marginVertical: px(24),
   },
 });

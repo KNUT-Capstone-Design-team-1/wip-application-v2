@@ -18,6 +18,7 @@ import { styles } from '../../styles/organisms/CameraScreen';
 import { useCameraCapture } from '../../hooks/useCameraCapture';
 import { Plus, X } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 
 interface CameraScreenProps {
   visible: boolean;
@@ -68,7 +69,7 @@ const CameraScreen = ({
             style={[styles.closeButton, { top: Math.max(insets.top, 20) + 10 }]}
             onPress={onClose}
           >
-            <X size={24} color={COLOR['white']} strokeWidth={3} />
+            <X size={fontPx(24)} color={COLOR['white']} strokeWidth={3} />
           </TouchableOpacity>
 
           <Text style={styles.title}>알약 검색</Text>
@@ -81,7 +82,11 @@ const CameraScreen = ({
                 <Image source={{ uri: frontImage }} style={styles.slotImage} />
               ) : (
                 <View style={styles.emptySlot}>
-                  <Plus size={24} color={COLOR['white']} strokeWidth={2} />
+                  <Plus
+                    size={fontPx(24)}
+                    color={COLOR['white']}
+                    strokeWidth={2}
+                  />
                 </View>
               )}
             </View>
@@ -93,7 +98,11 @@ const CameraScreen = ({
                 <Image source={{ uri: backImage }} style={styles.slotImage} />
               ) : (
                 <View style={styles.emptySlot}>
-                  <Plus size={24} color={COLOR['white']} strokeWidth={2} />
+                  <Plus
+                    size={fontPx(24)}
+                    color={COLOR['white']}
+                    strokeWidth={2}
+                  />
                 </View>
               )}
             </View>

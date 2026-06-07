@@ -1,21 +1,22 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: px(30),
     alignItems: 'center',
   },
   title: {
     fontFamily: 'Paperlogy',
-    fontSize: 18,
+    fontSize: fontPx(18),
     fontWeight: 700,
     color: COLOR_PRIMARY[400],
-    marginBottom: 20,
+    marginBottom: px(20),
   },
   imagesWrapper: {
     flexDirection: 'row',
-    gap: 16,
+    gap: px(16),
     width: '100%',
     justifyContent: 'center',
   },
@@ -24,17 +25,17 @@ export const styles = StyleSheet.create({
   },
   label: {
     fontFamily: 'Paperlogy',
-    fontSize: 14,
+    fontSize: fontPx(14),
     fontWeight: 600,
     color: COLOR_PRIMARY[300],
-    marginBottom: 8,
+    marginBottom: px(8),
   },
   imageBox: {
     position: 'relative',
-    width: 140,
-    height: 140,
-    borderRadius: 12,
-    borderWidth: 2,
+    width: px(140),
+    height: px(140),
+    borderRadius: px(12),
+    borderWidth: px(2),
     borderColor: COLOR_GRAY[100],
     overflow: 'hidden',
   },
@@ -44,11 +45,11 @@ export const styles = StyleSheet.create({
   },
   checkmark: {
     position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 20,
-    height: 20,
-    borderRadius: 14,
+    top: px(6),
+    right: px(6),
+    width: px(20),
+    height: px(20),
+    borderRadius: px(14),
     backgroundColor: COLOR['normal'],
     justifyContent: 'center',
     alignItems: 'center',

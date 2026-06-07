@@ -9,6 +9,7 @@ import {
   pickMultipleImagesFromFiles,
 } from '../../utils/imagePickerUtils';
 import { Camera, FolderClosed, FolderOpen, Image } from 'lucide-react-native';
+import { fontPx } from '@utils/responsive';
 
 interface PillImages {
   front: string | null;
@@ -97,7 +98,11 @@ const ImageSearchButtons = ({
           style={[styles.button, { backgroundColor: COLOR_PRIMARY[400] }]}
           onPress={handleCameraPress}
         >
-          <Camera size={24} fill={COLOR['white']} color={COLOR_PRIMARY[400]} />
+          <Camera
+            size={fontPx(24)}
+            fill={COLOR['white']}
+            color={COLOR_PRIMARY[400]}
+          />
           <Text style={styles.text}>촬영하기</Text>
         </TouchableOpacity>
 
@@ -106,7 +111,7 @@ const ImageSearchButtons = ({
           style={[styles.button, { backgroundColor: COLOR_PRIMARY[200] }]}
           onPress={handleAlbumPress}
         >
-          <Image size={24} color={COLOR['white']} />
+          <Image size={fontPx(24)} color={COLOR['white']} />
           <Text style={styles.text}>앨범에서 선택하기</Text>
         </TouchableOpacity>
 
@@ -115,7 +120,7 @@ const ImageSearchButtons = ({
           style={[styles.button, { backgroundColor: COLOR_GRAY[400] }]}
           onPress={handleFilePress}
         >
-          <FolderClosed size={24} color={COLOR['white']} />
+          <FolderClosed size={fontPx(24)} color={COLOR['white']} />
           <Text style={styles.text}>파일 탐색기에서 선택하기</Text>
         </TouchableOpacity>
       </View>

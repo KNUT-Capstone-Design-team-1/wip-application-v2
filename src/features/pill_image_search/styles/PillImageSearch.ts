@@ -1,5 +1,6 @@
 import { COLOR, COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -8,13 +9,13 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: '5%',
-    paddingBottom: 40,
+    paddingBottom: px(40),
   },
   hr: {
     width: '100%',
-    height: 1,
+    height: px(1),
     backgroundColor: COLOR_GRAY[100],
-    marginTop: 30,
-    marginBottom: 30,
+    marginTop: px(30),
+    marginBottom: px(30),
   },
 });
