@@ -7,6 +7,7 @@ import {
 import { styles } from '@features/pill_save/styles/molecules/PillSaveContent';
 import { X } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 
 /**
  * 알약 이미지 컴포넌트
@@ -24,7 +25,7 @@ const DeleteButton = ({ onPress }: { onPress: () => void }) => (
     onPress={onPress}
     activeOpacity={0.6}
   >
-    <X size={14} color={COLOR['white']} strokeWidth={4} />
+    <X size={fontPx(14)} color={COLOR['white']} strokeWidth={4} />
   </TouchableOpacity>
 );
 

@@ -9,6 +9,7 @@ import {
 import { styles } from '@features/pill_save/styles/organisms/PillSaveList';
 import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
 import NotItem from '@components/common/NotItem';
+import { px } from '@utils/responsive';
 
 /**
  * 저장된 데이터가 없을 때 표시할 화면
@@ -47,7 +48,7 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
   const renderItem: ListRenderItem<IPillSaveData> = useCallback(
     ({ item }) => {
       if (item.ITEM_SEQ === 'EMPTY_ITEM') {
-        return <View style={{ flex: 1, margin: 6 }} />;
+        return <View style={{ flex: 1, margin: px(6) }} />;
       }
 
       return (

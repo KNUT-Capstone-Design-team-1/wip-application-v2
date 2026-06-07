@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   pillSaveListWrapper: {
     flex: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: px(8),
   },
   pillSaveListContent: {
-    paddingTop: 14,
-    paddingBottom: 20,
+    paddingTop: px(14),
+    paddingBottom: px(20),
   },
   pillSaveColumnWrapper: {
     justifyContent: 'flex-start',
-    gap: 12,
-    marginBottom: 12,
+    gap: px(12),
+    marginBottom: px(12),
   },
 });
