@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   settingList: {
@@ -11,7 +12,7 @@ export const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     width: '100%',
-    height: 70,
+    height: px(70),
   },
   settingItemTextBox: {
     display: 'flex',
@@ -23,6 +24,6 @@ export const styles = StyleSheet.create({
   text: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    fontSize: 16,
+    fontSize: fontPx(16),
   },
 });
