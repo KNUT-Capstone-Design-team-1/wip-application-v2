@@ -4,6 +4,7 @@ import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/nearby_p
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { Copy, X } from 'lucide-react-native';
 import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 
 const PharmacyInfoCard = ({
   pharmacy,
@@ -28,13 +29,17 @@ const PharmacyInfoCard = ({
             {pharmacy.telephone || '전화번호 없음'}
           </Text>
           {pharmacy.telephone && (
-            <Copy size={14} color={COLOR_PRIMARY[200]} strokeWidth={3} />
+            <Copy
+              size={fontPx(14)}
+              color={COLOR_PRIMARY[200]}
+              strokeWidth={3}
+            />
           )}
         </TouchableOpacity>
         <Text style={styles.pharmacyAddress}>{pharmacy.address}</Text>
       </View>
       <TouchableOpacity style={styles.closeButton} onPress={onClosePress}>
-        <X size={16} color={COLOR_PRIMARY[400]} strokeWidth={4} />
+        <X size={fontPx(16)} color={COLOR_PRIMARY[400]} strokeWidth={4} />
       </TouchableOpacity>
     </View>
   );
