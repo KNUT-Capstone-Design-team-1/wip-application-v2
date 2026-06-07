@@ -12,6 +12,7 @@ import { styles } from '../styles/BottomSheet';
 import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
 import { formatContents } from '@features/notice/utils/notice';
+import { px } from '@utils/responsive';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -68,7 +69,10 @@ const BottomSheet = ({
 
   const renderItem = ({ item }: { item: INoticeData }) => (
     <View
-      style={[styles.slideItem, { width: SCREEN_WIDTH, paddingHorizontal: 16 }]}
+      style={[
+        styles.slideItem,
+        { width: SCREEN_WIDTH, paddingHorizontal: px(16) },
+      ]}
     >
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.contents}>{formatContents(item.contents)}</Text>

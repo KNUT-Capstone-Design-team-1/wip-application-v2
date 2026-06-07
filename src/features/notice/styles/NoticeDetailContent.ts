@@ -1,15 +1,16 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   noticeDetailWrapper: {
     display: 'flex',
-    padding: 10,
+    padding: px(10),
   },
   noticeTitle: {
     fontFamily: 'Paperlogy',
-    fontSize: 20,
+    fontSize: fontPx(20),
     fontWeight: 700,
-    marginBottom: 8,
+    marginBottom: px(8),
     color: '#333',
   },
   noticeDateWrapper: {
@@ -20,21 +21,21 @@ export const styles = StyleSheet.create({
   noticeDate: {
     fontFamily: 'Paperlogy',
     fontWeight: 400,
-    fontSize: 12,
+    fontSize: fontPx(12),
     color: '#999',
-    marginBottom: 12,
+    marginBottom: px(12),
   },
   hr: {
-    height: 1,
+    height: px(1),
     backgroundColor: '#e0e0e0',
-    marginTop: 8,
+    marginTop: px(8),
   },
   noticeContent: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    marginTop: 20,
-    fontSize: 14,
-    lineHeight: 20,
+    marginTop: px(20),
+    fontSize: fontPx(14),
+    lineHeight: px(20),
     color: '#444',
   },
 });

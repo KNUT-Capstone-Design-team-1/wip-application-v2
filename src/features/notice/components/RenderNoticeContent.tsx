@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 // Base64 문자열 탐지용 정규식 (예: {data:image/png;base64,...})
 const base64Regex = /^data:image\/[a-zA-Z]+;base64,/;
@@ -10,7 +11,7 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
   const lines = contents.split(/\n|\\n/);
 
   return (
-    <View style={{ flexDirection: 'column', gap: 8 }}>
+    <View style={{ flexDirection: 'column', gap: px(8) }}>
       {lines.map((line, index) => {
         const trimmed = line.trim();
 
@@ -27,9 +28,9 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
               key={index}
               source={{ uri: imgSrc }}
               style={{
-                width: 200,
-                height: 200,
-                borderRadius: 8,
+                width: px(200),
+                height: px(200),
+                borderRadius: px(8),
                 alignSelf: 'center',
               }}
               resizeMode="cover"
@@ -39,7 +40,10 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
 
         // 일반 텍스트일 경우
         return (
-          <Text key={index} style={{ fontSize: 16, lineHeight: 22 }}>
+          <Text
+            key={index}
+            style={{ fontSize: fontPx(16), lineHeight: px(22) }}
+          >
             {trimmed}
           </Text>
         );

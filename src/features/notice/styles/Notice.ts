@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -6,12 +7,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    padding: 16,
-    borderBottomWidth: 1,
+    padding: px(16),
+    borderBottomWidth: px(1),
     borderBottomColor: '#e0e0e0',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: fontPx(20),
     fontWeight: 'bold',
     color: '#333',
   },
@@ -24,8 +25,8 @@ export const styles = StyleSheet.create({
   loadingText: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    marginTop: 16,
-    fontSize: 16,
+    marginTop: px(16),
+    fontSize: fontPx(16),
     color: '#666',
   },
   emptyContainer: {
@@ -36,7 +37,7 @@ export const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    fontSize: 16,
+    fontSize: fontPx(16),
     color: '#999',
   },
 });

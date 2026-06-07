@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -8,7 +9,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
-    paddingBottom: 50, // 하단 여백 추가
+    paddingBottom: px(50), // 하단 여백 추가
   },
   noticeListWrapper: {
     display: 'flex',

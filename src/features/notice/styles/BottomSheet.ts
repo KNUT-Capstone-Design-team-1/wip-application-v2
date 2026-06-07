@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_PRIMARY } from '@constants/color';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   bottomSheetContainer: {
@@ -23,33 +24,33 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '42%',
     backgroundColor: COLOR_PRIMARY['300'],
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
+    borderTopRightRadius: px(30),
+    borderTopLeftRadius: px(30),
   },
   flatList: {
     flex: 1,
   },
   slideItem: {
     justifyContent: 'flex-start',
-    paddingTop: 16,
-    gap: 20,
+    paddingTop: px(16),
+    gap: px(20),
   },
   navigationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 20,
-    gap: 8,
+    paddingTop: px(20),
+    gap: px(8),
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: px(8),
+    height: px(8),
+    borderRadius: px(4),
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   activeDot: {
     backgroundColor: '#fff',
-    width: 24,
+    width: px(24),
   },
   bottomSheetControl: {
     position: 'absolute',
@@ -59,7 +60,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: px(16),
     backgroundColor: '#fff',
     color: '#444',
   },
@@ -69,30 +70,30 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'Paperlogy',
     fontWeight: 700,
-    fontSize: 18,
+    fontSize: fontPx(18),
     color: '#fff',
   },
   contents: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    fontSize: 12,
+    fontSize: fontPx(12),
     color: '#e3e3e3',
   },
   detailButton: {
     position: 'absolute',
-    bottom: 80,
-    right: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    bottom: px(80),
+    right: px(16),
+    paddingVertical: px(8),
+    paddingHorizontal: px(12),
     zIndex: 10,
   },
   detailButtonText: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
     color: '#fff',
-    fontSize: 14,
-    borderBottomWidth: 1,
+    fontSize: fontPx(14),
+    borderBottomWidth: px(1),
     borderBottomColor: '#fff',
-    paddingBottom: 2,
+    paddingBottom: px(2),
   },
 });

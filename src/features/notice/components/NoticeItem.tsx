@@ -7,6 +7,7 @@ import {
   INoticeItemProps,
 } from '@features/notice/types/notice_type';
 import { formatDate, isModified } from '@utils/dateUtils';
+import { px } from '@utils/responsive';
 
 /**
  * 공지사항 텍스트 정보 컴포넌트 (제목 및 날짜)
@@ -15,7 +16,7 @@ const NoticeInfo = ({ notice }: { notice: INoticeData }) => {
   const isContentModified = isModified(notice.createDate, notice.updateDate);
 
   return (
-    <View style={{ flex: 1, marginRight: 10 }}>
+    <View style={{ flex: 1, marginRight: px(10) }}>
       <Text style={styles.noticeTitle} numberOfLines={1}>
         {notice.title}
       </Text>

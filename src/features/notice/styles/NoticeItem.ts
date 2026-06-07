@@ -1,38 +1,39 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   noticeDataWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
+    padding: px(16),
+    borderBottomWidth: px(1),
     borderBottomColor: '#e0e0e0',
     backgroundColor: '#fff',
   },
   noticeTitle: {
     fontFamily: 'Paperlogy',
-    fontSize: 14,
+    fontSize: fontPx(14),
     fontWeight: 700,
     color: '#333',
-    marginBottom: 4,
+    marginBottom: px(4),
   },
   noticeDate: {
     fontFamily: 'Paperlogy',
     fontWeight: 400,
-    fontSize: 12,
+    fontSize: fontPx(12),
     color: '#999',
   },
   badge: {
     backgroundColor: '#32D2FF',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    paddingHorizontal: px(8),
+    paddingVertical: px(4),
+    borderRadius: px(4),
   },
   badgeText: {
     fontFamily: 'Jalnan2',
     color: '#fff',
-    fontSize: 12,
+    fontSize: fontPx(12),
     fontWeight: 200,
   },
 });
