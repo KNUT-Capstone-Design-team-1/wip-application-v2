@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_CONFIGS } from '@layouts/bottomTab/constants';
 import { router, usePathname } from 'expo-router';
+import { px } from '@utils/responsive';
 import { styles } from './styles';
 import { TabItem } from './TabItem';
 
@@ -19,7 +20,7 @@ const BottomTab = () => {
     <View
       style={[
         styles.bottomTabContainer,
-        { paddingBottom: Math.max(insets.bottom, 12) },
+        { paddingBottom: Math.max(insets.bottom, px(12)) },
       ]}
     >
       <View style={styles.bottomTabList}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
+import { px } from '@utils/responsive';
 import { styles } from './styles';
 import { TabItemProps } from './types';
 import { GRADIENT_COLORS, ACTIVE_COLOR } from './constants';
@@ -24,7 +25,7 @@ export const TabItem = React.memo(
       >
         {isActive ? (
           <MaskedView
-            style={{ width: 22, height: 22 }}
+            style={{ width: px(22), height: px(22) }}
             maskElement={
               <View
                 style={{

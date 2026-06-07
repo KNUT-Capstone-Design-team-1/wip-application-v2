@@ -4,9 +4,10 @@ import SettingSvg from '@assets/images/setting.svg';
 import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
 import { TabConfig } from './types';
+import { fontPx } from '@utils/responsive';
 
-export const ICON_SIZE = 22;
-export const CENTER_ICON_SIZE = 22;
+export const ICON_SIZE = fontPx(22);
+export const CENTER_ICON_SIZE = fontPx(22);
 export const GRADIENT_COLORS = ['#137DFF', '#32D2FF'] as const;
 export const ACTIVE_COLOR = '#32D2FF';
 
