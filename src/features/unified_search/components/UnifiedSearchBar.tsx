@@ -14,6 +14,7 @@ import { CircleXIcon } from 'lucide-react-native';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
 import { COLOR_GRAY } from '@constants/index';
 import FullSizeLoading from '@components/common/FullSizeLoading';
+import { px } from '@utils/responsive';
 
 interface IUnifiedSearchBarProps {
   containerStyle?: StyleProp<ViewStyle>;
@@ -82,7 +83,7 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
           width={IconStyles['searchIcon'].size}
           height={IconStyles['searchIcon'].size}
           fill={IconStyles['searchIcon'].color}
-          style={{ marginTop: -2 }}
+          style={{ marginTop: px(-2) }}
         />
       )}
       <FullSizeLoading visible={loading} />
