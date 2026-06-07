@@ -1,5 +1,6 @@
 import { COLOR, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -24,36 +25,36 @@ export const styles = StyleSheet.create({
   },
   statusText: {
     fontFamily: 'Paperlogy',
-    fontSize: 18,
+    fontSize: fontPx(18),
     fontWeight: 700,
     color: COLOR_PRIMARY[100],
-    marginBottom: 12,
+    marginBottom: px(12),
   },
   progressBarContainer: {
-    width: 250,
-    height: 10,
+    width: px(250),
+    height: px(10),
     backgroundColor: COLOR['white'],
-    borderRadius: 5,
+    borderRadius: px(5),
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
     backgroundColor: COLOR_PRIMARY[100],
-    borderRadius: 5,
+    borderRadius: px(5),
   },
   detailsContainer: {
     alignItems: 'center',
   },
   percentText: {
     fontFamily: 'Paperlogy',
-    fontSize: 16,
+    fontSize: fontPx(16),
     color: COLOR['white'],
     fontWeight: 700,
-    marginBottom: 4,
+    marginBottom: px(4),
   },
   pageText: {
     fontFamily: 'Paperlogy',
-    fontSize: 14,
+    fontSize: fontPx(14),
     fontWeight: 700,
     color: COLOR['white'],
     opacity: 0.9,
