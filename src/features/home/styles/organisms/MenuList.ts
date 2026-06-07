@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   menuListWrapper: {
@@ -6,7 +7,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    marginTop: 20,
+    gap: px(10),
+    marginTop: px(20),
   },
 });

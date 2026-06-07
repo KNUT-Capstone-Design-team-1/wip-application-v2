@@ -5,6 +5,7 @@ import { BUTTON_LIST } from '../../constants/MenuList';
 import Toast from '@components/common/Toast';
 import { useToast } from '@hooks/use_toast';
 import MenuButton from '../molecules/MenuButton';
+import { px } from '@utils/responsive';
 
 interface IMenuListProps {
   onPillIdentificationPress?: () => void;
@@ -36,7 +37,7 @@ const MenuList = ({ onPillIdentificationPress }: IMenuListProps) => {
             key={index}
             imageSource={button.img}
             width={'48%'}
-            height={140}
+            height={px(140)}
             title={button.title}
             content={button.content}
             backgroundColor={button.backgroundColor}

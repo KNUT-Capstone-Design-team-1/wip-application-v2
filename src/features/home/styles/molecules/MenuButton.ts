@@ -1,15 +1,16 @@
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   menuButton: {
-    borderRadius: 13,
+    borderRadius: px(13),
   },
   buttonImgWrapper: {
     flex: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
     maxHeight: '60%',
-    paddingTop: 4,
+    paddingTop: px(4),
   },
   buttonContentWrapper: {
     flex: 1,
@@ -18,13 +19,13 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'Paperlogy',
     fontWeight: 700,
-    fontSize: 16,
+    fontSize: fontPx(16),
     color: '#fff',
   },
   content: {
     fontFamily: 'Paperlogy',
     fontWeight: 300,
-    fontSize: 11,
+    fontSize: fontPx(11),
     color: '#fff',
   },
 });

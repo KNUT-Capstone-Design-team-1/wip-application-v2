@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_GRAY } from '@constants/index';
 import { FONT_PAPERLOGY_WEIGHT } from '@constants/font';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   tagContainer: {
@@ -8,22 +9,22 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 4,
+    gap: px(4),
     borderColor: COLOR_GRAY[300],
-    borderWidth: 1,
-    borderRadius: 32,
-    paddingVertical: 2,
-    paddingLeft: 8,
+    borderWidth: px(1),
+    borderRadius: px(32),
+    paddingVertical: px(2),
+    paddingLeft: px(8),
   },
   tagWrapper: {},
   tagTitle: {
-    fontSize: 14,
+    fontSize: fontPx(14),
     color: COLOR_GRAY[400],
     ...FONT_PAPERLOGY_WEIGHT['regular'],
   },
   deleteButton: {
-    paddingVertical: 5,
-    paddingRight: 6,
+    paddingVertical: px(5),
+    paddingRight: px(6),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -31,7 +32,7 @@ export const styles = StyleSheet.create({
 
 export const IconStyles = {
   deleteIcon: {
-    size: 14,
+    size: fontPx(14),
     color: COLOR_GRAY['300'],
     strokeWidth: 2,
   },
