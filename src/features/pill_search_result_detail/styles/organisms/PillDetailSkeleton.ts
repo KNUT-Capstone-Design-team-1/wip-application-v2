@@ -1,5 +1,6 @@
 import { COLOR } from '@constants/color';
 import { StyleSheet } from 'react-native';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,21 +10,21 @@ export const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: px(16),
     backgroundColor: COLOR['white'],
-    borderRadius: 18,
+    borderRadius: px(18),
   },
   infoContainer: {
-    padding: 20,
+    padding: px(20),
   },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: px(20),
   },
   infoRows: {
-    gap: 12,
+    gap: px(12),
   },
   infoRow: {
     flexDirection: 'row',
@@ -32,16 +33,16 @@ export const styles = StyleSheet.create({
   },
   moreButtonContainer: {
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: px(20),
+    marginBottom: px(20),
   },
   sections: {
-    gap: 16,
+    gap: px(16),
   },
   section: {
-    gap: 10,
+    gap: px(10),
   },
   sectionContent: {
-    paddingTop: 8,
+    paddingTop: px(8),
   },
 });

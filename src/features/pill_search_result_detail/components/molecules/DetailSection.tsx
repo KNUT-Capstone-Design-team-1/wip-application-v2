@@ -5,6 +5,7 @@ import { decodeHtmlContent } from '../../utils/htmlDecoder';
 import { IDetailSectionProps } from '@features/pill_search_result_detail/types/pill_detail_type';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { COLOR_PRIMARY } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 
 const DetailSection = ({
   title,
@@ -32,9 +33,17 @@ const DetailSection = ({
       >
         <Text style={styles.detailInfoHeadText}>{title}</Text>
         {isOpen ? (
-          <ChevronDown size={24} color={COLOR_PRIMARY[200]} strokeWidth={2} />
+          <ChevronDown
+            size={fontPx(24)}
+            color={COLOR_PRIMARY[200]}
+            strokeWidth={2}
+          />
         ) : (
-          <ChevronUp size={24} color={COLOR_PRIMARY[200]} strokeWidth={2} />
+          <ChevronUp
+            size={fontPx(24)}
+            color={COLOR_PRIMARY[200]}
+            strokeWidth={2}
+          />
         )}
       </TouchableOpacity>
       {isOpen && (

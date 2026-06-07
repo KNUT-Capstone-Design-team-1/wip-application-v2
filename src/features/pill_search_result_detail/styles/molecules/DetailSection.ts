@@ -1,32 +1,33 @@
 import { COLOR, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   detailSectionWrapper: {},
   detailInfoHeadWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 10,
-    paddingVertical: 4,
+    gap: px(10),
+    paddingVertical: px(4),
   },
   detailInfoHeadText: {
     fontFamily: 'Paperlogy',
     color: COLOR_PRIMARY[200],
-    fontSize: 18,
+    fontSize: fontPx(18),
     fontWeight: 700,
     flex: 1,
   },
   detailInfoContent: {
-    paddingVertical: 4,
-    paddingHorizontal: 4,
+    paddingVertical: px(4),
+    paddingHorizontal: px(4),
     backgroundColor: COLOR['white'],
-    borderRadius: 8,
+    borderRadius: px(8),
   },
   detailInfoText: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
     color: COLOR['black'],
-    fontSize: 16,
-    lineHeight: 30,
+    fontSize: fontPx(16),
+    lineHeight: px(30),
   },
 });
