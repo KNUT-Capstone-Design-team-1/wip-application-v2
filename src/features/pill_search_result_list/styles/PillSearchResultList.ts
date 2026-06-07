@@ -1,20 +1,21 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   pillSearchResultListRoot: {
     flex: 1,
     backgroundColor: COLOR['white'],
-    padding: 20,
+    padding: px(20),
   },
   searchCountLabel: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
     color: COLOR_GRAY[400],
-    fontSize: 12,
+    fontSize: fontPx(12),
   },
   searchBarWrapper: {
-    marginBottom: 10,
+    marginBottom: px(10),
     backgroundColor: COLOR['white'],
     zIndex: 10,
   },
@@ -27,8 +28,8 @@ export const styles = StyleSheet.create({
   loadingText: {
     fontFamily: 'Paperlogy',
     fontWeight: 600,
-    marginTop: 16,
-    fontSize: 16,
+    marginTop: px(16),
+    fontSize: fontPx(16),
     color: COLOR_GRAY[400],
   },
 });

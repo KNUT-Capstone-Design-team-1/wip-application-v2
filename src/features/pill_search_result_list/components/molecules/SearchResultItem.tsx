@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
+import { fontPx } from '@utils/responsive';
 
 /**
  * 알약 썸네일 이미지 컴포넌트
@@ -36,7 +37,7 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
       </Text>
       {itemNames[1] && (
         <Text
-          style={[styles.searchItemTitle, { fontSize: 12 }]}
+          style={[styles.searchItemTitle, { fontSize: fontPx(12) }]}
           numberOfLines={1}
         >
           {itemNames[1]}

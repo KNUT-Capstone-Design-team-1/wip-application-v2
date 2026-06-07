@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_PRIMARY } from '../../../../constants/color';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchBarWrapper: {
@@ -9,10 +10,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 40,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderRadius: 20,
+    height: px(40),
+    paddingHorizontal: px(20),
+    borderWidth: px(1),
+    borderRadius: px(20),
     borderColor: COLOR_PRIMARY[400],
   },
   searchTextInput: {
@@ -20,20 +21,20 @@ export const styles = StyleSheet.create({
   },
   clearButton: {
     position: 'absolute',
-    width: 20,
+    width: px(20),
     right: '15%',
     justifyContent: 'center',
     // alignItems: 'center',
-    // marginRight: 8,
+    // marginRight: px(8),
   },
   clearButtonText: {
-    fontSize: 20,
+    fontSize: fontPx(20),
     color: '#999',
     fontWeight: 'bold',
   },
   searchButton: {
-    width: 24,
-    height: 24,
+    width: px(24),
+    height: px(24),
     justifyContent: 'center',
     alignItems: 'center',
   },

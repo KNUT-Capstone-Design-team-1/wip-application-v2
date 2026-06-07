@@ -1,41 +1,42 @@
 import { COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
+import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchConditionContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 10,
+    paddingHorizontal: px(20),
+    marginBottom: px(10),
   },
   tagList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: px(8),
   },
   tag: {
     backgroundColor: '#F2F2F7',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: px(10),
+    paddingVertical: px(4),
+    borderRadius: px(12),
     flexDirection: 'row',
     alignItems: 'center',
   },
   tagLabel: {
     fontFamily: 'Paperlogy',
     fontWeight: 600,
-    fontSize: 12,
+    fontSize: fontPx(12),
     color: COLOR_GRAY[400],
-    marginRight: 4,
+    marginRight: px(4),
   },
   tagValue: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    fontSize: 12,
+    fontSize: fontPx(12),
     color: COLOR_GRAY[300],
   },
   tagImage: {
-    width: 24,
-    height: 24,
-    marginLeft: 6,
+    width: px(24),
+    height: px(24),
+    marginLeft: px(6),
     backgroundColor: 'transparent',
   },
 });

@@ -8,6 +8,7 @@ import { mapToHealthKrUrl } from '@features/pill_search_result_list/utils/health
 import logger from '@utils/logger';
 import { Search } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 
 const HealthKrFloatingButton = () => {
   const searchParam = useSearchResultListStore((state) => state.searchParam);
@@ -30,7 +31,7 @@ const HealthKrFloatingButton = () => {
       onPress={handlePress}
       activeOpacity={0.8}
     >
-      <Search size={18} color={COLOR['white']} strokeWidth={2} />
+      <Search size={fontPx(18)} color={COLOR['white']} strokeWidth={2} />
       <Text style={styles.buttonText}>검색 결과에 없는 약 검색</Text>
     </TouchableOpacity>
   );

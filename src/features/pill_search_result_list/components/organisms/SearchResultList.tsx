@@ -7,6 +7,7 @@ import { usePillSearchResultList } from '@features/pill_search_result_list/hooks
 import { ISearchResultData } from '@features/pill_search_result_list/types/pill_search_result_list';
 import NotItem from '@components/common/NotItem';
 import { IPillData } from '@services/database/types';
+import { px } from '@utils/responsive';
 
 /**
  * 검색 결과가 없을 때 표시할 컴포넌트
@@ -35,7 +36,7 @@ const ResultFlatList = ({
 }) => {
   const renderItem: ListRenderItem<IPillData> = useCallback(
     ({ item, index }) => (
-      <View style={index === 0 ? { marginTop: -10 } : undefined}>
+      <View style={index === 0 ? { marginTop: px(-10) } : undefined}>
         <SearchResultItem resultItem={item} itemClickHandler={onItemClick} />
       </View>
     ),
@@ -51,7 +52,7 @@ const ResultFlatList = ({
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       ItemSeparatorComponent={renderSeparator}
-      contentContainerStyle={{ paddingBottom: 100 }} // Item 1개의 여유공간
+      contentContainerStyle={{ paddingBottom: px(100) }} // Item 1개의 여유공간
       showsVerticalScrollIndicator={true}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.5}
@@ -61,8 +62,8 @@ const ResultFlatList = ({
       windowSize={10}
       removeClippedSubviews={true}
       getItemLayout={(_, index) => ({
-        length: 100, // SearchResultItem의 대략적인 높이 (패딩 포함)
-        offset: 100 * index,
+        length: px(100), // SearchResultItem의 대략적인 높이 (패딩 포함)
+        offset: px(100) * index,
         index,
       })}
     />
