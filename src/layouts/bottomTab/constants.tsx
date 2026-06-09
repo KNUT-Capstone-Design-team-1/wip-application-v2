@@ -3,6 +3,7 @@ import HomeSvg from '@assets/images/home.svg';
 import SettingSvg from '@assets/images/setting.svg';
 import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
+import StorageSvg from '@assets/images/storage.svg';
 import { TabConfig } from './types';
 import { fontPx } from '@utils/responsive';
 
@@ -49,6 +50,19 @@ export const TAB_CONFIGS: TabConfig[] = [
       />
     ),
     path: '/pill-image-search',
+    isCenter: false,
+  },
+  {
+    key: 'pill-save',
+    label: '보관함',
+    icon: (isActive: boolean) => (
+      <StorageSvg
+        width={CENTER_ICON_SIZE}
+        height={CENTER_ICON_SIZE}
+        fill={isActive ? '#000' : '#fff'}
+      />
+    ),
+    path: '/pill-save',
     isCenter: false,
   },
   {
