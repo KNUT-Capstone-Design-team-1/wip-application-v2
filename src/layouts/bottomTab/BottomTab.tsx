@@ -22,11 +22,12 @@ const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
           const isFocused = state.index === index;
 
           // Find matching config for icons and labels
-          const config = TAB_CONFIGS.find(
-            (c) =>
-              c.key === route.name ||
-              (route.name === 'index' && c.key === 'home'),
-          );
+          const config = TAB_CONFIGS.find((c) => {
+            if (route.name === 'index') return c.key === 'home';
+
+            const normalizedPath = `/${route.name.replace(/\/index$/, '')}`;
+            return c.path === normalizedPath;
+          });
 
           if (!config) return null;
 
