@@ -1,20 +1,13 @@
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { TAB_CONFIGS } from '@layouts/bottomTab/constants';
-import { router, usePathname } from 'expo-router';
 import { px } from '@utils/responsive';
 import { styles } from './styles';
 import { TabItem } from './TabItem';
 
-const BottomTab = () => {
-  const pathname = usePathname();
+const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const insets = useSafeAreaInsets();
-
-  // 현재 경로와 탭 경로를 비교하여 활성화 상태 확인
-  const isTabActive = (tabPath: string) => {
-    if (tabPath === '/') return pathname === '/';
-    return pathname.startsWith(tabPath);
-  };
 
   return (
     <View
@@ -24,31 +17,39 @@ const BottomTab = () => {
       ]}
     >
       <View style={styles.bottomTabList}>
-        {TAB_CONFIGS.map((item, index) => {
-          const isActive = isTabActive(item.path);
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
+
+          // Find matching config for icons and labels
+          const config = TAB_CONFIGS.find(
+            (c) =>
+              c.key === route.name ||
+              (route.name === 'index' && c.key === 'home'),
+          );
+
+          if (!config) return null;
 
           const handlePress = () => {
-            // 같은 route인 경우 스택 쌓지 않음
-            if (isActive) return;
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-            // 홈으로 이동할 때는 push를 사용하여 스택의 최상단으로 보내고,
-            // 다른 탭으로 이동할 때는 replace를 사용하여 현재 탭 화면을 교체합니다.
-            // 이렇게 하면 어떤 탭에서든 뒤로가기를 누르면 홈으로 돌아갑니다.
-            if (item.path === '/') {
-              router.push('/');
-            } else {
-              router.replace(item.path as any);
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
             }
           };
 
           return (
             <TabItem
-              key={item.key || index}
-              icon={item.icon(isActive)}
-              label={item.label}
-              isActive={isActive}
+              key={route.key}
+              icon={config.icon(isFocused)}
+              label={config.label}
+              isActive={isFocused}
               onPress={handlePress}
-              isCenter={item.isCenter}
+              isCenter={config.isCenter}
             />
           );
         })}
