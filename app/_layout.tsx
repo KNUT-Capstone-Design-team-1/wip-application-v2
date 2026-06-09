@@ -7,6 +7,7 @@ import {
   useAppInitializer,
   DatabaseUpdateView,
 } from '@features/database_update';
+import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomSheet';
 
 /**
  * 앱의 최상위 레이아웃 컴포넌트
@@ -37,6 +38,7 @@ const RootLayout = () => {
           <Stack.Screen name="(tabs)" />
         </Stack>
       </Layout>
+      <MainNoticeBottomSheet />
     </SafeAreaProvider>
   );
 };
