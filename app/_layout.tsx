@@ -34,7 +34,7 @@ const RootLayout = () => {
       <StatusBar style="auto" />
       <Layout>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ title: '홈' }} />
+          <Stack.Screen name="(tabs)" />
         </Stack>
       </Layout>
     </SafeAreaProvider>
