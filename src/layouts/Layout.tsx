@@ -20,7 +20,7 @@ const Layout = ({ children }: LayoutProps) => {
     <View style={styles.container}>
       {isMainPage ? <Header /> : <SubHeader title={pageTitle} />}
       <View style={styles.content}>{children}</View>
-      <BottomTab />
+      {/* <BottomTab /> */}
 
       {/* 홈 화면에서만 공지사항 바텀시트 로드 및 표시 */}
       {isMainPage && <MainNoticeBottomSheet />}
