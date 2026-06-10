@@ -1,6 +1,7 @@
 import { COLOR, COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: '5%',
-    paddingBottom: px(40),
+    paddingBottom: px(40) + bottomTabSize.height,
   },
   hr: {
     width: '100%',

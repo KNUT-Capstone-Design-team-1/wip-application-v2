@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '@constants/index';
-import { FONT_PAPERLOGY_WEIGHT } from '@constants/font';
+import { COLOR, COLOR_GRAY } from '@constants/color';
 import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -8,14 +7,13 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: px(20),
+    backgroundColor: COLOR['white'],
+    borderRadius: px(16),
     paddingHorizontal: px(16),
-    height: px(40),
+    height: px(34),
     borderWidth: px(1),
-    borderColor: COLOR_GRAY[200],
     // 그림자 추가 (iOS)
-    shadowColor: '#000',
+    shadowColor: COLOR['black'],
     shadowOffset: { width: 0, height: px(1) },
     shadowOpacity: 0.1,
     shadowRadius: px(2),
@@ -28,8 +26,8 @@ export const styles = StyleSheet.create({
     lineHeight: fontPx(18),
     includeFontPadding: false,
     paddingVertical: 0,
-    color: '#333',
-    ...FONT_PAPERLOGY_WEIGHT['regular'],
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
   },
   clearButton: {
     paddingVertical: px(5),

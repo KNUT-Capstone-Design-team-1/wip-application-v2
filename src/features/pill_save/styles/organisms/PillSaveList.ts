@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   pillSaveListWrapper: {
@@ -8,7 +9,7 @@ export const styles = StyleSheet.create({
   },
   pillSaveListContent: {
     paddingTop: px(14),
-    paddingBottom: px(20),
+    paddingBottom: px(20) + bottomTabSize.height,
   },
   pillSaveColumnWrapper: {
     justifyContent: 'flex-start',

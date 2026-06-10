@@ -5,57 +5,67 @@ import { TAB_CONFIGS } from '@layouts/bottomTab/constants';
 import { px } from '@utils/responsive';
 import { styles } from './styles';
 import { TabItem } from './TabItem';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View
+    <LinearGradient
+      colors={[
+        'rgba(255,255,255,0)',
+        'rgba(255,255,255,0.3)',
+        'rgba(255,255,255,1)',
+      ]}
+      locations={[0, 0.4, 1]}
       style={[
         styles.bottomTabContainer,
         { paddingBottom: Math.max(insets.bottom, px(12)) },
       ]}
+      pointerEvents="box-none"
     >
-      <View style={styles.bottomTabList}>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const isFocused = state.index === index;
+      <View>
+        <View style={styles.bottomTabList}>
+          {state.routes.map((route, index) => {
+            const { options } = descriptors[route.key];
+            const isFocused = state.index === index;
 
-          // Find matching config for icons and labels
-          const config = TAB_CONFIGS.find((c) => {
-            if (route.name === 'index') return c.key === 'home';
+            // Find matching config for icons and labels
+            const config = TAB_CONFIGS.find((c) => {
+              if (route.name === 'index') return c.key === 'home';
 
-            const normalizedPath = `/${route.name.replace(/\/index$/, '')}`;
-            return c.path === normalizedPath;
-          });
-
-          if (!config) return null;
-
-          const handlePress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
+              const normalizedPath = `/${route.name.replace(/\/index$/, '')}`;
+              return c.path === normalizedPath;
             });
 
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name, route.params);
-            }
-          };
+            if (!config) return null;
 
-          return (
-            <TabItem
-              key={route.key}
-              icon={config.icon(isFocused)}
-              label={config.label}
-              isActive={isFocused}
-              onPress={handlePress}
-              isCenter={config.isCenter}
-            />
-          );
-        })}
+            const handlePress = () => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+
+              if (!isFocused && !event.defaultPrevented) {
+                navigation.navigate(route.name, route.params);
+              }
+            };
+
+            return (
+              <TabItem
+                key={route.key}
+                icon={config.icon(isFocused)}
+                label={config.label}
+                isActive={isFocused}
+                onPress={handlePress}
+                isCenter={config.isCenter}
+              />
+            );
+          })}
+        </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 

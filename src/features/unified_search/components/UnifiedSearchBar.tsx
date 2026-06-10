@@ -12,7 +12,7 @@ import { IconStyles, styles } from '../styles/unifiedSearchStyles';
 import SearchIcon from '@assets/icons/search.svg';
 import { CircleXIcon } from 'lucide-react-native';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
-import { COLOR_GRAY } from '@constants/index';
+import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/index';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import { px } from '@utils/responsive';
 
@@ -22,6 +22,7 @@ interface IUnifiedSearchBarProps {
 
 const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
   const [keyword, setKeyword] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const { search, loading } = useUnifiedSearch();
 
   const handleSearch = useCallback(
@@ -57,7 +58,13 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
   );
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View
+      style={[
+        styles.container,
+        containerStyle,
+        { borderColor: isFocused ? COLOR_PRIMARY[100] : COLOR_GRAY[200] },
+      ]}
+    >
       <TextInput
         style={styles.input}
         placeholder="검색어를 입력하세요"
@@ -69,6 +76,8 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
         multiline={false}
         autoCorrect={false}
         autoCapitalize="none"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
       {keyword.length > 0 ? (
         <TouchableOpacity onPress={handleClear} style={styles.clearButton}>

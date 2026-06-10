@@ -1,12 +1,16 @@
 import { COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
+import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   bottomTabContainer: {
-    position: 'relative',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     width: '100%',
-    minHeight: px(80),
+    minHeight: bottomTabSize.height,
   },
   bottomTabList: {
     flexDirection: 'row',

@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { px, fontPx } from '@utils/responsive';
+import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
@@ -16,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   infoContainer: {
     position: 'absolute',
-    bottom: px(20),
+    bottom: px(20) + bottomTabSize.height,
     left: px(20),
     right: px(20),
     backgroundColor: COLOR['white'],
