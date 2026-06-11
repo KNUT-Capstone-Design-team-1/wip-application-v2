@@ -1,5 +1,6 @@
 import { useCallback, memo } from 'react';
-import { View, FlatList, ListRenderItem } from 'react-native';
+import { View } from 'react-native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import SearchResultItem from '@features/pill_search_result_list/components/molecules/SearchResultItem';
 import { styles } from '@features/pill_search_result_list/styles/organisms/SearchResultList';
 import { usePillSearch } from '@hooks/use_pill_search';
@@ -21,9 +22,9 @@ const EmptyResult = () => (
 );
 
 /**
- * 알약 리스트를 렌더링하는 FlatList 컴포넌트
+ * 알약 리스트를 렌더링하는 FlashList 컴포넌트
  */
-const ResultFlatList = ({
+const ResultFlashList = ({
   data,
   onLoadMore,
   onItemClick,
@@ -46,7 +47,7 @@ const ResultFlatList = ({
   const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
 
   return (
-    <FlatList
+    <FlashList
       style={styles.searchResultListWrapper}
       data={data}
       renderItem={renderItem}
@@ -56,16 +57,6 @@ const ResultFlatList = ({
       showsVerticalScrollIndicator={true}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.5}
-      // 성능 최적화 설정
-      initialNumToRender={10}
-      maxToRenderPerBatch={10}
-      windowSize={10}
-      removeClippedSubviews={true}
-      getItemLayout={(_, index) => ({
-        length: px(100), // SearchResultItem의 대략적인 높이 (패딩 포함)
-        offset: px(100) * index,
-        index,
-      })}
     />
   );
 };
@@ -84,7 +75,7 @@ const SearchResultList = ({
       {isEmpty ? (
         <EmptyResult />
       ) : (
-        <ResultFlatList
+        <ResultFlashList
           data={searchResultData}
           onLoadMore={loadMorePills}
           onItemClick={searchItemClickHandler}
