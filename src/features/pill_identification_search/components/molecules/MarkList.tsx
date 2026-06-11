@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 import { MarkData } from '../../types/mark_types';
 import { styles } from '../../styles/molecules/MarkList';
@@ -19,33 +20,35 @@ const MarkList = ({ data, onSelect }: IMarkListProps) => {
   }
 
   const renderItem = ({ item }: { item: MarkData }) => (
-    <TouchableOpacity
-      style={styles.gridItem}
-      onPress={() => onSelect(item)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: item.base64 }}
-          style={styles.gridImage}
-          contentFit="contain"
-        />
-      </View>
-      <Text style={styles.gridTitle} numberOfLines={2}>
-        {item.title}
-      </Text>
-    </TouchableOpacity>
+    <View style={styles.itemWrapper}>
+      <TouchableOpacity
+        style={styles.gridItem}
+        onPress={() => onSelect(item)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: item.base64 }}
+            style={styles.gridImage}
+            contentFit="contain"
+          />
+        </View>
+        <Text style={styles.gridTitle} numberOfLines={2}>
+          {item.title}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
-    <FlatList
+    <FlashList
       data={data}
       renderItem={renderItem}
       keyExtractor={(item) => item.code}
       numColumns={4}
       contentContainerStyle={styles.gridContainer}
-      columnWrapperStyle={styles.columnWrapper}
-      showsVerticalScrollIndicator={true}
+      scrollEnabled={false}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react';
-import { View, FlatList, ListRenderItem } from 'react-native';
+import { View } from 'react-native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import PillSaveContent from '@features/pill_save/components/molecules/PillSaveContent';
 import {
@@ -48,17 +49,19 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
   const renderItem: ListRenderItem<IPillSaveData> = useCallback(
     ({ item }) => {
       if (item.ITEM_SEQ === 'EMPTY_ITEM') {
-        return <View style={{ flex: 1, margin: px(6) }} />;
+        return <View style={{ flex: 1, padding: px(6) }} />;
       }
 
       return (
-        <PillSaveContent
-          saveData={item}
-          onPressDetail={() =>
-            handlePressDetail(item.ITEM_SEQ, item.ITEM_IMAGE)
-          }
-          onPressDelete={() => onDataChange?.(item.ITEM_SEQ)}
-        />
+        <View style={{ flex: 1, padding: px(6) }}>
+          <PillSaveContent
+            saveData={item}
+            onPressDetail={() =>
+              handlePressDetail(item.ITEM_SEQ, item.ITEM_IMAGE)
+            }
+            onPressDelete={() => onDataChange?.(item.ITEM_SEQ)}
+          />
+        </View>
       );
     },
     [handlePressDetail, onDataChange],
@@ -75,19 +78,14 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
       : pillSaveData;
 
   return (
-    <FlatList
+    <FlashList
       style={styles.pillSaveListWrapper}
       contentContainerStyle={styles.pillSaveListContent}
       data={formattedData}
       renderItem={renderItem}
       keyExtractor={(item) => item.ITEM_SEQ}
       numColumns={2}
-      columnWrapperStyle={styles.pillSaveColumnWrapper}
       showsVerticalScrollIndicator={false}
-      initialNumToRender={10}
-      maxToRenderPerBatch={10}
-      windowSize={5}
-      removeClippedSubviews={true}
     />
   );
 };

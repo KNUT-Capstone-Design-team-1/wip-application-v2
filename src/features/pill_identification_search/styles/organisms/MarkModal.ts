@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(20),
     borderRadius: px(16),
     width: Math.min(width * 0.92, px(400)),
-    height: Math.min(height * 0.65, px(600)),
+    height: Math.min(height * 0.63, px(600)),
     elevation: 6,
   },
   closeButton: {
@@ -53,7 +53,6 @@ export const styles = StyleSheet.create({
   },
   markListContainer: {
     flex: 1,
-    marginBottom: px(16),
   },
   loadingContainer: {
     flex: 1,

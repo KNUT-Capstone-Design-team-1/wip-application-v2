@@ -4,12 +4,13 @@ import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   gridContainer: {},
-  columnWrapper: {
-    justifyContent: 'space-between',
+  itemWrapper: {
+    flex: 1,
+    paddingHorizontal: px(4),
     marginBottom: px(12),
   },
   gridItem: {
-    width: '23%',
+    width: '100%',
     aspectRatio: 1,
     backgroundColor: '#f9f9f9',
     borderRadius: px(8),

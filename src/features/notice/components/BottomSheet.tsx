@@ -6,8 +6,8 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Dimensions,
-  FlatList,
 } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { styles } from '../styles/BottomSheet';
 import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
@@ -23,7 +23,6 @@ const BottomSheet = ({
 }: IBottomSheetProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-  const flatListRef = useRef<FlatList>(null);
   const { moveToDetailContent } = useBottomSheet();
 
   const viewabilityConfig = useRef({
@@ -100,8 +99,7 @@ const BottomSheet = ({
             />
           ))}
         </View>
-        <FlatList
-          ref={flatListRef}
+        <FlashList
           data={data}
           horizontal
           pagingEnabled
