@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
 import { usePillImageStore } from '../store/pill_image_store';
 import { requestPillImageFeatureExtraction } from '@services/apis/google_cloud/wip_pill_image_feature_extraction';
-import { getPillDatas } from '@services/database/queries/pill_data';
+import {
+  getPillDataCount,
+  getPillDatas,
+} from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { router } from 'expo-router';
 import RNFS from 'react-native-fs';
@@ -24,8 +27,12 @@ export const usePillImageSelection = () => {
     setIsSearching,
   } = usePillImageStore();
 
-  const { setSearchResultData, setIsLoading, setSearchParam } =
-    useSearchResultListStore();
+  const {
+    setSearchResultData,
+    setIsLoading,
+    setSearchParam,
+    setTotalDataCount,
+  } = useSearchResultListStore();
 
   /**
    * 단일 이미지 선택 (카메라 촬영)
@@ -128,8 +135,10 @@ export const usePillImageSelection = () => {
 
       setSearchParam(searchParam);
 
+      const totalDataCount = await getPillDataCount(searchParam);
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
       setSearchResultData(results);
+      setTotalDataCount(totalDataCount);
 
       router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
     } catch (e) {

@@ -48,22 +48,19 @@ const InitialLoadingView = () => (
 );
 
 const PillSearchResultListScreen = () => {
-  const { searchResultData, isLoading, markImages } =
+  const { searchResultData, isLoading, markImages, totalDataCount } =
     useSearchResultListStore();
 
   // 마크 이미지 데이터 페칭 훅 사용
   useFetchMarkImages();
 
-  const isInitialLoading = isLoading && searchResultData.length === 0;
+  const isInitialLoading = isLoading;
 
   return (
     <View style={styles.pillSearchResultListRoot}>
       <SearchBarSection />
 
-      <ResultInfoSection
-        count={searchResultData.length}
-        markImages={markImages}
-      />
+      <ResultInfoSection count={totalDataCount} markImages={markImages} />
 
       {isInitialLoading ? (
         <InitialLoadingView />

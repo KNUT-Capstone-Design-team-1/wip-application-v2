@@ -2,15 +2,22 @@ import { useState, useCallback } from 'react';
 import { unifiedSearchService } from '../services/unifiedSearchService';
 import { logger } from '@utils/index';
 import Toast from 'react-native-toast-message';
-import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
+import {
+  getPillDataCountByItemSeq,
+  getPillDatasByItemSeq,
+} from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { useRouter, usePathname } from 'expo-router';
 
 export const useUnifiedSearch = () => {
   const [loading, setLoading] = useState(false);
 
-  const { setSearchResultData, setIsLoading, setSearchParam } =
-    useSearchResultListStore();
+  const {
+    setSearchResultData,
+    setIsLoading,
+    setSearchParam,
+    setTotalDataCount,
+  } = useSearchResultListStore();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -64,10 +71,12 @@ export const useUnifiedSearch = () => {
           return;
         }
 
+        const totalDataCount = await getPillDataCountByItemSeq(results);
         const pillDatas = await getPillDatasByItemSeq(results);
 
         // 검색 조건 및 결과 저장
         setSearchParam({ ITEM_NAME: trimmedKeyword });
+        setTotalDataCount(totalDataCount);
         setSearchResultData(pillDatas);
 
         handleNavigation();

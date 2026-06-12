@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
 import { useSearchIdStore } from '../store/search_id_store';
 import { useMarkStore } from '../store/mark_store';
-import { getPillDatas } from '@services/database/queries/pill_data';
+import {
+  getPillDataCount,
+  getPillDatas,
+} from '@services/database/queries/pill_data';
 import { TPillDataSearchParam } from '@services/database/types';
 import { router } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
@@ -9,10 +12,20 @@ import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
 import { ISearchPillData } from '../types/search_id_types';
 
+/**
+ * 식별 검색 Hook
+ * - 초기 검색 (식별 검색)
+ * - 식별 검색 상태 관리
+ */
+
 export const useSelectedSearchId = () => {
   const { resetSelectedMark } = useMarkStore();
-  const { setSearchResultData, setIsLoading, setSearchParam } =
-    useSearchResultListStore();
+  const {
+    setSearchResultData,
+    setIsLoading,
+    setSearchParam,
+    setTotalDataCount,
+  } = useSearchResultListStore();
 
   // 개별 액션들만 가져와서 핸들러들이 스토어 전체 변경에 반응하지 않도록 함
   const setSideLabelFrontText = useSearchIdStore(
@@ -159,8 +172,10 @@ export const useSelectedSearchId = () => {
       router.push('/pill-search-result-list');
 
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
+      const totalDataCount = await getPillDataCount(searchParam);
 
       setSearchParam(searchParam);
+      setTotalDataCount(totalDataCount);
       setSearchResultData(results);
 
       return results;

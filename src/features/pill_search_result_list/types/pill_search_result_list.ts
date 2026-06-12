@@ -17,10 +17,12 @@ export interface ISearchResultListStore {
   markImages: { code: string; base64: string }[];
   currentPage: number;
   hasMore: boolean;
+  totalDataCount: number;
 
   setSearchParam: (param: Partial<TPillDataSearchParam> | null) => void;
   setMarkImages: (images: { code: string; base64: string }[]) => void;
   setSearchResultData: (resultData: IPillData[]) => void;
+  setTotalDataCount: (totalDataCount: number) => void;
   appendSearchResultData: (newData: IPillData[]) => void;
   setIsLoading: (loading: boolean) => void;
   getSearchResultData: () => IPillData[];

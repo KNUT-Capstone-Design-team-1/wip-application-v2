@@ -14,6 +14,7 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
     markImages: [], // 검색 조건에 포함된 마크 이미지 정보
     currentPage: 1, // 현재 로드된 페이지 번호
     hasMore: true, // 추가 로드 가능한 데이터 존재 여부
+    totalDataCount: 0, // 총 검색 결과 데이터 수
 
     // --- Actions ---
 
@@ -42,6 +43,15 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
       set({
         searchResultData: resultData,
         isLoading: false, // 데이터 설정 완료 시 로딩 종료
+      }),
+
+    /**
+     * 총 검색 결과 데이터 수 설정
+     * @param totalDataCount
+     */
+    setTotalDataCount: (totalDataCount: number) =>
+      set({
+        totalDataCount,
       }),
 
     /**

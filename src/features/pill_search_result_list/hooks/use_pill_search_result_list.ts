@@ -1,12 +1,15 @@
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { getPillDatas } from '@services/database/queries/pill_data';
+import {
+  getPillDataCount,
+  getPillDatas,
+} from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { IPillData, TPillDataSearchParam } from '@services/database/types';
 import logger from '@utils/logger';
 
 /**
- * 알약 검색 Hook
+ * 알약 검색(InputText) Hook
  * - 초기 검색
  * - 무한 스크롤 (페이지네이션 sqlite Limit)
  * - 검색 상태 관리
@@ -17,6 +20,7 @@ export const usePillSearchResultList = () => {
   const {
     setSearchParam,
     setSearchResultData,
+    setTotalDataCount,
     setIsLoading,
     appendSearchResultData,
   } = useSearchResultListStore();
@@ -51,8 +55,10 @@ export const usePillSearchResultList = () => {
       setSearchParam(searchParam);
 
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
+      const totalDataCount = await getPillDataCount(searchParam);
 
       setSearchResultData(results);
+      setTotalDataCount(totalDataCount);
     },
     [setSearchParam, setSearchResultData],
   );
@@ -100,8 +106,10 @@ export const usePillSearchResultList = () => {
       setSearchParam(restParams);
 
       const results = await getPillDatas(restParams, { page: 1, limit: 30 });
+      const totalDataCount = await getPillDataCount(restParams);
 
       setSearchResultData(results);
+      setTotalDataCount(totalDataCount);
     },
     [setSearchParam, setSearchResultData, setIsLoading],
   );

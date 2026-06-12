@@ -469,6 +469,28 @@ export const getPillDatas = async (
 };
 
 /**
+ * 알약 데이터 개수 조회
+ * @param params 검색 조건
+ * @returns
+ */
+export const getPillDataCount = async (
+  params: Partial<TPillDataSearchParam>,
+) => {
+  const db = await getDatabase();
+
+  const { whereClause, whereValues } = buildWhereClause(
+    getPillDataWhereQuery,
+    params,
+  );
+
+  const sql = `SELECT COUNT(*) as COUNT FROM pill_data ${whereClause}`;
+
+  const result = await db.getFirstAsync<{ COUNT: number }>(sql, whereValues);
+
+  return result?.COUNT ?? 0;
+};
+
+/**
  * ID 값인 ITEM_SEQ를 기준으로 알약 데이터 목록 조회
  * @param itemSeqs ITEM_SEQ 배열
  * @returns
@@ -486,4 +508,24 @@ export const getPillDatasByItemSeq = async (itemSeqs: string[]) => {
   const result = await db.getAllAsync<IPillData>(sql, itemSeqs);
 
   return result;
+};
+
+/**
+ * ID 값인 ITEM_SEQ를 기준으로 알약 데이터 개수 조회
+ * @param itemSeq ITEM_SEQ 배열
+ * @returns
+ */
+export const getPillDataCountByItemSeq = async (itemSeqs: string[]) => {
+  if (itemSeqs.length === 0) {
+    return 0;
+  }
+
+  const db = await getDatabase();
+
+  const sql = `SELECT COUNT(*) as COUNT FROM pill_data 
+               WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})`;
+
+  const result = await db.getFirstAsync<{ COUNT: number }>(sql, itemSeqs);
+
+  return result?.COUNT ?? 0;
 };
