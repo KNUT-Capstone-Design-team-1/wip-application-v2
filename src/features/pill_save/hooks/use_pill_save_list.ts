@@ -1,7 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { pillSaveService } from '../services/pill_save_service';
 import logger from '@utils/logger';
+import { useFocusEffect } from 'expo-router';
 
 /**
  * 저장된 알약 리스트 관리 훅
@@ -13,7 +14,7 @@ export const usePillSaveList = () => {
   /**
    * 저장된 데이터 가져오기
    */
-  const getSaveData = useCallback(async () => {
+  const getSaveData = async () => {
     try {
       setLoading(true);
 
@@ -29,7 +30,7 @@ export const usePillSaveList = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   /**
    * 특정 알약 저장 삭제
@@ -46,9 +47,11 @@ export const usePillSaveList = () => {
     }
   }, []);
 
-  useEffect(() => {
-    getSaveData();
-  }, [getSaveData]);
+  useFocusEffect(
+    useCallback(() => {
+      getSaveData();
+    }, []),
+  );
 
   return {
     pillSaveData,
