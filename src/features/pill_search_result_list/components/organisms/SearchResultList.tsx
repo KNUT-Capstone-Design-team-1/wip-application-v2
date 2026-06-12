@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import SearchResultItem from '@features/pill_search_result_list/components/molecules/SearchResultItem';
 import { styles } from '@features/pill_search_result_list/styles/organisms/SearchResultList';
-import { usePillSearch } from '@hooks/use_pill_search';
 import { usePillSearchResultList } from '@features/pill_search_result_list/hooks/use_pill_search_result_list';
 import { ISearchResultData } from '@features/pill_search_result_list/types/pill_search_result_list';
 import NotItem from '@components/common/NotItem';
@@ -65,8 +64,8 @@ const SearchResultList = ({
   searchResultData,
   isLoadingMore,
 }: ISearchResultData) => {
-  const { loadMorePills } = usePillSearch();
-  const { searchItemClickHandler, keyExtractor } = usePillSearchResultList();
+  const { searchItemClickHandler, keyExtractor, loadMorePills } =
+    usePillSearchResultList();
 
   const isEmpty = searchResultData.length === 0 && !isLoadingMore;
 

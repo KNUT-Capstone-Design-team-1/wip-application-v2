@@ -5,10 +5,21 @@ import { useSearchResultListStore } from '@features/pill_search_result_list/stor
 import { IPillData, TPillDataSearchParam } from '@services/database/types';
 import logger from '@utils/logger';
 
+/**
+ * 알약 검색 Hook
+ * - 초기 검색
+ * - 무한 스크롤 (페이지네이션 sqlite Limit)
+ * - 검색 상태 관리
+ */
+
 export const usePillSearchResultList = () => {
   const router = useRouter();
-  const { setSearchParam, setSearchResultData, setIsLoading } =
-    useSearchResultListStore();
+  const {
+    setSearchParam,
+    setSearchResultData,
+    setIsLoading,
+    appendSearchResultData,
+  } = useSearchResultListStore();
 
   /**
    * 아이템 클릭 시 상세 페이지로 이동
@@ -120,10 +131,53 @@ export const usePillSearchResultList = () => {
     }
   }, [setIsLoading, executeRestoreSearch, setSearchResultData]);
 
+  /**
+   * 다음 페이지 로드 (무한 스크롤)
+   */
+  const loadMorePills = async () => {
+    const state = useSearchResultListStore.getState();
+    const { searchParam, hasMore, isLoading, currentPage } = state;
+
+    // 이미 로딩 중이거나 더 이상 데이터가 없으면 중단
+    if (isLoading || !hasMore || !searchParam) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const nextPage = currentPage + 1;
+
+      console.log(`📄 페이지 ${nextPage} 로드 중...`);
+
+      // 데이터베이스 조회
+      const newResults = await getPillDatas(searchParam, {
+        page: nextPage,
+        limit: 30,
+      });
+
+      console.log(`✅ ${newResults.length}개 추가 로드`);
+
+      // 기존 데이터에 추가 (덮어쓰지 않음)
+      appendSearchResultData(newResults);
+
+      // 페이지 정보 업데이트
+      useSearchResultListStore.setState({
+        currentPage: nextPage,
+        hasMore: newResults.length === 30,
+      });
+    } catch (e) {
+      logger.error(`Failed to load more pills. ${e.stack || e}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     keyExtractor,
     searchItemClickHandler,
     searchResultButtonClickHandler,
     clearSearchAndRestore,
+    loadMorePills,
   };
 };
