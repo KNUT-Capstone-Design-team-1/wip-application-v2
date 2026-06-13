@@ -28,17 +28,11 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
    * 상세 페이지로 이동
    */
   const handlePressDetail = useCallback(
-    async (itemSeq: string, itemImage: string) => {
-      const result = await getPillDatasByItemSeq([itemSeq]);
-      if (result.length > 0) {
-        router.push({
-          pathname: '/pill-search-result-detail',
-          params: {
-            itemDetail: JSON.stringify(result[0]),
-            itemImage: itemImage,
-          },
-        });
-      }
+    (itemSeq: string, itemImage: string) => {
+      router.push({
+        pathname: '/pill-search-result-detail',
+        params: { ITEM_SEQ: itemSeq, itemImage: itemImage },
+      });
     },
     [],
   );

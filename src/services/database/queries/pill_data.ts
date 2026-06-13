@@ -7,6 +7,10 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
+/*
+TODO: 데이터 최적화 필요
+*/
+
 const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
   'ITEM_SEQ',
   'ITEM_NAME',

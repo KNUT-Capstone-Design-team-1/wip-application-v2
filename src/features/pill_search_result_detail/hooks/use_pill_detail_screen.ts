@@ -8,7 +8,7 @@ import { useRecentSearchPillStore } from '@store/recent_search_pill_store';
 import { TRecentSearchPill } from '@common_types/recent_search_pill';
 
 export const usePillDetailScreen = () => {
-  const { itemDetail, itemImage, ITEM_SEQ } = useLocalSearchParams();
+  const { itemImage, ITEM_SEQ } = useLocalSearchParams();
   const itemSeqStr = Array.isArray(ITEM_SEQ) ? ITEM_SEQ[0] : ITEM_SEQ;
   const itemImageStr = Array.isArray(itemImage) ? itemImage[0] : itemImage;
 
@@ -50,18 +50,6 @@ export const usePillDetailScreen = () => {
     const initData = async () => {
       let initialPillData: IPillDetail | null = null;
 
-      if (itemDetail) {
-        try {
-          initialPillData = JSON.parse(itemDetail as string);
-
-          setPillData(initialPillData);
-
-          setLoading(false);
-        } catch (e) {
-          logger.error(`Failed to parse itemDetail. ${e.stack || e}`);
-        }
-      }
-
       if (itemSeqStr) {
         await loadPillDetail(
           itemSeqStr as string,
@@ -70,15 +58,13 @@ export const usePillDetailScreen = () => {
         );
 
         return;
-      }
-
-      if (!itemDetail) {
+      } else {
         setLoading(false);
       }
     };
 
     initData();
-  }, [itemSeqStr, itemDetail, loadPillDetail]);
+  }, [itemSeqStr, loadPillDetail]);
 
   return {
     pillData,
