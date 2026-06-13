@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: '#000',
+    backgroundColor: COLOR['black'],
     opacity: 0.5,
   },
   bottomSheet: {
@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   activeDot: {
-    backgroundColor: '#fff',
+    backgroundColor: COLOR['white'],
     width: px(24),
   },
   bottomSheetControl: {
@@ -61,23 +61,31 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: px(16),
-    backgroundColor: '#fff',
-    color: '#444',
+    backgroundColor: COLOR['white'],
   },
   sheetCloseToday: {
-    color: 'grey',
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
+    fontSize: fontPx(14),
+    color: COLOR_PRIMARY[300],
+  },
+  sheetCloseButton: {
+    fontFamily: 'Paperlogy',
+    fontWeight: 500,
+    fontSize: fontPx(14),
+    color: COLOR['black'],
   },
   title: {
     fontFamily: 'Paperlogy',
     fontWeight: 700,
     fontSize: fontPx(18),
-    color: '#fff',
+    color: COLOR['white'],
   },
   contents: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    fontSize: fontPx(12),
-    color: '#e3e3e3',
+    fontSize: fontPx(14),
+    color: COLOR['white'],
   },
   detailButton: {
     position: 'absolute',
@@ -90,10 +98,10 @@ export const styles = StyleSheet.create({
   detailButtonText: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
-    color: '#fff',
+    color: COLOR['white'],
     fontSize: fontPx(14),
     borderBottomWidth: px(1),
-    borderBottomColor: '#fff',
+    borderBottomColor: COLOR['white'],
     paddingBottom: px(2),
   },
 });

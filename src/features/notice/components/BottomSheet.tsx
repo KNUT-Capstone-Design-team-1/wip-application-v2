@@ -13,6 +13,7 @@ import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
 import { formatContents } from '@features/notice/utils/notice';
 import { px } from '@utils/responsive';
+import { COLOR } from '@constants/color';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -133,7 +134,7 @@ const BottomSheet = ({
             <Text style={styles.sheetCloseToday}>하루 동안 보지 않기</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleClose}>
-            <Text>닫기</Text>
+            <Text style={styles.sheetCloseButton}>닫기</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
