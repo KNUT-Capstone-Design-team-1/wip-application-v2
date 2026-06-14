@@ -25,14 +25,6 @@ export const styles = StyleSheet.create({
     gap: px(4),
     marginBottom: px(4),
   },
-  infoIcon: {
-    width: px(16),
-    height: px(16),
-    backgroundColor: COLOR_PRIMARY[300],
-    borderRadius: px(8),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   contentTitle: {
     fontFamily: 'Paperlogy',
     textAlign: 'center',

@@ -5,6 +5,8 @@ import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
 import { usePillImageSelection } from '../hooks/usePillImageSelection';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import { styles } from '../styles/PillImageSearch';
+import CameraGuideModal from '../components/organisms/CameraGuideModal';
+import { useCameraGuideModalStore } from '../store/camera_guide_store';
 
 // TODO: Scroll 제거 필요 (ScrollView를 교체하던지 아니면 Scroll이 안되게 막던지)
 // TODO: 검색 중 취소 로직 필요 (사용자의 뒤로가기, 외부에서 종료)
@@ -12,7 +14,6 @@ import { styles } from '../styles/PillImageSearch';
 const PillImageSearch = () => {
   const {
     pillImages,
-    hasImage,
     isSearching,
     isBothImagesSelected,
     handleImageSelect,
@@ -21,16 +22,16 @@ const PillImageSearch = () => {
     handleSearch,
   } = usePillImageSelection();
 
+  const { isGuideModalVisible, setIsGuideModalVisible } =
+    useCameraGuideModalStore();
+
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
+      <View style={styles.container}>
         <ImageSearchContent
-          contentState={hasImage}
           frontImage={pillImages.front}
           backImage={pillImages.back}
+          onRemove={handleImageRemove}
         />
         <View style={styles.hr} />
         <ImageSearchButtons
@@ -38,14 +39,17 @@ const PillImageSearch = () => {
           onImageSelect={handleImageSelect}
           onMultipleImageSelect={handleMultipleImageSelect}
           pillImages={pillImages}
-          onImageRemove={handleImageRemove}
           onApply={handleSearch}
           showApplyButton={isBothImagesSelected}
         />
-      </ScrollView>
+      </View>
       <FullSizeLoading
         visible={isSearching}
         message="이미지를 분석하여 알약을 찾는 중입니다..."
+      />
+      <CameraGuideModal
+        visible={isGuideModalVisible}
+        onClose={() => setIsGuideModalVisible(false)}
       />
     </View>
   );

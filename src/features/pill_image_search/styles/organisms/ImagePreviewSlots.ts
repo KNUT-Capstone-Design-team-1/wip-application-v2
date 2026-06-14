@@ -4,14 +4,20 @@ import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
+    marginTop: px(30),
+  },
+  titleWrapper: {
+    flexDirection: 'row',
     marginBottom: px(20),
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: px(4),
   },
   title: {
     fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
+    fontSize: fontPx(18),
     fontWeight: 700,
-    color: COLOR_PRIMARY[400],
-    marginBottom: px(12),
+    color: COLOR_PRIMARY[300],
   },
   slotsWrapper: {
     flexDirection: 'row',
@@ -31,12 +37,11 @@ export const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     aspectRatio: 1,
-    borderRadius: px(10),
-    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
+    borderRadius: px(10),
   },
   removeButton: {
     position: 'absolute',

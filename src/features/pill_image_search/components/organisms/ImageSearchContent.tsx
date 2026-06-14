@@ -1,59 +1,31 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { styles } from '../../styles/organisms/ImageSearchContent';
-import {
-  BEFORE_PILL_IMAGE_SEARCH,
-  AFTER_PILL_IMAGE_SEARCH,
-} from '../../constants/pillImageSearch';
-import InfoIcon from '@assets/icons/info-icon.svg';
-import SelectedImagesView from '../atoms/SelectedImagesView';
-import { Info } from 'lucide-react-native';
-import { COLOR, COLOR_PRIMARY } from '@constants/color';
-import { fontPx } from '@utils/responsive';
+import ImagePreviewSlots from './ImagePreviewSlots';
+import ImageSearchGuide from './ImageSearchGuide';
 
 interface IImageSearchContentProps {
-  contentState: boolean;
-  frontImage?: string | null;
-  backImage?: string | null;
+  frontImage: string | null;
+  backImage: string | null;
+  onRemove: (side: 'front' | 'back') => void;
 }
 
 const ImageSearchContent = ({
-  contentState,
   frontImage,
   backImage,
+  onRemove,
 }: IImageSearchContentProps) => {
-  const content = contentState
-    ? AFTER_PILL_IMAGE_SEARCH
-    : BEFORE_PILL_IMAGE_SEARCH;
-  const isSelectedImage = contentState && frontImage && backImage;
-
   // 이미지가 선택되었을 때는 선택된 이미지 표시
-  if (isSelectedImage) {
-    return <SelectedImagesView frontImage={frontImage} backImage={backImage} />;
+  if (frontImage || backImage) {
+    return (
+      <ImagePreviewSlots
+        frontImage={frontImage}
+        backImage={backImage}
+        onRemove={onRemove}
+      />
+    );
   }
 
   // 기본 촬영 가이드 표시
-  return (
-    <View style={styles.contentContainer}>
-      <Text style={styles.title}>{content.title}</Text>
-      <View style={styles.contentTitleWrapper}>
-        <Info
-          size={fontPx(24)}
-          color={COLOR['white']}
-          fill={COLOR_PRIMARY[300]}
-        />
-        <Text style={styles.contentTitle}>{content.contentTitle}</Text>
-      </View>
-      <Text style={styles.contentDescription}>
-        {content.contentDescription}
-      </Text>
-      <Image
-        source={content.contentImage}
-        style={styles.contentImage}
-        resizeMode="contain"
-      />
-    </View>
-  );
+  return <ImageSearchGuide />;
 };
 
 export default ImageSearchContent;

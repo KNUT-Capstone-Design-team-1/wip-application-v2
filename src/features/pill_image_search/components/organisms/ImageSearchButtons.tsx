@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
 import { COLOR_PRIMARY, COLOR_GRAY, COLOR } from '@constants/color';
-import ImagePreviewSlots from '../organisms/ImagePreviewSlots';
 import CameraScreen from '../organisms/CameraScreen';
 import {
   pickMultipleImages,
   pickMultipleImagesFromFiles,
 } from '../../utils/imagePickerUtils';
-import { Camera, FolderClosed, FolderOpen, Image } from 'lucide-react-native';
+import { Camera, FolderClosed, Image } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
 
 interface PillImages {
@@ -21,7 +20,6 @@ interface ImageSearchButtonsProps {
   onImageSelect?: (imageUri: string) => void;
   onMultipleImageSelect?: (images: string[]) => void;
   pillImages?: PillImages;
-  onImageRemove?: (side: 'front' | 'back') => void;
   onApply?: () => void;
   showApplyButton?: boolean;
 }
@@ -30,7 +28,6 @@ const ImageSearchButtons = ({
   onImageSelect,
   onMultipleImageSelect,
   pillImages,
-  onImageRemove,
   onApply,
   showApplyButton,
 }: ImageSearchButtonsProps) => {
@@ -80,16 +77,6 @@ const ImageSearchButtons = ({
         backImage={pillImages?.back || null}
         mode="camera"
       />
-      {/* 이미지 미리보기 슬롯 - 촬영 완료 전에만 표시 */}
-      {pillImages &&
-        !showApplyButton &&
-        (pillImages.front || pillImages.back) && (
-          <ImagePreviewSlots
-            frontImage={pillImages.front}
-            backImage={pillImages.back}
-            onRemove={onImageRemove || (() => {})}
-          />
-        )}
 
       {/* 촬영/선택 버튼 */}
       <View style={styles.imageSearchButtonsWrapper}>
