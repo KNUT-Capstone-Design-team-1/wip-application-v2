@@ -9,6 +9,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const insets = useSafeAreaInsets();
+  const currentRoute = state.routes[state.index];
+  const { options } = descriptors[currentRoute.key];
+
+  const tabBarStyle = options.tabBarStyle as any;
+  if (tabBarStyle?.display === 'none') {
+    return null;
+  }
 
   return (
     <LinearGradient
