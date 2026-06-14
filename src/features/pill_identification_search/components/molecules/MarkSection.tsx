@@ -35,7 +35,12 @@ const MarkSection = () => {
   return (
     <View style={styles.selectMarkContainer}>
       {/* 마크 선택 Modal */}
-      <Modal visible={modalState} transparent animationType="slide">
+      <Modal
+        visible={modalState}
+        transparent
+        animationType="slide"
+        onRequestClose={closeMarkModal}
+      >
         <MarkModal
           onClose={closeMarkModal}
           searchText={searchText}
