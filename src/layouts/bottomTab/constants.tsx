@@ -1,8 +1,8 @@
 import React from 'react';
 import HomeSvg from '@assets/images/home.svg';
-import SettingSvg from '@assets/images/setting.svg';
 import PillImageSearchSvg from '@assets/images/pill-image-search.svg';
 import PillIdentificationSearchSvg from '@assets/images/pillIdentification-search.svg';
+import NearbyPharmacySvg from '@assets/images/pharmacy.svg';
 import StorageSvg from '@assets/images/storage.svg';
 import { TabConfig } from './types';
 import { fontPx } from '@utils/responsive';
@@ -53,6 +53,19 @@ export const TAB_CONFIGS: TabConfig[] = [
     isCenter: false,
   },
   {
+    key: 'nearby-pharmacy',
+    label: '주변약국',
+    icon: (isActive: boolean) => (
+      <NearbyPharmacySvg
+        width={CENTER_ICON_SIZE}
+        height={CENTER_ICON_SIZE}
+        fill={isActive ? '#000' : '#fff'}
+      />
+    ),
+    path: '/nearby-pharmacy',
+    isCenter: false,
+  },
+  {
     key: 'pill-save',
     label: '보관함',
     icon: (isActive: boolean) => (
@@ -63,19 +76,6 @@ export const TAB_CONFIGS: TabConfig[] = [
       />
     ),
     path: '/pill-save',
-    isCenter: false,
-  },
-  {
-    key: 'setting',
-    label: '설정',
-    icon: (isActive: boolean) => (
-      <SettingSvg
-        width={ICON_SIZE}
-        height={ICON_SIZE}
-        fill={isActive ? '#000' : '#fff'}
-      />
-    ),
-    path: '/setting',
     isCenter: false,
   },
 ];

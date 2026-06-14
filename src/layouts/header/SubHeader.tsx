@@ -29,6 +29,7 @@ const SubHeader = ({ title }: SubHeaderProps) => {
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
+        {/* 이게 없으면 title이 우측으로 치우침 */}
         <View style={styles.menuButton} />
       </View>
     </View>

@@ -29,10 +29,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  menuIcon: {
-    width: px(24),
-    height: px(24),
-    tintColor: COLOR_PRIMARY[200],
+  settingButton: {
+    marginLeft: px(8),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backButton: {
     width: px(40),

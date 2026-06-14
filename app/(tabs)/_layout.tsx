@@ -16,8 +16,11 @@ export default function TabsLayout() {
         name="pill-image-search/index"
         options={{ title: '이미지검색' }}
       />
+      <Tabs.Screen
+        name="nearby-pharmacy/index"
+        options={{ title: '주변약국' }}
+      />
       <Tabs.Screen name="pill-save/index" options={{ title: '보관함' }} />
-      <Tabs.Screen name="setting/index" options={{ title: '설정' }} />
     </Tabs>
   );
 }
