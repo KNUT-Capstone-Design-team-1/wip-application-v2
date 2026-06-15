@@ -5,11 +5,6 @@ import { styles } from '../../styles/organisms/LastSearchPill';
 import { router } from 'expo-router';
 import { useRecentSearchPillStore } from '@store/recent_search_pill_store';
 
-/*
-TODO
-- 최근 검색한 알약 실시간 갱신이 안됨
-*/
-
 const LastSearchPill = () => {
   const { recentSearchPills, getRecentSearchPills, deleteRecentSearch } =
     useRecentSearchPillStore();

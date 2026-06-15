@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
 import { usePillImageSelection } from '../hooks/usePillImageSelection';
@@ -8,7 +8,6 @@ import { styles } from '../styles/PillImageSearch';
 import CameraGuideModal from '../components/organisms/CameraGuideModal';
 import { useCameraGuideModalStore } from '../store/camera_guide_store';
 
-// TODO: Scroll 제거 필요 (ScrollView를 교체하던지 아니면 Scroll이 안되게 막던지)
 // TODO: 검색 중 취소 로직 필요 (사용자의 뒤로가기, 외부에서 종료)
 
 const PillImageSearch = () => {

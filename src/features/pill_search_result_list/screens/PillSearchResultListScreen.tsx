@@ -7,11 +7,6 @@ import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchB
 import SearchConditionTags from '@features/pill_search_result_list/components/molecules/SearchConditionTags';
 import { useFetchMarkImages } from '@features/pill_search_result_list/hooks/use_fetch_mark_images';
 
-/*
-TODO: 초기 검색 결과 개수가 안맞음
-- list가 갱신되면 늘어남
-*/
-
 /**
  * 상단 검색바 섹션
  */
