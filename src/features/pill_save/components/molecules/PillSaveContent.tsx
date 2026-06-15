@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text, TouchableOpacity } from 'react-native';
 import {
   IPillSaveContentProps,
   IPillSaveData,
@@ -13,7 +14,7 @@ import { fontPx } from '@utils/responsive';
  * 알약 이미지 컴포넌트
  */
 const PillImage = ({ uri }: { uri: string }) => (
-  <Image source={{ uri }} resizeMode="contain" style={styles.pillImage} />
+  <Image source={{ uri }} contentFit="contain" style={styles.pillImage} />
 );
 
 /**

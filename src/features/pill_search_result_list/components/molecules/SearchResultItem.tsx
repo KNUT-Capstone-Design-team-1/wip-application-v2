@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
@@ -14,7 +15,7 @@ const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
       <Image
         source={{ uri: imageUri }}
         style={{ width: '100%', height: '100%' }}
-        resizeMode="contain"
+        contentFit="contain"
       />
     ) : (
       <View style={styles.fallbackImageContainer}>

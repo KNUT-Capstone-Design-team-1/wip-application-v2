@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
 
 // Base64 문자열 탐지용 정규식 (예: {data:image/png;base64,...})
@@ -33,7 +34,7 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
                 borderRadius: px(8),
                 alignSelf: 'center',
               }}
-              resizeMode="cover"
+              contentFit="cover"
             />
           );
         }

@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { View, Text, Image, ImageSourcePropType } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text, ImageSourcePropType } from 'react-native';
 import { styles } from '../../styles/atoms/IconButton';
 import { COLOR_PRIMARY } from '@constants/color';
 
@@ -33,7 +34,7 @@ const IconButton = memo(
           ]}
         >
           {hasIcon && (
-            <Image source={iconUrl} style={styles.icon} resizeMode="contain" />
+            <Image source={iconUrl} style={styles.icon} contentFit="contain" />
           )}
         </View>
         <View style={styles.iconButtonBottom}>

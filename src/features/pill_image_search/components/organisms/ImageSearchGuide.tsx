@@ -1,4 +1,5 @@
-import { View, Text, Image } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text } from 'react-native';
 import { styles } from '../../styles/organisms/ImageSearchGuide';
 import { AFTER_PILL_IMAGE_SEARCH as content } from '../../constants/pillImageSearch';
 import { Info } from 'lucide-react-native';
@@ -23,7 +24,7 @@ const ImageSearchGuide = () => {
       <Image
         source={content.contentImage}
         style={styles.contentImage}
-        resizeMode="contain"
+        contentFit="contain"
       />
     </View>
   );

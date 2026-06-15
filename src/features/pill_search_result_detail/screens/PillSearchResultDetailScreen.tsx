@@ -1,4 +1,5 @@
-import { View, ScrollView, Text, Image } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, ScrollView, Text } from 'react-native';
 import PillDetailInfo from '@features/pill_search_result_detail/components/organisms/PillDetailInfo';
 import PillDetailSkeleton from '@features/pill_search_result_detail/components/organisms/PillDetailSkeleton';
 import { styles } from '@features/pill_search_result_detail/styles/PillSearchResultDetailScreen';
@@ -35,7 +36,7 @@ const PillSearchResultDetailScreen = () => {
             <Image
               style={styles.pillImg}
               source={{ uri: itemImageStr || pillData.ITEM_IMAGE || '' }}
-              resizeMode="contain"
+              contentFit="contain"
             />
           ) : (
             <View style={styles.pillDetailNoImageWrapper}>

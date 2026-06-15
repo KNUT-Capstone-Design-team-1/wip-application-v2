@@ -1,4 +1,5 @@
-import { View, Text, Image } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text } from 'react-native';
 import { TAKE_GUIDE } from '../../constants/TakeGuide';
 import { styles } from '../../styles/organisms/TakeGuide';
 
@@ -10,7 +11,7 @@ const TakeGuide = () => {
         <Image
           style={styles.guideAlertIcon}
           source={TAKE_GUIDE.icon}
-          resizeMode="cover"
+          contentFit="cover"
         />
       </View>
     </View>

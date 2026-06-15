@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text, ScrollView } from 'react-native';
 import { useSearchResultListStore } from '../../store/search_result_list_store';
 import { styles } from '../../styles/molecules/SearchConditionTags';
 

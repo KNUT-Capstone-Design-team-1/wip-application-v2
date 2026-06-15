@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, Text, ActivityIndicator } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text, ActivityIndicator } from 'react-native';
 import SplashIcon from '@assets/icons/splash-icon.png';
 import { styles } from '../styles/DatabaseUpdateView.styles';
 import { IUpdateProgress } from '../types';
@@ -17,8 +18,8 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
       <View style={styles.logoContainer}>
         <Image
           source={SplashIcon}
-          style={{ width: '100%' }}
-          resizeMode={'contain'}
+          style={{ height: '100%', width: '100%' }}
+          contentFit={'contain'}
         />
       </View>
 

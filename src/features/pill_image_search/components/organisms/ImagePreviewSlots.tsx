@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { styles } from '../../styles/organisms/ImagePreviewSlots';
 import { CircleQuestionMark, Plus, X } from 'lucide-react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
@@ -65,7 +65,11 @@ const ImagePreviewSlots = ({
             <Text style={styles.label}>뒷면</Text>
             {backImage ? (
               <View style={styles.imageContainer}>
-                <Image source={{ uri: backImage }} style={styles.image} />
+                <Image
+                  source={{ uri: backImage }}
+                  style={styles.image}
+                  cachePolicy={'memory'}
+                />
                 <TouchableOpacity
                   style={styles.removeButton}
                   onPress={() => onRemove('back')}

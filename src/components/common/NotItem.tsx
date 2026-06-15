@@ -1,4 +1,5 @@
-import { View, Text, Image } from 'react-native';
+import { Image } from '@components/common/CustomImage';
+import { View, Text } from 'react-native';
 import { styles } from './styles/NotItem';
 import { INotItemProps } from '@features/notice/types/notice_type';
 import character from '@assets/images/character.png';
@@ -13,7 +14,7 @@ const NotItem = ({ mainText, subText, marginTop, height }: INotItemProps) => {
     >
       <Text style={styles.mainText}>{mainText}</Text>
       <Text style={styles.subText}>{subText}</Text>
-      <Image source={character} style={styles.icon} resizeMode="contain" />
+      <Image source={character} style={styles.icon} contentFit="contain" />
     </View>
   );
 };
