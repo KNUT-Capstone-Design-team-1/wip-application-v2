@@ -4,7 +4,6 @@ import MapView from 'react-native-maps';
 import * as Clipboard from 'expo-clipboard';
 import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_pharmacy';
 import { INearbyPharmacies } from '@services/database/types';
-import Toast from '@components/common/Toast';
 import { useToast } from '@hooks/use_toast';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR_PRIMARY } from '@constants/color';
@@ -27,12 +26,12 @@ const NearbyPharmacyScreen = () => {
   const [selectedPharmacy, setSelectedPharmacy] =
     useState<INearbyPharmacies | null>(null);
 
-  const { showToast, hideToast, toastState } = useToast();
+  const { showToast } = useToast();
 
   // 에러 메시지 감시
   useEffect(() => {
     if (errorMsg) {
-      showToast(errorMsg);
+      showToast({ type: 'error', message: errorMsg });
     }
   }, [errorMsg, showToast]);
 
@@ -47,7 +46,7 @@ const NearbyPharmacyScreen = () => {
 
       await Clipboard.setStringAsync(text);
 
-      showToast('복사되었습니다.');
+      showToast({ message: '복사되었습니다.' });
     },
     [showToast],
   );
@@ -119,12 +118,6 @@ const NearbyPharmacyScreen = () => {
           onClosePress={handleCloseInfoCard}
         />
       )}
-
-      <Toast
-        message={toastState.message}
-        visible={toastState.visible}
-        onHide={hideToast}
-      />
     </View>
   );
 };

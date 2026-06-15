@@ -1,16 +1,18 @@
 import { useState, useCallback } from 'react';
 import { unifiedSearchService } from '../services/unifiedSearchService';
 import { logger } from '@utils/index';
-import Toast from 'react-native-toast-message';
 import {
   getPillDataCountByItemSeq,
   getPillDatasByItemSeq,
 } from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { useRouter, usePathname } from 'expo-router';
+import { useToast } from '@hooks/use_toast';
 
 export const useUnifiedSearch = () => {
   const [loading, setLoading] = useState(false);
+
+  const { showToast } = useToast();
 
   const {
     setSearchResultData,
@@ -50,23 +52,19 @@ export const useUnifiedSearch = () => {
         const searchResult = await unifiedSearchService.search(keywords);
 
         if (!searchResult.success) {
-          Toast.show({
+          showToast({
             type: 'error',
-            text1: '통합 검색 서버 오류',
-            text2:
+            message:
               '서버로 부터 검색 결과를 받아오는데 실패했습니다. 나중에 다시 시도해주세요.',
-            position: 'bottom',
           });
           return;
         }
 
         const results = searchResult.data?.results || [];
         if (results.length === 0) {
-          Toast.show({
-            type: 'info',
-            text1: '검색 결과 없음',
-            text2: '입력하신 키워드와 일치하는 약 정보가 없습니다.',
-            position: 'bottom',
+          showToast({
+            type: 'default',
+            message: '입력하신 키워드와 일치하는 약 정보가 없습니다.',
           });
           return;
         }
@@ -83,11 +81,9 @@ export const useUnifiedSearch = () => {
       } catch (e) {
         logger.error(`UnifiedSearch search Failed: ${e.stack || e}`);
 
-        Toast.show({
+        showToast({
           type: 'error',
-          text1: '검색 실패',
-          text2: '통합 검색에 실패했습니다. 나중에 다시 시도해주세요.',
-          position: 'bottom',
+          message: '통합 검색에 실패했습니다. 나중에 다시 시도해주세요.',
         });
       } finally {
         setLoading(false);

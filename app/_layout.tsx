@@ -8,6 +8,9 @@ import {
   DatabaseUpdateView,
 } from '@features/database_update';
 import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomSheet';
+import Toast from 'react-native-toast-message';
+import toastConfig from '@components/config/toastConfig';
+import { px } from '@utils/responsive';
 
 /**
  * 앱의 최상위 레이아웃 컴포넌트
@@ -39,6 +42,7 @@ const RootLayout = () => {
         </Stack>
       </Layout>
       <MainNoticeBottomSheet />
+      <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
     </SafeAreaProvider>
   );
 };

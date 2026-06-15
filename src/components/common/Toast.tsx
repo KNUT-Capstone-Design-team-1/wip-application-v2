@@ -1,69 +1,22 @@
-import React, { useEffect } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { Text, View } from 'react-native';
 import { styles } from './styles/Toast';
-import { px } from '@utils/responsive';
+import { ToastConfigParams } from 'react-native-toast-message';
 
-interface IToastProps {
-  message: string;
-  visible: boolean;
-  duration?: number;
-  onHide: () => void;
-}
-
-const Toast = ({ message, visible, duration = 2000, onHide }: IToastProps) => {
-  const opacity = React.useRef(new Animated.Value(0)).current;
-  const translateY = React.useRef(new Animated.Value(px(50))).current;
-
-  useEffect(() => {
-    if (visible) {
-      // 아래에서 위로 슬라이드업 + 페이드 인
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      // 지정된 시간 후 페이드 아웃 + 아래로 슬라이드
-      const timer = setTimeout(() => {
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateY, {
-            toValue: px(50),
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ]).start(() => {
-          onHide();
-        });
-      }, duration);
-
-      return () => clearTimeout(timer);
-    }
-  }, [visible, duration, opacity, translateY, onHide]);
-
-  if (!visible) {
-    return null;
-  }
-
+const Toast = ({
+  text1,
+  backgroundColor,
+}: ToastConfigParams<any> & { backgroundColor?: string }) => {
   return (
-    <Animated.View
-      style={[styles.toastContainer, { opacity, transform: [{ translateY }] }]}
-    >
-      <View style={styles.toastContent}>
-        <Text style={styles.toastText}>{message}</Text>
+    <View style={styles.toastContainer}>
+      <View
+        style={[
+          styles.toastContent,
+          { backgroundColor: backgroundColor ?? 'rgba(0, 0, 0, 0.8)' },
+        ]}
+      >
+        <Text style={styles.toastText}>{text1}</Text>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 

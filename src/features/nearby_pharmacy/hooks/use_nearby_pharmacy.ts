@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import * as Location from 'expo-location';
-import Toast from 'react-native-toast-message';
+import { useToast } from '@hooks/use_toast';
 import { getNearbyPharmacies } from '@services/database/queries/nearby_pharmacies';
 import { INearbyPharmacies } from '@services/database/types';
 import logger from '@utils/logger';
 
 export const useNearbyPharmacy = () => {
+  const { showToast } = useToast();
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
@@ -120,10 +121,9 @@ export const useNearbyPharmacy = () => {
     } catch (e) {
       logger.error(`Failed to initialize location. ${e.stack || e}`);
 
-      Toast.show({
+      showToast({
         type: 'error',
-        text1: '위치 확인에 실패했습니다. 다시 시도해주세요.',
-        position: 'bottom',
+        message: '위치 확인에 실패했습니다. 다시 시도해주세요.',
       });
 
       if (!isDataLoaded.current) {
