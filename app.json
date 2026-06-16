@@ -6,16 +6,16 @@
     "owner": "mustbemadness",
     "version": "3.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/icon.png",
+    "icon": "./assets/icons/android-adaptive-icon.png",
     "newArchEnabled": true,
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mbm.whatispill",
       "icon": {
-        "light": "./assets/icons/ios-icon.png",
-        "dark": "./assets/icons/ios-icon.png",
-        "tinted": "./assets/icons/ios-icon.png"
+        "light": "./assets/icons/ios-icon-default.png",
+        "dark": "./assets/icons/ios-icon-dark.png",
+        "tinted": "./assets/icons/ios-icon-default.png"
       },
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다",
@@ -36,8 +36,8 @@
         "backgroundColor": "#ffffff"
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/adaptive-icon.png",
-        "monochromeImage": "./assets/icons/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/android-adaptive-icon.png",
+        "monochromeImage": "./assets/icons/android-adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
