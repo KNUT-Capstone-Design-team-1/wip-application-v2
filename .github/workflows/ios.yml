@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.event.inputs.branch }}
 
       - name: setup-nodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: yarn
@@ -38,7 +38,7 @@ jobs:
           BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
           curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.ipa "$BUILD_URL"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: wip-${{ env.VERSION }}-${{ github.run_number }}
           path: wip-${{ env.VERSION }}-${{ github.run_number }}.ipa
