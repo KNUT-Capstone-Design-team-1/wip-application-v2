@@ -49,7 +49,7 @@ const PillSearchResultListScreen = () => {
   // 마크 이미지 데이터 페칭 훅 사용
   useFetchMarkImages();
 
-  const isInitialLoading = isLoading;
+  const isInitialLoading = isLoading && searchResultData.length === 0;
 
   return (
     <View style={styles.pillSearchResultListRoot}>
@@ -66,7 +66,7 @@ const PillSearchResultListScreen = () => {
         />
       )}
 
-      {!isInitialLoading && <HealthKrFloatingButton />}
+      {searchResultData.length > 0 && <HealthKrFloatingButton />}
     </View>
   );
 };

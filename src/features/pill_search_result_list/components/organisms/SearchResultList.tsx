@@ -1,5 +1,5 @@
 import { useCallback, memo } from 'react';
-import { View } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import SearchResultItem from '@features/pill_search_result_list/components/molecules/SearchResultItem';
 import { styles } from '@features/pill_search_result_list/styles/organisms/SearchResultList';
@@ -28,11 +28,13 @@ const ResultFlashList = ({
   onLoadMore,
   onItemClick,
   keyExtractor,
+  isLoadingMore,
 }: {
   data: IPillData[];
   onLoadMore: () => void;
   onItemClick: (seq: string, itemImage: string) => void;
   keyExtractor: (item: IPillData, index: number) => string;
+  isLoadingMore: boolean;
 }) => {
   const renderItem: ListRenderItem<IPillData> = useCallback(
     ({ item, index }) => (
@@ -45,6 +47,15 @@ const ResultFlashList = ({
 
   const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
 
+  const renderFooter = useCallback(() => {
+    if (!isLoadingMore) return <View style={{ height: px(100) }} />;
+    return (
+      <View style={{ paddingVertical: px(20), height: px(100) }}>
+        <ActivityIndicator size="small" color="#007AFF" />
+      </View>
+    );
+  }, [isLoadingMore]);
+
   return (
     <FlashList
       style={styles.searchResultListWrapper}
@@ -52,7 +63,7 @@ const ResultFlashList = ({
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       ItemSeparatorComponent={renderSeparator}
-      contentContainerStyle={{ paddingBottom: px(100) }} // Item 1개의 여유공간
+      ListFooterComponent={renderFooter}
       showsVerticalScrollIndicator={true}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.5}
@@ -62,7 +73,7 @@ const ResultFlashList = ({
 
 const SearchResultList = ({
   searchResultData,
-  isLoadingMore,
+  isLoadingMore = false,
 }: ISearchResultData) => {
   const { searchItemClickHandler, keyExtractor, loadMorePills } =
     usePillSearchResultList();
@@ -79,6 +90,7 @@ const SearchResultList = ({
           onLoadMore={loadMorePills}
           onItemClick={searchItemClickHandler}
           keyExtractor={keyExtractor}
+          isLoadingMore={isLoadingMore}
         />
       )}
     </View>
