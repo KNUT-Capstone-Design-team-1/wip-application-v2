@@ -67,7 +67,7 @@ const ResultFlashList = ({
       ListFooterComponent={renderFooter}
       showsVerticalScrollIndicator={true}
       onEndReached={onLoadMore}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0.3}
     />
   );
 };
