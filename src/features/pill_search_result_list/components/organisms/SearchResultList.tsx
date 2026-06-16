@@ -48,11 +48,12 @@ const ResultFlashList = ({
   const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
 
   const renderFooter = useCallback(() => {
-    if (!isLoadingMore) return <View style={{ height: px(100) }} />;
-    return (
+    return isLoadingMore ? (
       <View style={{ paddingVertical: px(20), height: px(100) }}>
         <ActivityIndicator size="small" color="#007AFF" />
       </View>
+    ) : (
+      <View style={{ height: px(100) }} />
     );
   }, [isLoadingMore]);
 
