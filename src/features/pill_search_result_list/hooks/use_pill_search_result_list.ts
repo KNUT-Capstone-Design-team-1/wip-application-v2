@@ -156,7 +156,7 @@ export const usePillSearchResultList = () => {
 
       const nextPage = currentPage + 1;
 
-      console.log(`📄 페이지 ${nextPage} 로드 중...`);
+      console.log(`페이지 ${nextPage} 로드 중...`);
 
       // 데이터베이스 조회
       const newResults = await getPillDatas(searchParam, {
@@ -164,7 +164,7 @@ export const usePillSearchResultList = () => {
         limit: 30,
       });
 
-      console.log(`✅ ${newResults.length}개 추가 로드`);
+      console.log(`${newResults.length}개 추가 로드`);
 
       // 기존 데이터에 추가 (덮어쓰지 않음)
       appendSearchResultData(newResults);
