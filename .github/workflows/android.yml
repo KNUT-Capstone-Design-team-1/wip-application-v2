@@ -33,6 +33,7 @@ jobs:
       - name: build
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         run: |
           eas build -p android --profile production --non-interactive --json > build.json
           BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
