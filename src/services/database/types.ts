@@ -226,6 +226,10 @@ export interface ITableColumnSchema {
 export interface IWhereQueryClause {
   query: string;
   values: (str: any) => (string | number)[];
+  weight?: {
+    query: string;
+    values: (str: any) => (string | number)[];
+  };
 }
 
 export type TWhereQueryClauseFunc = (

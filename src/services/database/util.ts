@@ -70,8 +70,13 @@ export const buildWhereClause = (
       whereParts.push(queryClause.query);
       whereValues.push(...queryClause.values(value));
 
-      orderParts.push(`CASE WHEN ${queryClause.query} THEN 1 ELSE 0 END`);
-      orderValues.push(...queryClause.values(value));
+      if (queryClause.weight) {
+        orderParts.push(queryClause.weight.query);
+        orderValues.push(...queryClause.weight.values(value));
+      } else {
+        orderParts.push(`CASE WHEN ${queryClause.query} THEN 1 ELSE 0 END`);
+        orderValues.push(...queryClause.values(value));
+      }
     }
   }
 

@@ -196,6 +196,23 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
         `%${printFront.split('').join('%')}%`,
         `%${printFront.split('').join('%')}%`,
       ],
+      weight: {
+        query: `(
+          CASE 
+            WHEN PRINT_FRONT = ? THEN 100 
+            WHEN PRINT_FRONT LIKE ? THEN 60 
+            WHEN PRINT_FRONT LIKE ? THEN 30 
+            ELSE 0 
+          END +
+          CASE 
+            WHEN PRINT_BACK = ? THEN 100 
+            WHEN PRINT_BACK LIKE ? THEN 60 
+            WHEN PRINT_BACK LIKE ? THEN 30 
+            ELSE 0 
+          END
+        )`,
+        values: (s: string) => [s, `${s}%`, `%${s}%`, s, `${s}%`, `%${s}%`],
+      },
     },
     PRINT_FRONT_EXACTLY: {
       query: `PRINT_FRONT = ?`,
@@ -208,6 +225,23 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
         `%${printBack.split('').join('%')}%`,
         `%${printBack.split('').join('%')}%`,
       ],
+      weight: {
+        query: `(
+          CASE 
+            WHEN PRINT_BACK = ? THEN 100 
+            WHEN PRINT_BACK LIKE ? THEN 60 
+            WHEN PRINT_BACK LIKE ? THEN 30 
+            ELSE 0 
+          END +
+          CASE 
+            WHEN PRINT_FRONT = ? THEN 100 
+            WHEN PRINT_FRONT LIKE ? THEN 60 
+            WHEN PRINT_FRONT LIKE ? THEN 30 
+            ELSE 0 
+          END
+        )`,
+        values: (s: string) => [s, `${s}%`, `%${s}%`, s, `${s}%`, `%${s}%`],
+      },
     },
     PRINT_BACK_EXACTLY: {
       query: `PRINT_BACK = ?`,
@@ -459,7 +493,7 @@ export const getPillDatas = async (
     SELECT ${ALL_PILL_DATA_COLUMNS} 
     FROM pill_data 
     ${whereClause}
-    ${orderByClause}
+    ${orderByClause ? `${orderByClause},` : 'ORDER BY'} ITEM_NAME ASC, ITEM_SEQ ASC
     LIMIT ?, ?
   `;
 

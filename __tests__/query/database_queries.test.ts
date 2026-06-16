@@ -68,6 +68,17 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
       expect(lastExecutedSql).toContain('LIMIT ?, ?');
       expect(lastExecutedParams).toContain(20); // offset/limit 확인
     });
+
+    test('PRINT_FRONT 검색 시 가중치 정렬 쿼리 확인', async () => {
+      await PillDataQuery.getPillDatas(
+        { PRINT_FRONT: 'ABC' },
+        { page: 1, limit: 30 },
+      );
+      expect(lastExecutedSql).toContain('WHEN PRINT_FRONT = ? THEN 100');
+      expect(lastExecutedSql).toContain('WHEN PRINT_BACK = ? THEN 100');
+      expect(lastExecutedSql).toContain('ORDER BY');
+      expect(lastExecutedSql).toContain('ITEM_NAME ASC, ITEM_SEQ ASC');
+    });
   });
 
   describe('2. Config (환경설정)', () => {
