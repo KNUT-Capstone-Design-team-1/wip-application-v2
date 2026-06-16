@@ -170,7 +170,8 @@
           "hidden": false,
           "style": "dark"
         }
-      ]
+      ],
+      ["expo-file-system"]
     ],
     "extra": {
       "eas": {

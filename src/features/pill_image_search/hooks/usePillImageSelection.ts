@@ -7,7 +7,7 @@ import {
 } from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { router } from 'expo-router';
-import RNFS from 'react-native-fs';
+import { File } from 'expo-file-system';
 import { Alert } from 'react-native';
 import logger from '@utils/logger';
 
@@ -106,8 +106,8 @@ export const usePillImageSelection = () => {
 
       // 이미지 파일을 Base64로 변환 (병렬 처리)
       const [frontBase64, backBase64] = await Promise.all([
-        RNFS.readFile(pillImages.front, 'base64'),
-        RNFS.readFile(pillImages.back, 'base64'),
+        new File(pillImages.front).base64(),
+        new File(pillImages.back).base64(),
       ]);
 
       // 특징 추출 API 호출

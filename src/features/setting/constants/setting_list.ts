@@ -1,11 +1,11 @@
-import VersionCheck from 'react-native-version-check-expo';
+import * as Application from 'expo-application';
 import { ISettingListType } from '@features/setting/types/setting_type';
 
 export const SEARCH_LIST: ISettingListType[] = [
   {
     id: 'NONE',
     title: `앱 버전`,
-    value: `v${VersionCheck.getCurrentVersion()}`,
+    value: `v${Application.nativeApplicationVersion}`,
     path: '',
   },
   {
