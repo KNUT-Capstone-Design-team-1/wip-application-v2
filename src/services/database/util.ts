@@ -44,16 +44,20 @@ export const getColumnPlaceholderForTableCreate = (
  * 파라미터에 대한 WHERE 절을 생성
  * @param whereQueryClauseFunc WHERE 절을 만들어주는 함수
  * @param param 파라미터
+ * @param operator 조건들을 연결할 연산자 (기본값: 'AND')
  * @returns
  */
 export const buildWhereClause = (
   whereQueryClauseFunc: TWhereQueryClauseFunc,
   param: Record<string, any>,
+  operator: 'AND' | 'OR' = 'AND',
 ) => {
   const queryClauseMap = whereQueryClauseFunc(param);
 
   const whereParts: string[] = [];
   const whereValues: any[] = [];
+  const orderParts: string[] = [];
+  const orderValues: any[] = [];
 
   for (const key in param) {
     const value = param[key as keyof typeof param];
@@ -64,16 +68,22 @@ export const buildWhereClause = (
       ] as IWhereQueryClause;
 
       whereParts.push(queryClause.query);
-
       whereValues.push(...queryClause.values(value));
+
+      orderParts.push(`CASE WHEN ${queryClause.query} THEN 1 ELSE 0 END`);
+      orderValues.push(...queryClause.values(value));
     }
   }
 
   const whereClause = whereParts.length
-    ? `WHERE ${whereParts.join(' AND ')}`
+    ? `WHERE ${whereParts.join(` ${operator} `)}`
     : '';
 
-  return { whereClause, whereValues };
+  const orderByClause = orderParts.length
+    ? `ORDER BY (${orderParts.join(' + ')}) DESC`
+    : '';
+
+  return { whereClause, whereValues, orderByClause, orderValues };
 };
 
 /**

@@ -452,19 +452,23 @@ export const getPillDatas = async (
 ) => {
   const db = await getDatabase();
 
-  const { whereClause, whereValues } = buildWhereClause(
-    getPillDataWhereQuery,
-    params,
-  );
+  const { whereClause, whereValues, orderByClause, orderValues } =
+    buildWhereClause(getPillDataWhereQuery, params, 'OR');
 
-  const sql = `SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data ${whereClause}
-               LIMIT ?, ?`;
+  const sql = `
+    SELECT ${ALL_PILL_DATA_COLUMNS} 
+    FROM pill_data 
+    ${whereClause}
+    ${orderByClause}
+    LIMIT ?, ?
+  `;
 
   const { page = 1, limit = 30 } = queryOption;
   const offset = (page - 1) * limit;
 
   const result = await db.getAllAsync<IPillData>(sql, [
     ...whereValues,
+    ...orderValues,
     offset,
     limit,
   ]);
@@ -485,6 +489,7 @@ export const getPillDataCount = async (
   const { whereClause, whereValues } = buildWhereClause(
     getPillDataWhereQuery,
     params,
+    'OR',
   );
 
   const sql = `SELECT COUNT(*) as COUNT FROM pill_data ${whereClause}`;
@@ -506,8 +511,10 @@ export const getPillDatasByItemSeq = async (itemSeqs: string[]) => {
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data 
-               WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})`;
+  const sql = `
+    SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data 
+    WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})
+  `;
 
   const result = await db.getAllAsync<IPillData>(sql, itemSeqs);
 
@@ -526,8 +533,10 @@ export const getPillDataCountByItemSeq = async (itemSeqs: string[]) => {
 
   const db = await getDatabase();
 
-  const sql = `SELECT COUNT(*) as COUNT FROM pill_data 
-               WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})`;
+  const sql = `
+    SELECT COUNT(*) as COUNT FROM pill_data 
+    WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})
+  `;
 
   const result = await db.getFirstAsync<{ COUNT: number }>(sql, itemSeqs);
 
