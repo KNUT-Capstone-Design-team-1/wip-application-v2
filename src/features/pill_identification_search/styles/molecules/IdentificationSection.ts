@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_PRIMARY } from '@constants/color';
 
 export const styles = StyleSheet.create({
   identificationSection: {
@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Paperlogy',
     fontSize: fontPx(16),
     fontWeight: 600,
-    color: COLOR_GRAY[300],
+    color: COLOR_PRIMARY[300],
   },
   childrenContainer: {
     width: '100%',
