@@ -14,54 +14,34 @@ interface ISpecialClassificationResult {
   prohibitedIngredients: string[];
 }
 
-/**
- * 성분명 문자열을 정제하고 배열로 분리
- * 구분자: ;, | 및 공백(\s)
- * 특정 노이즈 단어(이, 약, 중, 등 등) 필터링
- */
-export const parseIngredients = (ingredientsStr?: string): string[] => {
-  if (!ingredientsStr) {
-    return [];
-  }
-
-  const noiseWords = ['이', '약', '중', '등', '및', '외'];
-
-  return ingredientsStr
-    .split(/[;,|\s]+/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !noiseWords.includes(s));
-};
+interface IIngredientParams {
+  kr: string;
+  en: string;
+}
 
 /**
  * 특정 성분이 특정 분류에 속하는지 확인하는 범용 함수
  */
 const checkSubstance = async (
-  ingredientsKr: string[],
-  ingredientsEn: string[],
+  ingredients: IIngredientParams,
   queryFn: (
     params: any,
     options: { page: number; limit: number },
   ) => Promise<any[]>,
-  krParamKey: string,
-  enParamKey: string,
 ): Promise<string[]> => {
   const matched = new Set<string>();
 
-  for (const name of ingredientsKr) {
-    const found = await queryFn({ [krParamKey]: name }, { page: 1, limit: 1 });
+  const [foundKr, foundEn] = await Promise.all([
+    ingredients.kr
+      ? queryFn({ containedInKr: ingredients.kr }, { page: 1, limit: 100 })
+      : Promise.resolve([]),
+    ingredients.en
+      ? queryFn({ containedInEn: ingredients.en }, { page: 1, limit: 100 })
+      : Promise.resolve([]),
+  ]);
 
-    if (found.length > 0) {
-      matched.add(name);
-    }
-  }
-
-  for (const name of ingredientsEn) {
-    const found = await queryFn({ [enParamKey]: name }, { page: 1, limit: 1 });
-
-    if (found.length > 0) {
-      matched.add(name);
-    }
-  }
+  foundKr.forEach((item) => matched.add(item.chemicalNameKr));
+  foundEn.forEach((item) => matched.add(item.chemicalNameEn));
 
   return Array.from(matched);
 };
@@ -69,23 +49,21 @@ const checkSubstance = async (
 /**
  * 금지 약물(도핑) 여부 확인 (추가 정보 포함)
  */
-const checkProhibitedSubstance = async (ingredientsEn: string[]) => {
+const checkProhibitedSubstance = async (
+  ingredients: IIngredientParams,
+): Promise<{ ingredients: string[] }> => {
   const matched = new Set<string>();
 
-  const updateProhibitedInfo = (found: any[], name: string) => {
-    if (found.length > 0) {
-      matched.add(name);
-    }
-  };
-
-  for (const name of ingredientsEn) {
-    const found = await getProhibitedList(
-      { contents: name },
-      { page: 1, limit: 1 },
-    );
-
-    updateProhibitedInfo(found, name);
+  if (!ingredients.en) {
+    return { ingredients: [] };
   }
+
+  const found = await getProhibitedList(
+    { contents: ingredients.en },
+    { page: 1, limit: 100 },
+  );
+
+  found.forEach((item) => matched.add(item.contents));
 
   return { ingredients: Array.from(matched) };
 };
@@ -99,10 +77,12 @@ export const checkSpecialClassifications = async (
   materialName?: string,
   materialEngName?: string,
 ): Promise<ISpecialClassificationResult> => {
-  const ingredientsKr = parseIngredients(materialName);
-  const ingredientsEn = parseIngredients(materialEngName);
+  const ingredients: IIngredientParams = {
+    kr: materialName?.trim() || '',
+    en: materialEngName?.trim() || '',
+  };
 
-  if (ingredientsKr.length === 0 && ingredientsEn.length === 0) {
+  if (!ingredients.kr && !ingredients.en) {
     return {
       isNarcotic: false,
       narcoticIngredients: [],
@@ -116,28 +96,10 @@ export const checkSpecialClassifications = async (
   }
 
   const [narcotic, cannabis, psychotropic, prohibited] = await Promise.all([
-    checkSubstance(
-      ingredientsKr,
-      ingredientsEn,
-      getNarcotics,
-      'chemicalNameKr',
-      'chemicalNameEn',
-    ),
-    checkSubstance(
-      ingredientsKr,
-      ingredientsEn,
-      getCannabis,
-      'chemicalNameKr',
-      'chemicalNameEn',
-    ),
-    checkSubstance(
-      ingredientsKr,
-      ingredientsEn,
-      getPsychotropics,
-      'chemicalNameKr',
-      'chemicalNameEn',
-    ),
-    checkProhibitedSubstance(ingredientsEn),
+    checkSubstance(ingredients, getNarcotics),
+    checkSubstance(ingredients, getCannabis),
+    checkSubstance(ingredients, getPsychotropics),
+    checkProhibitedSubstance(ingredients),
   ]);
 
   return {

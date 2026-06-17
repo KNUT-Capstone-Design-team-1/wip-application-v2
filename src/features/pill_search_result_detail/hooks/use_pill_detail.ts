@@ -49,7 +49,7 @@ export const usePillDetail = () => {
 
         const [classifications, drivingWarning] = await Promise.all([
           checkSpecialClassifications(
-            detail.MATERIAL_NAME || '',
+            detail.MAIN_ITEM_INGR?.replace(/[^가-힣]/g, '') || '',
             detail.MAIN_INGR_ENG || '',
           ),
           checkDrivingWarning(
@@ -81,7 +81,7 @@ export const usePillDetail = () => {
       setPillData: React.Dispatch<React.SetStateAction<IPillDetail | null>>,
     ) => {
       const specialInfo = await checkSpecialClassifications(
-        basicData.MATERIAL_NAME || '',
+        basicData.MAIN_ITEM_INGR?.replace(/[^가-힣]/g, '') || '',
         basicData.MATERIAL_ENG_NAME || '',
       );
 
