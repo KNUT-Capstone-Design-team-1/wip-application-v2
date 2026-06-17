@@ -4,9 +4,14 @@ run-name: wip-ios-build
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch
+        required: true
+        default: main
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
 jobs:
   build:
@@ -34,8 +39,6 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: build
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           eas build -p ios --profile production --non-interactive --json > build.json
           BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)

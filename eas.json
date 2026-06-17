@@ -1,11 +1,24 @@
 {
+  "cli": {
+    "appVersionSource": "remote"
+  },
   "build": {
     "base": {
       "node": "20.19.4"
     },
     "production": {
       "extends": "base",
-      "credentialsSource": "remote"
+      "credentialsSource": "remote",
+      "android": {
+        "buildType": "app-bundle"
+      }
+    },
+    "production-apk": {
+      "extends": "base",
+      "credentialsSource": "remote",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "development": {
       "extends": "base",

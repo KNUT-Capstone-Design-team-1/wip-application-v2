@@ -4,9 +4,14 @@ run-name: wip-android-build
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch
+        required: true
+        default: main
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
 jobs:
   build:
@@ -33,15 +38,21 @@ jobs:
           VERSION=$(jq -r '.expo.version' app.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: build
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: build-aab
         run: |
-          eas build -p android --profile production --non-interactive --json > build.json
-          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
+          eas build -p android --profile production --non-interactive --wait --json > aab.json
+          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' aab.json)
           curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.aab "$BUILD_URL"
+      
+      - name: build-apk
+        run: |
+          eas build -p android --profile production-apk --non-interactive --wait --json > apk.json
+          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' apk.json)
+          curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.apk "$BUILD_URL"
 
       - uses: actions/upload-artifact@v5
         with:
           name: wip-${{ env.VERSION }}-${{ github.run_number }}
-          path: wip-${{ env.VERSION }}-${{ github.run_number }}.aab
+          path: |
+            wip-${{ env.VERSION }}-${{ github.run_number }}.aab
+            wip-${{ env.VERSION }}-${{ github.run_number }}.apk
