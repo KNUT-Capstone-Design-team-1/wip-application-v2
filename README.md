@@ -51,19 +51,19 @@ eas credentials
 
 ```bash
 # Native 프로젝트 재생성
-yarn rebuild
+yarn run rebuild
 
 # Android 실행
-yarn android
+yarn run android
 
 # iOS 실행
-yarn ios
+yarn run ios
 
 # Android APK 빌드
-yarn apk
+yarn run apk
 
 # iOS IPA 빌드
-yarn ipa
+yarn run ipa
 ```
 
 > `apk`, `ipa` 빌드는 Linux 또는 macOS 환경에서만 사용 가능합니다.
