@@ -45,14 +45,11 @@ eas credentials
 
 ---
 
-# Execute
+# Execute & Build
 
 앱 실행 및 개발 환경 검증 명령어입니다.
 
 ```bash
-# 프로젝트 상태 점검
-npx expo-doctor
-
 # Native 프로젝트 재생성
 yarn rebuild
 
@@ -61,19 +58,15 @@ yarn android
 
 # iOS 실행
 yarn ios
+
+# Android APK 빌드
+yarn apk
+
+# iOS IPA 빌드
+yarn ipa
 ```
 
----
-
-# Test
-
-```bash
-# API 테스트
-yarn test:api
-
-# Query 테스트
-yarn test:query
-```
+> `apk`, `ipa` 빌드는 Linux 또는 macOS 환경에서만 사용 가능합니다.
 
 ---
 
@@ -85,25 +78,23 @@ yarn test:query
 # Expo 호환 라이브러리 설치
 npx expo install {library}
 
+# 라이브러리 업데이트
+npx expo install --fix
+
 # 코드 검사
 npx expo lint
+
+# 프로젝트 상태 점검
+npx expo-doctor
+
+# API 테스트
+yarn test:api
+
+# Query 테스트
+yarn test:query
 ```
 
 > `expo install` 사용 시 Expo SDK 버전에 맞는 라이브러리 버전이 자동으로 설치됩니다.
-
----
-
-# Build
-
-```bash
-# Android APK 빌드
-yarn apk
-
-# iOS IPA 빌드
-yarn ipa
-```
-
-> `apk`, `ipa` 빌드는 Linux 또는 macOS 환경에서만 사용 가능합니다.
 
 ---
 
@@ -132,20 +123,6 @@ yarn rebuild
 - 공식 문서에서 지원 버전을 확인하세요.
 
 - [Expo Docs](https://docs.expo.dev/?utm_source=chatgpt.com)
-
----
-
-## Expo 라이브러리 충돌
-
-다른 라이브러리와 충돌하는 경우:
-
-- Expo 호환 라이브러리로 교체
-- 충돌 라이브러리 수정
-- `expo-doctor` 실행 후 의존성 문제 확인
-
-```bash
-npx expo-doctor
-```
 
 ---
 
