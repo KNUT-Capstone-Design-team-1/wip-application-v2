@@ -171,6 +171,23 @@ Error: Couldn't allocate enough memory
 
 ---
 
+## 개발 환경에서 주변 약국 기능이 동작하지 않을 때 (안드로이드)
+
+### 원인
+
+- 구글맵 API 키에 디버그 keystore SHA-1이 등록되어있지 않음
+
+### 해결방법
+
+- debug.keystore를 구글맵 API 키 제한사항에 등록
+- debug.keystore는 기기마다 다름
+
+```bash
+keytool -list -v -keystore android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+---
+
 # References
 
 - [EAS Environment Variables Docs](https://docs.expo.dev/eas/environment-variables/?utm_source=chatgpt.com)
