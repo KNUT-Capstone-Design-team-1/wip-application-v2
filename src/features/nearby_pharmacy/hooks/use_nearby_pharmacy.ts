@@ -77,7 +77,7 @@ export const useNearbyPharmacy = () => {
         accuracy: Location.Accuracy.Balanced,
       }),
       new Promise<null>((_, reject) =>
-        setTimeout(() => reject(new Error('Location timeout')), 10000),
+        setTimeout(() => reject(new Error('Location timeout')), 60 * 1000),
       ),
     ]);
   }, []);
