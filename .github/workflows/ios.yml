@@ -26,7 +26,7 @@ jobs:
       - name: setup-nodeJS
         uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version: 20
           cache: yarn
 
       - name: cache-node-modules
@@ -74,7 +74,22 @@ jobs:
       - name: versioning
         run: |
           VERSION=$(jq -r '.expo.version' app.json)
+          BUILD=${{ github.run_number }}
+
+          jq \
+            --arg build "$BUILD" \
+            '
+            .expo.ios.buildNumber=$build
+            ' \
+            app.json > tmp.json
+
+          mv tmp.json app.json
+
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD=$BUILD" >> $GITHUB_ENV
+
+          echo "Build Number:"
+          cat app.json | jq '.expo.ios.buildNumber'
 
       - name: build-local
         env:
@@ -96,11 +111,11 @@ jobs:
           fi
 
           cp "$IPA" \
-            wip-${{ env.VERSION }}-${{ github.run_number }}.ipa
+            wip-${VERSION}-${BUILD}.ipa
 
       - name: upload-artifact
         uses: actions/upload-artifact@v5
         with:
-          name: wip-${{ env.VERSION }}-${{ github.run_number }}
+          name: wip-${{ env.VERSION }}-${{ env.BUILD }}
           path: |
-            wip-${{ env.VERSION }}-${{ github.run_number }}.ipa
+            wip-${{ env.VERSION }}-${{ env.BUILD }}.ipa
