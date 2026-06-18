@@ -57,7 +57,7 @@ jobs:
           echo "BUILD=$BUILD" >> $GITHUB_ENV
 
           echo "Build Version:"
-          cat app.json | jq '.expo.android.versionCode'
+          jq '.expo.android.versionCode' app.json
 
       - name: build-aab-local
         env:
@@ -69,8 +69,17 @@ jobs:
             --local \
             --non-interactive
 
-          cp build/*.aab \
-            wip-${VERSION}-${BUILD}.aab
+          AAB=$(find . -type f -name "*.aab" | xargs ls -t | head -n 1)
+
+          if [ -z "$AAB" ]; then
+            echo "AAB not found"
+            exit 1
+          fi
+
+          echo "Found: $AAB"
+
+          cp "$AAB" \
+            "wip-${VERSION}-${BUILD}.aab"
 
       - name: build-apk-local
         env:
@@ -82,8 +91,17 @@ jobs:
             --local \
             --non-interactive
 
-          cp build/*.apk \
-            wip-${VERSION}-${BUILD}.apk
+          APK=$(find . -type f -name "*.apk" | xargs ls -t | head -n 1)
+
+          if [ -z "$APK" ]; then
+            echo "APK not found"
+            exit 1
+          fi
+
+          echo "Found: $APK"
+
+          cp "$APK" \
+            "wip-${VERSION}-${BUILD}.apk"
 
       - name: upload-artifact
         uses: actions/upload-artifact@v5
