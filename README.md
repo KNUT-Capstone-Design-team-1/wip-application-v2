@@ -180,7 +180,6 @@ Error: Couldn't allocate enough memory
 ### 해결방법
 
 - debug.keystore를 구글맵 API 키 제한사항에 등록
-- debug.keystore는 기기마다 다름
 
 ```bash
 keytool -list -v -keystore android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
