@@ -28,6 +28,12 @@ jobs:
           node-version: 24
           cache: yarn
 
+      - name: setup-java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: install-dependencies
         run: |
           npm install -g eas-cli
@@ -38,19 +44,30 @@ jobs:
           VERSION=$(jq -r '.expo.version' app.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: build-aab
+      - name: build-aab-local
         run: |
-          eas build -p android --profile production --non-interactive --wait --json > aab.json
-          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' aab.json)
-          curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.aab "$BUILD_URL"
-      
-      - name: build-apk
-        run: |
-          eas build -p android --profile production-apk --non-interactive --wait --json > apk.json
-          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' apk.json)
-          curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.apk "$BUILD_URL"
+          eas build \
+            -p android \
+            --profile production \
+            --local \
+            --non-interactive
 
-      - uses: actions/upload-artifact@v5
+          cp build/*.aab \
+            wip-${{ env.VERSION }}-${{ github.run_number }}.aab
+
+      - name: build-apk-local
+        run: |
+          eas build \
+            -p android \
+            --profile production-apk \
+            --local \
+            --non-interactive
+
+          cp build/*.apk \
+            wip-${{ env.VERSION }}-${{ github.run_number }}.apk
+
+      - name: upload-artifact
+        uses: actions/upload-artifact@v5
         with:
           name: wip-${{ env.VERSION }}-${{ github.run_number }}
           path: |
