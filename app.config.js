@@ -1,3 +1,5 @@
+const BUILD = process.env.BUILD ?? '1';
+
 export default {
   expo: {
     name: '이게뭐약',
@@ -14,6 +16,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.mbm.whatispill',
+      buildNumber: BUILD,
 
       icon: {
         light: './assets/icons/ios-icon-default.png',
@@ -38,6 +41,9 @@ export default {
     },
 
     android: {
+      package: 'com.mbm.whatispill',
+      versionCode: Number(BUILD),
+
       config: {
         googleMaps: {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY_ANDROID,
@@ -61,9 +67,6 @@ export default {
       },
 
       edgeToEdgeEnabled: true,
-
-      package: 'com.mbm.whatispill',
-
       softwareKeyboardLayoutMode: 'resize',
 
       permissions: [
