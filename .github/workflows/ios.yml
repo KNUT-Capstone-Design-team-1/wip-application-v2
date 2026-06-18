@@ -15,10 +15,11 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v5
+      - name: checkout
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.inputs.branch }}
 
@@ -28,23 +29,78 @@ jobs:
           node-version: 24
           cache: yarn
 
+      - name: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
       - name: install-dependencies
         run: |
           npm install -g eas-cli
-          yarn install
+
+          if [ ! -d node_modules ]; then
+            yarn install --frozen-lockfile
+          fi
+
+      - name: cache-cocoapods
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+            ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
+      - name: setup-cocoapods
+        run: |
+          sudo gem install cocoapods
+
+      - name: install-pods-if-needed
+        run: |
+          if [ -d ios ]; then
+            cd ios
+
+            if [ ! -d Pods ]; then
+              pod install
+            fi
+          fi
 
       - name: versioning
         run: |
           VERSION=$(jq -r '.expo.version' app.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: build
+      - name: build-local
+        env:
+          EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
         run: |
-          eas build -p ios --profile production --non-interactive --json > build.json
-          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build.json)
-          curl -L -o wip-${{ env.VERSION }}-${{ github.run_number }}.ipa "$BUILD_URL"
+          eas build \
+            -p ios \
+            --profile production \
+            --local \
+            --non-interactive
 
-      - uses: actions/upload-artifact@v5
+      - name: collect-artifact
+        run: |
+          IPA=$(find . -type f -name "*.ipa" | head -n 1)
+
+          if [ -z "$IPA" ]; then
+            echo "ipa not found"
+            exit 1
+          fi
+
+          cp "$IPA" \
+            wip-${{ env.VERSION }}-${{ github.run_number }}.ipa
+
+      - name: upload-artifact
+        uses: actions/upload-artifact@v5
         with:
           name: wip-${{ env.VERSION }}-${{ github.run_number }}
-          path: wip-${{ env.VERSION }}-${{ github.run_number }}.ipa
+          path: |
+            wip-${{ env.VERSION }}-${{ github.run_number }}.ipa
