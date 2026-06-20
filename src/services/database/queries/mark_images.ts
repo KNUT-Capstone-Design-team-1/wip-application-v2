@@ -51,7 +51,7 @@ export const getMarkImages = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_MARK_IMAGES_COLUMNS} FROM mark_images ${whereClause}
+  const sql = `SELECT ${ALL_MARK_IMAGES_COLUMNS} FROM mark_images ${whereClause || 'WHERE code != "" AND title != "" AND base64 != ""'}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;

@@ -12,7 +12,7 @@ export const useMarkModal = () => {
   const [modalState, setModalState] = useState(false);
 
   const [searchText, setSearchText] = useState('');
-  const [allMarkData, setAllMarkData] = useState<MarkData[]>([]); // 전체 데이터 (100개)
+  const [allMarkData, setAllMarkData] = useState<MarkData[]>([]); // 전체 데이터 (INITIAL_LOAD_COUNT)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +28,7 @@ export const useMarkModal = () => {
   } = useMarkStore();
 
   const openMarkModal = useCallback(() => {
+    resetModalState();
     setModalState(true);
   }, []);
 
@@ -35,7 +36,13 @@ export const useMarkModal = () => {
     setModalState(false);
   }, []);
 
-  // 초기 로드 (100개 한 번에 가져오기)
+  const resetModalState = useCallback(() => {
+    setSearchText('');
+    setAllMarkData([]);
+    setError(null);
+  }, []);
+
+  // 초기 로드 (INITIAL_LOAD_COUNT 한 번에 가져오기)
   const loadInitialMarks = useCallback(async (keyword: string) => {
     setLoading(true);
     setError(null);
@@ -62,7 +69,7 @@ export const useMarkModal = () => {
     }
   }, []);
 
-  // 더 많은 데이터 로드 (100개 이후)
+  // 더 많은 데이터 로드 (INITIAL_LOAD_COUNT 이후)
   const loadMoreData = useCallback(
     async (keyword: string, nextBatch: number) => {
       setLoading(true);
@@ -122,7 +129,7 @@ export const useMarkModal = () => {
         allMarkData.length % INITIAL_LOAD_COUNT === 0;
 
       if (shouldLoadMore) {
-        // 100개 단위로 딱 떨어질 때만 추가 로드
+        // INITIAL_LOAD_COUNT 단위로 딱 떨어질 때만 추가 로드
         const nextBatch =
           Math.ceil(allMarkData.length / INITIAL_LOAD_COUNT) + 1;
 
@@ -164,11 +171,11 @@ export const useMarkModal = () => {
     return allMarkData.slice(startIndex, endIndex);
   }, [allMarkData, currentPage]);
 
-  // 총 페이지 수 (데이터가 100개 단위로 떨어지면 더 있을 수 있다고 가정)
+  // 총 페이지 수 (데이터가 INITIAL_LOAD_COUNT 단위로 떨어지면 더 있을 수 있다고 가정)
   const totalPages = useMemo(() => {
     const loadedPages = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
 
-    // 데이터가 100개 단위로 딱 떨어지면 더 있을 수 있으므로 +5 페이지 추가
+    // 데이터가 INITIAL_LOAD_COUNT 단위로 딱 떨어지면 더 있을 수 있으므로 +5 페이지 추가
     const isExactBatch =
       allMarkData.length > 0 && allMarkData.length % INITIAL_LOAD_COUNT === 0;
 
