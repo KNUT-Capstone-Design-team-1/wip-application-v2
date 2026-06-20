@@ -6,9 +6,13 @@ import { SEARCH_LIST } from '@features/setting/constants/setting_list';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ISettingListType } from '@features/setting/types/setting_type';
 import logger from '@utils/logger';
+import { useRecentSearchPillStore } from '@store/recent_search_pill_store';
 
 export const useSetting = () => {
   const router = useRouter();
+  const resetRecentSearch = useRecentSearchPillStore(
+    (state) => state.resetRecentSearch,
+  );
 
   const loadPillStorageCount = useCallback(async () => {
     try {
@@ -67,7 +71,7 @@ export const useSetting = () => {
         style: 'destructive',
         onPress: async () => {
           try {
-            await AsyncStorage.removeItem('recentSearch');
+            resetRecentSearch();
 
             Alert.alert('완료', '검색 기록이 삭제되었습니다.');
           } catch (e) {

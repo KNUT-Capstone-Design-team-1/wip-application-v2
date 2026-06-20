@@ -9,6 +9,7 @@ interface IRecentSearchPillStore {
   getRecentSearchPills: () => void;
   setRecentSearchPills: (pillData: TRecentSearchPill) => void;
   deleteRecentSearch: (itemSeq: string) => void;
+  resetRecentSearch: () => void;
 }
 
 export const useRecentSearchPillStore = create<IRecentSearchPillStore>(
@@ -55,6 +56,14 @@ export const useRecentSearchPillStore = create<IRecentSearchPillStore>(
         set({ recentSearchPills: updatedPills });
       } catch (e) {
         logger.error(`Failed to delete recent search: ${e.stack || e}`);
+      }
+    },
+    resetRecentSearch: async () => {
+      try {
+        await AsyncStorage.removeItem('recentSearch');
+        set({ recentSearchPills: [] });
+      } catch (e) {
+        logger.error(`Failed to reset recent search: ${e.stack || e}`);
       }
     },
   }),
