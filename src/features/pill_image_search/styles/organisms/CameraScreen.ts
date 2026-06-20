@@ -6,11 +6,12 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR['black'],
+    justifyContent: 'space-between',
   },
   topOverlay: {
     paddingHorizontal: px(20),
     paddingBottom: px(20),
-    backgroundColor: COLOR['black'],
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     zIndex: 1,
   },
   closeButton: {
@@ -60,9 +61,47 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  guideOverlay: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  guideView: {
+    aspectRatio: 1,
+  },
+  guideCorner: {
+    position: 'absolute',
+    width: '25%',
+    height: '25%',
+    borderColor: COLOR['guide'],
+  },
+  topLeft: {
+    top: 0,
+    left: 0,
+    borderTopWidth: px(2),
+    borderLeftWidth: px(2),
+  },
+  topRight: {
+    top: 0,
+    right: 0,
+    borderTopWidth: px(2),
+    borderRightWidth: px(2),
+  },
+  bottomLeft: {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: px(2),
+    borderLeftWidth: px(2),
+  },
+  bottomRight: {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: px(2),
+    borderRightWidth: px(2),
+  },
   bottomOverlay: {
     paddingTop: px(20),
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     alignItems: 'center',
     zIndex: 1,
   },

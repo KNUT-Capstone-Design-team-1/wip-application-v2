@@ -7,18 +7,14 @@ import {
   Image,
   Modal,
 } from 'react-native';
-import {
-  Camera,
-  useCameraDevice,
-  useCameraFormat,
-  useCameraPermission,
-} from 'react-native-vision-camera';
+import { Camera } from 'react-native-vision-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '../../styles/organisms/CameraScreen';
 import { useCameraCapture } from '../../hooks/useCameraCapture';
 import { Plus, X } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import { useCameraConfig } from '@features/pill_image_search/hooks/useCameraConfig';
 
 interface CameraScreenProps {
   visible: boolean;
@@ -36,15 +32,11 @@ const CameraScreen = ({
   frontImage,
   backImage,
 }: CameraScreenProps) => {
-  const device = useCameraDevice('back');
-  const format = useCameraFormat(device, [
-    { photoAspectRatio: 1 / 1 },
-    { photoResolution: { width: 768, height: 768 } },
-  ]);
-  const { hasPermission, requestPermission } = useCameraPermission();
+  const { device, format, hasPermission, requestPermission, getGuideWidth } =
+    useCameraConfig();
   const insets = useSafeAreaInsets();
 
-  const { cameraRef, capturePhoto } = useCameraCapture({
+  const { cameraRef, capturePhoto, isProcessing } = useCameraCapture({
     onCapture,
   });
 
@@ -108,16 +100,25 @@ const CameraScreen = ({
             </View>
           </View>
         </View>
-
-        <Camera
-          ref={cameraRef}
-          style={{ flex: 1 }}
-          device={device}
-          isActive={visible}
-          photo={true}
-          format={format}
-          photoQualityBalance="balanced"
-        />
+        {/* 가이드 뷰 */}
+        <View style={styles.guideOverlay}>
+          <Camera
+            ref={cameraRef}
+            style={StyleSheet.absoluteFill}
+            device={device}
+            isActive={visible}
+            photo={true}
+            format={format}
+            photoQualityBalance="balanced"
+            resizeMode="cover"
+          />
+          <View style={[styles.guideView, { width: getGuideWidth() }]}>
+            <View style={[styles.guideCorner, styles.topLeft]} />
+            <View style={[styles.guideCorner, styles.topRight]} />
+            <View style={[styles.guideCorner, styles.bottomLeft]} />
+            <View style={[styles.guideCorner, styles.bottomRight]} />
+          </View>
+        </View>
 
         {/* 하단 촬영 버튼 */}
         <View
@@ -126,7 +127,11 @@ const CameraScreen = ({
             { paddingBottom: Math.max(insets.bottom, 40) },
           ]}
         >
-          <TouchableOpacity style={styles.captureButton} onPress={capturePhoto}>
+          <TouchableOpacity
+            style={[styles.captureButton, isProcessing && { opacity: 0.5 }]}
+            onPress={capturePhoto}
+            disabled={isProcessing}
+          >
             <View style={styles.captureButtonInner} />
           </TouchableOpacity>
         </View>
