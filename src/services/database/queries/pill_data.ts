@@ -487,7 +487,7 @@ export const getPillDatas = async (
   const db = await getDatabase();
 
   const { whereClause, whereValues, orderByClause, orderValues } =
-    buildWhereClause(getPillDataWhereQuery, params, 'OR');
+    buildWhereClause(getPillDataWhereQuery, params, 'AND');
 
   const sql = `
     SELECT ${ALL_PILL_DATA_COLUMNS} 
@@ -523,7 +523,7 @@ export const getPillDataCount = async (
   const { whereClause, whereValues } = buildWhereClause(
     getPillDataWhereQuery,
     params,
-    'OR',
+    'AND',
   );
 
   const sql = `SELECT COUNT(*) as COUNT FROM pill_data ${whereClause}`;
