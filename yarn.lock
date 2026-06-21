@@ -4688,13 +4688,6 @@ expo-linking@~8.0.12:
     expo-constants "~18.0.13"
     invariant "^2.2.4"
 
-expo-localization@~17.0.9:
-  version "17.0.9"
-  resolved "https://registry.yarnpkg.com/expo-localization/-/expo-localization-17.0.9.tgz#92b2827a4b68e42c0cd0ad1d3f1abf0ebe50a4a0"
-  integrity sha512-k5eYHr7iLMob3M8cHH6bgDrDRmqnZG8xKGLhpx8ST+LsFXmSgYpJ/t0VwWm0gz64C/K669XhObdG3D6QwCGqhw==
-  dependencies:
-    rtl-detect "^1.0.2"
-
 expo-location@~19.0.8:
   version "19.0.8"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-19.0.8.tgz#1805393151b1286021c1ad36246b6fd095d09b55"
@@ -4726,15 +4719,6 @@ expo-modules-core@3.0.30:
   dependencies:
     invariant "^2.2.4"
 
-expo-navigation-bar@~5.0.10:
-  version "5.0.10"
-  resolved "https://registry.yarnpkg.com/expo-navigation-bar/-/expo-navigation-bar-5.0.10.tgz#64e4fdb91ff3872110373b56c8e65d196b40979c"
-  integrity sha512-r9rdLw8mY6GPMQmVVOY/r1NBBw74DZefXHF60HxhRsdNI2kjc1wLdfWfR2rk4JVdOvdMDujnGrc9HQmqM3n8Jg==
-  dependencies:
-    "@react-native/normalize-colors" "0.81.5"
-    debug "^4.3.2"
-    react-native-is-edge-to-edge "^1.2.1"
-
 expo-router@~6.0.24:
   version "6.0.24"
   resolved "https://registry.yarnpkg.com/expo-router/-/expo-router-6.0.24.tgz#727d0c7c0055dbe9d590ad8fb9af978bb2a0dfd9"
@@ -4763,13 +4747,6 @@ expo-router@~6.0.24:
     shallowequal "^1.1.0"
     use-latest-callback "^0.2.1"
     vaul "^1.1.2"
-
-expo-sensors@~15.0.8:
-  version "15.0.8"
-  resolved "https://registry.yarnpkg.com/expo-sensors/-/expo-sensors-15.0.8.tgz#9ffe3413e726381d3d5949fe1e19667c0e5288b7"
-  integrity sha512-ttibOSCYjFAMIfjV+vVukO1v7GKlbcPRfxcRqbTaSMGneewDwVSXbGFImY530fj1BR3mWq4n9jHnuDp8tAEY9g==
-  dependencies:
-    invariant "^2.2.4"
 
 expo-server@^1.0.7:
   version "1.0.7"
@@ -4833,6 +4810,11 @@ exponential-backoff@^3.1.1:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/exponential-backoff/-/exponential-backoff-3.1.3.tgz#51cf92c1c0493c766053f9d3abee4434c244d2f6"
   integrity sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==
+
+fast-base64-decode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fast-base64-decode/-/fast-base64-decode-1.0.0.tgz#b434a0dd7d92b12b43f26819300d2dafb83ee418"
+  integrity sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q==
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
@@ -7426,6 +7408,13 @@ react-native-gesture-handler@~2.28.0:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
 
+react-native-get-random-values@~1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.11.0.tgz#1ca70d1271f4b08af92958803b89dccbda78728d"
+  integrity sha512-4BTbDbRmS7iPdhYLRcz3PGFIpFJBwNZg9g42iwa2P6FOv9vZj/xJc678RZXnLNZzd0qd7Q3CCF6Yd+CU2eoXKQ==
+  dependencies:
+    fast-base64-decode "^1.0.0"
+
 react-native-is-edge-to-edge@^1.1.6, react-native-is-edge-to-edge@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.2.1.tgz#64e10851abd9d176cbf2b40562f751622bde3358"
@@ -7796,11 +7785,6 @@ rimraf@^3.0.2:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
-
-rtl-detect@^1.0.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/rtl-detect/-/rtl-detect-1.1.2.tgz#ca7f0330af5c6bb626c15675c642ba85ad6273c6"
-  integrity sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==
 
 safe-array-concat@^1.1.3:
   version "1.1.3"

@@ -1,4 +1,5 @@
 import 'expo-router/entry'; // Expo Router entry
+import 'react-native-get-random-values';
 
 const App = () => {
   return null; // Expo Router 파일을 자동인식하여 폴더스캔

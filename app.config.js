@@ -57,11 +57,9 @@ export default {
       },
 
       adaptiveIcon: {
-        foregroundImage:
-          './assets/icons/android-adaptive-icon.png',
+        foregroundImage: './assets/icons/android-adaptive-icon.png',
 
-        monochromeImage:
-          './assets/icons/android-adaptive-icon.png',
+        monochromeImage: './assets/icons/android-adaptive-icon.png',
 
         backgroundColor: '#ffffff',
       },
@@ -124,14 +122,6 @@ export default {
       ],
 
       [
-        'expo-sensors',
-        {
-          motionPermission:
-            '$(PRODUCT_NAME)에서 알약 촬영시 초점 이동을 위해 모션 권한이 필요합니다',
-        },
-      ],
-
-      [
         'expo-font',
         {
           android: {
@@ -140,48 +130,39 @@ export default {
                 fontFamily: 'Paperlogy',
                 fontDefinitions: [
                   {
-                    path:
-                      './assets/fonts/Paperlogy-1Thin.ttf',
+                    path: './assets/fonts/Paperlogy-1Thin.ttf',
                     weight: 100,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-2ExtraLight.ttf',
+                    path: './assets/fonts/Paperlogy-2ExtraLight.ttf',
                     weight: 200,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-3Light.ttf',
+                    path: './assets/fonts/Paperlogy-3Light.ttf',
                     weight: 300,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-4Regular.ttf',
+                    path: './assets/fonts/Paperlogy-4Regular.ttf',
                     weight: 400,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-5Medium.ttf',
+                    path: './assets/fonts/Paperlogy-5Medium.ttf',
                     weight: 500,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-6SemiBold.ttf',
+                    path: './assets/fonts/Paperlogy-6SemiBold.ttf',
                     weight: 600,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-7Bold.ttf',
+                    path: './assets/fonts/Paperlogy-7Bold.ttf',
                     weight: 700,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-8ExtraBold.ttf',
+                    path: './assets/fonts/Paperlogy-8ExtraBold.ttf',
                     weight: 800,
                   },
                   {
-                    path:
-                      './assets/fonts/Paperlogy-9Black.ttf',
+                    path: './assets/fonts/Paperlogy-9Black.ttf',
                     weight: 900,
                   },
                 ],
@@ -192,8 +173,7 @@ export default {
 
                 fontDefinitions: [
                   {
-                    path:
-                      './assets/fonts/Jalnan2.otf',
+                    path: './assets/fonts/Jalnan2.otf',
                     weight: 400,
                   },
                 ],
@@ -229,8 +209,6 @@ export default {
         },
       ],
 
-      ['expo-localization'],
-
       'expo-router',
 
       [
@@ -241,22 +219,12 @@ export default {
         },
       ],
 
-      [
-        'expo-navigation-bar',
-        {
-          enforceContrast: false,
-          hidden: false,
-          style: 'dark',
-        },
-      ],
-
       ['expo-file-system'],
     ],
 
     extra: {
       eas: {
-        projectId:
-          '8120ae66-d8a3-4e4a-885e-a76c3477b881',
+        projectId: '8120ae66-d8a3-4e4a-885e-a76c3477b881',
       },
     },
   },
