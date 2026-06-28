@@ -7,10 +7,6 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
-const ALL_PROHIBITED_LIST_COLUMNS: (keyof IProhibitedList)[] = [
-  'contents',
-] as const;
-
 /**
  * prohibited_list 테이블 조회를 위한 WHERE param 생성
  * @param _params where 절에 사용할 검색 조건
@@ -44,7 +40,7 @@ export const getProhibitedList = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_PROHIBITED_LIST_COLUMNS} FROM prohibited_list ${whereClause}
+  const sql = `SELECT * FROM prohibited_list ${whereClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;

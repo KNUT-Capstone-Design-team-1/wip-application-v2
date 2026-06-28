@@ -7,55 +7,6 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
-const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
-  'ITEM_SEQ',
-  'ITEM_NAME',
-  'ENTP_NAME',
-  'CHART',
-  'ITEM_IMAGE',
-  'PRINT_FRONT',
-  'PRINT_BACK',
-  'DRUG_SHAPE',
-  'COLOR_CLASS1',
-  'COLOR_CLASS2',
-  'LINE_FRONT',
-  'LINE_BACK',
-  'LENGTH_LONG',
-  'LENGTH_SHORT',
-  'LENGTH_THICK',
-  'CLASS_NO',
-  'CLASS_NAME',
-  'ETC_OTC_CODE',
-  'ITEM_PERMIT_DATE',
-  'FORM_CODE',
-  'DRUG_SHAPE_FRONT',
-  'DRUG_SHAPE_BACK',
-  'MARK_IMAGE_FRONT',
-  'MARK_IMAGE_BACK',
-  'MARK_CODE_FRONT',
-  'MARK_CODE_BACK',
-  'CHANGE_DATE',
-  'ITEM_ENG_NAME',
-  'COVERAGE_ENG_NAME',
-  'ENTP_ENG_NAME',
-  'MATERIAL_NAME',
-  'MATERIAL_ENG_NAME',
-  'STORAGE_METHOD',
-  'VALID_TERM',
-  'PACK_UNIT',
-  'INSURANCE_CODE',
-  'DRUG_CLASS',
-  'FINISH_MATERIAL_YN',
-  'NEW_DRUG_YN',
-  'INDUTY_CODE',
-  'CHANGE_CONTENT',
-  'TOTAL_CONTENT',
-  'MAIN_ITEM_INGR',
-  'INGR_NAME',
-  'RARE_DRUG_YN',
-  'OEM_ENTP_NAME',
-] as const;
-
 /**
  * pill_data 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
@@ -414,8 +365,7 @@ export const getPillDatas = async (
     buildWhereClause(getPillDataWhereQuery, params, 'AND');
 
   const sql = `
-    SELECT ${ALL_PILL_DATA_COLUMNS} 
-    FROM pill_data 
+    SELECT * FROM pill_data 
     ${whereClause}
     ${orderByClause ? `${orderByClause},` : 'ORDER BY'} ITEM_NAME ASC, ITEM_SEQ ASC
     LIMIT ?, ?
@@ -470,7 +420,7 @@ export const getPillDatasByItemSeq = async (itemSeqs: string[]) => {
   const db = await getDatabase();
 
   const sql = `
-    SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data 
+    SELECT * FROM pill_data 
     WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})
   `;
 

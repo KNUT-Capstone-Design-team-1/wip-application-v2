@@ -7,20 +7,6 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
-const ALL_NEARBY_PHARMACIES_COLUMNS: (keyof INearbyPharmacies)[] = [
-  'id',
-  'name',
-  'states',
-  'region',
-  'district',
-  'postalCode',
-  'address',
-  'telephone',
-  'openData',
-  'X',
-  'Y',
-] as const;
-
 /**
  * nearby_pharmacies 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
@@ -87,7 +73,7 @@ export const getNearbyPharmacies = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_NEARBY_PHARMACIES_COLUMNS.join(', ')} FROM nearby_pharmacies ${whereClause}
+  const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;
