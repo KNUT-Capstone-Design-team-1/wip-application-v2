@@ -8,92 +8,48 @@ import {
 } from '../services/special_classification_service';
 import logger from '@utils/logger';
 
+/**
+ * 상세 정보 API 호출
+ */
+const fetchApiDetailData = async (itemSeq: string) => {
+  try {
+    const pillDetail = await requestGetPillDetail(itemSeq);
+
+    return pillDetail;
+  } catch (e) {
+    logger.error(`Failed to load API pill detail. ${e.stack || e}`);
+
+    return null;
+  }
+};
+
+/**
+ * API 호출 결과를 기존 상태에 병합
+ * @param apiDetailData API로 부터 받은 상세 정보
+ * @param setPillData 상태 업데이트 함수
+ * @returns
+ */
+const applyApiDetailData = (
+  apiDetailData: Partial<IPillDetail> | null,
+  setPillData: React.Dispatch<React.SetStateAction<IPillDetail | null>>,
+) => {
+  if (!apiDetailData) {
+    return;
+  }
+
+  const isDrivingWarning = checkDrivingWarning(
+    apiDetailData.EE_DOC_DATA,
+    apiDetailData.UD_DOC_DATA,
+    apiDetailData.NB_DOC_DATA,
+  );
+
+  // 조회된 상세 정보와 운전 경고 여부를 기존 데이터에 업데이트
+  setPillData((prevData) =>
+    prevData ? { ...prevData, ...apiDetailData, isDrivingWarning } : null,
+  );
+};
+
 export const usePillDetail = () => {
-  /**
-   * 백그라운드에서 상세 정보를 불러와 기존 기본 정보와 병합
-   */
-  const fetchBackgroundDetail = useCallback(
-    async (
-      itemSeq: string,
-      setPillData: React.Dispatch<React.SetStateAction<IPillDetail | null>>,
-    ) => {
-      try {
-        const detailData = await requestGetPillDetail(itemSeq);
-
-        const isDrivingWarning = checkDrivingWarning(
-          detailData.EE_DOC_DATA,
-          detailData.UD_DOC_DATA,
-          detailData.NB_DOC_DATA,
-        );
-
-        setPillData((prev) =>
-          prev ? { ...prev, ...detailData, isDrivingWarning } : null,
-        );
-      } catch (e) {
-        logger.error(`Failed to load background pill detail. ${e.stack || e}`);
-      }
-    },
-    [],
-  );
-
-  /**
-   * 로컬 DB에 기본 정보가 없을 경우, API에서 전체 상세 정보를 로드
-   */
-  const fetchDetailFromApi = useCallback(
-    async (
-      itemSeq: string,
-      setPillData: React.Dispatch<React.SetStateAction<IPillDetail | null>>,
-    ) => {
-      try {
-        const detail = await requestGetPillDetail(itemSeq);
-
-        const [classifications, drivingWarning] = await Promise.all([
-          checkSpecialClassifications(
-            detail.MAIN_ITEM_INGR?.replace(/[^가-힣]/g, '') || '',
-            detail.MAIN_INGR_ENG || '',
-          ),
-          checkDrivingWarning(
-            detail.EE_DOC_DATA,
-            detail.UD_DOC_DATA,
-            detail.NB_DOC_DATA,
-          ),
-        ]);
-
-        setPillData({
-          ...detail,
-          ...classifications,
-          isDrivingWarning: drivingWarning,
-        });
-      } catch (e) {
-        logger.error(`Failed to fetch detail from API. ${e.stack || e}`);
-      }
-    },
-    [],
-  );
-
-  /**
-   * 로컬 DB에서 찾은 기본 정보에 특수 분류를 추가하여 먼저 보여주고, 상세 정보를 백그라운드로 요청
-   */
-  const processBasicData = useCallback(
-    async (
-      itemSeq: string,
-      basicData: any,
-      setPillData: React.Dispatch<React.SetStateAction<IPillDetail | null>>,
-    ) => {
-      const specialInfo = await checkSpecialClassifications(
-        basicData.MAIN_ITEM_INGR?.replace(/[^가-힣]/g, '') || '',
-        basicData.MATERIAL_ENG_NAME || '',
-      );
-
-      setPillData({ ...basicData, ...specialInfo });
-      await fetchBackgroundDetail(itemSeq, setPillData);
-    },
-    [fetchBackgroundDetail],
-  );
-
-  /**
-   * 알약의 기본 정보를 로컬 DB에서 가져오고, 필요한 경우 API를 통해 상세 정보를 로드
-   */
   const loadPillDetail = useCallback(
     async (
       itemSeq: string,
@@ -103,22 +59,43 @@ export const usePillDetail = () => {
       try {
         setLoading(true);
 
-        const basicDataList = await getPillDatasByItemSeq([itemSeq]);
-        const basicData = basicDataList.length > 0 ? basicDataList[0] : null;
+        // 로컬 DB에서 기본 정보 가져오기
+        const localPillDataList = await getPillDatasByItemSeq([itemSeq]);
+        const basicPillData =
+          localPillDataList.length > 0 ? localPillDataList[0] : null;
 
-        if (!basicData) {
-          await fetchDetailFromApi(itemSeq, setPillData);
+        if (!basicPillData) {
+          setLoading(false);
           return;
         }
 
-        await processBasicData(itemSeq, basicData, setPillData);
+        // 기본 정보를 바탕으로 특수 분류 정보 계산
+        const specialClassifications = await checkSpecialClassifications(
+          basicPillData.MAIN_ITEM_INGR?.replace(/[^가-힣]/g, '') || '',
+          basicPillData.MATERIAL_ENG_NAME || '',
+        );
+
+        // DB 정보 + 특수 분류 정보를 합쳐서 상태에 반영하여 화면에 우선 표시
+        const combinedBasicData = {
+          ...basicPillData,
+          ...specialClassifications,
+        };
+        setPillData(combinedBasicData as IPillDetail);
+        setLoading(false);
+
+        // API를 통해 상세 정보 (효능효과, 용법용량, 주의사항) 백그라운드 요청
+        fetchApiDetailData(itemSeq).then((apiDetailData) =>
+          applyApiDetailData(apiDetailData, setPillData),
+        );
       } catch (e) {
-        logger.error(`Failed to load pill detail. ${e.stack || e}`);
-      } finally {
+        logger.error(
+          `Failed to load pill detail. ${e instanceof Error ? e.stack : e}`,
+        );
+
         setLoading(false);
       }
     },
-    [fetchDetailFromApi, processBasicData],
+    [],
   );
 
   return { loadPillDetail };
