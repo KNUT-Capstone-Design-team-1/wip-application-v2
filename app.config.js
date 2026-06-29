@@ -74,7 +74,6 @@ export default {
         'android.permission.ACCESS_FINE_LOCATION',
         'android.permission.READ_MEDIA_IMAGES',
         'android.permission.READ_MEDIA_VISUAL_USER_SELECTED',
-        'android.permission.RECORD_AUDIO',
       ],
     },
 
