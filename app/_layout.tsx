@@ -29,6 +29,7 @@ const RootLayout = () => {
           currentPage={updateProgress.currentPage}
           totalPages={updateProgress.totalPages}
         />
+        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
       </SafeAreaProvider>
     );
   }

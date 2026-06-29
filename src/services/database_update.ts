@@ -131,7 +131,11 @@ export const initTable = async (
 export const insertData = async (
   currentPage: number,
   table: TDataTable,
-): Promise<{ code: DATABSE_UPDATE_RESULT_CODE; totalPage: number }> => {
+): Promise<{
+  code: DATABSE_UPDATE_RESULT_CODE;
+  totalPage: number;
+  total: number;
+}> => {
   let response: GoogleCloud.ResourceDataAPI.IResourceDataResponse<TResourceDataSchemas>;
 
   try {
@@ -141,17 +145,17 @@ export const insertData = async (
     );
 
     if (!response?.resource?.length || !response?.totalPage) {
-      return { code: 'ERROR-NO-RESOURCE-DATA', totalPage: 0 };
+      return { code: 'ERROR-NO-RESOURCE-DATA', totalPage: 0, total: 0 };
     }
   } catch (e) {
     logger.error(
       `[INSERT-DATA] Error Occurred from request ${table} table resource. ${(e as Error).stack || e}`,
     );
 
-    return { code: 'ERROR-GET-RESOURCE', totalPage: 0 };
+    return { code: 'ERROR-GET-RESOURCE', totalPage: 0, total: 0 };
   }
 
-  const { totalPage, resource } = response;
+  const { totalPage, total, resource } = response;
 
   try {
     await InitTableQuery.insertData(table, resource);
@@ -160,10 +164,18 @@ export const insertData = async (
       `[INSERT-DATA] Error Occurred from insert ${table} table resource. ${(e as Error).stack || e}`,
     );
 
-    return { code: 'ERROR-INSERT-TABLE', totalPage };
+    return { code: 'ERROR-INSERT-TABLE', totalPage, total };
   }
 
-  return { code: 'OK', totalPage };
+  return { code: 'OK', totalPage, total };
+};
+
+/**
+ * 특정 테이블의 전체 행 개수(Row Count)를 조회한다.
+ * @param table 데이터 테이블
+ */
+export const getTableRowCount = async (table: TDataTable): Promise<number> => {
+  return await InitTableQuery.getTableRowCount(table);
 };
 
 /**

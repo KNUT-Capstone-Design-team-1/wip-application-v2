@@ -88,7 +88,7 @@ const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
 const createInsertSql = (table: TDataTable, columns: string[]): string => {
   const escapedColumns = columns.map((column) => `"${column}"`);
 
-  return `INSERT INTO ${table} (${escapedColumns.join(', ')}) 
+  return `INSERT OR REPLACE INTO ${table} (${escapedColumns.join(', ')}) 
           VALUES (${columns.map(() => '?').join(', ')})`;
 };
 
@@ -186,4 +186,15 @@ export const insertData = async (
 
     await executeBatchInsert(db, sql, columns, batch);
   }
+};
+
+/**
+ * 특정 테이블의 전체 행 개수(Row Count)를 조회한다.
+ * @param table 데이터 테이블
+ */
+export const getTableRowCount = async (table: TDataTable): Promise<number> => {
+  const db = await getDatabase();
+  const sql = `SELECT COUNT(*) as count FROM ${table}`;
+  const result = await db.getAllAsync<{ count: number }>(sql);
+  return result?.[0]?.count || 0;
 };
