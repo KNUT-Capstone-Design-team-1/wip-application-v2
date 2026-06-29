@@ -140,8 +140,8 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       },
     },
     PRINT_FRONT_EXACTLY: {
-      query: `PRINT_FRONT = ?`,
-      values: (printFront: string) => [printFront],
+      query: `(PRINT_FRONT = ? OR PRINT_BACK = ?)`,
+      values: (printFront: string) => [printFront, printFront],
     },
     // 식별문자의 경우 중간에 공백이나 특수문자가 들어갈 수 있어 %L%I%K%E% 형식으로 조회한다
     PRINT_BACK: {
@@ -169,8 +169,8 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       },
     },
     PRINT_BACK_EXACTLY: {
-      query: `PRINT_BACK = ?`,
-      values: (printBack: string) => [printBack],
+      query: `(PRINT_BACK = ? OR PRINT_FRONT = ?)`,
+      values: (printBack: string) => [printBack, printBack],
     },
 
     CLASS_NAME: {
