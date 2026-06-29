@@ -53,4 +53,21 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(16),
     paddingVertical: px(16),
   },
+  disclaimerWrapper: {
+    marginTop: px(24),
+    marginBottom: px(40),
+    padding: px(16),
+    backgroundColor: COLOR_GRAY[150],
+    borderRadius: px(8),
+    borderWidth: 1,
+    borderColor: COLOR_GRAY[250],
+  },
+  disclaimerText: {
+    fontFamily: 'Paperlogy',
+    fontSize: fontPx(13),
+    fontWeight: 600,
+    color: COLOR_GRAY[400],
+    lineHeight: px(20),
+    textAlign: 'center',
+  },
 });

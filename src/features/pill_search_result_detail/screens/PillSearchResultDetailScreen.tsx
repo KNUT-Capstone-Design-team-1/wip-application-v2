@@ -53,6 +53,14 @@ const PillSearchResultDetailScreen = () => {
           saveState={saveState}
           onSaveToggle={handleSaveToggle}
         />
+
+        {/* 의료 정보 면책 조항 */}
+        <View style={styles.disclaimerWrapper}>
+          <Text style={styles.disclaimerText}>
+            본 앱의 정보는 참고용이며, 정확한 의학적 진단 및 치료를 대신할 수
+            없습니다. 의약품 복용 시 반드시 의사나 약사와 상담하십시오.
+          </Text>
+        </View>
       </View>
     </ScrollView>
   );

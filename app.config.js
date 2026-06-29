@@ -117,6 +117,7 @@ export default {
         {
           cameraPermission:
             '$(PRODUCT_NAME)에서 알약을 촬영하기 위해 카메라 권한이 필요합니다',
+          enableMicrophonePermission: false,
         },
       ],
 
