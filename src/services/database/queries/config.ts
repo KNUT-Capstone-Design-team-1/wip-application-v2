@@ -58,8 +58,8 @@ export const updateSpecificConfig = async (
   const db = await getDatabase();
 
   const result = await db.runAsync(
-    `UPDATE config SET \`value\` = ? WHERE \`key\` = ?`,
-    [value, key],
+    `INSERT OR REPLACE INTO config (\`key\`, \`value\`) VALUES (?, ?)`,
+    [key, value],
   );
 
   return result;
@@ -73,16 +73,12 @@ export const updateSpecificConfig = async (
 export const updateConfigs = async (updateDatas: IConfig[]) => {
   const db = await getDatabase();
 
-  const configKeys = updateDatas.map((v) => v.key);
-  const configValues = updateDatas.map((v) => v.value);
+  const placeholders = updateDatas.map(() => '(?, ?)').join(', ');
+  const params = updateDatas.flatMap((v) => [v.key, v.value]);
 
   const result = await db.runAsync(
-    `UPDATE config SET \`value\` = CASE \`key\`
-     ${configKeys.map((key) => `WHEN '${key}' THEN ?`).join(' ')}
-     END
-     WHERE \`key\` IN (${configKeys.map(() => '?').join(', ')})
-    `,
-    [...configValues, ...configKeys],
+    `INSERT OR REPLACE INTO config (\`key\`, \`value\`) VALUES ${placeholders}`,
+    params,
   );
 
   return result;

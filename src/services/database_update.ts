@@ -43,12 +43,21 @@ export const checkRequireTableUpdate = async (
   newSchemaVersion: number;
   newDataVersion: number;
 }> => {
+  // API 호출을 최소화하기 위해 싱글턴 패턴으로 처리
+  if (!DATABASE_VERSION_ON_SERVER) {
+    DATABASE_VERSION_ON_SERVER =
+      await GoogleCloud.DatabaseVersionAPI.requestDatabaseVersion();
+  }
+
+  const { schemaVersion: newSchemaVersion, dataVersion: newDataVersion } =
+    DATABASE_VERSION_ON_SERVER[table];
+
   const currentVersion = await ConfigQuery.getSpecificConfigs(
     TABLE_CONFIG_KEYS_MAP[table],
   );
 
   if (!currentVersion?.length) {
-    return { code: 'REQUIRE-UPDATE', newSchemaVersion: 0, newDataVersion: 0 };
+    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
   }
 
   const currentSchemaVersion = currentVersion.find((v) =>
@@ -59,18 +68,9 @@ export const checkRequireTableUpdate = async (
     v.key.endsWith('DataVersion'),
   )?.value;
 
-  if (!currentSchemaVersion || !currentDataVersion) {
-    return { code: 'REQUIRE-UPDATE', newSchemaVersion: 0, newDataVersion: 0 };
+  if (currentSchemaVersion == null || currentDataVersion == null) {
+    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
   }
-
-  // API 호출을 최소화하기 위해 싱글턴 패턴으로 처리
-  if (!DATABASE_VERSION_ON_SERVER) {
-    DATABASE_VERSION_ON_SERVER =
-      await GoogleCloud.DatabaseVersionAPI.requestDatabaseVersion();
-  }
-
-  const { schemaVersion: newSchemaVersion, dataVersion: newDataVersion } =
-    DATABASE_VERSION_ON_SERVER[table];
 
   const isOldSchema = Number(currentSchemaVersion) < Number(newSchemaVersion);
   if (isOldSchema) {

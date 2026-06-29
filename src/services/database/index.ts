@@ -19,6 +19,8 @@ const DEFAULT_CONFIG: IConfig[] = [
   { key: 'narcoticsDataVersion', value: 0 },
   { key: 'psychotropicsSchemaVersion', value: 0 },
   { key: 'psychotropicsDataVersion', value: 0 },
+  { key: 'prohibitedListSchemaVersion', value: 0 },
+  { key: 'prohibitedListDataVersion', value: 0 },
 ] as const;
 
 /**
