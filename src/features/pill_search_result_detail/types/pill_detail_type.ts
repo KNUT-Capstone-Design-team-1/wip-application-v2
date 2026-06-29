@@ -49,6 +49,7 @@ export interface IPillDetail {
   isProhibited?: boolean;
   prohibitedIngredients?: string[];
   isDrivingWarning?: boolean;
+  drivingWarningKeywords?: string[];
 }
 
 export interface IPillDetailInfoProps {

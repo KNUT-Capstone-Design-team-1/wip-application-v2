@@ -117,26 +117,53 @@ export const checkSpecialClassifications = async (
 /**
  * 문서 데이터에서 운전 및 기계 조작 주의 키워드 확인
  */
-export const checkDrivingWarning = (
+export const getDrivingWarningKeywords = (
   eeData?: string,
   udData?: string,
   nbData?: string,
-): boolean => {
+): string[] => {
   const keywords = [
+    // 운전/기계조작
     '운전',
-    '기계 조작',
-    '기계조작',
-    '정신',
-    '졸음',
-    '수면',
-    '저하',
-    '반응속도',
-    '의식',
-    '어지러움',
     '자동차',
+    '차량',
+    '기계조작',
+    '기계 조작',
+    '위험한 기계',
+    '중장비',
+
+    // 졸음/진정
+    '졸음',
+    '졸리',
+    '수면',
+    '진정',
+    '진정작용',
+    '몽롱',
+    '의식저하',
+
+    // 어지러움
+    '어지러움',
+    '어지럼',
+    '어지럼증',
+    '현기증',
+    '실신',
+
+    // 인지/반응
+    '집중력',
+    '주의력',
+    '판단력',
+    '반응속도',
+    '반응시간',
+    '인지기능',
+    '운동실조',
+
+    // 시야
+    '시야흐림',
+    '복시',
+    '시력장애',
   ];
 
-  const combinedData = `${eeData || ''} ${udData || ''} ${nbData || ''}`;
+  const combinedData = `${eeData ?? ''} ${udData ?? ''} ${nbData ?? ''}`;
 
-  return keywords.some((keyword) => combinedData.includes(keyword));
+  return keywords.filter((keyword) => combinedData.includes(keyword));
 };

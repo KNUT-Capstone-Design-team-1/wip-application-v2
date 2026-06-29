@@ -48,7 +48,16 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         label="운전/기계조작"
         value={
           data.isDrivingWarning ? (
-            <Text style={styles.warningText}>⚠️ 주의 (O)</Text>
+            <>
+              <Text style={styles.warningText}>⚠️ 주의 (O)</Text>
+              {`\n해당 단어: `}
+              <Text style={styles.warningText}>
+                {Array.isArray(data.drivingWarningKeywords) &&
+                data.drivingWarningKeywords.length > 0
+                  ? data.drivingWarningKeywords.join(', ')
+                  : '-'}
+              </Text>
+            </>
           ) : (
             '안전 (X)'
           )

@@ -3,7 +3,7 @@ import { IPillDetail } from '@features/pill_search_result_detail/types/pill_deta
 import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
 import { requestGetPillDetail } from '@services/apis/google_cloud/wip_pill_detail';
 import {
-  checkDrivingWarning,
+  getDrivingWarningKeywords,
   checkSpecialClassifications,
 } from '../services/special_classification_service';
 import logger from '@utils/logger';
@@ -37,15 +37,24 @@ const applyApiDetailData = (
     return;
   }
 
-  const isDrivingWarning = checkDrivingWarning(
+  const drivingWarningKeywords = getDrivingWarningKeywords(
     apiDetailData.EE_DOC_DATA,
     apiDetailData.UD_DOC_DATA,
     apiDetailData.NB_DOC_DATA,
   );
 
+  const isDrivingWarning = drivingWarningKeywords.length > 0;
+
   // 조회된 상세 정보와 운전 경고 여부를 기존 데이터에 업데이트
   setPillData((prevData) =>
-    prevData ? { ...prevData, ...apiDetailData, isDrivingWarning } : null,
+    prevData
+      ? {
+          ...prevData,
+          ...apiDetailData,
+          isDrivingWarning,
+          drivingWarningKeywords,
+        }
+      : null,
   );
 };
 
