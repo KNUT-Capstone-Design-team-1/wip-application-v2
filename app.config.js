@@ -19,9 +19,9 @@ export default {
       buildNumber: BUILD,
 
       icon: {
-        light: './assets/icons/ios-icon-default.png',
+        light: './assets/icons/ios-icon-light.png',
         dark: './assets/icons/ios-icon-dark.png',
-        tinted: './assets/icons/ios-icon-default.png',
+        tinted: './assets/icons/ios-icon-tinted.png',
       },
 
       infoPlist: {
