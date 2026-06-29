@@ -120,11 +120,12 @@ export const usePillImageSelection = () => {
         throw new Error(`No extractionResult`);
       }
 
-      const { PRINT, SHAPE, COLOR } = extractionResult;
+      const { PRINT_FRONT, PRINT_BACK, SHAPE, COLOR } = extractionResult;
 
       // 추출된 특징으로 DB 검색 파라미터 구성
       const searchParam = {
-        PRINT_FRONT: PRINT.join(' '),
+        PRINT_FRONT,
+        PRINT_BACK,
         DRUG_SHAPE: SHAPE,
         COLOR_CLASS1: COLOR,
       };

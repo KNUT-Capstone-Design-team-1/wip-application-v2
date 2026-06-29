@@ -2,7 +2,8 @@ import axios from 'axios';
 import { getToken } from './google_cloud_token';
 
 interface IGeminiPillFeatureExtractionResponse {
-  PRINT: string[];
+  PRINT_FRONT: string;
+  PRINT_BACK: string;
   SHAPE: string[];
   COLOR: string[];
 }
