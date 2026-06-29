@@ -57,27 +57,13 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
           <InfoRow label="총량" value={data.TOTAL_CONTENT} />
           <InfoRow label="저장 방법" value={data.STORAGE_METHOD} />
           <Text style={styles.sectionTitle}>[ 관리 정보 ]</Text>
-          <InfoRow label="표준 코드" value={data.BAR_CODE} />
           <InfoRow
             label="보험 코드"
             value={data.INSURANCE_CODE || data.COVERAGE_ENG_NAME}
           />
           <InfoRow label="허가 일자" value={data.ITEM_PERMIT_DATE} />
-          <InfoRow label="허가/신고 구분" value={data.APPROVAL_TYPE} />
           <InfoRow label="업체 영문명" value={data.ENTP_ENG_NAME} />
-          <InfoRow label="업체 허가 번호" value={data.ENTP_PERMIT_NO} />
-          <InfoRow
-            label="사업자 번호"
-            value={data.ENTP_BIZ_NO || data.BUSINESS_LICENCE_NUMBER}
-          />
           <InfoRow label="위탁제조업체" value={data.OEM_ENTP_NAME} />
-
-          {data.CANCEL_STATUS === '취소' && (
-            <>
-              <InfoRow label="취소 상태" value={data.CANCEL_STATUS} />
-              <InfoRow label="취소 일자" value={data.CANCEL_DATE} />
-            </>
-          )}
 
           <InfoRow label="변경 일자" value={data.CHANGE_DATE} />
           <InfoRow
@@ -85,12 +71,10 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
             value={data.CHANGE_CONTENT?.replace(/[/]/g, '\n')}
           />
           <Text style={styles.sectionTitle}>[ 기타 ]</Text>
-          <InfoRow label="재심사 대상" value={data.REEXAM_TARGET_YN} />
-          <InfoRow label="재심사 기간" value={data.REEXAM_CONT} />
+
           <InfoRow label="마약류 분류" value={data.DRUG_CLASS} />
           <InfoRow label="신약 여부" value={data.NEW_DRUG_YN} />
           <InfoRow label="희귀의약품" value={data.RARE_DRUG_YN} />
-          <InfoRow label="ATC 코드" value={data.ATC_CODE} />
         </>
       )}
     </View>

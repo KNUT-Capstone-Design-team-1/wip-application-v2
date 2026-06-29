@@ -7,16 +7,6 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
-const ALL_NARCOTICS_COLUMNS: (keyof INarcotics)[] = [
-  'chemicalNameKr',
-  'chemicalNameEn',
-  'synonyms',
-  'casNumber',
-  'isomerCasNumber',
-  'molecularFormula',
-  'molecularWeight',
-] as const;
-
 /**
  * narcotics 테이블 조회를 위한 WHERE param 생성
  * @param _params where 절에 사용할 검색 조건
@@ -62,7 +52,7 @@ export const getNarcotics = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_NARCOTICS_COLUMNS} FROM narcotics ${whereClause}
+  const sql = `SELECT * FROM narcotics ${whereClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;

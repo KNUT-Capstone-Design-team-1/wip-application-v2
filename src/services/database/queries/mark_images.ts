@@ -8,12 +8,6 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
-const ALL_MARK_IMAGES_COLUMNS: (keyof IMarkImages)[] = [
-  'code',
-  'title',
-  'base64',
-] as const;
-
 /**
  * mark_images 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
@@ -51,7 +45,7 @@ export const getMarkImages = async (
 
   const db = await getDatabase();
 
-  const sql = `SELECT ${ALL_MARK_IMAGES_COLUMNS} FROM mark_images ${whereClause || 'WHERE code != "" AND title != "" AND base64 != ""'}
+  const sql = `SELECT * FROM mark_images ${whereClause || 'WHERE code != "" AND title != "" AND base64 != ""'}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;

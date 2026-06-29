@@ -8,9 +8,7 @@ import { IConfig, TConfigKey } from '../types';
 export const getAllConfig = async () => {
   const db = await getDatabase();
 
-  const result = await db.getAllAsync<IConfig>(
-    `SELECT \`key\`, \`value\` FROM config`,
-  );
+  const result = await db.getAllAsync<IConfig>(`SELECT * FROM config`);
 
   return result;
 };
@@ -24,7 +22,7 @@ export const getSpecificConfig = async (key: string) => {
   const db = await getDatabase();
 
   const result = await db.getFirstAsync<IConfig>(
-    `SELECT \`key\`, \`value\` FROM config WHERE \`key\` = ?`,
+    `SELECT * FROM config WHERE \`key\` = ?`,
     [key],
   );
 
@@ -40,7 +38,7 @@ export const getSpecificConfigs = async (keys: TConfigKey[]) => {
   const db = await getDatabase();
 
   const result = await db.getAllAsync<IConfig>(
-    `SELECT \`key\`, \`value\` FROM config WHERE \`key\` IN (${keys.map(() => '?').join(', ')})`,
+    `SELECT * FROM config WHERE \`key\` IN (${keys.map(() => '?').join(', ')})`,
     keys,
   );
 

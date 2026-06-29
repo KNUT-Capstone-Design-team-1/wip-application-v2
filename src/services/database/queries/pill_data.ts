@@ -7,75 +7,6 @@ import {
 } from '../types';
 import { buildWhereClause } from '../util';
 
-/*
-TODO: 데이터 최적화 필요
-*/
-
-const ALL_PILL_DATA_COLUMNS: (keyof IPillData)[] = [
-  'ITEM_SEQ',
-  'ITEM_NAME',
-  'ENTP_SEQ',
-  'ENTP_NAME',
-  'CHART',
-  'ITEM_IMAGE',
-  'PRINT_FRONT',
-  'PRINT_BACK',
-  'DRUG_SHAPE',
-  'COLOR_CLASS1',
-  'COLOR_CLASS2',
-  'LINE_FRONT',
-  'LINE_BACK',
-  'LENGTH_LONG',
-  'LENGTH_SHORT',
-  'LENGTH_THICK',
-  'IMG_REGIST_TS',
-  'CLASS_NO',
-  'CLASS_NAME',
-  'ETC_OTC_CODE',
-  'ITEM_PERMIT_DATE',
-  'FORM_CODE',
-  'DRUG_SHAPE_FRONT',
-  'DRUG_SHAPE_BACK',
-  'MARK_IMAGE_FRONT',
-  'MARK_IMAGE_BACK',
-  'MARK_CODE_FRONT',
-  'MARK_CODE_BACK',
-  'CHANGE_DATE',
-  'BUSINESS_LICENCE_NUMBER',
-  'ITEM_ENG_NAME',
-  'COVERAGE_ENG_NAME',
-  'BAR_CODE',
-  'APPROVAL_TYPE',
-  'CANCEL_STATUS',
-  'CANCEL_DATE',
-  'ENTP_ENG_NAME',
-  'ENTP_PERMIT_NO',
-  'MATERIAL_NAME',
-  'MATERIAL_ENG_NAME',
-  'EE_DOC_DATA',
-  'UD_DOC_DATA',
-  'NB_DOC_DATA',
-  'ATT_DOC_DATA',
-  'STORAGE_METHOD',
-  'REEXAM_TARGET_YN',
-  'REEXAM_CONT',
-  'VALID_TERM',
-  'PACK_UNIT',
-  'INSURANCE_CODE',
-  'DRUG_CLASS',
-  'FINISH_MATERIAL_YN',
-  'NEW_DRUG_YN',
-  'INDUTY_CODE',
-  'CHANGE_CONTENT',
-  'TOTAL_CONTENT',
-  'MAIN_ITEM_INGR',
-  'INGR_NAME',
-  'ATC_CODE',
-  'ENTP_BIZ_NO',
-  'RARE_DRUG_YN',
-  'OEM_ENTP_NAME',
-] as const;
-
 /**
  * pill_data 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
@@ -133,10 +64,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `ITEM_SEQ = ?`,
       values: (itemSeq: string) => [itemSeq],
     },
-    ENTP_SEQ: {
-      query: `ENTP_SEQ = ?`,
-      values: (entpSeq: string) => [entpSeq],
-    },
+
     ITEM_NAME: {
       query: `ITEM_NAME LIKE ?`,
       values: (itemName: string) => [`%${itemName}%`],
@@ -157,10 +85,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `CHART LIKE ?`,
       values: (chart: string) => [`%${chart}%`],
     },
-    BAR_CODE: {
-      query: `BAR_CODE = ?`,
-      values: (barCode: string) => [barCode],
-    },
+
     MATERIAL_NAME: {
       query: `MATERIAL_NAME LIKE ?`,
       values: (materialName: string) => [`%${materialName}%`],
@@ -247,10 +172,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `PRINT_BACK = ?`,
       values: (printBack: string) => [printBack],
     },
-    IMG_REGIST_TS: {
-      query: `IMG_REGIST_TS = ?`,
-      values: (imgRegistTs: string) => [imgRegistTs],
-    },
+
     CLASS_NAME: {
       query: `CLASS_NAME LIKE ?`,
       values: (className: string) => [`%${className}%`],
@@ -299,10 +221,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `CHANGE_DATE = ?`,
       values: (val: string) => [val],
     },
-    BUSINESS_LICENCE_NUMBER: {
-      query: `BUSINESS_LICENCE_NUMBER = ?`,
-      values: (val: string) => [val],
-    },
+
     ITEM_ENG_NAME: {
       query: `ITEM_ENG_NAME LIKE ?`,
       values: (val: string) => [`%${val}%`],
@@ -311,54 +230,17 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `COVERAGE_ENG_NAME = ?`,
       values: (val: string) => [val],
     },
-    APPROVAL_TYPE: {
-      query: `APPROVAL_TYPE = ?`,
-      values: (val: string) => [val],
-    },
-    CANCEL_STATUS: {
-      query: `CANCEL_STATUS = ?`,
-      values: (val: string) => [val],
-    },
-    CANCEL_DATE: {
-      query: `CANCEL_DATE = ?`,
-      values: (val: string) => [val],
-    },
+
     ENTP_ENG_NAME: {
       query: `ENTP_ENG_NAME LIKE ?`,
       values: (val: string) => [`%${val}%`],
     },
-    ENTP_PERMIT_NO: {
-      query: `ENTP_PERMIT_NO = ?`,
-      values: (val: string) => [val],
-    },
+
     MATERIAL_ENG_NAME: {
       query: `MATERIAL_ENG_NAME LIKE ?`,
       values: (val: string) => [`%${val}%`],
     },
-    EE_DOC_DATA: {
-      query: `EE_DOC_DATA LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    UD_DOC_DATA: {
-      query: `UD_DOC_DATA LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    NB_DOC_DATA: {
-      query: `NB_DOC_DATA LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    ATT_DOC_DATA: {
-      query: `ATT_DOC_DATA LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    REEXAM_TARGET_YN: {
-      query: `REEXAM_TARGET_YN = ?`,
-      values: (val: string) => [val],
-    },
-    REEXAM_CONT: {
-      query: `REEXAM_CONT LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
+
     INSURANCE_CODE: {
       query: `INSURANCE_CODE = ?`,
       values: (val: string) => [val],
@@ -387,14 +269,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `TOTAL_CONTENT LIKE ?`,
       values: (val: string) => [`%${val}%`],
     },
-    ATC_CODE: {
-      query: `ATC_CODE = ?`,
-      values: (val: string) => [val],
-    },
-    ENTP_BIZ_NO: {
-      query: `ENTP_BIZ_NO = ?`,
-      values: (val: string) => [val],
-    },
+
     RARE_DRUG_YN: {
       query: `RARE_DRUG_YN = ?`,
       values: (val: string) => [val],
@@ -490,8 +365,7 @@ export const getPillDatas = async (
     buildWhereClause(getPillDataWhereQuery, params, 'AND');
 
   const sql = `
-    SELECT ${ALL_PILL_DATA_COLUMNS} 
-    FROM pill_data 
+    SELECT * FROM pill_data 
     ${whereClause}
     ${orderByClause ? `${orderByClause},` : 'ORDER BY'} ITEM_NAME ASC, ITEM_SEQ ASC
     LIMIT ?, ?
@@ -546,7 +420,7 @@ export const getPillDatasByItemSeq = async (itemSeqs: string[]) => {
   const db = await getDatabase();
 
   const sql = `
-    SELECT ${ALL_PILL_DATA_COLUMNS} FROM pill_data 
+    SELECT * FROM pill_data 
     WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})
   `;
 
