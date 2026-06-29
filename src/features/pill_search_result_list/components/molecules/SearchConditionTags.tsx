@@ -18,6 +18,10 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
   const renderTags = () => {
     const tags: { label: string; value: string; images?: string[] }[] = [];
 
+    if (searchParam.KEYWORD) {
+      tags.push({ label: '검색어', value: searchParam.KEYWORD });
+    }
+
     if (searchParam.ITEM_NAME) {
       tags.push({ label: '제품명', value: searchParam.ITEM_NAME });
     }

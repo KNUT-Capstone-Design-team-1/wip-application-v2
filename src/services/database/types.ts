@@ -241,6 +241,7 @@ export type TPillDataSearchParam = Omit<
   FORM_CODE: string[] | null;
   PRINT_FRONT_EXACTLY: string; // 표시앞 일치
   PRINT_BACK_EXACTLY: string; // 표시뒤 일치
+  KEYWORD?: string; // 통합 검색어
 };
 
 export type TMarkImagesSearchParam = Omit<IMarkImages, 'base64'>;

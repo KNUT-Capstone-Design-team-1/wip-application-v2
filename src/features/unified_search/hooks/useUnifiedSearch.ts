@@ -73,7 +73,7 @@ export const useUnifiedSearch = () => {
         const pillDatas = await getPillDatasByItemSeq(results);
 
         // 검색 조건 및 결과 저장
-        setSearchParam({ ITEM_NAME: trimmedKeyword });
+        setSearchParam({ KEYWORD: trimmedKeyword });
         setTotalDataCount(totalDataCount);
         setSearchResultData(pillDatas);
 
