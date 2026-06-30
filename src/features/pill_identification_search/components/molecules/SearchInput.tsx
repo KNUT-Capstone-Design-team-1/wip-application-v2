@@ -33,6 +33,7 @@ const SearchInput = ({
       ]}
     >
       <TextInput
+        maxLength={50}
         style={styles.searchInput}
         placeholder={placeholder}
         placeholderTextColor={COLOR_GRAY[200]}

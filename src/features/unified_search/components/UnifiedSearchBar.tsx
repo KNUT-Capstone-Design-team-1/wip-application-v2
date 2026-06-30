@@ -66,6 +66,7 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
       ]}
     >
       <TextInput
+        maxLength={50}
         style={styles.input}
         placeholder="검색어를 입력하세요"
         value={keyword}

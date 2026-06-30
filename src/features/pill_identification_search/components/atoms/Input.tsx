@@ -44,6 +44,7 @@ export const Input = ({
       ]}
     >
       <TextInput
+        maxLength={50}
         onFocus={() => setIsFocused(true)}
         onBlur={handleBlur}
         onSubmitEditing={handleSubmit}

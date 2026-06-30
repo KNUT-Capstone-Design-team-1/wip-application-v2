@@ -17,6 +17,7 @@ const SearchBar = () => {
   return (
     <View style={styles.searchBarWrapper}>
       <TextInput
+        maxLength={50}
         // style={styles.searchInput}
         value={searchInputText}
         onChangeText={(text: string) => setSearchInputText(text)}
