@@ -8,17 +8,17 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR['white'],
   },
   logoContainer: {
-    flex: 5,
+    flex: 4,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
-  spinnerContainer: {
-    flex: 1,
+  noticeContainer: {
+    flex: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   infoContainer: {
-    flex: 1,
+    flex: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
@@ -32,13 +32,13 @@ export const styles = StyleSheet.create({
   },
   noticeText: {
     fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
+    fontSize: fontPx(16),
     fontWeight: 500,
     color: COLOR_GRAY[400],
     marginBottom: px(16),
     textAlign: 'center',
     paddingHorizontal: px(20),
-    lineHeight: fontPx(20),
+    lineHeight: fontPx(24),
   },
   progressBarContainer: {
     width: px(250),

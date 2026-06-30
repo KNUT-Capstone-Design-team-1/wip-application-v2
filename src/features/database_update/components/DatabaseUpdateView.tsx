@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import SplashIcon from '@assets/icons/splash-icon.png';
 import { styles } from '../styles/DatabaseUpdateView.styles';
 import { IUpdateProgress } from '../types';
@@ -23,20 +23,16 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
         />
       </View>
 
-      {/* 스피너 */}
-      <View style={styles.spinnerContainer}>
-        {progress === 0 && (
-          <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
-        )}
+      {/* 안내 문구 */}
+      <View style={styles.noticeContainer}>
+        <Text style={styles.noticeText}>
+          {`준비 중입니다.\n약 1분 정도 소요됩니다.\n완료될 때까지 이 화면을 유지해 주세요.`}
+        </Text>
       </View>
 
       {/* 로딩 정보 */}
       <View style={styles.infoContainer}>
         <Text style={styles.statusText}>{status}</Text>
-        <Text style={styles.noticeText}>
-          준비 중입니다. 약 1분 정도 소요됩니다.{'\n'}
-          완료될 때까지 이 화면을 유지해 주세요.
-        </Text>
 
         {/* 프로그레스 바 */}
         <View style={styles.progressBarContainer}>
