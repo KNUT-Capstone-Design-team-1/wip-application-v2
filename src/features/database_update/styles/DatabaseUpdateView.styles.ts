@@ -1,4 +1,4 @@
-import { COLOR, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_PRIMARY, COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
 
@@ -30,6 +30,16 @@ export const styles = StyleSheet.create({
     color: COLOR_PRIMARY[100],
     marginBottom: px(12),
   },
+  noticeText: {
+    fontFamily: 'Paperlogy',
+    fontSize: fontPx(14),
+    fontWeight: 500,
+    color: COLOR_GRAY[400],
+    marginBottom: px(16),
+    textAlign: 'center',
+    paddingHorizontal: px(20),
+    lineHeight: fontPx(20),
+  },
   progressBarContainer: {
     width: px(250),
     height: px(10),
@@ -44,11 +54,12 @@ export const styles = StyleSheet.create({
   },
   detailsContainer: {
     alignItems: 'center',
+    marginTop: px(8),
   },
   percentText: {
     fontFamily: 'Paperlogy',
     fontSize: fontPx(16),
-    color: COLOR['white'],
+    color: COLOR_PRIMARY[100],
     fontWeight: 700,
     marginBottom: px(4),
   },
@@ -56,7 +67,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Paperlogy',
     fontSize: fontPx(14),
     fontWeight: 700,
-    color: COLOR['white'],
+    color: COLOR_GRAY[400],
     opacity: 0.9,
   },
 });
