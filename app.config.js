@@ -31,7 +31,11 @@ export default {
         NSPhotoLibraryUsageDescription:
           '$(PRODUCT_NAME)에서 알약 검색에 필요한 이미지를 가져오기 위해 사진 권한이 필요합니다',
 
-        LSApplicationQueriesSchemes: ['mailto', 'mailto'],
+        NSLocationWhenInUseUsageDescription:
+          '$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다',
+
+        LSApplicationQueriesSchemes: ['mailto'],
+
         ITSAppUsesNonExemptEncryption: false,
       },
 
