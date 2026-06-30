@@ -4,7 +4,6 @@ import { View, Text } from 'react-native';
 import SplashIcon from '@assets/icons/splash-icon.png';
 import { styles } from '../styles/DatabaseUpdateView.styles';
 import { IUpdateProgress } from '../types';
-import { COLOR_PRIMARY } from '@constants/color';
 
 const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
   status,
