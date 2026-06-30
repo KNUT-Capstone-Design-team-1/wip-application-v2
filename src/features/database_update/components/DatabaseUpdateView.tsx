@@ -39,14 +39,9 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
           <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
         </View>
 
-        {/* 퍼센트 및 페이지 정보 */}
+        {/* 퍼센트 정보 */}
         <View style={styles.detailsContainer}>
           <Text style={styles.percentText}>{(progress * 100).toFixed(1)}%</Text>
-          {currentPage && totalPages && (
-            <Text style={styles.pageText}>
-              {currentPage} / {totalPages} 페이지
-            </Text>
-          )}
         </View>
       </View>
     </View>

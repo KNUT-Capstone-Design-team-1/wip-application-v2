@@ -63,11 +63,4 @@ export const styles = StyleSheet.create({
     fontWeight: 700,
     marginBottom: px(4),
   },
-  pageText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 700,
-    color: COLOR_GRAY[400],
-    opacity: 0.9,
-  },
 });
