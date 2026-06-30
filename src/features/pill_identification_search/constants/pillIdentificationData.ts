@@ -17,6 +17,7 @@ import straight from '@assets/images/shape/straight.png';
 import triangle from '@assets/images/shape/triangle.png';
 import total from '@assets/images/shape/total.png';
 import { IIdentificationSearchData } from '../types/search_id_types';
+import { SEARCH_CONDITION_LABELS } from '@constants/search';
 
 // section key → store 배열 변수 매핑
 export const SECTION_KEY_TO_STORE_KEY: { [key: string]: string } = {
@@ -38,7 +39,7 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 앞면, 뒷면 식별 문자
   sideLabelText: {
     type: 'textInput',
-    title: '식별 문자',
+    title: SEARCH_CONDITION_LABELS.SIDE_LABEL,
     datas: [
       {
         key: 'front',
@@ -57,7 +58,7 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 제품명
   productNameText: {
     type: 'textInput',
-    title: '제품명',
+    title: SEARCH_CONDITION_LABELS.ITEM_NAME,
     datas: [
       {
         key: 'product',
@@ -66,10 +67,10 @@ export const pillIdentificationData: IIdentificationSearchData = {
       },
     ],
   },
-  // 회사명
+  // 제조사명
   companyName: {
     type: 'textInput',
-    title: '제조사명',
+    title: SEARCH_CONDITION_LABELS.ENTP_NAME,
     datas: [
       {
         key: 'company',
@@ -82,7 +83,7 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 제형
   manufacturerName: {
     type: 'iconButton',
-    title: '제형',
+    title: SEARCH_CONDITION_LABELS.FORM,
     datas: [
       {
         iconUrl: all,
@@ -119,7 +120,7 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 분할선
   dividerLineData: {
     type: 'iconButton',
-    title: '분할선',
+    title: SEARCH_CONDITION_LABELS.LINE,
     datas: [
       {
         iconUrl: all,
@@ -155,7 +156,7 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 모양
   shape: {
     type: 'iconButton',
-    title: '모양',
+    title: SEARCH_CONDITION_LABELS.SHAPE,
     datas: [
       {
         iconUrl: all,
@@ -234,7 +235,7 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 색상
   colors: {
     type: 'iconButton',
-    title: '색상',
+    title: SEARCH_CONDITION_LABELS.COLOR,
     datas: [
       {
         iconUrl: all,
@@ -343,6 +344,6 @@ export const pillIdentificationData: IIdentificationSearchData = {
   // 마크
   mark: {
     type: 'other',
-    title: '마크',
+    title: SEARCH_CONDITION_LABELS.MARK,
   },
 };

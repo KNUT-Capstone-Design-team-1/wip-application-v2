@@ -3,6 +3,7 @@ import { Image } from '@components/common/CustomImage';
 import { View, Text, ScrollView } from 'react-native';
 import { useSearchResultListStore } from '../../store/search_result_list_store';
 import { styles } from '../../styles/molecules/SearchConditionTags';
+import { SEARCH_CONDITION_LABELS } from '@constants/search';
 
 interface SearchConditionTagsProps {
   markImages?: { code: string; base64: string }[];
@@ -19,20 +20,29 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
     const tags: { label: string; value: string; images?: string[] }[] = [];
 
     if (searchParam.KEYWORD) {
-      tags.push({ label: '검색어', value: searchParam.KEYWORD });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.KEYWORD,
+        value: searchParam.KEYWORD,
+      });
     }
 
     if (searchParam.ITEM_NAME) {
-      tags.push({ label: '제품명', value: searchParam.ITEM_NAME });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.ITEM_NAME,
+        value: searchParam.ITEM_NAME,
+      });
     }
 
     if (searchParam.ENTP_NAME) {
-      tags.push({ label: '회사명', value: searchParam.ENTP_NAME });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.ENTP_NAME,
+        value: searchParam.ENTP_NAME,
+      });
     }
 
     if (searchParam.PRINT_FRONT || searchParam.PRINT_FRONT_EXACTLY) {
       tags.push({
-        label: '식별(앞)',
+        label: SEARCH_CONDITION_LABELS.PRINT_FRONT,
         value: (searchParam.PRINT_FRONT ||
           searchParam.PRINT_FRONT_EXACTLY) as string,
       });
@@ -40,14 +50,17 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
 
     if (searchParam.PRINT_BACK || searchParam.PRINT_BACK_EXACTLY) {
       tags.push({
-        label: '식별(뒤)',
+        label: SEARCH_CONDITION_LABELS.PRINT_BACK,
         value: (searchParam.PRINT_BACK ||
           searchParam.PRINT_BACK_EXACTLY) as string,
       });
     }
 
     if (searchParam.DRUG_SHAPE && searchParam.DRUG_SHAPE.length > 0) {
-      tags.push({ label: '모양', value: searchParam.DRUG_SHAPE.join(', ') });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.SHAPE,
+        value: searchParam.DRUG_SHAPE.join(', '),
+      });
     }
 
     const colors = Array.from(
@@ -58,7 +71,10 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
     );
 
     if (colors.length > 0) {
-      tags.push({ label: '색상', value: colors.join(', ') });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.COLOR,
+        value: colors.join(', '),
+      });
     }
 
     const lines = Array.from(
@@ -69,11 +85,17 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
     );
 
     if (lines.length > 0) {
-      tags.push({ label: '분할선', value: lines.join(', ') });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.LINE,
+        value: lines.join(', '),
+      });
     }
 
     if (searchParam.FORM_CODE && searchParam.FORM_CODE.length > 0) {
-      tags.push({ label: '제형', value: searchParam.FORM_CODE.join(', ') });
+      tags.push({
+        label: SEARCH_CONDITION_LABELS.FORM,
+        value: searchParam.FORM_CODE.join(', '),
+      });
     }
 
     const marks = Array.from(
@@ -89,7 +111,7 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
         .map((code) => markImages?.find((m) => m.code === code)?.base64)
         .filter((img): img is string => !!img);
 
-      tags.push({ label: '마크', value: '', images });
+      tags.push({ label: SEARCH_CONDITION_LABELS.MARK, value: '', images });
     }
 
     if (tags.length === 0) {
