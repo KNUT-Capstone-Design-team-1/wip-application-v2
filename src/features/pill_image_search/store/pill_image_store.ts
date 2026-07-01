@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-interface PillImages {
+export interface PillImages {
   front: string | null;
   back: string | null;
 }

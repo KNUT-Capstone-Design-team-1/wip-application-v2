@@ -21,6 +21,7 @@ export const usePillImageSelection = () => {
     isSearching,
     setFrontImage,
     setBackImage,
+    setPillImages,
     removeFrontImage,
     removeBackImage,
     resetPillImages,
@@ -34,65 +35,65 @@ export const usePillImageSelection = () => {
     setTotalDataCount,
   } = useSearchResultListStore();
 
-  /**
-   * 단일 이미지 선택 (카메라 촬영)
-   */
+  // 단일 이미지 등록 핸들러 (빈 공간에 순차적으로 사진을 채움)
   const handleImageSelect = useCallback(
     (imageUri: string) => {
-      // 재촬영 시: 이미 2장이 있으면 앞면부터 다시 시작
-      if (pillImages.front && pillImages.back) {
-        console.log('재촬영 - 앞면부터 다시 저장');
+      const hasBothImages = !!(pillImages.front && pillImages.back);
+      if (hasBothImages) {
         resetPillImages();
         setFrontImage(imageUri);
         return;
       }
 
-      // 앞면이 비어있으면 앞면에, 아니면 뒷면에 저장
-      if (!pillImages.front) {
-        console.log('앞면 이미지 저장:', imageUri);
+      const isFrontEmpty = !pillImages.front;
+      if (isFrontEmpty) {
         setFrontImage(imageUri);
-      } else if (!pillImages.back) {
-        console.log('뒷면 이미지 저장:', imageUri);
+        return;
+      }
+
+      const isBackEmpty = !pillImages.back;
+      if (isBackEmpty) {
         setBackImage(imageUri);
       }
     },
     [pillImages, resetPillImages, setFrontImage, setBackImage],
   );
 
-  /**
-   * 다중 이미지 선택 (앨범에서 2장)
-   */
+  // 다중 이미지 등록 핸들러 (앨범/파일 탐색기에서 1~2장 선택 시 처리)
   const handleMultipleImageSelect = useCallback(
     (images: string[]) => {
-      if (images.length >= 2) {
-        console.log('앨범에서 2장 선택:', images);
-        resetPillImages();
-        setFrontImage(images[0]);
-        setBackImage(images[1]);
+      const isSingleImage = images.length === 1;
+      if (isSingleImage) {
+        handleImageSelect(images[0]);
+        return;
+      }
+
+      const hasEnoughImages = images.length >= 2;
+      if (hasEnoughImages) {
+        setPillImages({ front: images[0], back: images[1] });
       }
     },
-    [resetPillImages, setFrontImage, setBackImage],
+    [handleImageSelect, setPillImages],
   );
 
-  /**
-   * 이미지 삭제
-   */
+  // 특정 위치(앞면/뒷면)의 이미지 삭제 핸들러
   const handleImageRemove = useCallback(
     (side: 'front' | 'back') => {
-      if (side === 'front') {
+      const isFront = side === 'front';
+      if (isFront) {
         removeFrontImage();
-      } else {
-        removeBackImage();
+        return;
       }
+
+      removeBackImage();
     },
     [removeFrontImage, removeBackImage],
   );
 
-  /**
-   * 검색하기 (API 호출)
-   */
+  // 선택된 두 장의 이미지를 서버로 전송하여 알약 특징 추출 및 DB 검색 수행 핸들러
   const handleSearch = useCallback(async () => {
-    if (!pillImages.front || !pillImages.back) {
+    const isMissingImage = !pillImages.front || !pillImages.back;
+    if (isMissingImage) {
       Alert.alert(
         '이미지 부족',
         '알약의 앞면과 뒷면 이미지가 모두 필요합니다.',
@@ -116,7 +117,8 @@ export const usePillImageSelection = () => {
         back: backBase64,
       });
 
-      if (!extractionResult) {
+      const hasNoResult = !extractionResult;
+      if (hasNoResult) {
         throw new Error(`No extractionResult`);
       }
 
@@ -138,6 +140,7 @@ export const usePillImageSelection = () => {
 
       const totalDataCount = await getPillDataCount(searchParam);
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
+
       setSearchResultData(results);
       setTotalDataCount(totalDataCount);
 
@@ -161,6 +164,7 @@ export const usePillImageSelection = () => {
     setSearchParam,
   ]);
 
+  // 앞면과 뒷면 이미지가 모두 선택되었는지 여부 확인 (true/false)
   const isBothImagesSelected = !!(pillImages.front && pillImages.back);
 
   return {
