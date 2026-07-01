@@ -11,9 +11,44 @@ import { File } from 'expo-file-system';
 import { Alert } from 'react-native';
 import logger from '@utils/logger';
 
-/**
- * 알약 이미지 선택 로직을 관리하는 Hook
- */
+// 이미지에서 알약 특징(모양, 색상, 식별문자 등)을 추출하는 헬퍼 함수
+const extractPillFeatures = async (frontUri: string, backUri: string) => {
+  // 이미지 파일을 Base64로 변환 (병렬 처리)
+  const [frontBase64, backBase64] = await Promise.all([
+    new File(frontUri).base64(),
+    new File(backUri).base64(),
+  ]);
+
+  // 특징 추출 API 호출
+  const extractionResult = await requestPillImageFeatureExtraction({
+    front: frontBase64,
+    back: backBase64,
+  });
+
+  const hasNoResult = !extractionResult;
+  if (hasNoResult) {
+    throw new Error(`No extractionResult`);
+  }
+
+  // 추출된 특징으로 DB 검색 파라미터 구성 후 반환
+  return {
+    PRINT_FRONT: extractionResult.PRINT_FRONT,
+    PRINT_BACK: extractionResult.PRINT_BACK,
+    DRUG_SHAPE: extractionResult.SHAPE,
+    COLOR_CLASS1: extractionResult.COLOR,
+  };
+};
+
+// 추출된 특징 파라미터를 기반으로 로컬 DB에서 알약 데이터를 검색하는 헬퍼 함수
+const searchPillData = async (searchParam: any) => {
+  const totalDataCount = await getPillDataCount(searchParam);
+
+  const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
+
+  return { totalDataCount, results };
+};
+
+// 알약 이미지 선택 로직을 관리하는 커스텀 Hook
 export const usePillImageSelection = () => {
   const {
     pillImages,
@@ -92,7 +127,9 @@ export const usePillImageSelection = () => {
 
   // 선택된 두 장의 이미지를 서버로 전송하여 알약 특징 추출 및 DB 검색 수행 핸들러
   const handleSearch = useCallback(async () => {
-    const isMissingImage = !pillImages.front || !pillImages.back;
+    const { front, back } = pillImages;
+    const isMissingImage = !front || !back;
+
     if (isMissingImage) {
       Alert.alert(
         '이미지 부족',
@@ -105,41 +142,14 @@ export const usePillImageSelection = () => {
       setIsSearching(true);
       setIsLoading(true);
 
-      // 이미지 파일을 Base64로 변환 (병렬 처리)
-      const [frontBase64, backBase64] = await Promise.all([
-        new File(pillImages.front).base64(),
-        new File(pillImages.back).base64(),
-      ]);
-
-      // 특징 추출 API 호출
-      const extractionResult = await requestPillImageFeatureExtraction({
-        front: frontBase64,
-        back: backBase64,
-      });
-
-      const hasNoResult = !extractionResult;
-      if (hasNoResult) {
-        throw new Error(`No extractionResult`);
-      }
-
-      const { PRINT_FRONT, PRINT_BACK, SHAPE, COLOR } = extractionResult;
-
-      // 추출된 특징으로 DB 검색 파라미터 구성
-      const searchParam = {
-        PRINT_FRONT,
-        PRINT_BACK,
-        DRUG_SHAPE: SHAPE,
-        COLOR_CLASS1: COLOR,
-      };
+      const searchParam = await extractPillFeatures(front, back);
 
       logger.info(
         `[IMAGE-SEARCH] Extracted features: ${JSON.stringify(searchParam)}`,
       );
-
       setSearchParam(searchParam);
 
-      const totalDataCount = await getPillDataCount(searchParam);
-      const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
+      const { totalDataCount, results } = await searchPillData(searchParam);
 
       setSearchResultData(results);
       setTotalDataCount(totalDataCount);

@@ -122,46 +122,9 @@ const handleSingleImageSelection = (
   ]);
 };
 
-// 앨범에서 다중(최대 2장) 이미지를 선택하는 함수
-export const pickMultipleImages = async (
-  onSuccess: (images: string[]) => void,
-  currentImages?: PillImages,
-): Promise<void> => {
-  const hasPermission = await requestMediaLibraryPermission();
-
-  if (!hasPermission) {
-    return;
-  }
-
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images'],
-    allowsMultipleSelection: true,
-    selectionLimit: 2,
-    quality: 0.8,
-    orderedSelection: true,
-  });
-
-  const isCanceled = result.canceled;
-  if (isCanceled) {
-    return;
-  }
-
-  const { assets } = result;
-
-  const hasEnoughImages = assets.length >= 2;
-  if (hasEnoughImages) {
-    onSuccess(assets.slice(0, 2).map((a) => a.uri));
-    return;
-  }
-
-  const isSingleImage = assets.length === 1;
-  if (!isSingleImage) {
-    return;
-  }
-
-  const firstImage = assets[0].uri;
-
-  handleSingleImageSelection(firstImage, currentImages, onSuccess, async () => {
+// 앨범에서 두 번째 이미지를 선택하고 예외 처리를 담당하는 헬퍼 함수
+const pickSecondImageFromLibrary = async (): Promise<string | null> => {
+  try {
     const secondResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: false,
@@ -176,32 +139,116 @@ export const pickMultipleImages = async (
 
     const selectedImageUri = secondResult.assets[0].uri;
     return selectedImageUri;
-  });
+  } catch (e) {
+    logger.error(`Failed to pick second image from library. ${e}`);
+    Alert.alert('오류', '두 번째 이미지를 불러오는 중 오류가 발생했습니다.');
+    return null;
+  }
+};
+
+// 파일 탐색기에서 두 번째 이미지를 선택하고 예외 처리를 담당하는 헬퍼 함수
+const pickSecondImageFromFiles = async (): Promise<string | null> => {
+  try {
+    const secondResult = await DocumentPicker.getDocumentAsync({
+      type: 'image/*',
+      multiple: false,
+      copyToCacheDirectory: true,
+    });
+
+    const hasNoImage = secondResult.canceled || !secondResult.assets?.length;
+    if (hasNoImage) {
+      return null;
+    }
+
+    const selectedImageUri = secondResult.assets[0].uri;
+    return selectedImageUri;
+  } catch (e) {
+    logger.error(`Failed to pick second image from files. ${e}`);
+    Alert.alert('오류', '두 번째 파일을 불러오는 중 오류가 발생했습니다.');
+    return null;
+  }
+};
+
+// 앨범에서 다중(최대 2장) 이미지를 선택하는 함수
+export const pickMultipleImages = async (
+  onSuccess: (images: string[]) => void,
+  currentImages?: PillImages,
+): Promise<void> => {
+  try {
+    const hasPermission = await requestMediaLibraryPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      selectionLimit: 2,
+      quality: 0.8,
+      orderedSelection: true,
+    });
+
+    const isCanceled = result.canceled;
+    if (isCanceled) {
+      return;
+    }
+
+    const { assets } = result;
+
+    const hasEnoughImages = assets.length >= 2;
+    if (hasEnoughImages) {
+      onSuccess(assets.slice(0, 2).map((a) => a.uri));
+      return;
+    }
+
+    const isSingleImage = assets.length === 1;
+    if (!isSingleImage) {
+      return;
+    }
+
+    const firstImage = assets[0].uri;
+
+    handleSingleImageSelection(
+      firstImage,
+      currentImages,
+      onSuccess,
+      pickSecondImageFromLibrary,
+    );
+  } catch (e) {
+    logger.error(`Failed to pick multiple images from library. ${e}`);
+    Alert.alert('오류', '갤러리에서 이미지를 불러오는 중 오류가 발생했습니다.');
+  }
 };
 
 // 앨범에서 단일(1장) 이미지를 선택하는 함수 (수정/자르기 화면 없음)
 export const pickSingleImage = async (
   onSuccess: (imageUri: string) => void,
 ): Promise<void> => {
-  const hasPermission = await requestMediaLibraryPermission();
+  try {
+    const hasPermission = await requestMediaLibraryPermission();
 
-  if (!hasPermission) {
-    return;
+    if (!hasPermission) {
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: false,
+      quality: 0.8,
+    });
+
+    const hasNoImage = result.canceled || !result.assets?.length;
+    if (hasNoImage) {
+      return;
+    }
+
+    const selectedImageUri = result.assets[0].uri;
+    onSuccess(selectedImageUri);
+  } catch (e) {
+    logger.error(`Failed to pick single image from library. ${e}`);
+    Alert.alert('오류', '갤러리에서 이미지를 불러오는 중 오류가 발생했습니다.');
   }
-
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images'],
-    allowsEditing: false,
-    quality: 0.8,
-  });
-
-  const hasNoImage = result.canceled || !result.assets?.length;
-  if (hasNoImage) {
-    return;
-  }
-
-  const selectedImageUri = result.assets[0].uri;
-  onSuccess(selectedImageUri);
 };
 
 // 기기의 파일 탐색기에서 다중(최대 2장) 이미지를 선택하는 함수
@@ -240,22 +287,7 @@ export const pickMultipleImagesFromFiles = async (
       firstImage,
       currentImages,
       onSuccess,
-      async () => {
-        const secondResult = await DocumentPicker.getDocumentAsync({
-          type: 'image/*',
-          multiple: false,
-          copyToCacheDirectory: true,
-        });
-
-        const hasNoImage =
-          secondResult.canceled || !secondResult.assets?.length;
-        if (hasNoImage) {
-          return null;
-        }
-
-        const selectedImageUri = secondResult.assets[0].uri;
-        return selectedImageUri;
-      },
+      pickSecondImageFromFiles,
     );
   } catch (e) {
     logger.error(`Failed to pick multiple images from files. ${e.stack || e}`);
