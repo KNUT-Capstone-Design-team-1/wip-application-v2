@@ -56,10 +56,7 @@ export const useNotices = () => {
     } finally {
       setIsNoticeLoading(false);
     }
-  }, [setIsNoticeLoading, setNoticeData, noticeDataSort]);
-
-  // 공지사항 상세 데이터 가져오는 함수 (현재 미구현)
-  const getNoticeDetail = useCallback(async () => {}, []);
+  }, [setNoticeData, noticeDataSort]);
 
   /**
    * 로컬 스토리지에 캐시된 공지사항 데이터 로드
@@ -93,9 +90,12 @@ export const useNotices = () => {
    * 홈 화면 바텀시트용 공지사항 로드 (캐시 우선 전략)
    */
   const getNoticeBottomSheet = useCallback(async () => {
-    try {
-      setIsNoticeLoading(true);
+    const isNeverShowAgain = useNoticeStore.getState().isNeverShowAgain;
 
+    // 하루 동안 보지 않기 상태 시 공지사항 갱신 안함
+    if (isNeverShowAgain) return;
+
+    try {
       // 캐시된 데이터 먼저 확인하여 즉시 UI 반영
       const cachedNotices = await getCachedNotices();
       if (cachedNotices) {
@@ -103,7 +103,6 @@ export const useNotices = () => {
 
         setNoticeData(cachedNotices);
         setMainBottomSheetData(mustReadNotices);
-        setIsNoticeLoading(false);
 
         // 백그라운드에서 조용히 최신 데이터 갱신
         getNoticeList()
@@ -114,18 +113,7 @@ export const useNotices = () => {
       }
 
       // 캐시가 없는 경우 API 호출 (응답 속도에 따라 바텀시트 노출 결정)
-      const startTime = performance.now();
       const allNotices = await getNoticeList();
-      const duration = performance.now() - startTime;
-
-      // 응답이 너무 느리면(1.5초 이상) 사용자 경험을 위해 바텀시트를 띄우지 않음
-      if (duration >= 1500) {
-        setMainBottomSheetData([]);
-
-        await cacheNotices(allNotices);
-
-        return;
-      }
 
       const mustReadNotices = allNotices.filter((n) => n.mustRead === 1);
 
@@ -136,14 +124,11 @@ export const useNotices = () => {
       logger.error(`Failed to get notice bottom sheet. ${e.stack || e}`);
 
       setMainBottomSheetData([]);
-    } finally {
-      setIsNoticeLoading(false);
     }
   }, [
     getCachedNotices,
     setNoticeData,
     setMainBottomSheetData,
-    setIsNoticeLoading,
     getNoticeList,
     cacheNotices,
   ]);
@@ -152,9 +137,8 @@ export const useNotices = () => {
   return useMemo(
     () => ({
       getNoticeList,
-      getNoticeDetail,
       getNoticeBottomSheet,
     }),
-    [getNoticeList, getNoticeDetail, getNoticeBottomSheet],
+    [getNoticeList, getNoticeBottomSheet],
   );
 };

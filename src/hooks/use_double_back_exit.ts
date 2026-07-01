@@ -2,6 +2,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef } from 'react';
 import { BackHandler, Platform } from 'react-native';
 import { useToast } from './use_toast';
+import { useAppStateStore } from '@store/app_state_store';
 
 export const useDoubleBackExit = () => {
   const backPressTime = useRef<number>(0);
@@ -17,6 +18,9 @@ export const useDoubleBackExit = () => {
 
         // 2초(2000ms) 이내에 다시 누른 경우
         if (currentTime - backPressTime.current < 2000) {
+          // 앱 상태 갱신
+          useAppStateStore.getState().setIsExited(true);
+
           // Toast 메시지가 떠 있다면 숨기고 앱 완전 종료
           hideToast();
           BackHandler.exitApp();

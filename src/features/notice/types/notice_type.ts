@@ -20,15 +20,17 @@ export interface INoticeStore {
   noticeData: INoticeData[];
   noticeDetail: INoticeData | null;
   mainBottomSheetData: INoticeData[];
-  isDetailViewing: boolean;
   isNoticeLoading: boolean;
+  isVisibleBottomSheet: boolean; // 바텀시트 표시 여부
+  isNeverShowAgain: boolean;
 
   // Actions
   setNoticeData: (notices: INoticeData[]) => void;
   setMainBottomSheetData: (state: INoticeData[]) => void;
   setNoticeDetail: (notice: INoticeData | null) => void;
-  setIsDetailViewing: (viewingState: boolean) => void;
-  setIsNoticeLoading: (loading: boolean) => void;
+  setIsNoticeLoading: (loadingState: boolean) => void;
+  setIsVisibleBottomSheet: (visible: boolean) => void;
+  setIsNeverShowAgain: (show: boolean) => void;
 }
 
 // NoticeItem.tsx
