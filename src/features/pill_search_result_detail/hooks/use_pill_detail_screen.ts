@@ -3,9 +3,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { usePillDetail } from '@features/pill_search_result_detail/hooks/use_pill_detail';
 import { usePillBox } from '@features/pill_save/hooks/use_pill_box';
 import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
-import logger from '@utils/logger';
-import { useRecentSearchPillStore } from '@store/recent_search_pill_store';
-import { TRecentSearchPill } from '@common_types/recent_search_pill';
+import { useRecentViewedPillStore } from '@store/recent_viewed_pill_store';
+import { TRecentViewedPill } from '@common_types/recent_viewed_pill';
 
 export const usePillDetailScreen = () => {
   const { itemImage, ITEM_SEQ } = useLocalSearchParams();
@@ -15,7 +14,7 @@ export const usePillDetailScreen = () => {
   const [pillData, setPillData] = useState<IPillDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const { loadPillDetail } = usePillDetail();
-  const { setRecentSearchPills } = useRecentSearchPillStore();
+  const { setRecentViewedPills } = useRecentViewedPillStore();
 
   const { saveState, toggleSave } = usePillBox(pillData?.ITEM_SEQ ?? '');
 
@@ -36,13 +35,13 @@ export const usePillDetailScreen = () => {
     });
   }, [pillData, toggleSave, itemImageStr]);
 
-  // 최근 검색 저장
+  // 최근 조회 저장
   useEffect(() => {
     if (pillData?.ITEM_SEQ) {
-      setRecentSearchPills({
+      setRecentViewedPills({
         ITEM_SEQ: pillData.ITEM_SEQ,
         ITEM_NAME: pillData.ITEM_NAME,
-      } as TRecentSearchPill);
+      } as TRecentViewedPill);
     }
   }, [pillData?.ITEM_SEQ]);
 

@@ -21,7 +21,7 @@ export const SEARCH_LIST: ISettingListType[] = [
     path: 'notice',
   },
   {
-    id: 'CLEAR_RECENT_SEARCH',
+    id: 'CLEAR_RECENT_VIEWED',
     title: '기록 삭제',
     value: '',
     path: '',

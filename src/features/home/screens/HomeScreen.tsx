@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { styles } from '../styles/HomeScreen';
-import LastSearchPill from '../components/organisms/LastSearchPill';
+import LastViewedPill from '../components/organisms/LastViewedPill';
 import MenuList from '../components/organisms/MenuList';
 import TakeGuide from '../components/organisms/TakeGuide';
 import { useRouter } from 'expo-router';
@@ -11,7 +11,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <LastSearchPill />
+      <LastViewedPill />
       <View style={styles.hr}></View>
       <MenuList
         onPillIdentificationPress={() =>

@@ -6,12 +6,12 @@ import { SEARCH_LIST } from '@features/setting/constants/setting_list';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ISettingListType } from '@features/setting/types/setting_type';
 import logger from '@utils/logger';
-import { useRecentSearchPillStore } from '@store/recent_search_pill_store';
+import { useRecentViewedPillStore } from '@store/recent_viewed_pill_store';
 
 export const useSetting = () => {
   const router = useRouter();
-  const resetRecentSearch = useRecentSearchPillStore(
-    (state) => state.resetRecentSearch,
+  const resetRecentViewed = useRecentViewedPillStore(
+    (state) => state.resetRecentViewed,
   );
 
   const loadPillStorageCount = useCallback(async () => {
@@ -59,9 +59,9 @@ export const useSetting = () => {
     [loadPillStorageCount],
   );
 
-  // 최근 검색 기록 삭제
-  const clearRecentSearch = useCallback(async () => {
-    Alert.alert('기록 삭제', '최근 검색한 알약 기록을 삭제하시겠습니까?', [
+  // 최근 조회 기록 삭제
+  const clearRecentViewed = useCallback(async () => {
+    Alert.alert('기록 삭제', '최근 조회한 알약 기록을 삭제하시겠습니까?', [
       {
         text: '취소',
         style: 'cancel',
@@ -71,7 +71,7 @@ export const useSetting = () => {
         style: 'destructive',
         onPress: async () => {
           try {
-            resetRecentSearch();
+            resetRecentViewed();
 
             Alert.alert('완료', '검색 기록이 삭제되었습니다.');
           } catch (e) {
@@ -99,15 +99,15 @@ export const useSetting = () => {
           clearPillStorage(onListUpdate);
           break;
 
-        case 'CLEAR_RECENT_SEARCH':
-          clearRecentSearch();
+        case 'CLEAR_RECENT_VIEWED':
+          clearRecentViewed();
           break;
 
         default:
           break;
       }
     },
-    [router, clearPillStorage, clearRecentSearch],
+    [router, clearPillStorage, clearRecentViewed],
   );
 
   return { handleSettingClick, loadPillStorageCount };

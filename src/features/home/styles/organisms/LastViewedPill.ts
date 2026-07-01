@@ -14,23 +14,24 @@ export const styles = StyleSheet.create({
     ...FONT_PAPERLOGY_WEIGHT['regular'],
   },
   scrollView: {
-    height: px(60),
+    flexGrow: 0,
   },
-  notLastSearchPllDataWrapper: {
+  notLastViewedPllDataWrapper: {
     flex: 1,
     height: px(60),
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notLastSearchPllDataText: {
+  notLastViewedPllDataText: {
     color: COLOR_GRAY[200],
     ...FONT_PAPERLOGY_WEIGHT['medium'],
   },
   searchTagList: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: px(8),
+    paddingRight: px(16),
   },
 });
