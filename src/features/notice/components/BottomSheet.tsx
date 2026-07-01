@@ -6,6 +6,8 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Dimensions,
+  BackHandler,
+  Platform,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { styles } from '../styles/BottomSheet';
@@ -24,6 +26,7 @@ const BottomSheet = ({
 }: IBottomSheetProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const isClosing = useRef(false);
   const { moveToDetailContent } = useBottomSheet();
 
   const viewabilityConfig = useRef({
@@ -46,7 +49,35 @@ const BottomSheet = ({
     }).start();
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const onBackPress = () => {
+      if (isClosing.current) return true;
+      isClosing.current = true;
+
+      Animated.timing(slideAnim, {
+        toValue: SCREEN_HEIGHT,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        onClose();
+      });
+
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+
+    return () => subscription.remove();
+  }, [onClose, slideAnim]);
+
   const handleClose = () => {
+    if (isClosing.current) return;
+    isClosing.current = true;
     // 모달 닫힐 때 아래로 슬라이드
     Animated.timing(slideAnim, {
       toValue: SCREEN_HEIGHT,
@@ -58,6 +89,8 @@ const BottomSheet = ({
   };
 
   const handleNeverShowAgain = () => {
+    if (isClosing.current) return;
+    isClosing.current = true;
     Animated.timing(slideAnim, {
       toValue: SCREEN_HEIGHT,
       duration: 300,
@@ -114,6 +147,8 @@ const BottomSheet = ({
         <TouchableOpacity
           style={styles.detailButton}
           onPress={() => {
+            if (isClosing.current) return;
+            isClosing.current = true;
             // 애니메이션 시작
             Animated.timing(slideAnim, {
               toValue: SCREEN_HEIGHT,
