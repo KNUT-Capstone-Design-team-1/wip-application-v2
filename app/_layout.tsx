@@ -25,8 +25,7 @@ const RootLayout = () => {
         <DatabaseUpdateView
           status={updateProgress.status}
           progress={updateProgress.progress}
-          currentPage={updateProgress.currentPage}
-          totalPages={updateProgress.totalPages}
+          isUpdating={updateProgress.isUpdating}
         />
         <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
       </SafeAreaProvider>

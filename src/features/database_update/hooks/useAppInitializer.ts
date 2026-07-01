@@ -25,6 +25,7 @@ export const useAppInitializer = () => {
   const [updateProgress, setUpdateProgress] = useState<IUpdateProgress>({
     status: '데이터 동기화 준비 중',
     progress: 0,
+    isUpdating: false,
   });
 
   const {
@@ -88,10 +89,19 @@ export const useAppInitializer = () => {
   useEffect(() => {
     const boot = async () => {
       try {
-        setUpdateProgress({ status: '서버 연결 중', progress: 0 });
+        setUpdateProgress({
+          status: '서버 연결 중',
+          progress: 0,
+          isUpdating: false,
+        });
+
         await AppConfigService.loadExternalConfig();
 
-        setUpdateProgress({ status: '데이터 동기화 시작', progress: 0.05 });
+        setUpdateProgress({
+          status: '데이터 동기화 시작',
+          progress: 0,
+          isUpdating: false,
+        });
 
         const initDatabaseSuccess = await initDatabase();
         if (!initDatabaseSuccess) {
@@ -116,7 +126,11 @@ export const useAppInitializer = () => {
       } catch (e) {
         logger.error(`Failed to init Database. ${(e as Error).stack || e}`);
 
-        setUpdateProgress({ status: '데이터 동기화 실패', progress: 0 });
+        setUpdateProgress({
+          status: '데이터 동기화 실패',
+          progress: 0,
+          isUpdating: false,
+        });
 
         setIsInitializing(false);
       }
@@ -143,6 +157,7 @@ export const useAppInitializer = () => {
       setUpdateProgress({
         status: `${TABLE_NAME_MAP[updateCurrentTable]} 데이터 동기화 진행중`,
         progress: currentTableIndexRef.current / ALL_DATA_TABLES.length,
+        isUpdating: true,
       });
 
       const initResult =
@@ -219,7 +234,11 @@ export const useAppInitializer = () => {
 
       if (currentTableIndexRef.current >= ALL_DATA_TABLES.length) {
         setStatus('COMPLETED');
-        setUpdateProgress({ status: '완료', progress: 1 });
+        setUpdateProgress((prev) => ({
+          status: '완료',
+          progress: 1,
+          isUpdating: prev.isUpdating,
+        }));
 
         setTimeout(() => {
           setIsInitializing(false);
@@ -278,8 +297,7 @@ export const useAppInitializer = () => {
         setUpdateProgress({
           status: `${TABLE_NAME_MAP[updateCurrentTable]} 데이터 동기화 중`,
           progress: newOverallProgress,
-          currentPage: updateCurrentPage,
-          totalPages: newTotalPages,
+          isUpdating: true,
         });
 
         if (isCancelled) {

@@ -23,14 +23,15 @@ export type TDataTable =
   | 'psychotropics'
   | 'prohibited_list';
 
+// 동기화가 빠른 순서로 진행
 export const ALL_DATA_TABLES: TDataTable[] = [
-  'pill_data',
-  'mark_images',
-  'nearby_pharmacies',
   'cannabis',
+  'mark_images',
   'narcotics',
   'psychotropics',
+  'nearby_pharmacies',
   'prohibited_list',
+  'pill_data',
 ] as const;
 
 export const TABLE_NAME_MAP: Record<TDataTable, string> = {
