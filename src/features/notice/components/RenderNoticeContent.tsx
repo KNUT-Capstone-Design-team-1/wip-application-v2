@@ -43,7 +43,12 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
         return (
           <Text
             key={index}
-            style={{ fontSize: fontPx(16), lineHeight: px(22) }}
+            style={{
+              fontSize: fontPx(16),
+              lineHeight: px(22),
+              fontFamily: 'Paperlogy',
+              fontWeight: 500,
+            }}
           >
             {trimmed}
           </Text>
