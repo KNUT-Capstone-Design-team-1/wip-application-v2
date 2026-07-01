@@ -55,6 +55,7 @@ export const useUnifiedSearch = () => {
           showToast({
             type: 'error',
             message:
+              searchResult.message ||
               '서버로 부터 검색 결과를 받아오는데 실패했습니다. 나중에 다시 시도해주세요.',
           });
           return;
