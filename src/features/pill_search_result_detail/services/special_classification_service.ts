@@ -47,7 +47,7 @@ const checkSubstance = async (
 };
 
 /**
- * 성분명 분리: 불필요한 염(Salt)/수화물 단어 제거, 특수문자(/, |, ,) 및 공백 기준 분리
+ * 성분명 분리: 불필요한 염(Salt)/수화물 단어 제거, 특수문자(/, |, ,) 기준 분리
  */
 const processTokens = (text: string) => {
   if (!text) {
@@ -63,7 +63,7 @@ const processTokens = (text: string) => {
     .trim();
 
   return sanitized
-    .split(/[\/|,\s]+/)
+    .split(/[\/|,]+/)
     .map((t) => t.trim())
     .filter((t) => t.length > 0);
 };
