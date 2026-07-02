@@ -6,10 +6,6 @@ import { styles } from '../../styles/molecules/PillSafetySection';
 import { useExternalUrlStore } from '@store/external_url_store';
 import logger from '@utils/logger';
 
-/*
-TODO: 잘못된 정보 신고하기 시 메일 앱으로 이동 전 Dialog/Alert를 표시하여 사용자에게 이동여부를 묻는 중간단계가 필요
-*/
-
 interface IPillSafetySectionProps {
   data: IPillDetail;
 }
@@ -17,7 +13,7 @@ interface IPillSafetySectionProps {
 const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
   const { reportEmail, nifdsUrl, kadaUrl } = useExternalUrlStore();
 
-  const handleReport = useCallback(async () => {
+  const handleReport = useCallback(() => {
     const subject = encodeURIComponent(
       `[잘못된 정보 신고] ${data.ITEM_NAME} (${data.ITEM_SEQ})`,
     );
@@ -27,18 +23,34 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
 
     const url = `mailto:${reportEmail}?subject=${subject}&body=${body}`;
 
-    try {
-      await Linking.openURL(url);
-    } catch (e) {
-      logger.error(
-        `Failed to open email client for reporting. URL: ${url}. ${e.stack || e}`,
-      );
+    Alert.alert(
+      '이메일 앱 열기',
+      '잘못된 정보 신고를 위해 이메일 앱으로 이동합니다. 이동하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '이동',
+          onPress: async () => {
+            try {
+              await Linking.openURL(url);
+            } catch (e) {
+              logger.error(
+                `Failed to open email client for reporting. URL: ${url}. ${(e as Error).stack || e}`,
+              );
 
-      Alert.alert(
-        '오류',
-        `이메일 앱을 열 수 없습니다.\n${reportEmail} 로 직접 메일을 보내주세요.`,
-      );
-    }
+              Alert.alert(
+                '오류',
+                `이메일 앱을 열 수 없습니다.\n${reportEmail} 로 직접 메일을 보내주세요.`,
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   }, [data.ITEM_NAME, data.ITEM_SEQ, reportEmail]);
 
   return (
