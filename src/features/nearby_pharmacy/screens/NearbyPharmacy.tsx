@@ -36,9 +36,9 @@ const NearbyPharmacyScreen = () => {
   }, [errorMsg, showToast]);
 
   /**
-   * 전화번호 클립보드 복사
+   * 약국 정보 클립보드 복사
    */
-  const handleCopyPhoneNumber = useCallback(
+  const handleCopy = useCallback(
     async (text: string) => {
       if (!text) {
         return;
@@ -114,7 +114,7 @@ const NearbyPharmacyScreen = () => {
       {selectedPharmacy && (
         <PharmacyInfoCard
           pharmacy={selectedPharmacy}
-          onCopyPress={handleCopyPhoneNumber}
+          onCopyPress={handleCopy}
           onClosePress={handleCloseInfoCard}
         />
       )}

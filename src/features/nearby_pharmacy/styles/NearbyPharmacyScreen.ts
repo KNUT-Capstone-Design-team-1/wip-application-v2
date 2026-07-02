@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
   infoContent: {
     flex: 1,
   },
-  pharmacyPhoneCopyButton: {
+  copyButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: px(4),
@@ -46,7 +46,6 @@ export const styles = StyleSheet.create({
     fontFamily: 'Paperlogy',
     fontSize: fontPx(18),
     fontWeight: 700,
-    marginBottom: px(5),
     color: COLOR['black'],
   },
   pharmacyPhone: {
