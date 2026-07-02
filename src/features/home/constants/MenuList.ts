@@ -22,7 +22,7 @@ export const BUTTON_LIST = [
     img: nearbyPharmacy,
     path: '/nearby-pharmacy',
     backgroundColor: '#2F71FF',
-    title: '가까운 약국',
+    title: '주변 약국',
     content: '주변 약국을 찾습니다',
   },
   {
