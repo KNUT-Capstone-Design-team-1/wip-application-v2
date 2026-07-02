@@ -181,10 +181,16 @@ export const pickMultipleImages = async (
       return;
     }
 
+    // 이미 1장이 등록되어 있다면 추가로 1장만 선택하도록 제한
+    const currentImageCount =
+      (currentImages?.front ? 1 : 0) + (currentImages?.back ? 1 : 0);
+
+    const limit = currentImageCount === 1 ? 1 : 2;
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsMultipleSelection: true,
-      selectionLimit: 2,
+      allowsMultipleSelection: limit > 1,
+      selectionLimit: limit,
       quality: 0.8,
       orderedSelection: true,
     });
@@ -257,9 +263,15 @@ export const pickMultipleImagesFromFiles = async (
   currentImages?: PillImages,
 ): Promise<void> => {
   try {
+    // 이미 1장이 등록되어 있다면 추가로 1장만 선택하도록 다중 선택 비활성화
+    const currentImageCount =
+      (currentImages?.front ? 1 : 0) + (currentImages?.back ? 1 : 0);
+
+    const limit = currentImageCount === 1 ? false : true;
+
     const result = await DocumentPicker.getDocumentAsync({
       type: 'image/*',
-      multiple: true,
+      multiple: limit,
       copyToCacheDirectory: true,
     });
 
