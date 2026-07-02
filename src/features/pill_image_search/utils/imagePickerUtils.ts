@@ -15,8 +15,8 @@ const handleLimitedPrivilege = (
 
   return new Promise((resolve) => {
     Alert.alert(
-      '전체 사진 접근 권한 권장',
-      '현재 일부 사진에만 접근이 허용되어 있습니다. 모든 앨범의 사진을 자유롭게 선택하시려면 "모든 사진 허용"으로 변경하는 것을 권장합니다.',
+      '안내',
+      '현재 일부 사진에만 접근이 허용되어 있습니다.\n모든 사진을 자유롭게 선택하시려면 "모든 사진 허용"으로 변경해 주세요.',
       [
         {
           text: '현재 상태 유지',
@@ -35,7 +35,7 @@ const handleLimitedPrivilege = (
   });
 };
 
-// 앨범(갤러리) 접근 권한을 요청하고 권한 허용 여부를 반환하는 함수
+// 앨범 접근 권한을 요청하고 권한 허용 여부를 반환하는 함수
 export const requestMediaLibraryPermission = async (): Promise<boolean> => {
   const { status, accessPrivileges } =
     await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -43,8 +43,8 @@ export const requestMediaLibraryPermission = async (): Promise<boolean> => {
   const isDenied = status === 'denied';
   if (isDenied) {
     Alert.alert(
-      '권한 필요',
-      '앨범 접근 권한이 거부되었습니다. 모든 사진을 선택하려면 설정에서 권한을 허용해주세요.',
+      '권한 안내',
+      '앨범 접근 권한이 거부되었습니다.\n모든 사진을 선택하려면 설정에서 권한을 허용해 주세요.',
       [
         { text: '취소', style: 'cancel' },
         { text: '설정으로 이동', onPress: () => Linking.openSettings() },
@@ -82,13 +82,11 @@ const handleSingleImageSelection = (
     return;
   }
 
-  const title = isReplacing
-    ? '나머지 한 장도 변경하시겠습니까?'
-    : '이미지 추가 선택';
+  const title = isReplacing ? '추가 변경 안내' : '추가 선택 안내';
 
   const message = isReplacing
-    ? '앞면 이미지가 변경되었습니다. 나머지 한 장(뒷면 등)도 변경하시겠습니까?'
-    : '한 장의 이미지가 선택되었습니다. 나머지 한 장(뒷면 등)을 추가로 선택해주세요.';
+    ? '앞면 이미지가 변경되었습니다.\n나머지 한 장도 변경하시겠습니까?'
+    : '한 장의 이미지가 선택되었습니다.\n나머지 한 장도 추가로 선택해 주세요.';
 
   const confirmText = isReplacing ? '변경하기' : '추가 선택';
 
@@ -141,7 +139,7 @@ const pickSecondImageFromLibrary = async (): Promise<string | null> => {
     return selectedImageUri;
   } catch (e) {
     logger.error(`Failed to pick second image from library. ${e}`);
-    Alert.alert('오류', '두 번째 이미지를 불러오는 중 오류가 발생했습니다.');
+    Alert.alert('오류', '두 번째 이미지를 불러오는데 실패했습니다.');
     return null;
   }
 };
@@ -164,7 +162,7 @@ const pickSecondImageFromFiles = async (): Promise<string | null> => {
     return selectedImageUri;
   } catch (e) {
     logger.error(`Failed to pick second image from files. ${e}`);
-    Alert.alert('오류', '두 번째 파일을 불러오는 중 오류가 발생했습니다.');
+    Alert.alert('오류', '두 번째 파일을 불러오는데 실패했습니다.');
     return null;
   }
 };
@@ -223,7 +221,7 @@ export const pickMultipleImages = async (
     );
   } catch (e) {
     logger.error(`Failed to pick multiple images from library. ${e}`);
-    Alert.alert('오류', '갤러리에서 이미지를 불러오는 중 오류가 발생했습니다.');
+    Alert.alert('오류', '앨범을 여는 데 실패했습니다.');
   }
 };
 
@@ -253,7 +251,7 @@ export const pickSingleImage = async (
     onSuccess(selectedImageUri);
   } catch (e) {
     logger.error(`Failed to pick single image from library. ${e}`);
-    Alert.alert('오류', '갤러리에서 이미지를 불러오는 중 오류가 발생했습니다.');
+    Alert.alert('오류', '앨범을 여는 데 실패했습니다.');
   }
 };
 
@@ -303,6 +301,6 @@ export const pickMultipleImagesFromFiles = async (
     );
   } catch (e) {
     logger.error(`Failed to pick multiple images from files. ${e.stack || e}`);
-    Alert.alert('오류', '파일을 불러오는 중 오류가 발생했습니다.');
+    Alert.alert('오류', '파일 탐색기를 실행하는데 실패했습니다.');
   }
 };

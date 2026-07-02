@@ -115,7 +115,7 @@ export const useCameraCapture = ({
     } catch (e: any) {
       logger.error(`Failed to capture photo. ${e.stack || e}`);
 
-      Alert.alert('오류', '카메라 실행 중 오류가 발생했습니다.');
+      Alert.alert('오류', '사진 촬영에 실패했습니다.');
     } finally {
       setIsProcessing(false);
     }

@@ -35,8 +35,8 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       );
 
       Alert.alert(
-        '신고하기 실패',
-        `이메일 앱을 열 수 없습니다. ${reportEmail} 로 직접 메일을 보내주세요.`,
+        '오류',
+        `이메일 앱을 열 수 없습니다.\n${reportEmail} 로 직접 메일을 보내주세요.`,
       );
     }
   }, [data.ITEM_NAME, data.ITEM_SEQ, reportEmail]);

@@ -39,7 +39,7 @@ export const useNearbyPharmacy = () => {
       } catch (e) {
         logger.error(`Failed to fetch pharmacies. ${e.stack || e}`);
 
-        setErrorMsg('약국 정보를 가져오는데 실패했습니다.');
+        setErrorMsg('약국 정보를 가져오는 데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -123,11 +123,11 @@ export const useNearbyPharmacy = () => {
 
       showToast({
         type: 'error',
-        message: '위치 확인에 실패했습니다. 다시 시도해주세요.',
+        message: '위치 확인에 실패했습니다.\n다시 시도해 주세요.',
       });
 
       if (!isDataLoaded.current) {
-        setErrorMsg('위치 확인에 실패했습니다. 다시 시도해주세요.'); // 어떤 방식으로도 데이터를 가져오지 못했을 때만 에러 메시지 설정
+        setErrorMsg('위치 확인에 실패했습니다.\n다시 시도해 주세요.'); // 어떤 방식으로도 데이터를 가져오지 못했을 때만 에러 메시지 설정
       }
     } finally {
       setLoading(false);

@@ -30,7 +30,7 @@ export const useSetting = () => {
   // 보관함 초기화
   const clearPillStorage = useCallback(
     async (onSuccess: (updatedList: ISettingListType[]) => void) => {
-      Alert.alert('보관함 초기화', '보관함의 모든 알약을 삭제하시겠습니까?', [
+      Alert.alert('안내', '보관함의 모든 알약을 삭제하시겠습니까?', [
         {
           text: '취소',
           style: 'cancel',
@@ -46,7 +46,7 @@ export const useSetting = () => {
 
               onSuccess(updatedList); // 화면 업데이트
 
-              Alert.alert('완료', '보관함이 초기화되었습니다.');
+              Alert.alert('알림', '보관함이 초기화되었습니다.');
             } catch (e) {
               logger.error(`Failed to clear pill storage: ${e.stack || e}`);
 
@@ -59,9 +59,9 @@ export const useSetting = () => {
     [loadPillStorageCount],
   );
 
-  // 최근 조회 기록 삭제
+  // 최근 조회한 알약 삭제
   const clearRecentViewed = useCallback(async () => {
-    Alert.alert('기록 삭제', '최근 조회한 알약 기록을 삭제하시겠습니까?', [
+    Alert.alert('안내', '최근 조회한 알약을 모두 삭제하시겠습니까?', [
       {
         text: '취소',
         style: 'cancel',
@@ -73,11 +73,11 @@ export const useSetting = () => {
           try {
             resetRecentViewed();
 
-            Alert.alert('완료', '검색 기록이 삭제되었습니다.');
+            Alert.alert('알림', '최근 조회한 알약이 삭제되었습니다.');
           } catch (e) {
             logger.error(`Failed to clear recent search: ${e.stack || e}`);
 
-            Alert.alert('오류', '기록 삭제에 실패했습니다.');
+            Alert.alert('오류', '최근 조회한 알약 삭제에 실패했습니다.');
           }
         },
       },

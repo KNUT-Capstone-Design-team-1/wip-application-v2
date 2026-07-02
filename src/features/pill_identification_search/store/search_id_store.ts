@@ -105,7 +105,7 @@ export const useSearchIdStore = create<ISearchIdStore>((set, get) => ({
       isExactMatch: searchIsExactMatch,
     };
 
-    console.log('data', data);
+    console.log('filter: ', data);
 
     return data;
   },

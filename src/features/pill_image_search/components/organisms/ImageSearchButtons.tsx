@@ -60,11 +60,7 @@ const ImageSearchButtons = ({
 
     // 촬영 전 사진이 1장이었다면, 이번 촬영으로 2장이 채워지므로 카메라 닫기
     if (hasOneImageBeforeCapture) {
-      setTimeout(() => {
-        console.log('2장 촬영 완료, 카메라 닫기');
-        setShowCamera(false);
-      }, 300);
-
+      setTimeout(() => setShowCamera(false), 300);
       return;
     }
 
@@ -75,10 +71,10 @@ const ImageSearchButtons = ({
       return;
     }
 
-    const title = '뒷면 이미지 변경';
+    const title = '추가 촬영 안내';
 
     const message =
-      '앞면 이미지가 변경되었습니다. 나머지 한 장(뒷면 등)도 변경하시겠습니까?';
+      '앞면 이미지가 변경되었습니다.\n나머지 한 장도 변경하시겠습니까?';
 
     const confirmText = '변경하기 (계속 촬영)';
 
@@ -120,11 +116,11 @@ const ImageSearchButtons = ({
     if (shouldPromptForSecondImage) {
       const isReplacing = initialImageCount === 2;
 
-      const title = isReplacing ? '뒷면 이미지 변경' : '이미지 추가 촬영';
+      const title = isReplacing ? '추가 촬영 안내' : '추가 촬영 안내';
 
       const message = isReplacing
-        ? '앞면 이미지가 변경되었습니다. 나머지 한 장(뒷면 등)도 변경하시겠습니까?'
-        : '한 장의 이미지가 촬영되었습니다. 나머지 한 장(뒷면 등)을 추가로 촬영해주세요.';
+        ? '앞면 이미지가 변경되었습니다.\n나머지 한 장도 변경하시겠습니까?'
+        : '한 장의 이미지가 촬영되었습니다.\n나머지 한 장도 추가로 촬영해 주세요.';
 
       const confirmText = isReplacing ? '변경하기 (계속 촬영)' : '추가 촬영';
 

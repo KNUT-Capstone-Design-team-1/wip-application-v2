@@ -131,10 +131,7 @@ export const usePillImageSelection = () => {
     const isMissingImage = !front || !back;
 
     if (isMissingImage) {
-      Alert.alert(
-        '이미지 부족',
-        '알약의 앞면과 뒷면 이미지가 모두 필요합니다.',
-      );
+      Alert.alert('안내', '알약의 앞면과 뒷면 이미지가 모두 필요합니다.');
       return;
     }
 
@@ -158,10 +155,7 @@ export const usePillImageSelection = () => {
     } catch (e) {
       logger.error(`[IMAGE-SEARCH] Failed to image search. ${e.stack || e}`);
 
-      Alert.alert(
-        '검색 실패',
-        '이미지 분석 중 오류가 발생했습니다. 다시 시도해 주세요.',
-      );
+      Alert.alert('오류', '이미지 분석에 실패했습니다.\n다시 시도해 주세요.');
     } finally {
       setIsSearching(false);
       setIsLoading(false);

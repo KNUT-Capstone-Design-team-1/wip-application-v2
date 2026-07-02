@@ -56,7 +56,7 @@ export const useUnifiedSearch = () => {
             type: 'error',
             message:
               searchResult.message ||
-              '서버로 부터 검색 결과를 받아오는데 실패했습니다. 나중에 다시 시도해주세요.',
+              '서버로부터 검색 결과를 받아오는 데 실패했습니다.\n나중에 다시 시도해 주세요.',
           });
           return;
         }
@@ -84,7 +84,7 @@ export const useUnifiedSearch = () => {
 
         showToast({
           type: 'error',
-          message: '통합 검색에 실패했습니다. 나중에 다시 시도해주세요.',
+          message: '통합 검색에 실패했습니다.\n나중에 다시 시도해 주세요.',
         });
       } finally {
         setLoading(false);

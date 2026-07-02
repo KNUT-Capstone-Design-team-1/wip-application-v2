@@ -220,7 +220,7 @@ export const useAppInitializer = () => {
 
       setStatus('ERROR');
       showToast({
-        message: '데이터 동기화 중 오류가 발생했습니다. 앱을 재시작해 주세요.',
+        message: '데이터 동기화에 실패했습니다. 앱을 재시작해 주세요.',
       });
     };
 
