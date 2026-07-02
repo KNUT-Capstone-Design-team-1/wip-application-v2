@@ -56,10 +56,23 @@ export const styles = StyleSheet.create({
     fontWeight: 600,
     textDecorationLine: 'underline',
   },
+  normalText: {
+    fontFamily: 'Paperlogy',
+    color: COLOR['black'],
+    fontWeight: 500,
+    fontSize: fontPx(14),
+  },
   warningText: {
     fontFamily: 'Paperlogy',
     color: COLOR['alert'],
     fontWeight: 700,
     fontSize: fontPx(14),
+  },
+  smallInfoText: {
+    fontFamily: 'Paperlogy',
+    fontSize: fontPx(12),
+    color: COLOR_GRAY[400],
+    fontWeight: 500,
+    marginTop: px(4),
   },
 });

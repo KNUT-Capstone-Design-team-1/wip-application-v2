@@ -47,6 +47,28 @@ const checkSubstance = async (
 };
 
 /**
+ * 성분명 분리: 불필요한 염(Salt)/수화물 단어 제거, 특수문자(/, |, ,) 및 공백 기준 분리
+ */
+const processTokens = (text: string) => {
+  if (!text) {
+    return [];
+  }
+
+  // 제거할 염기 및 수화물 단어 목록
+  const sanitized = text
+    .replace(
+      /\b(hydrochloride|hydrate|sulfate|maleate|tartrate|citrate|mesylate|acetate|bromide|anhydrous|micronized|diluted)\b/gi,
+      '',
+    )
+    .trim();
+
+  return sanitized
+    .split(/[\/|,\s]+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0);
+};
+
+/**
  * 금지 약물(도핑) 여부 확인 (추가 정보 포함)
  */
 const checkProhibitedSubstance = async (
@@ -54,16 +76,26 @@ const checkProhibitedSubstance = async (
 ): Promise<{ ingredients: string[] }> => {
   const matched = new Set<string>();
 
-  if (!ingredients.en) {
-    return { ingredients: [] };
-  }
+  const tokensEn = processTokens(ingredients.en);
+  const tokensKr = processTokens(ingredients.kr);
 
-  const found = await getProhibitedList(
-    { contents: ingredients.en },
-    { page: 1, limit: 100 },
-  );
+  // 중복된 토큰 검사를 피하기 위해 Set으로 병합
+  const allTokens = Array.from(new Set([...tokensEn, ...tokensKr]));
 
-  found.forEach((item) => matched.add(item.contents));
+  const checkAndAddProhibitedToken = async (token: string) => {
+    const found = await getProhibitedList(
+      { contents: token },
+      { page: 1, limit: 100 },
+    );
+
+    if (found.length > 0) {
+      // 검색된 원본 텍스트가 아닌, 파라미터로 들어온 분리된 성분명(token)을 표시
+      matched.add(token);
+    }
+  };
+
+  // 병렬로 도핑 금지 약물 테이블(prohibited_list)에서 검색
+  await Promise.all(allTokens.map(checkAndAddProhibitedToken));
 
   return { ingredients: Array.from(matched) };
 };

@@ -49,7 +49,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isDrivingWarning ? (
             <>
-              <Text style={styles.warningText}>⚠️ 주의 (O)</Text>
+              <Text style={styles.warningText}>주의 (O)</Text>
               {`\n해당 단어: `}
               <Text style={styles.warningText}>
                 {Array.isArray(data.drivingWarningKeywords) &&
@@ -133,13 +133,15 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isProhibited ? (
             <>
-              <Text style={styles.warningText}>주의 성분 </Text>
+              <Text style={styles.normalText}>주의 성분: </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.prohibitedIngredients)
                   ? data.prohibitedIngredients.join(', ')
                   : '-'}
               </Text>
-              {`)\n적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
+              <Text style={styles.smallInfoText}>
+                {`\n※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
+              </Text>
             </>
           ) : (
             '해당 없음 (X)'
