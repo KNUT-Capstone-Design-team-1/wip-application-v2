@@ -49,8 +49,9 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isDrivingWarning ? (
             <>
-              <Text style={styles.warningText}>주의 (O)</Text>
-              {`\n해당 단어: `}
+              <Text style={styles.warningText}>⚠️ 주의</Text>
+              {`\n`}
+              <Text style={styles.normalText}>해당 문구: </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.drivingWarningKeywords) &&
                 data.drivingWarningKeywords.length > 0
@@ -59,7 +60,7 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
               </Text>
             </>
           ) : (
-            '안전 (X)'
+            '해당 없음 (X)'
           )
         }
       />
@@ -69,8 +70,9 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isNarcotic ? (
             <>
-              <Text style={styles.warningText}>확인됨</Text>
-              {`\n해당 성분: `}
+              <Text style={styles.warningText}>⚠️ 주의</Text>
+              {`\n`}
+              <Text style={styles.normalText}>해당 성분: </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.narcoticIngredients)
                   ? data.narcoticIngredients.join(', ')
@@ -87,8 +89,9 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isCannabis ? (
             <>
-              <Text style={styles.warningText}>확인됨</Text>
-              {`\n해당 성분: `}
+              <Text style={styles.warningText}>⚠️ 주의</Text>
+              {`\n`}
+              <Text style={styles.normalText}>해당 성분: </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.cannabisIngredients)
                   ? data.cannabisIngredients.join(', ')
@@ -105,8 +108,9 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isPsychotropic ? (
             <>
-              <Text style={styles.warningText}>확인됨</Text>
-              {`\n해당 성분: `}
+              <Text style={styles.warningText}>⚠️ 주의</Text>
+              {`\n`}
+              <Text style={styles.normalText}>해당 성분: </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.psychotropicIngredients)
                   ? data.psychotropicIngredients.join(', ')
@@ -133,7 +137,9 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isProhibited ? (
             <>
-              <Text style={styles.normalText}>주의 성분: </Text>
+              <Text style={styles.warningText}>⚠️ 주의</Text>
+              {`\n`}
+              <Text style={styles.normalText}>해당 성분: </Text>
               <Text style={styles.warningText}>
                 {Array.isArray(data.prohibitedIngredients)
                   ? data.prohibitedIngredients.join(', ')
