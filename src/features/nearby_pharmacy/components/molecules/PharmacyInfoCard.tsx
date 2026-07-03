@@ -18,11 +18,7 @@ const PharmacyInfoCard = ({
           style={styles.copyButton}
           onPress={() => onCopyPress(pharmacy.name)}
         >
-          <Text
-            style={[styles.pharmacyName, { textDecorationLine: 'underline' }]}
-          >
-            {pharmacy.name}
-          </Text>
+          <Text style={styles.pharmacyName}>{pharmacy.name}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -33,10 +29,8 @@ const PharmacyInfoCard = ({
           <Text
             style={[
               styles.pharmacyPhone,
-              { textDecorationLine: 'underline' },
               !pharmacy.telephone && {
                 color: COLOR_GRAY[300],
-                textDecorationLine: 'none',
               },
             ]}
           >
@@ -49,14 +43,7 @@ const PharmacyInfoCard = ({
           disabled={!pharmacy.address}
           onPress={() => onCopyPress(pharmacy.address)}
         >
-          <Text
-            style={[
-              styles.pharmacyAddress,
-              { textDecorationLine: 'underline' },
-            ]}
-          >
-            {pharmacy.address}
-          </Text>
+          <Text style={styles.pharmacyAddress}>{pharmacy.address}</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.closeButton} onPress={onClosePress}>

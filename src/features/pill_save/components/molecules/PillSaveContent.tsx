@@ -14,7 +14,7 @@ import { fontPx } from '@utils/responsive';
  * 알약 이미지 컴포넌트
  */
 const PillImage = ({ uri }: { uri: string }) => (
-  <Image source={{ uri }} contentFit="contain" style={styles.pillImage} />
+  <Image source={{ uri }} contentFit="cover" style={styles.pillImage} />
 );
 
 /**

@@ -26,9 +26,14 @@ const PillBasicHeader = ({
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.nameViewWrapper}>
-          <Text style={styles.name}>{itemNames[0].trim()}</Text>
+          <Text selectable={true} style={styles.name}>
+            {itemNames[0].trim()}
+          </Text>
           {itemNames[1] && (
-            <Text style={[styles.name, { fontSize: fontPx(18) }]}>
+            <Text
+              selectable={true}
+              style={[styles.name, { fontSize: fontPx(18) }]}
+            >
               {itemNames[1]}
             </Text>
           )}

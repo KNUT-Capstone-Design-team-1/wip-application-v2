@@ -61,6 +61,8 @@ export const styles = StyleSheet.create({
     fontSize: fontPx(14),
     fontWeight: 600,
     color: COLOR_PRIMARY[300],
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   closeButton: {
     position: 'absolute',

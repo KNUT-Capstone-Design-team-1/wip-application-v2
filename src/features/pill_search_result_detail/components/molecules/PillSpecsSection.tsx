@@ -12,8 +12,8 @@ interface IPillSpecsSectionProps {
 const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
   return (
     <View style={styles.infoWrapper}>
-      <InfoRow label="제조사" value={data.ENTP_NAME} copyable />
-      <InfoRow label="주성분" value={data.MAIN_ITEM_INGR} copyable />
+      <InfoRow label="제조사" value={data.ENTP_NAME} />
+      <InfoRow label="주성분" value={data.MAIN_ITEM_INGR} />
       <InfoRow label="분류명" value={data.CLASS_NAME} />
       <InfoRow label="모양" value={data.DRUG_SHAPE} />
       <InfoRow label="제형" value={data.FORM_CODE} />
@@ -28,9 +28,9 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
       {/* 더보기 정보 */}
       {moreInfo && (
         <>
-          <InfoRow label="영문명" value={data.ITEM_ENG_NAME} copyable />
+          <InfoRow label="영문명" value={data.ITEM_ENG_NAME} />
           <InfoRow label="전문/일반" value={data.ETC_OTC_CODE} />
-          <InfoRow label="분류 번호" value={data.CLASS_NO} copyable />
+          <InfoRow label="분류 번호" value={data.CLASS_NO} />
           <Text style={styles.sectionTitle}>[ 상세 제원 ]</Text>
           <InfoRow
             label="색상"
@@ -49,15 +49,10 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
             label="원료 성분"
             value={data.MATERIAL_NAME?.replace(/[;|]/g, '\n')}
           />
-          <InfoRow
-            label="영문 성분명"
-            value={data.MATERIAL_ENG_NAME}
-            copyable
-          />
+          <InfoRow label="영문 성분명" value={data.MATERIAL_ENG_NAME} />
           <InfoRow
             label="첨가제"
             value={data.INGR_NAME?.replace(/[;|]/g, '\n')}
-            copyable
           />
           <InfoRow label="총량" value={data.TOTAL_CONTENT} />
           <InfoRow label="저장 방법" value={data.STORAGE_METHOD} />
@@ -67,8 +62,8 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
             value={data.INSURANCE_CODE || data.COVERAGE_ENG_NAME}
           />
           <InfoRow label="허가 일자" value={data.ITEM_PERMIT_DATE} />
-          <InfoRow label="업체 영문명" value={data.ENTP_ENG_NAME} copyable />
-          <InfoRow label="위탁제조업체" value={data.OEM_ENTP_NAME} copyable />
+          <InfoRow label="업체 영문명" value={data.ENTP_ENG_NAME} />
+          <InfoRow label="위탁제조업체" value={data.OEM_ENTP_NAME} />
 
           <InfoRow label="변경 일자" value={data.CHANGE_DATE} />
           <InfoRow
