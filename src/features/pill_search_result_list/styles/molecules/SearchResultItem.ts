@@ -19,8 +19,8 @@ export const styles = StyleSheet.create({
   },
   searchItemContents: {
     flex: 1,
-    gap: px(1),
-    // justifyContent: 'space-between',
+    paddingVertical: px(2),
+    gap: px(4),
   },
   searchItemTitle: {
     fontFamily: 'Paperlogy',
@@ -65,10 +65,12 @@ export const styles = StyleSheet.create({
     color: COLOR_PRIMARY[400],
     fontSize: fontPx(14),
   },
+  infoTitleWrapper: {
+    gap: px(1),
+  },
   infoPrintWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: px(4),
   },
   infoSeparator: {
     width: px(2),
@@ -78,7 +80,7 @@ export const styles = StyleSheet.create({
   },
   infoEntpWrapper: {
     flexGrow: 1,
-    gap: px(1),
     alignItems: 'flex-end',
+    justifyContent: 'flex-end',
   },
 });

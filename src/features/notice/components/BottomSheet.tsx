@@ -15,7 +15,7 @@ import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
 import { formatContents } from '@features/notice/utils/notice';
 import { px } from '@utils/responsive';
-import { COLOR } from '@constants/color';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -24,6 +24,7 @@ const BottomSheet = ({
   onClose,
   onNeverShowAgain,
 }: IBottomSheetProps) => {
+  const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const isClosing = useRef(false);
@@ -164,7 +165,12 @@ const BottomSheet = ({
         >
           <Text style={styles.detailButtonText}>자세히 보기</Text>
         </TouchableOpacity>
-        <View style={styles.bottomSheetControl}>
+        <View
+          style={[
+            styles.bottomSheetControl,
+            { paddingBottom: Math.max(insets.bottom, px(12)) },
+          ]}
+        >
           <TouchableOpacity onPress={handleNeverShowAgain}>
             <Text style={styles.sheetCloseToday}>하루 동안 보지 않기</Text>
           </TouchableOpacity>

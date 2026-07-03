@@ -20,7 +20,7 @@ const SubHeader = ({ title }: SubHeaderProps) => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.content}>
+      <View style={styles.subHeaderContent}>
         <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
           <ChevronLeft
             size={fontPx(24)}

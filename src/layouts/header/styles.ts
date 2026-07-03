@@ -6,9 +6,16 @@ import { px, fontPx } from '@utils/responsive';
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: COLOR.white,
-    paddingHorizontal: px(20),
+    paddingHorizontal: px(8),
   },
-  content: {
+  HeaderContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: px(50),
+    paddingHorizontal: px(12),
+  },
+  subHeaderContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

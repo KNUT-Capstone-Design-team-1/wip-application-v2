@@ -9,7 +9,7 @@ import { COLOR_PRIMARY } from '@constants/color';
  */
 const SaveCountHeader = ({ count }: { count: number }) => (
   <View style={styles.header}>
-    <Text style={styles.countText}>전체 개수 {count}개</Text>
+    <Text style={styles.countText}>전체 개수 {count}</Text>
   </View>
 );
 

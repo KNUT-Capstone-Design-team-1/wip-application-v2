@@ -26,10 +26,10 @@ const ResultInfoSection = ({
   count: number;
   markImages: { code: string; base64: string }[];
 }) => (
-  <>
+  <View style={styles.searchResultInfoWrapper}>
     <SearchConditionTags markImages={markImages} />
     <Text style={styles.searchCountLabel}>검색 결과 {count}건</Text>
-  </>
+  </View>
 );
 
 /**

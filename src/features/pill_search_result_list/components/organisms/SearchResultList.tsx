@@ -37,10 +37,8 @@ const ResultFlashList = ({
   isLoadingMore: boolean;
 }) => {
   const renderItem: ListRenderItem<IPillData> = useCallback(
-    ({ item, index }) => (
-      <View style={index === 0 ? { marginTop: px(-10) } : undefined}>
-        <SearchResultItem resultItem={item} itemClickHandler={onItemClick} />
-      </View>
+    ({ item }) => (
+      <SearchResultItem resultItem={item} itemClickHandler={onItemClick} />
     ),
     [onItemClick],
   );
@@ -49,7 +47,7 @@ const ResultFlashList = ({
 
   const renderFooter = useCallback(() => {
     return isLoadingMore ? (
-      <View style={{ paddingVertical: px(20), height: px(100) }}>
+      <View style={styles.searchResultListLoadingWrapper}>
         <ActivityIndicator size="small" color="#007AFF" />
       </View>
     ) : (
@@ -60,6 +58,7 @@ const ResultFlashList = ({
   return (
     <FlashList
       style={styles.searchResultListWrapper}
+      contentContainerStyle={styles.searchResultListContentContainer}
       data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
@@ -82,7 +81,7 @@ const SearchResultList = ({
   const isEmpty = searchResultData.length === 0 && !isLoadingMore;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.searchResultListContainer}>
       {isEmpty ? (
         <EmptyResult />
       ) : (

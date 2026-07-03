@@ -15,7 +15,7 @@ const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
       <Image
         source={{ uri: imageUri }}
         style={{ width: '100%', height: '100%' }}
-        contentFit="contain"
+        contentFit="cover"
       />
     ) : (
       <View style={styles.fallbackImageContainer}>
@@ -33,17 +33,19 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
 
   return (
     <View style={styles.searchItemContents}>
-      <Text style={styles.searchItemTitle} numberOfLines={1}>
-        {itemNames[0]}
-      </Text>
-      {itemNames[1] && (
-        <Text
-          style={[styles.searchItemTitle, { fontSize: fontPx(12) }]}
-          numberOfLines={1}
-        >
-          {itemNames[1]}
+      <View style={styles.infoTitleWrapper}>
+        <Text style={styles.searchItemTitle} numberOfLines={1}>
+          {itemNames[0]}
         </Text>
-      )}
+        {itemNames[1] && (
+          <Text
+            style={[styles.searchItemTitle, { fontSize: fontPx(12) }]}
+            numberOfLines={1}
+          >
+            {itemNames[1]}
+          </Text>
+        )}
+      </View>
       <Text style={styles.searchItemClassName} numberOfLines={1}>
         {pill.CLASS_NAME}
       </Text>

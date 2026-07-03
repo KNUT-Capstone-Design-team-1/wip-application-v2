@@ -13,7 +13,7 @@ const Header = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.content}>
+      <View style={styles.HeaderContent}>
         <View style={styles.logoWrapper}>
           <Text style={styles.logoText}>이게뭐약</Text>
         </View>

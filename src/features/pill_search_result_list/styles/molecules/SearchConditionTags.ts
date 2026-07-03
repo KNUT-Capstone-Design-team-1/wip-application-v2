@@ -4,17 +4,15 @@ import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchConditionContainer: {
-    paddingHorizontal: px(20),
     marginBottom: px(10),
   },
   tagList: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: px(8),
   },
   tag: {
     backgroundColor: '#F2F2F7',
-    paddingHorizontal: px(10),
+    paddingHorizontal: px(8),
     paddingVertical: px(4),
     borderRadius: px(12),
     flexDirection: 'row',

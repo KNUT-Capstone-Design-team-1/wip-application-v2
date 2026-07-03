@@ -6,18 +6,26 @@ export const styles = StyleSheet.create({
   pillSearchResultListRoot: {
     flex: 1,
     backgroundColor: COLOR['white'],
-    padding: px(20),
+    paddingVertical: px(20),
   },
   searchCountLabel: {
     fontFamily: 'Paperlogy',
     fontWeight: 500,
     color: COLOR_GRAY[400],
     fontSize: fontPx(12),
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    marginLeft: px(2),
   },
   searchBarWrapper: {
     marginBottom: px(10),
     backgroundColor: COLOR['white'],
     zIndex: 10,
+    paddingHorizontal: px(20),
+  },
+  searchResultInfoWrapper: {
+    paddingHorizontal: px(20),
+    gap: px(2),
   },
   loadingContainer: {
     flex: 1,
