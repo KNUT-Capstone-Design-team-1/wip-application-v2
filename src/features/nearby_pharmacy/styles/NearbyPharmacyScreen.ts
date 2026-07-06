@@ -43,23 +43,14 @@ export const styles = StyleSheet.create({
     marginBottom: px(5),
   },
   pharmacyName: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR['black'],
   },
   pharmacyPhone: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
     color: COLOR_PRIMARY[200],
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
   pharmacyAddress: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 600,
     color: COLOR_PRIMARY[300],
     includeFontPadding: false,
     textAlignVertical: 'center',

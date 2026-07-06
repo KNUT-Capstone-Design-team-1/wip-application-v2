@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../styles/PrevNextPagination';
 import { IPrevNextPaginationProps } from '../types/notice_type';
 
@@ -19,19 +20,21 @@ const PrevNextPagination = ({
           currentPage === 0 && styles.paginationButtonDisabled,
         ]}
       >
-        <Text
+        <BaseText
+          size={14}
+          weight="semiBold"
           style={[
             styles.paginationButtonText,
             currentPage === 0 && styles.paginationButtonTextDisabled,
           ]}
         >
           이전
-        </Text>
+        </BaseText>
       </TouchableOpacity>
 
-      <Text style={styles.pageIndicator}>
+      <BaseText size={14} weight="semiBold" style={styles.pageIndicator}>
         {currentPage + 1} / {totalPages}
-      </Text>
+      </BaseText>
 
       <TouchableOpacity
         onPress={onNext}
@@ -41,7 +44,9 @@ const PrevNextPagination = ({
           currentPage === totalPages - 1 && styles.paginationButtonDisabled,
         ]}
       >
-        <Text
+        <BaseText
+          size={14}
+          weight="semiBold"
           style={[
             styles.paginationButtonText,
             currentPage === totalPages - 1 &&
@@ -49,7 +54,7 @@ const PrevNextPagination = ({
           ]}
         >
           다음
-        </Text>
+        </BaseText>
       </TouchableOpacity>
     </View>
   );

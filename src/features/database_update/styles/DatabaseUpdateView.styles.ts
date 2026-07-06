@@ -24,16 +24,10 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   statusText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR_PRIMARY[100],
     marginBottom: px(12),
   },
   noticeText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
-    fontWeight: 500,
     color: COLOR_GRAY[400],
     marginBottom: px(16),
     textAlign: 'center',
@@ -57,10 +51,7 @@ export const styles = StyleSheet.create({
     marginTop: px(8),
   },
   percentText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
     color: COLOR_PRIMARY[100],
-    fontWeight: 700,
     marginBottom: px(4),
   },
 });

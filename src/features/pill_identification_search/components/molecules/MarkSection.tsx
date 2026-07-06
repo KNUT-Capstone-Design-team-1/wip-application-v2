@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity } from 'react-native';
+import { View, Modal, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { Image } from 'expo-image';
 import Button from '../atoms/Button';
 import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
@@ -70,7 +71,9 @@ const MarkSection = () => {
             />
           </View>
           <View style={{ justifyContent: 'center' }}>
-            <Text style={styles.markTitle}>{selectedMarkTitle}</Text>
+            <BaseText style={styles.markTitle} size={14} weight="bold">
+              {selectedMarkTitle}
+            </BaseText>
           </View>
           <TouchableOpacity
             style={styles.selectedMarkDelete}

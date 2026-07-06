@@ -1,12 +1,6 @@
 import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Modal,
-} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image, Modal } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { Camera } from 'react-native-vision-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '../../styles/organisms/CameraScreen';
@@ -64,12 +58,16 @@ const CameraScreen = ({
             <X size={fontPx(24)} color={COLOR['white']} strokeWidth={3} />
           </TouchableOpacity>
 
-          <Text style={styles.title}>알약 검색</Text>
+          <BaseText size={18} weight="bold" style={styles.title}>
+            알약 검색
+          </BaseText>
 
           <View style={styles.slotsWrapper}>
             {/* 앞면 */}
             <View style={styles.slot}>
-              <Text style={styles.label}>앞면</Text>
+              <BaseText size={14} weight="medium" style={styles.label}>
+                앞면
+              </BaseText>
               {frontImage ? (
                 <Image source={{ uri: frontImage }} style={styles.slotImage} />
               ) : (
@@ -85,7 +83,9 @@ const CameraScreen = ({
 
             {/* 뒷면 */}
             <View style={styles.slot}>
-              <Text style={styles.label}>뒷면</Text>
+              <BaseText size={14} weight="medium" style={styles.label}>
+                뒷면
+              </BaseText>
               {backImage ? (
                 <Image source={{ uri: backImage }} style={styles.slotImage} />
               ) : (

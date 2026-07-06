@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_PRIMARY } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   bottomSheetContainer: {
@@ -66,27 +66,15 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR['white'],
   },
   sheetCloseToday: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
     color: COLOR_PRIMARY[300],
   },
   sheetCloseButton: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
     color: COLOR['black'],
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(18),
     color: COLOR['white'],
   },
   contents: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
     color: COLOR['white'],
   },
   detailButton: {
@@ -98,10 +86,7 @@ export const styles = StyleSheet.create({
     zIndex: 10,
   },
   detailButtonText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
     color: COLOR['white'],
-    fontSize: fontPx(14),
     borderBottomWidth: px(1),
     borderBottomColor: COLOR['white'],
     paddingBottom: px(2),

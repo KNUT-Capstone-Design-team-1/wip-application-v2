@@ -131,48 +131,6 @@ export default {
           android: {
             fonts: [
               {
-                fontFamily: 'Paperlogy',
-                fontDefinitions: [
-                  {
-                    path: './assets/fonts/Paperlogy-1Thin.ttf',
-                    weight: 100,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-2ExtraLight.ttf',
-                    weight: 200,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-3Light.ttf',
-                    weight: 300,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-4Regular.ttf',
-                    weight: 400,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-5Medium.ttf',
-                    weight: 500,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-6SemiBold.ttf',
-                    weight: 600,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-7Bold.ttf',
-                    weight: 700,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-8ExtraBold.ttf',
-                    weight: 800,
-                  },
-                  {
-                    path: './assets/fonts/Paperlogy-9Black.ttf',
-                    weight: 900,
-                  },
-                ],
-              },
-
-              {
                 fontFamily: 'Jalnan2',
 
                 fontDefinitions: [
@@ -182,21 +140,37 @@ export default {
                   },
                 ],
               },
+              {
+                fontFamily: 'Pretendard',
+                fontDefinitions: [
+                  {
+                    path: './assets/fonts/Pretendard-Bold.ttf',
+                    weight: 700,
+                  },
+                  {
+                    path: './assets/fonts/Pretendard-SemiBold.ttf',
+                    weight: 600,
+                  },
+                  {
+                    path: './assets/fonts/Pretendard-Medium.ttf',
+                    weight: 500,
+                  },
+                  {
+                    path: './assets/fonts/Pretendard-Regular.ttf',
+                    weight: 400,
+                  },
+                ],
+              },
             ],
           },
 
           ios: {
             fonts: [
-              './assets/fonts/Paperlogy-1Thin.ttf',
-              './assets/fonts/Paperlogy-2ExtraLight.ttf',
-              './assets/fonts/Paperlogy-3Light.ttf',
-              './assets/fonts/Paperlogy-4Regular.ttf',
-              './assets/fonts/Paperlogy-5Medium.ttf',
-              './assets/fonts/Paperlogy-6SemiBold.ttf',
-              './assets/fonts/Paperlogy-7Bold.ttf',
-              './assets/fonts/Paperlogy-8ExtraBold.ttf',
-              './assets/fonts/Paperlogy-9Black.ttf',
               './assets/fonts/Jalnan2.otf',
+              './assets/fonts/Pretendard-Bold.ttf',
+              './assets/fonts/Pretendard-SemiBold.ttf',
+              './assets/fonts/Pretendard-Medium.ttf',
+              './assets/fonts/Pretendard-Regular.ttf',
             ],
           },
         },

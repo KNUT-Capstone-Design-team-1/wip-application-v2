@@ -1,6 +1,6 @@
 import { COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   infoWrapper: {
@@ -9,10 +9,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(12),
   },
   sectionTitle: {
-    fontFamily: 'Paperlogy',
     color: COLOR_PRIMARY[200],
-    fontSize: fontPx(16),
-    fontWeight: 700,
     textAlign: 'left',
     marginBottom: px(4),
     marginTop: px(12),

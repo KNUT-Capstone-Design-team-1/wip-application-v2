@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
 import { COLOR_PRIMARY, COLOR_GRAY, COLOR } from '@constants/color';
 import CameraScreen from '../organisms/CameraScreen';
@@ -202,7 +203,9 @@ const ImageSearchButtons = ({
             fill={COLOR['white']}
             color={COLOR_PRIMARY[400]}
           />
-          <Text style={styles.text}>촬영하기</Text>
+          <BaseText size={16} weight="bold" style={styles.text}>
+            촬영하기
+          </BaseText>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -211,7 +214,9 @@ const ImageSearchButtons = ({
           onPress={handleAlbumPress}
         >
           <Image size={fontPx(24)} color={COLOR['white']} />
-          <Text style={styles.text}>앨범에서 선택하기</Text>
+          <BaseText size={16} weight="bold" style={styles.text}>
+            앨범에서 선택하기
+          </BaseText>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -220,7 +225,9 @@ const ImageSearchButtons = ({
           onPress={handleFilePress}
         >
           <FolderClosed size={fontPx(24)} color={COLOR['white']} />
-          <Text style={styles.text}>파일 탐색기에서 선택하기</Text>
+          <BaseText size={16} weight="bold" style={styles.text}>
+            파일 탐색기에서 선택하기
+          </BaseText>
         </TouchableOpacity>
       </View>
 
@@ -236,7 +243,9 @@ const ImageSearchButtons = ({
             ]}
             onPress={onApply}
           >
-            <Text style={styles.searchButtonText}>검색하기</Text>
+            <BaseText size={18} weight="bold" style={styles.searchButtonText}>
+              검색하기
+            </BaseText>
           </TouchableOpacity>
         </View>
       )}

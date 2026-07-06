@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_PRIMARY } from '../../../../constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchBarWrapper: {
@@ -24,13 +24,9 @@ export const styles = StyleSheet.create({
     width: px(20),
     right: '15%',
     justifyContent: 'center',
-    // alignItems: 'center',
-    // marginRight: px(8),
   },
   clearButtonText: {
-    fontSize: fontPx(20),
     color: '#999',
-    fontWeight: 'bold',
   },
   searchButton: {
     width: px(24),

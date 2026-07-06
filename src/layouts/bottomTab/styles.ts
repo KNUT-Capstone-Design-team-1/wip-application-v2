@@ -1,6 +1,6 @@
 import { COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
@@ -29,7 +29,5 @@ export const styles = StyleSheet.create({
   },
   label: {
     color: COLOR_GRAY['400'],
-    fontSize: fontPx(10),
-    fontFamily: 'Jalnan2',
   },
 });

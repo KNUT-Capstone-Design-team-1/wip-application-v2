@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_PRIMARY } from '../../../../constants';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   contentContainer: {
@@ -12,10 +12,7 @@ export const styles = StyleSheet.create({
     color: COLOR_PRIMARY[300],
   },
   title: {
-    fontFamily: 'Paperlogy',
     textAlign: 'center',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     marginBottom: px(20), // 타이틀과 내용 사이 간격
     color: COLOR_PRIMARY[300],
   },
@@ -26,17 +23,11 @@ export const styles = StyleSheet.create({
     marginBottom: px(4),
   },
   contentTitle: {
-    fontFamily: 'Paperlogy',
     textAlign: 'center',
-    fontSize: fontPx(16),
-    fontWeight: 500,
   },
   contentDescription: {
-    fontFamily: 'Paperlogy',
     textAlign: 'center',
-    fontSize: fontPx(14),
     color: COLOR['normal'],
-    fontWeight: 500,
   },
   contentImage: {
     width: '90%',

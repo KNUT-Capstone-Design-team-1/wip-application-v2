@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
@@ -28,7 +29,9 @@ const SubHeader = ({ title }: SubHeaderProps) => {
             strokeWidth={2.5}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{title}</Text>
+        <BaseText weight="bold" size={18} style={styles.headerTitle}>
+          {title}
+        </BaseText>
         {/* 이게 없으면 title이 우측으로 치우침 */}
         <View style={styles.menuButton} />
       </View>

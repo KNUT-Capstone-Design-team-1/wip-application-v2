@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     lineHeight: fontPx(18),
     includeFontPadding: false,
     paddingVertical: 0,
-    fontFamily: 'Paperlogy',
+    fontFamily: 'Pretendard',
     fontWeight: 500,
   },
   clearButton: {

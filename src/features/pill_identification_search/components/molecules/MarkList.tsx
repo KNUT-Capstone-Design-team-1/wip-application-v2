@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 import { MarkData } from '../../types/mark_types';
@@ -14,7 +15,9 @@ const MarkList = ({ data, onSelect }: IMarkListProps) => {
   if (data.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>검색 결과가 없습니다</Text>
+        <BaseText style={styles.emptyText} size={16} weight="bold">
+          검색 결과가 없습니다
+        </BaseText>
       </View>
     );
   }
@@ -33,9 +36,14 @@ const MarkList = ({ data, onSelect }: IMarkListProps) => {
             contentFit="contain"
           />
         </View>
-        <Text style={styles.gridTitle} numberOfLines={2}>
+        <BaseText
+          style={styles.gridTitle}
+          numberOfLines={2}
+          size={12}
+          weight="semiBold"
+        >
           {item.title}
-        </Text>
+        </BaseText>
       </TouchableOpacity>
     </View>
   );

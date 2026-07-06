@@ -1,4 +1,5 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { px } from '@utils/responsive';
@@ -15,7 +16,14 @@ const Header = () => {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.HeaderContent}>
         <View style={styles.logoWrapper}>
-          <Text style={styles.logoText}>이게뭐약</Text>
+          <BaseText
+            fontFamily="Jalnan2"
+            weight="regular"
+            size={18}
+            style={styles.logoText}
+          >
+            이게뭐약
+          </BaseText>
         </View>
         <UnifiedSearchBar containerStyle={{ marginLeft: px(32), flex: 1 }} />
         <Pressable

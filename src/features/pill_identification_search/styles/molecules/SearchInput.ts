@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: px(44),
-    fontFamily: 'Paperlogy',
+    fontFamily: 'Pretendard',
     fontWeight: 600,
     fontSize: fontPx(14),
   },

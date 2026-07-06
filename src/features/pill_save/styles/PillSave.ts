@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   pillSaveRoot: {
@@ -15,10 +15,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: COLOR_GRAY[100],
   },
   countText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
     color: COLOR_GRAY[400],
-    fontWeight: 600,
   },
   loadingContainer: {
     flex: 1,
@@ -27,10 +24,7 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR['white'],
   },
   loadingText: {
-    fontFamily: 'Paperlogy',
     marginTop: px(12),
-    fontSize: fontPx(16),
-    fontWeight: 700,
     color: COLOR_GRAY[400],
   },
 });

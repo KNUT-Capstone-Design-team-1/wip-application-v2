@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_GRAY, COLOR_PRIMARY } from '../../../../constants';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -14,9 +14,6 @@ export const styles = StyleSheet.create({
     gap: px(4),
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR_PRIMARY[300],
   },
   slotsWrapper: {
@@ -27,9 +24,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 600,
     color: COLOR_PRIMARY[300],
     marginBottom: px(8),
     textAlign: 'center',

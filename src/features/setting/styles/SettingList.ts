@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   settingList: {
@@ -21,9 +21,5 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  text: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(16),
-  },
+  text: {},
 });

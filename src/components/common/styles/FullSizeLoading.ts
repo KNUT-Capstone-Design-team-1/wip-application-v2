@@ -22,10 +22,7 @@ export const styles = StyleSheet.create({
     shadowRadius: px(3.84),
   },
   message: {
-    fontFamily: 'Paperlogy',
     marginTop: px(15),
-    fontSize: fontPx(16),
     color: COLOR['black'],
-    fontWeight: 600,
   },
 });

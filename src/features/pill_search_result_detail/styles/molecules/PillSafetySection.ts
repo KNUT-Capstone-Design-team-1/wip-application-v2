@@ -1,16 +1,13 @@
 import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
     marginBottom: px(20),
   },
   title: {
-    fontFamily: 'Paperlogy',
     color: COLOR_PRIMARY[200],
-    fontSize: fontPx(16),
-    fontWeight: 700,
     textAlign: 'left',
   },
   externalLinkButton: {
@@ -22,24 +19,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   externalLinkButtonText: {
-    fontFamily: 'Paperlogy',
     color: COLOR['white'],
-    fontWeight: 700,
-    fontSize: fontPx(14),
   },
   sourceText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
     color: COLOR_GRAY[300],
-    fontWeight: 600,
     marginTop: px(10),
     textAlign: 'left',
   },
   disclaimerText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
     color: COLOR['alert'],
-    fontWeight: 600,
     lineHeight: px(16),
   },
   disclaimerContainer: {
@@ -50,29 +38,17 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   reportButtonText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
     color: COLOR['alert'],
-    fontWeight: 600,
     textDecorationLine: 'underline',
   },
   normalText: {
-    fontFamily: 'Paperlogy',
     color: COLOR['black'],
-    fontWeight: 500,
-    fontSize: fontPx(14),
   },
   warningText: {
-    fontFamily: 'Paperlogy',
     color: COLOR['alert'],
-    fontWeight: 700,
-    fontSize: fontPx(14),
   },
   smallInfoText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
     color: COLOR_GRAY[400],
-    fontWeight: 500,
     marginTop: px(4),
   },
 });

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   imageSearchButtonsWrapper: {
@@ -18,9 +18,6 @@ export const styles = StyleSheet.create({
     borderRadius: px(10),
   },
   text: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
-    fontWeight: 700,
     color: COLOR['white'],
   },
   searchButton: {
@@ -32,9 +29,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchButtonText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR['white'],
   },
   hr: {

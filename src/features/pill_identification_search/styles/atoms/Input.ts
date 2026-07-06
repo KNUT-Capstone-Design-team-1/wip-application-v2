@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    fontFamily: 'Paperlogy',
+    fontFamily: 'Pretendard',
     color: COLOR_PRIMARY[400],
     fontSize: fontPx(14),
     fontWeight: 500,

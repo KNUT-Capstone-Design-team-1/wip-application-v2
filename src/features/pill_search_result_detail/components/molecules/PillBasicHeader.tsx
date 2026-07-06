@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/molecules/PillBasicHeader';
 import { Bookmark } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
@@ -26,16 +27,23 @@ const PillBasicHeader = ({
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.nameViewWrapper}>
-          <Text selectable={true} style={styles.name}>
+          <BaseText
+            selectable={true}
+            weight="bold"
+            size={22}
+            style={styles.name}
+          >
             {itemNames[0].trim()}
-          </Text>
+          </BaseText>
           {itemNames[1] && (
-            <Text
+            <BaseText
               selectable={true}
-              style={[styles.name, { fontSize: fontPx(18) }]}
+              weight="bold"
+              size={18}
+              style={styles.name}
             >
               {itemNames[1]}
-            </Text>
+            </BaseText>
           )}
         </View>
       </ScrollView>

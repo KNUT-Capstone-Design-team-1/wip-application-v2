@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   menuButton: {
@@ -17,15 +17,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(16),
     color: '#fff',
   },
   content: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 300,
-    fontSize: fontPx(11),
     color: '#fff',
   },
 });

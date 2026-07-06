@@ -34,15 +34,9 @@ export const styles = StyleSheet.create({
     borderColor: COLOR_PRIMARY[100],
   },
   pageButtonText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
     color: COLOR_PRIMARY[400],
-    fontWeight: 500,
   },
   pageButtonTextActive: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 500,
     color: COLOR['white'],
   },
 });

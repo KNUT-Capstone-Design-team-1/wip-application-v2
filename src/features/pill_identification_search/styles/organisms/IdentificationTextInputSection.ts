@@ -1,4 +1,4 @@
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
 
@@ -29,14 +29,9 @@ export const styles = StyleSheet.create({
     marginRight: px(8),
   },
   textInputLabelCheckboxText: {
-    color: '#fff',
-    fontSize: fontPx(12),
-    fontWeight: 700,
+    color: COLOR['white'],
   },
   textInputLabelText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 400,
-    fontSize: fontPx(14),
     color: '#666',
     paddingVertical: px(0),
     includeFontPadding: false,

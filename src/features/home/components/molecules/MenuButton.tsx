@@ -4,9 +4,9 @@ import {
   ImageSourcePropType,
   Pressable,
   View,
-  Text,
 } from 'react-native';
 import { styles } from '../../styles/molecules/MenuButton';
+import { BaseText } from '@components/common/BaseText';
 
 interface MenuButtonProps {
   imageSource: ImageSourcePropType;
@@ -50,8 +50,12 @@ const MenuButton = ({
           <Image source={imageSource} />
         </View>
         <View style={styles.buttonContentWrapper}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.content}>{content}</Text>
+          <BaseText weight={'bold'} size={16} style={styles.title}>
+            {title}
+          </BaseText>
+          <BaseText weight={'medium'} size={11} style={styles.content}>
+            {content}
+          </BaseText>
         </View>
       </View>
     </Pressable>

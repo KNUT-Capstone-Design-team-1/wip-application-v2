@@ -1,6 +1,6 @@
 import { COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchConditionContainer: {
@@ -19,16 +19,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tagLabel: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(12),
     color: COLOR_GRAY[400],
     marginRight: px(4),
   },
   tagValue: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(12),
     color: COLOR_GRAY[300],
   },
   tagImage: {

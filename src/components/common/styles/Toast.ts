@@ -16,9 +16,6 @@ export const styles = StyleSheet.create({
   },
   toastText: {
     color: '#ffffff',
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: '500',
     textAlign: 'center',
   },
 });

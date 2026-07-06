@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
@@ -15,6 +14,7 @@ import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
 import { formatContents } from '@features/notice/utils/notice';
 import { px } from '@utils/responsive';
+import { BaseText } from '@components/common/BaseText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -108,8 +108,12 @@ const BottomSheet = ({
         { width: SCREEN_WIDTH, paddingHorizontal: px(16) },
       ]}
     >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.contents}>{formatContents(item.contents)}</Text>
+      <BaseText size={18} weight="bold" style={styles.title}>
+        {item.title}
+      </BaseText>
+      <BaseText size={14} weight="medium" style={styles.contents}>
+        {formatContents(item.contents)}
+      </BaseText>
     </View>
   );
 
@@ -163,7 +167,9 @@ const BottomSheet = ({
             });
           }}
         >
-          <Text style={styles.detailButtonText}>자세히 보기</Text>
+          <BaseText size={14} weight="semiBold" style={styles.detailButtonText}>
+            자세히 보기
+          </BaseText>
         </TouchableOpacity>
         <View
           style={[
@@ -172,10 +178,14 @@ const BottomSheet = ({
           ]}
         >
           <TouchableOpacity onPress={handleNeverShowAgain}>
-            <Text style={styles.sheetCloseToday}>하루 동안 보지 않기</Text>
+            <BaseText size={14} weight="medium" style={styles.sheetCloseToday}>
+              하루 동안 보지 않기
+            </BaseText>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleClose}>
-            <Text style={styles.sheetCloseButton}>닫기</Text>
+            <BaseText size={14} weight="medium" style={styles.sheetCloseButton}>
+              닫기
+            </BaseText>
           </TouchableOpacity>
         </View>
       </Animated.View>

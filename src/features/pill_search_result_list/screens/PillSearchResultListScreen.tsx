@@ -1,4 +1,5 @@
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_search_result_list/styles/PillSearchResultList';
 import SearchResultList from '@features/pill_search_result_list/components/organisms/SearchResultList';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
@@ -28,7 +29,9 @@ const ResultInfoSection = ({
 }) => (
   <View style={styles.searchResultInfoWrapper}>
     <SearchConditionTags markImages={markImages} />
-    <Text style={styles.searchCountLabel}>검색 결과 {count}건</Text>
+    <BaseText style={styles.searchCountLabel} weight="medium" size={12}>
+      검색 결과 {count}건
+    </BaseText>
   </View>
 );
 
@@ -38,7 +41,9 @@ const ResultInfoSection = ({
 const InitialLoadingView = () => (
   <View style={styles.loadingContainer}>
     <ActivityIndicator size="large" color="#007AFF" />
-    <Text style={styles.loadingText}>검색 중...</Text>
+    <BaseText style={styles.loadingText} weight="semiBold" size={16}>
+      검색 중...
+    </BaseText>
   </View>
 );
 

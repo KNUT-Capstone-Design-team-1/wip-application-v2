@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
@@ -19,7 +20,9 @@ const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
       />
     ) : (
       <View style={styles.fallbackImageContainer}>
-        <Text style={styles.fallbackImageText}>이미지 없음</Text>
+        <BaseText style={styles.fallbackImageText} weight="semiBold" size={14}>
+          이미지 없음
+        </BaseText>
       </View>
     )}
   </View>
@@ -34,34 +37,59 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
   return (
     <View style={styles.searchItemContents}>
       <View style={styles.infoTitleWrapper}>
-        <Text style={styles.searchItemTitle} numberOfLines={1}>
+        <BaseText
+          style={styles.searchItemTitle}
+          weight="bold"
+          size={14}
+          numberOfLines={1}
+        >
           {itemNames[0]}
-        </Text>
+        </BaseText>
         {itemNames[1] && (
-          <Text
-            style={[styles.searchItemTitle, { fontSize: fontPx(12) }]}
+          <BaseText
+            style={styles.searchItemTitle}
+            weight="bold"
+            size={12}
             numberOfLines={1}
           >
             {itemNames[1]}
-          </Text>
+          </BaseText>
         )}
       </View>
-      <Text style={styles.searchItemClassName} numberOfLines={1}>
+      <BaseText
+        style={styles.searchItemClassName}
+        weight="semiBold"
+        size={12}
+        numberOfLines={1}
+      >
         {pill.CLASS_NAME}
-      </Text>
+      </BaseText>
       <View style={styles.infoPrintWrapper}>
-        <Text style={styles.searchItemPrintText}>
+        <BaseText
+          style={styles.searchItemPrintText}
+          weight="semiBold"
+          size={11}
+        >
           {pill.PRINT_FRONT || '없음'}
-        </Text>
+        </BaseText>
         <View style={styles.infoSeparator} />
-        <Text style={styles.searchItemPrintText}>
+        <BaseText
+          style={styles.searchItemPrintText}
+          weight="semiBold"
+          size={11}
+        >
           {pill.PRINT_BACK || '없음'}
-        </Text>
+        </BaseText>
       </View>
       <View style={styles.infoEntpWrapper}>
-        <Text style={styles.searchItemEntpName} numberOfLines={1}>
+        <BaseText
+          style={styles.searchItemEntpName}
+          weight="semiBold"
+          size={11}
+          numberOfLines={1}
+        >
           {pill.ENTP_NAME}
-        </Text>
+        </BaseText>
       </View>
     </View>
   );

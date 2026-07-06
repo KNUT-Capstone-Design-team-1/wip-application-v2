@@ -32,9 +32,6 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   gridTitle: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(12),
     color: COLOR_PRIMARY[400],
     textAlign: 'center',
     marginTop: px(4),
@@ -46,7 +43,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   footerText: {
-    fontSize: fontPx(12),
     color: COLOR_GRAY[200],
     marginTop: px(8),
   },
@@ -57,9 +53,6 @@ export const styles = StyleSheet.create({
     paddingVertical: px(60),
   },
   emptyText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(16),
     color: COLOR_GRAY[200],
   },
 });

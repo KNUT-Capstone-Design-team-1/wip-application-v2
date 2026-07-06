@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,8 +12,6 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
   },
   headerTitle: {
-    fontSize: fontPx(20),
-    fontWeight: 'bold',
     color: '#333',
   },
   loadingContainer: {
@@ -23,10 +21,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   loadingText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
     marginTop: px(16),
-    fontSize: fontPx(16),
     color: '#666',
   },
   emptyContainer: {
@@ -35,9 +30,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(16),
     color: '#999',
   },
 });

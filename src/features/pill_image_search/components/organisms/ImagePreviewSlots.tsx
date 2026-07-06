@@ -1,5 +1,6 @@
 import { Image } from '@components/common/CustomImage';
-import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { View, TouchableOpacity, Pressable } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImagePreviewSlots';
 import { CircleQuestionMark, Plus, X } from 'lucide-react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
@@ -25,7 +26,9 @@ const ImagePreviewSlots = ({
     <>
       <View style={styles.container}>
         <View style={styles.titleWrapper}>
-          <Text style={styles.title}>촬영된 이미지</Text>
+          <BaseText size={18} weight="bold" style={styles.title}>
+            촬영된 이미지
+          </BaseText>
           <Pressable onPress={() => setIsGuideModalVisible(true)}>
             <CircleQuestionMark
               size={fontPx(24)}
@@ -38,7 +41,9 @@ const ImagePreviewSlots = ({
         <View style={styles.slotsWrapper}>
           {/* 앞면 */}
           <View style={styles.slot}>
-            <Text style={styles.label}>앞면</Text>
+            <BaseText size={14} weight="semiBold" style={styles.label}>
+              앞면
+            </BaseText>
             {frontImage ? (
               <View style={styles.imageContainer}>
                 <Image source={{ uri: frontImage }} style={styles.image} />
@@ -62,7 +67,9 @@ const ImagePreviewSlots = ({
 
           {/* 뒷면 */}
           <View style={styles.slot}>
-            <Text style={styles.label}>뒷면</Text>
+            <BaseText size={14} weight="semiBold" style={styles.label}>
+              뒷면
+            </BaseText>
             {backImage ? (
               <View style={styles.imageContainer}>
                 <Image

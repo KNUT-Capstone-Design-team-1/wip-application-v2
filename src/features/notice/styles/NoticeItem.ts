@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   noticeDataWrapper: {
@@ -12,16 +12,10 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   noticeTitle: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 700,
     color: '#333',
     marginBottom: px(4),
   },
   noticeDate: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 400,
-    fontSize: fontPx(12),
     color: '#999',
   },
   badge: {
@@ -31,9 +25,6 @@ export const styles = StyleSheet.create({
     borderRadius: px(4),
   },
   badgeText: {
-    fontFamily: 'Jalnan2',
     color: '#fff',
-    fontSize: fontPx(12),
-    fontWeight: 200,
   },
 });

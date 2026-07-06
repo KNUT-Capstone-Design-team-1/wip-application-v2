@@ -11,9 +11,5 @@ export const styles = StyleSheet.create({
     borderColor: COLOR_PRIMARY[100],
     borderWidth: 1,
   },
-  label: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
-  },
+  label: {},
 });

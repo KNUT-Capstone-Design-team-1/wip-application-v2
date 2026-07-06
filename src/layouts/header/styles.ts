@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_PRIMARY } from '../../constants';
-import { FONT_JALNAN2_WEIGHT, FONT_PAPERLOGY_WEIGHT } from '@constants/font';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -26,10 +25,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     height: px(40),
   },
-  logoText: {
-    fontSize: fontPx(18),
-    ...FONT_JALNAN2_WEIGHT['regular'],
-  },
+  logoText: {},
   menuButton: {
     width: px(40),
     height: px(40),
@@ -49,9 +45,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: fontPx(18),
     color: COLOR_PRIMARY[200],
     textAlign: 'center',
-    ...FONT_PAPERLOGY_WEIGHT['bold'],
   },
 });

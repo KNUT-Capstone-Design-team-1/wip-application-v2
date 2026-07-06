@@ -1,6 +1,6 @@
 import { COLOR, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   detailSectionWrapper: {},
@@ -11,10 +11,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(4),
   },
   detailInfoHeadText: {
-    fontFamily: 'Paperlogy',
     color: COLOR_PRIMARY[200],
-    fontSize: fontPx(18),
-    fontWeight: 700,
     flex: 1,
   },
   detailInfoContent: {
@@ -24,10 +21,7 @@ export const styles = StyleSheet.create({
     borderRadius: px(8),
   },
   detailInfoText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
     color: COLOR['black'],
-    fontSize: fontPx(16),
     lineHeight: px(30),
   },
 });

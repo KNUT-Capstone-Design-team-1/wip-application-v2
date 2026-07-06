@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import Tag from '../atoms/Tag';
 import { styles } from '../../styles/organisms/LastViewedPill';
 import { router } from 'expo-router';
 import { useRecentViewedPillStore } from '@store/recent_viewed_pill_store';
+import { BaseText } from '@components/common/BaseText';
 
 const LastViewedPill = () => {
   const { recentViewedPills, getRecentViewedPills, deleteRecentViewed } =
@@ -22,7 +23,9 @@ const LastViewedPill = () => {
 
   return (
     <View style={styles.searchContainer}>
-      <Text style={styles.searchTitle}>최근 조회한 알약</Text>
+      <BaseText weight={'medium'} size={16} style={styles.searchTitle}>
+        최근 조회한 알약
+      </BaseText>
       <ScrollView
         horizontal={true}
         style={styles.scrollView}
@@ -31,9 +34,13 @@ const LastViewedPill = () => {
       >
         {recentViewedPills.length === 0 ? (
           <View style={styles.notLastViewedPllDataWrapper}>
-            <Text style={styles.notLastViewedPllDataText}>
+            <BaseText
+              weight={'medium'}
+              size={14}
+              style={styles.notLastViewedPllDataText}
+            >
               최근 조회한 알약이 없습니다.
-            </Text>
+            </BaseText>
           </View>
         ) : (
           recentViewedPills.map((pill, index) => {

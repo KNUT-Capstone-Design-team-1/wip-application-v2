@@ -1,6 +1,6 @@
 import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   scrollViewWrapper: {
@@ -32,9 +32,6 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_GRAY[150],
   },
   pillDetailNoImageText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
-    fontWeight: 600,
     color: COLOR_PRIMARY[400],
     paddingHorizontal: px(16),
     paddingVertical: px(16),
@@ -46,9 +43,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pillResultDetailNotFoundText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 600,
     color: COLOR['black'],
     paddingHorizontal: px(16),
     paddingVertical: px(16),
@@ -63,9 +57,6 @@ export const styles = StyleSheet.create({
     borderColor: COLOR_GRAY[250],
   },
   disclaimerText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(13),
-    fontWeight: 600,
     color: COLOR_GRAY[400],
     lineHeight: px(20),
     textAlign: 'center',

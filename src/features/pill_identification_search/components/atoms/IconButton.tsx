@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, Text, ImageSourcePropType } from 'react-native';
+import { View, ImageSourcePropType } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/atoms/IconButton';
 import { COLOR_PRIMARY } from '@constants/color';
 
@@ -38,14 +39,16 @@ const IconButton = memo(
           )}
         </View>
         <View style={styles.iconButtonBottom}>
-          <Text
+          <BaseText
             style={[
               styles.iconSectionLabel,
-              isSelected && { color: COLOR_PRIMARY[400], fontWeight: 700 },
+              isSelected && { color: COLOR_PRIMARY[400] },
             ]}
+            size={13}
+            weight={isSelected ? 'bold' : 'medium'}
           >
             {label}
-          </Text>
+          </BaseText>
         </View>
       </View>
     );

@@ -1,6 +1,9 @@
-import { View, TouchableOpacity, Text } from 'react-native';
-import { IconStyles, styles } from '../../styles/atoms/Tag';
+import { View, TouchableOpacity } from 'react-native';
+import { styles } from '../../styles/atoms/Tag';
 import { X } from 'lucide-react-native';
+import { BaseText } from '@components/common/BaseText';
+import { fontPx } from '@utils/responsive';
+import { COLOR_GRAY } from '@constants/color';
 
 interface ITagProps {
   title: string;
@@ -22,7 +25,9 @@ const Tag = ({
         onPress={onPressHandler}
         activeOpacity={0.5}
       >
-        <Text style={styles.tagTitle}>{title}</Text>
+        <BaseText weight={'medium'} size={14} style={styles.tagTitle}>
+          {title}
+        </BaseText>
       </TouchableOpacity>
       {showDelete && onDeleteHandler && (
         <TouchableOpacity
@@ -30,7 +35,7 @@ const Tag = ({
           onPress={onDeleteHandler}
           activeOpacity={0.7}
         >
-          <X {...IconStyles['deleteIcon']} />
+          <X size={fontPx(14)} color={COLOR_GRAY['300']} strokeWidth={3} />
         </TouchableOpacity>
       )}
     </View>

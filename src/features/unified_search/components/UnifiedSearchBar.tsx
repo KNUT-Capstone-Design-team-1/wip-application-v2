@@ -6,7 +6,6 @@ import {
   ViewStyle,
   StyleProp,
   TouchableOpacity,
-  Text,
 } from 'react-native';
 import { IconStyles, styles } from '../styles/unifiedSearchStyles';
 import SearchIcon from '@assets/icons/search.svg';

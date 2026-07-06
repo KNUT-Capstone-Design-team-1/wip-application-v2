@@ -1,6 +1,7 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { styles } from './styles/Toast';
 import { ToastConfigParams } from 'react-native-toast-message';
+import { BaseText } from './BaseText';
 
 const Toast = ({
   text1,
@@ -14,7 +15,9 @@ const Toast = ({
           { backgroundColor: backgroundColor ?? 'rgba(0, 0, 0, 0.8)' },
         ]}
       >
-        <Text style={styles.toastText}>{text1}</Text>
+        <BaseText weight={'medium'} size={14} style={styles.toastText}>
+          {text1}
+        </BaseText>
       </View>
     </View>
   );

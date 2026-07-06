@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import InfoRow from '../atoms/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSpecsSection';
@@ -31,7 +32,9 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
           <InfoRow label="영문명" value={data.ITEM_ENG_NAME} />
           <InfoRow label="전문/일반" value={data.ETC_OTC_CODE} />
           <InfoRow label="분류 번호" value={data.CLASS_NO} />
-          <Text style={styles.sectionTitle}>[ 상세 제원 ]</Text>
+          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+            [ 상세 제원 ]
+          </BaseText>
           <InfoRow
             label="색상"
             value={`${data.COLOR_CLASS1 || '-'}${data.COLOR_CLASS2 ? ` / ${data.COLOR_CLASS2}` : ''}`}
@@ -44,7 +47,9 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
             label="크기 (mm)"
             value={`장축: ${data.LENGTH_LONG || '-'} / 단축: ${data.LENGTH_SHORT || '-'} / 두께: ${data.LENGTH_THICK || '-'}`}
           />
-          <Text style={styles.sectionTitle}>[ 성분 및 저장 ]</Text>
+          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+            [ 성분 및 저장 ]
+          </BaseText>
           <InfoRow
             label="원료 성분"
             value={data.MATERIAL_NAME?.replace(/[;|]/g, '\n')}
@@ -56,7 +61,9 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
           />
           <InfoRow label="총량" value={data.TOTAL_CONTENT} />
           <InfoRow label="저장 방법" value={data.STORAGE_METHOD} />
-          <Text style={styles.sectionTitle}>[ 관리 정보 ]</Text>
+          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+            [ 관리 정보 ]
+          </BaseText>
           <InfoRow
             label="보험 코드"
             value={data.INSURANCE_CODE || data.COVERAGE_ENG_NAME}
@@ -70,7 +77,9 @@ const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
             label="변경 내용"
             value={data.CHANGE_CONTENT?.replace(/[/]/g, '\n')}
           />
-          <Text style={styles.sectionTitle}>[ 기타 ]</Text>
+          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+            [ 기타 ]
+          </BaseText>
 
           <InfoRow label="마약류 분류" value={data.DRUG_CLASS} />
           <InfoRow label="신약 여부" value={data.NEW_DRUG_YN} />

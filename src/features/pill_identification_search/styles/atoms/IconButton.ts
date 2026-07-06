@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 import { COLOR_GRAY } from '@constants/color';
 
 export const styles = StyleSheet.create({
@@ -38,8 +38,5 @@ export const styles = StyleSheet.create({
   iconSectionLabel: {
     color: COLOR_GRAY[300],
     textAlign: 'center',
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(13),
   },
 });

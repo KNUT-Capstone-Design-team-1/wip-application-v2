@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { useSearchIdStore } from '../../store/search_id_store';
 import { COLOR_PRIMARY } from '@constants/color';
 import { Input } from '../atoms/Input';
@@ -71,12 +72,22 @@ const IdentificationTextInputSection = memo(
                   ]}
                 >
                   {isExactMatch && (
-                    <Text style={styles.textInputLabelCheckboxText}>✓</Text>
+                    <BaseText
+                      style={styles.textInputLabelCheckboxText}
+                      size={12}
+                      weight="bold"
+                    >
+                      ✓
+                    </BaseText>
                   )}
                 </View>
-                <Text style={styles.textInputLabelText}>
+                <BaseText
+                  style={styles.textInputLabelText}
+                  size={14}
+                  weight="regular"
+                >
                   식별문자 일치 (정확히 일치하는 문자만 검색)
-                </Text>
+                </BaseText>
               </TouchableOpacity>
             )}
           </View>

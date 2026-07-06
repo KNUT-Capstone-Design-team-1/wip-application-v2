@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 import { COLOR_PRIMARY, COLOR_GRAY } from '@constants/color';
 import { bottomTabSize } from '@constants/size';
 
@@ -28,9 +28,6 @@ export const styles = StyleSheet.create({
     position: 'relative',
   },
   modalTitle: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR_PRIMARY[100],
   },
   closeButton: {
@@ -40,9 +37,6 @@ export const styles = StyleSheet.create({
     padding: px(5),
   },
   closeButtonText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(24),
-    fontWeight: 700,
     color: COLOR_GRAY[200],
   },
   scrollView: {

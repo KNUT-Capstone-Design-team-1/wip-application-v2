@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 import { COLOR } from '@constants/color';
 
 export const styles = StyleSheet.create({
@@ -14,8 +14,6 @@ export const styles = StyleSheet.create({
   name: {
     color: COLOR['black'],
     flex: 1,
-    fontSize: fontPx(22),
-    fontWeight: '700',
   },
   gradiant: {
     position: 'absolute',

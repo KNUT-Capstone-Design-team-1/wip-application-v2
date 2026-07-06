@@ -35,9 +35,6 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   markTitle: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(14),
     color: COLOR_GRAY[400],
     textAlign: 'center',
   },

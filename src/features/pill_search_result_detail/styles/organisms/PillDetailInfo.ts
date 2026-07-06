@@ -1,6 +1,6 @@
 import { COLOR_GRAY } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   infoContainer: {
@@ -17,10 +17,7 @@ export const styles = StyleSheet.create({
     gap: px(4),
   },
   infoMoreBtnText: {
-    fontFamily: 'Paperlogy',
     color: COLOR_GRAY[300],
-    fontSize: fontPx(16),
-    fontWeight: 600,
     textAlign: 'center',
   },
   detailInfoContainer: {

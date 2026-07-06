@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchItemWrapper: {
@@ -22,33 +22,17 @@ export const styles = StyleSheet.create({
     paddingVertical: px(2),
     gap: px(4),
   },
-  searchItemTitle: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(14),
-  },
+  searchItemTitle: {},
   searchItemClassName: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(12),
     color: COLOR['item'],
   },
   searchItemEtcOtcCode: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(11),
     color: COLOR['item'],
   },
   searchItemEntpName: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(11),
     color: COLOR_GRAY[400],
   },
   searchItemPrintText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(11),
     color: COLOR_PRIMARY[400],
     includeFontPadding: false,
     textAlignVertical: 'center',
@@ -60,10 +44,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fallbackImageText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
     color: COLOR_PRIMARY[400],
-    fontSize: fontPx(14),
   },
   infoTitleWrapper: {
     gap: px(1),

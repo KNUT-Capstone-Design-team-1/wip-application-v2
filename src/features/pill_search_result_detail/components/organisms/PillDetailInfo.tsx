@@ -1,5 +1,6 @@
 import { memo, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/PillDetailInfo';
 import { IPillDetailInfoProps } from '../../types/pill_detail_type';
 
@@ -35,9 +36,9 @@ const PillDetailInfo = ({
         style={styles.infoMoreBtn}
         onPress={() => setMoreInfo((prev) => !prev)}
       >
-        <Text style={styles.infoMoreBtnText}>
+        <BaseText weight="semiBold" size={16} style={styles.infoMoreBtnText}>
           {moreInfo ? '접기' : '더보기'}
-        </Text>
+        </BaseText>
         {moreInfo ? (
           <ChevronUp
             size={fontPx(24)}

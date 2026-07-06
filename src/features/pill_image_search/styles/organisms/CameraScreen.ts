@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR_GRAY, COLOR } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
@@ -24,9 +24,6 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR['white'],
     textAlign: 'center',
     marginBottom: px(16),
@@ -39,9 +36,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 500,
     color: COLOR['white'],
     marginBottom: px(6),
     textAlign: 'center',

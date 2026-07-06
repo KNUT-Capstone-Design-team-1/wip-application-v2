@@ -18,9 +18,6 @@ export const styles = StyleSheet.create({
   },
   guideTitle: {
     color: COLOR.alert,
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(13),
-    fontWeight: 700,
     textAlign: 'center',
     lineHeight: fontPx(18),
   },

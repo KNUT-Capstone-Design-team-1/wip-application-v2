@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   noticeDetailWrapper: {
@@ -7,9 +7,6 @@ export const styles = StyleSheet.create({
     padding: px(10),
   },
   noticeTitle: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(20),
-    fontWeight: 700,
     marginBottom: px(8),
     color: '#333',
   },
@@ -19,9 +16,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   noticeDate: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 400,
-    fontSize: fontPx(12),
     color: '#999',
     marginBottom: px(12),
   },
@@ -31,10 +25,7 @@ export const styles = StyleSheet.create({
     marginTop: px(8),
   },
   noticeContent: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
     marginTop: px(20),
-    fontSize: fontPx(14),
     lineHeight: px(20),
     color: '#444',
   },

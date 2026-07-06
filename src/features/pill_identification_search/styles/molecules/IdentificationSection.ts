@@ -9,9 +9,6 @@ export const styles = StyleSheet.create({
     marginBottom: px(16),
   },
   titleText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
-    fontWeight: 600,
     color: COLOR_PRIMARY[300],
   },
   childrenContainer: {

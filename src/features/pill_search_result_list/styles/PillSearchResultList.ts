@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_GRAY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   pillSearchResultListRoot: {
@@ -9,10 +9,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(20),
   },
   searchCountLabel: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
     color: COLOR_GRAY[400],
-    fontSize: fontPx(12),
     includeFontPadding: false,
     textAlignVertical: 'center',
     marginLeft: px(2),
@@ -34,10 +31,7 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR['white'],
   },
   loadingText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
     marginTop: px(16),
-    fontSize: fontPx(16),
     color: COLOR_GRAY[400],
   },
 });

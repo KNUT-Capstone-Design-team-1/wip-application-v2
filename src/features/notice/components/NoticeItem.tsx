@@ -1,5 +1,6 @@
 import React, { memo, useCallback } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { router } from 'expo-router';
 import { styles } from '@features/notice/styles/NoticeItem';
 import {
@@ -17,13 +18,18 @@ const NoticeInfo = ({ notice }: { notice: INoticeData }) => {
 
   return (
     <View style={{ flex: 1, marginRight: px(10) }}>
-      <Text style={styles.noticeTitle} numberOfLines={1}>
+      <BaseText
+        size={14}
+        weight="bold"
+        style={styles.noticeTitle}
+        numberOfLines={1}
+      >
         {notice.title}
-      </Text>
-      <Text style={styles.noticeDate}>
+      </BaseText>
+      <BaseText size={12} weight="regular" style={styles.noticeDate}>
         {formatDate(notice.createDate)}
         {isContentModified && ' (수정)'}
-      </Text>
+      </BaseText>
     </View>
   );
 };
@@ -36,7 +42,14 @@ const MustReadBadge = ({ mustRead }: { mustRead: number }) => {
 
   return (
     <View style={styles.badge}>
-      <Text style={styles.badgeText}>필독</Text>
+      <BaseText
+        fontFamily="Jalnan2"
+        weight="regular"
+        size={12}
+        style={styles.badgeText}
+      >
+        필독
+      </BaseText>
     </View>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { px } from '@utils/responsive';
@@ -49,9 +50,14 @@ export const TabItem = React.memo(
         ) : (
           <>{icon}</>
         )}
-        <Text style={[styles.label, isActive && { color: ACTIVE_COLOR }]}>
+        <BaseText
+          fontFamily="Jalnan2"
+          weight="regular"
+          size={10}
+          style={[styles.label, isActive && { color: ACTIVE_COLOR }]}
+        >
           {label}
-        </Text>
+        </BaseText>
       </TouchableOpacity>
     );
   },

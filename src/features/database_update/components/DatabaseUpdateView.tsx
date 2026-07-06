@@ -4,6 +4,7 @@ import { View, Text } from 'react-native';
 import SplashIcon from '@assets/icons/splash-icon.png';
 import { styles } from '../styles/DatabaseUpdateView.styles';
 import { IUpdateProgress } from '../types';
+import { BaseText } from '@components/common/BaseText';
 
 const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
   status,
@@ -25,14 +26,16 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
         <>
           {/* 안내 문구 */}
           <View style={styles.noticeContainer}>
-            <Text style={styles.noticeText}>
+            <BaseText weight={'medium'} size={16} style={styles.noticeText}>
               {`준비 중입니다.\n약 1분 정도 소요됩니다.\n완료될 때까지 이 화면을 유지해 주세요.`}
-            </Text>
+            </BaseText>
           </View>
 
           {/* 로딩 정보 */}
           <View style={styles.infoContainer}>
-            <Text style={styles.statusText}>{status}</Text>
+            <BaseText weight={'bold'} size={18} style={styles.statusText}>
+              {status}
+            </BaseText>
 
             {/* 프로그레스 바 */}
             <View style={styles.progressBarContainer}>
@@ -43,9 +46,9 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
 
             {/* 퍼센트 정보 */}
             <View style={styles.detailsContainer}>
-              <Text style={styles.percentText}>
+              <BaseText weight={'bold'} size={16} style={styles.percentText}>
                 {(progress * 100).toFixed(1)}%
-              </Text>
+              </BaseText>
             </View>
           </View>
         </>

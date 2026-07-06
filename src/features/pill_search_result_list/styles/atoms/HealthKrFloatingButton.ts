@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   floatingButton: {
@@ -23,10 +23,7 @@ export const styles = StyleSheet.create({
     gap: px(8),
   },
   buttonText: {
-    fontFamily: 'Paperlogy',
     color: COLOR['white'],
-    fontSize: fontPx(14),
-    fontWeight: 600,
     includeFontPadding: false,
     paddingVertical: 0,
   },

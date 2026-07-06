@@ -1,5 +1,6 @@
 import { memo, useMemo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/molecules/DetailSection';
 import { decodeHtmlContent } from '../../utils/htmlDecoder';
 import { IDetailSectionProps } from '@features/pill_search_result_detail/types/pill_detail_type';
@@ -31,7 +32,9 @@ const DetailSection = ({
         onPress={onToggle}
         activeOpacity={0.7}
       >
-        <Text style={styles.detailInfoHeadText}>{title}</Text>
+        <BaseText weight="bold" size={18} style={styles.detailInfoHeadText}>
+          {title}
+        </BaseText>
         {isOpen ? (
           <ChevronDown
             size={fontPx(24)}
@@ -48,7 +51,9 @@ const DetailSection = ({
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.detailInfoContent}>
-          <Text style={styles.detailInfoText}>{decodedContent}</Text>
+          <BaseText weight="medium" size={16} style={styles.detailInfoText}>
+            {decodedContent}
+          </BaseText>
         </View>
       )}
     </View>

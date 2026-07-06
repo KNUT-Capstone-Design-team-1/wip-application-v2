@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_GRAY } from '@constants/index';
-import { FONT_PAPERLOGY_WEIGHT } from '@constants/font';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   tagContainer: {
@@ -18,9 +17,9 @@ export const styles = StyleSheet.create({
   },
   tagWrapper: {},
   tagTitle: {
-    fontSize: fontPx(14),
     color: COLOR_GRAY[400],
-    ...FONT_PAPERLOGY_WEIGHT['regular'],
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   deleteButton: {
     paddingVertical: px(5),
@@ -29,11 +28,3 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-export const IconStyles = {
-  deleteIcon: {
-    size: fontPx(14),
-    color: COLOR_GRAY['300'],
-    strokeWidth: 2,
-  },
-};

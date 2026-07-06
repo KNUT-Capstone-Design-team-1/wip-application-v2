@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/atoms/SearchBar';
 import SearchIcon from '../../../../../assets/icons/search.svg';
 import { usePillSearchResultList } from '../../hooks/use_pill_search_result_list';
@@ -18,7 +19,6 @@ const SearchBar = () => {
     <View style={styles.searchBarWrapper}>
       <TextInput
         maxLength={50}
-        // style={styles.searchInput}
         value={searchInputText}
         onChangeText={(text: string) => setSearchInputText(text)}
         onSubmitEditing={() => searchResultButtonClickHandler(searchInputText)}
@@ -32,7 +32,9 @@ const SearchBar = () => {
           onPress={handleClearSearch}
           style={styles.clearButton}
         >
-          <Text style={styles.clearButtonText}>×</Text>
+          <BaseText style={styles.clearButtonText} weight="bold" size={20}>
+            ×
+          </BaseText>
         </TouchableOpacity>
       )}
 
