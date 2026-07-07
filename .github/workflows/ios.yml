@@ -34,7 +34,12 @@ jobs:
           xcodebuild -version
           xcode-select -p
           ls /Applications
-
+      
+      - name: Select Xcode 26.3
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          xcodebuild -version
+      
       - name: cache-node-modules
         uses: actions/cache@v4
         with:
@@ -92,7 +97,10 @@ jobs:
         env:
           BUILD: ${{ env.BUILD }}
           EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
+          DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
         run: |
+          xcodebuild -version
+      
           eas build \
             -p ios \
             --profile production \
