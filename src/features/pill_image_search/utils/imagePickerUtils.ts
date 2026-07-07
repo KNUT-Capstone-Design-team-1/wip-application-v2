@@ -1,65 +1,8 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Alert, Linking } from 'react-native';
+import { Alert } from 'react-native';
 import logger from '@utils/logger';
 import { PillImages } from '../store/pill_image_store';
-
-// 권한이 'limited'일 경우 사용자에게 전체 권한을 권장하는 헬퍼 함수
-const handleLimitedPrivilege = (
-  accessPrivileges?: string,
-): Promise<boolean> | boolean => {
-  const isFullyGranted = accessPrivileges !== 'limited';
-  if (isFullyGranted) {
-    return true;
-  }
-
-  return new Promise((resolve) => {
-    Alert.alert(
-      '안내',
-      '현재 일부 사진에만 접근이 허용되어 있습니다.\n모든 사진을 자유롭게 선택하시려면 "모든 사진 허용"으로 변경해 주세요.',
-      [
-        {
-          text: '현재 상태 유지',
-          style: 'cancel',
-          onPress: () => resolve(true),
-        },
-        {
-          text: '설정으로 이동',
-          onPress: () => {
-            Linking.openSettings();
-            resolve(false); // 설정 이동 시에는 일단 false 반환
-          },
-        },
-      ],
-    );
-  });
-};
-
-// 앨범 접근 권한을 요청하고 권한 허용 여부를 반환하는 함수
-export const requestMediaLibraryPermission = async (): Promise<boolean> => {
-  const { status, accessPrivileges } =
-    await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-  const isDenied = status === 'denied';
-  if (isDenied) {
-    Alert.alert(
-      '권한 안내',
-      '앨범 접근 권한이 거부되었습니다.\n모든 사진을 선택하려면 설정에서 권한을 허용해 주세요.',
-      [
-        { text: '취소', style: 'cancel' },
-        { text: '설정으로 이동', onPress: () => Linking.openSettings() },
-      ],
-    );
-    return false;
-  }
-
-  const isGranted = status === 'granted';
-  if (!isGranted) {
-    return false;
-  }
-
-  return handleLimitedPrivilege(accessPrivileges);
-};
 
 // 1장만 선택/촬영되었을 때 나머지 1장에 대한 추가 선택 여부를 묻거나,
 // 2장 상태에서 1장만 변경 시 교체 여부를 묻고 처리하는 헬퍼 함수
@@ -173,12 +116,6 @@ export const pickMultipleImages = async (
   currentImages?: PillImages,
 ): Promise<void> => {
   try {
-    const hasPermission = await requestMediaLibraryPermission();
-
-    if (!hasPermission) {
-      return;
-    }
-
     // 이미 1장이 등록되어 있다면 추가로 1장만 선택하도록 제한
     const currentImageCount =
       (currentImages?.front ? 1 : 0) + (currentImages?.back ? 1 : 0);
@@ -230,12 +167,6 @@ export const pickSingleImage = async (
   onSuccess: (imageUri: string) => void,
 ): Promise<void> => {
   try {
-    const hasPermission = await requestMediaLibraryPermission();
-
-    if (!hasPermission) {
-      return;
-    }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: false,
