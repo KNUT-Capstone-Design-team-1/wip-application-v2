@@ -29,6 +29,12 @@ jobs:
           node-version: 20
           cache: yarn
 
+      - name: Check Xcode
+        run: |
+          xcodebuild -version
+          xcode-select -p
+          ls /Applications
+
       - name: cache-node-modules
         uses: actions/cache@v4
         with:
