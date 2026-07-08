@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     color: COLOR_PRIMARY[400],
   },
   infoTitleWrapper: {
-    gap: px(1),
+    // gap: px(1),
   },
   infoPrintWrapper: {
     flexDirection: 'row',

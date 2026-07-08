@@ -58,33 +58,25 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
       </View>
       <BaseText
         style={styles.searchItemClassName}
-        weight="semiBold"
+        weight="medium"
         size={12}
         numberOfLines={1}
       >
         {pill.CLASS_NAME}
       </BaseText>
       <View style={styles.infoPrintWrapper}>
-        <BaseText
-          style={styles.searchItemPrintText}
-          weight="semiBold"
-          size={11}
-        >
+        <BaseText style={styles.searchItemPrintText} weight="medium" size={11}>
           {pill.PRINT_FRONT || '없음'}
         </BaseText>
         <View style={styles.infoSeparator} />
-        <BaseText
-          style={styles.searchItemPrintText}
-          weight="semiBold"
-          size={11}
-        >
+        <BaseText style={styles.searchItemPrintText} weight="medium" size={11}>
           {pill.PRINT_BACK || '없음'}
         </BaseText>
       </View>
       <View style={styles.infoEntpWrapper}>
         <BaseText
           style={styles.searchItemEntpName}
-          weight="semiBold"
+          weight="medium"
           size={11}
           numberOfLines={1}
         >

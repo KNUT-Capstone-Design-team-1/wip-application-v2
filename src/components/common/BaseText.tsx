@@ -42,6 +42,8 @@ export const BaseText: React.FC<IBaseTextProps> = ({
           fontFamily: fontFamily,
           fontWeight: WEIGHT_MAP[weight],
           fontSize: fontPx(size),
+          includeFontPadding: false,
+          textAlignVertical: 'center',
         },
         style,
       ]}
