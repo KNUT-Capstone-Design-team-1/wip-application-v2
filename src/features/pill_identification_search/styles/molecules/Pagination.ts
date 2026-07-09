@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { px } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   paginationContainer: {
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     width: px(32),
     height: px(32),
     borderWidth: 2,
-    borderColor: COLOR_GRAY[150],
+    borderColor: COLOR_LINE['border'],
     borderRadius: px(8),
     alignItems: 'center',
     justifyContent: 'center',
@@ -24,19 +24,19 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: COLOR_GRAY[150],
+    borderColor: COLOR_LINE['border'],
     borderRadius: px(8),
     marginHorizontal: px(4),
     backgroundColor: COLOR['white'],
   },
   pageButtonActive: {
-    backgroundColor: COLOR_PRIMARY[100],
-    borderColor: COLOR_PRIMARY[100],
+    backgroundColor: COLOR_BG['btnPrimary'],
+    borderColor: COLOR['primary'],
   },
   pageButtonText: {
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['title'],
   },
   pageButtonTextActive: {
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
   },
 });

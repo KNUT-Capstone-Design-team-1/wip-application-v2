@@ -1,4 +1,4 @@
-import { COLOR, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(4),
   },
   detailInfoHeadText: {
-    color: COLOR_PRIMARY[200],
+    color: COLOR_TEXT['subTitle'],
     flex: 1,
   },
   detailInfoContent: {

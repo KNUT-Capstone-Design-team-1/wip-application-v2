@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   iconButtonWrapper: {
@@ -8,16 +8,16 @@ export const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     borderRadius: px(15),
-    borderWidth: 2,
-    borderColor: COLOR_GRAY[150],
+    borderWidth: px(1.5),
+    borderColor: COLOR_LINE['border'],
     backgroundColor: '#fff',
     overflow: 'hidden',
   },
   iconButtonTop: {
     width: '100%',
     height: '70%',
-    borderBottomWidth: 2,
-    borderBottomColor: COLOR_GRAY[150],
+    borderBottomWidth: px(1.5),
+    borderBottomColor: COLOR_LINE['border'],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(2),
   },
   iconSectionLabel: {
-    color: COLOR_GRAY[300],
+    color: COLOR_TEXT['label'],
     textAlign: 'center',
   },
 });

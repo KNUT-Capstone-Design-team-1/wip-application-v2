@@ -2,7 +2,7 @@ import React from 'react';
 import { DimensionValue } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import TouchableScale from 'react-native-touchable-scale';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { styles } from '../../styles/atoms/Button';
 
 interface IButtonProps {
@@ -14,7 +14,7 @@ interface IButtonProps {
 }
 
 const Button = ({
-  background = COLOR_PRIMARY[100],
+  background = COLOR['primary'],
   color = '#fff',
   width = '50%',
   label,

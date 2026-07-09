@@ -4,7 +4,7 @@ import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImageSearchGuide';
 import { AFTER_PILL_IMAGE_SEARCH as content } from '../../constants/pillImageSearch';
 import { Info } from 'lucide-react-native';
-import { COLOR, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
 const ImageSearchGuide = () => {
@@ -17,7 +17,7 @@ const ImageSearchGuide = () => {
         <Info
           size={fontPx(24)}
           color={COLOR['white']}
-          fill={COLOR_PRIMARY[300]}
+          fill={COLOR_TEXT['label']}
         />
         <BaseText size={16} weight="medium" style={styles.contentTitle}>
           {content.contentTitle}

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '../../../../constants/color';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(20),
     borderWidth: px(1),
     borderRadius: px(20),
-    borderColor: COLOR_PRIMARY[400],
+    borderColor: COLOR_LINE['border'],
   },
   searchTextInput: {
     flex: 1,
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   clearButtonText: {
-    color: '#999',
+    color: COLOR_TEXT['sub'],
   },
   searchButton: {
     width: px(24),

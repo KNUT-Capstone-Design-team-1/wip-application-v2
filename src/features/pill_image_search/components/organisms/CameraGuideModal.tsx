@@ -1,9 +1,9 @@
-import { Modal, Pressable, View, Text } from 'react-native';
+import { Modal, Pressable } from 'react-native';
 import { styles } from '../../styles/organisms/CameraGuideModal';
 import ImageSearchGuide from './ImageSearchGuide';
 import { X } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 
 interface ICameraGuideModalProps {
   visible: boolean;
@@ -28,7 +28,7 @@ const CameraGuideModal = ({ visible, onClose }: ICameraGuideModalProps) => {
             ]}
             onPress={onClose}
           >
-            <X size={fontPx(24)} strokeWidth={3} color={COLOR_GRAY[300]} />
+            <X size={fontPx(24)} strokeWidth={3} color={COLOR_TEXT['sub']} />
           </Pressable>
         </Pressable>
       </Pressable>

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     bottom: px(20) + bottomTabSize.height,
     left: px(20),
     right: px(20),
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     borderRadius: px(15),
     paddingVertical: px(12),
     paddingHorizontal: px(16),
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 10,
-    shadowColor: COLOR['black'],
+    shadowColor: COLOR['shadow'],
     shadowOffset: { width: 0, height: px(5) },
     shadowOpacity: 0.3,
     shadowRadius: 6.68,
@@ -43,15 +43,15 @@ export const styles = StyleSheet.create({
     marginBottom: px(5),
   },
   pharmacyName: {
-    color: COLOR['black'],
+    color: COLOR_TEXT['title'],
   },
   pharmacyPhone: {
-    color: COLOR_PRIMARY[200],
+    color: COLOR_TEXT['subTitle'],
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
   pharmacyAddress: {
-    color: COLOR_PRIMARY[300],
+    color: COLOR_TEXT['body'],
     includeFontPadding: false,
     textAlignVertical: 'center',
   },

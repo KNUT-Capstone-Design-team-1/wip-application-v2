@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY } from '@constants/color';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     borderRadius: px(10),
   },
   text: {
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
   },
   searchButton: {
     marginTop: px(20),
@@ -29,12 +29,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchButtonText: {
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
   },
   hr: {
     width: '100%',
     height: px(1),
-    backgroundColor: COLOR_GRAY[100],
+    backgroundColor: COLOR_LINE['separator'],
     marginVertical: px(24),
   },
 });

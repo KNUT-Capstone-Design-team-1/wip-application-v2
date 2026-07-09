@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { px } from '@utils/responsive';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['title'],
     marginBottom: px(16),
   },
   searchWrapper: {
@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: px(10),
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['sub'],
   },
   emptyState: {
     flex: 1,
@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(60),
   },
   emptyText: {
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['sub'],
     textAlign: 'center',
   },
 });

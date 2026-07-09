@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '@constants/index';
+import { COLOR_LINE } from '@constants/index';
 import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   hr: {
     width: '100%',
     height: px(2),
-    backgroundColor: COLOR_GRAY[150],
+    backgroundColor: COLOR_LINE['border'],
     marginTop: px(12),
   },
 });

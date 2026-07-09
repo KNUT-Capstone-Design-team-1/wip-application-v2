@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '../../../../constants';
+import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     gap: px(4),
   },
   title: {
-    color: COLOR_PRIMARY[300],
+    color: COLOR_TEXT['title'],
   },
   slotsWrapper: {
     flexDirection: 'row',
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    color: COLOR_PRIMARY[300],
+    color: COLOR_TEXT['label'],
     marginBottom: px(8),
     textAlign: 'center',
   },
@@ -51,8 +51,8 @@ export const styles = StyleSheet.create({
     borderRadius: px(10),
     borderWidth: px(2),
     borderStyle: 'dashed',
-    borderColor: COLOR_GRAY[200],
-    backgroundColor: COLOR_GRAY[150],
+    borderColor: COLOR_LINE['border'],
+    backgroundColor: COLOR_BG['base'],
     justifyContent: 'center',
     alignItems: 'center',
   },

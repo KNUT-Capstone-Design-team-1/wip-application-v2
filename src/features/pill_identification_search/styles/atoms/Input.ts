@@ -1,18 +1,19 @@
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   inputWrapper: {
-    borderColor: COLOR_GRAY[250],
+    borderColor: 'transparent',
     borderRadius: px(10),
-    borderWidth: 1,
+    borderWidth: px(1.5),
     paddingHorizontal: px(10),
     justifyContent: 'center',
+    backgroundColor: COLOR_BG['base'],
   },
   input: {
     fontFamily: 'Pretendard',
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['body'],
     fontSize: fontPx(14),
     fontWeight: 500,
     height: '100%',

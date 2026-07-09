@@ -1,14 +1,14 @@
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   scrollViewWrapper: {
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     flex: 1,
   },
   viewWrapper: {
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     flex: 1,
     overflow: 'hidden',
     paddingHorizontal: px(16),
@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     marginTop: px(16),
     overflow: 'hidden',
     width: '100%',
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
   },
   pillImg: {
     height: '100%',
@@ -29,21 +29,21 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLOR_GRAY[150],
+    backgroundColor: COLOR_BG['base'],
   },
   pillDetailNoImageText: {
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['disabled'],
     paddingHorizontal: px(16),
     paddingVertical: px(16),
   },
   pillResultDetailRoot: {
     flex: 1,
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     justifyContent: 'center',
     alignItems: 'center',
   },
   pillResultDetailNotFoundText: {
-    color: COLOR['black'],
+    color: COLOR_TEXT['sub'],
     paddingHorizontal: px(16),
     paddingVertical: px(16),
   },
@@ -51,13 +51,13 @@ export const styles = StyleSheet.create({
     marginTop: px(24),
     marginBottom: px(40),
     padding: px(16),
-    backgroundColor: COLOR_GRAY[150],
+    backgroundColor: COLOR_BG['base'],
     borderRadius: px(8),
     borderWidth: 1,
-    borderColor: COLOR_GRAY[250],
+    borderColor: COLOR_LINE['border'],
   },
   disclaimerText: {
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['label'],
     lineHeight: px(20),
     textAlign: 'center',
   },

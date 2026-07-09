@@ -1,4 +1,4 @@
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
   bottomTabList: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#182729',
+    backgroundColor: COLOR_BG['tabbar'],
     borderRadius: px(30),
     marginHorizontal: px(20),
     paddingHorizontal: px(16),
@@ -28,6 +28,6 @@ export const styles = StyleSheet.create({
     gap: px(8),
   },
   label: {
-    color: COLOR_GRAY['400'],
+    color: COLOR_TEXT['disabled'],
   },
 });

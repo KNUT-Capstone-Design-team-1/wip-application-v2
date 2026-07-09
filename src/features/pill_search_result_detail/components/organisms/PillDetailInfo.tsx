@@ -9,7 +9,7 @@ import PillSpecsSection from '../molecules/PillSpecsSection';
 import PillSafetySection from '../molecules/PillSafetySection';
 import PillDescriptionSection from '../molecules/PillDescriptionSection';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
 const PillDetailInfo = ({
@@ -42,13 +42,13 @@ const PillDetailInfo = ({
         {moreInfo ? (
           <ChevronUp
             size={fontPx(24)}
-            color={COLOR_GRAY[300]}
+            color={COLOR_TEXT['sub']}
             strokeWidth={2}
           />
         ) : (
           <ChevronDown
             size={fontPx(24)}
-            color={COLOR_GRAY[300]}
+            color={COLOR_TEXT['sub']}
             strokeWidth={2}
           />
         )}

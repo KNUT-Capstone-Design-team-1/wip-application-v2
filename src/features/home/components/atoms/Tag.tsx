@@ -3,7 +3,7 @@ import { styles } from '../../styles/atoms/Tag';
 import { X } from 'lucide-react-native';
 import { BaseText } from '@components/common/BaseText';
 import { fontPx } from '@utils/responsive';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 
 interface ITagProps {
   title: string;
@@ -35,7 +35,7 @@ const Tag = ({
           onPress={onDeleteHandler}
           activeOpacity={0.7}
         >
-          <X size={fontPx(14)} color={COLOR_GRAY['300']} strokeWidth={3} />
+          <X size={fontPx(14)} color={COLOR_TEXT['disabled']} strokeWidth={3} />
         </TouchableOpacity>
       )}
     </View>

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/index';
+import { COLOR_TEXT } from '@constants/index';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   searchTitle: {
-    color: COLOR_PRIMARY[300],
+    color: COLOR_TEXT['subTitle'],
     marginBottom: px(8),
   },
   scrollView: {
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   notLastViewedPllDataText: {
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['disabled'],
   },
   searchTagList: {
     display: 'flex',

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -9,12 +9,12 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLOR_PRIMARY[200],
+    backgroundColor: COLOR['secondary'],
     paddingVertical: px(12),
     paddingHorizontal: px(20),
     borderRadius: px(30),
     // ios
-    shadowColor: COLOR['black'],
+    shadowColor: COLOR['shadow'],
     shadowOffset: { width: 0, height: px(2) },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

@@ -178,12 +178,20 @@ const BottomSheet = ({
           ]}
         >
           <TouchableOpacity onPress={handleNeverShowAgain}>
-            <BaseText size={14} weight="medium" style={styles.sheetCloseToday}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={styles.sheetCloseTodayText}
+            >
               하루 동안 보지 않기
             </BaseText>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleClose}>
-            <BaseText size={14} weight="medium" style={styles.sheetCloseButton}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={styles.sheetCloseButtonText}
+            >
               닫기
             </BaseText>
           </TouchableOpacity>

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '@constants/index';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/index';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -9,15 +9,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: px(4),
-    borderColor: COLOR_GRAY[300],
-    borderWidth: px(1),
+    borderColor: COLOR_LINE['border'],
+    borderWidth: px(2),
     borderRadius: px(32),
     paddingVertical: px(2),
     paddingLeft: px(8),
   },
   tagWrapper: {},
   tagTitle: {
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['sub'],
     includeFontPadding: false,
     textAlignVertical: 'center',
   },

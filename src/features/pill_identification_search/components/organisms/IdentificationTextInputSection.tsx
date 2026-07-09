@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { useSearchIdStore } from '../../store/search_id_store';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { Input } from '../atoms/Input';
 import IdentificationSection from '../molecules/IdentificationSection';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@features/pill_identification_search/types/search_id_types';
 import { SECTION_KEY_TO_TEXT_STORE_KEYS } from '../../constants/pillIdentificationData';
 import { styles } from '../../styles/organisms/IdentificationTextInputSection';
+import { px } from '@utils/responsive';
 
 interface IIdentificationTextInputSectionProps {
   sectionKey: string;
@@ -35,7 +36,13 @@ const IdentificationTextInputSection = memo(
     }
 
     return (
-      <View style={{ marginBottom: 20 }}>
+      <View
+        style={{
+          marginBottom: px(2),
+          backgroundColor: COLOR['white'],
+          paddingHorizontal: px(20),
+        }}
+      >
         <IdentificationSection
           title={section.title}
           direction="row"
@@ -66,7 +73,7 @@ const IdentificationTextInputSection = memo(
                     styles.textInputLabelCheckboxWrapper,
                     {
                       backgroundColor: isExactMatch
-                        ? COLOR_PRIMARY[100]
+                        ? COLOR['primary']
                         : 'transparent',
                     },
                   ]}

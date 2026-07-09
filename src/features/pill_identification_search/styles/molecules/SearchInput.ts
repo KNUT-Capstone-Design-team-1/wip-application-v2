@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   searchContainer: {
@@ -11,8 +11,8 @@ export const styles = StyleSheet.create({
     gap: px(4),
   },
   searchContainerDisabled: {
-    backgroundColor: COLOR_GRAY[100],
-    color: COLOR_GRAY[200],
+    backgroundColor: COLOR_BG['btnDisabled'],
+    color: COLOR_TEXT['disabled'],
   },
   searchInput: {
     flex: 1,
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchButtonText: {
-    color: '#fff',
+    color: COLOR_TEXT['white'],
     fontSize: fontPx(14),
     fontWeight: '600',
   },

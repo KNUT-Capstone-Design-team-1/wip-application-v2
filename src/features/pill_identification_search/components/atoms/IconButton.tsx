@@ -3,7 +3,7 @@ import { Image } from '@components/common/CustomImage';
 import { View, ImageSourcePropType } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/atoms/IconButton';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 
 interface IIConButtonProps {
   isSelected: boolean;
@@ -21,7 +21,7 @@ const IconButton = memo(
       <View
         style={[
           styles.iconButtonWrapper,
-          isSelected && { borderColor: COLOR_PRIMARY[100], borderWidth: 2 },
+          isSelected && { borderColor: COLOR['primary'], borderWidth: 2 },
         ]}
       >
         {/* iconUrl이 있으면 이미지, 없으면 색상으로 채우기 */}
@@ -42,7 +42,7 @@ const IconButton = memo(
           <BaseText
             style={[
               styles.iconSectionLabel,
-              isSelected && { color: COLOR_PRIMARY[400] },
+              isSelected && { color: COLOR_TEXT['title'] },
             ]}
             size={13}
             weight={isSelected ? 'bold' : 'medium'}

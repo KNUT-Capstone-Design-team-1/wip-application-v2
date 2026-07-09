@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_PRIMARY } from '../../constants';
+import { COLOR, COLOR_TEXT } from '../../constants';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLOR.white,
+    backgroundColor: COLOR['white'],
     paddingHorizontal: px(8),
   },
   HeaderContent: {
@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    color: COLOR_PRIMARY[200],
+    color: COLOR_TEXT['subTitle'],
     textAlign: 'center',
   },
 });

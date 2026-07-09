@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_PRIMARY } from '../../../../constants';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -9,12 +9,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     marginTop: px(30),
-    color: COLOR_PRIMARY[300],
   },
   title: {
     textAlign: 'center',
     marginBottom: px(20), // 타이틀과 내용 사이 간격
-    color: COLOR_PRIMARY[300],
+    color: COLOR_TEXT['title'],
   },
   contentTitleWrapper: {
     flexDirection: 'row',

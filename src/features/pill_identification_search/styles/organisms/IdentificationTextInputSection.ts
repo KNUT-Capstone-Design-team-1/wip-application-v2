@@ -1,4 +1,4 @@
-import { COLOR, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
 
@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     height: px(18),
     borderRadius: px(4),
     borderWidth: 1.5,
-    borderColor: COLOR_PRIMARY[100],
+    borderColor: COLOR['primary'],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: px(8),
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     color: COLOR['white'],
   },
   textInputLabelText: {
-    color: '#666',
+    color: COLOR_TEXT['label'],
     paddingVertical: px(0),
     includeFontPadding: false,
     textAlignVertical: 'center',

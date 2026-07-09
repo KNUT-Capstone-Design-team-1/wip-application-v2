@@ -1,4 +1,4 @@
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     gap: px(8),
   },
   tag: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: COLOR_BG['base'],
     paddingHorizontal: px(8),
     paddingVertical: px(4),
     borderRadius: px(12),
@@ -19,11 +19,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tagLabel: {
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['sub'],
     marginRight: px(4),
   },
   tagValue: {
-    color: COLOR_GRAY[300],
+    color: COLOR_TEXT['body'],
   },
   tagImage: {
     width: px(24),

@@ -1,4 +1,4 @@
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(4),
   },
   infoMoreBtn: {
-    borderBottomColor: COLOR_GRAY[100],
+    borderBottomColor: COLOR_LINE['separator'],
     borderBottomWidth: px(1.5),
     marginBottom: px(16),
     paddingVertical: px(12),
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     gap: px(4),
   },
   infoMoreBtnText: {
-    color: COLOR_GRAY[300],
+    color: COLOR_TEXT['sub'],
     textAlign: 'center',
   },
   detailInfoContainer: {

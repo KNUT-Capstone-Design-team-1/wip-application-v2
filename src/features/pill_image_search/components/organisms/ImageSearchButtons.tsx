@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Alert } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
-import { COLOR_PRIMARY, COLOR_GRAY, COLOR } from '@constants/color';
+import { COLOR, COLOR_BG } from '@constants/color';
 import CameraScreen from '../organisms/CameraScreen';
 import {
   pickMultipleImages,
@@ -195,14 +195,10 @@ const ImageSearchButtons = ({
       <View style={styles.imageSearchButtonsWrapper}>
         <TouchableOpacity
           activeOpacity={0.7}
-          style={[styles.button, { backgroundColor: COLOR_PRIMARY[400] }]}
+          style={[styles.button, { backgroundColor: COLOR_BG['btnDark'] }]}
           onPress={handleCameraPress}
         >
-          <Camera
-            size={fontPx(24)}
-            fill={COLOR['white']}
-            color={COLOR_PRIMARY[400]}
-          />
+          <Camera size={fontPx(24)} color={COLOR['white']} />
           <BaseText size={16} weight="bold" style={styles.text}>
             촬영하기
           </BaseText>
@@ -210,7 +206,7 @@ const ImageSearchButtons = ({
 
         <TouchableOpacity
           activeOpacity={0.7}
-          style={[styles.button, { backgroundColor: COLOR_PRIMARY[200] }]}
+          style={[styles.button, { backgroundColor: COLOR_BG['btnSecondary'] }]}
           onPress={handleAlbumPress}
         >
           <Image size={fontPx(24)} color={COLOR['white']} />
@@ -221,7 +217,7 @@ const ImageSearchButtons = ({
 
         <TouchableOpacity
           activeOpacity={0.7}
-          style={[styles.button, { backgroundColor: COLOR_GRAY[400] }]}
+          style={[styles.button, { backgroundColor: COLOR_BG['btnGray'] }]}
           onPress={handleFilePress}
         >
           <FolderClosed size={fontPx(24)} color={COLOR['white']} />
@@ -239,11 +235,11 @@ const ImageSearchButtons = ({
             activeOpacity={0.7}
             style={[
               styles.button,
-              { backgroundColor: COLOR_PRIMARY[200], borderRadius: 50 },
+              { backgroundColor: COLOR_BG['btnPrimary'], borderRadius: 50 },
             ]}
             onPress={onApply}
           >
-            <BaseText size={18} weight="bold" style={styles.searchButtonText}>
+            <BaseText size={20} weight="bold" style={styles.searchButtonText}>
               검색하기
             </BaseText>
           </TouchableOpacity>

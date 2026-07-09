@@ -9,6 +9,8 @@ import IdentificationTextInputSection from '@features/pill_identification_search
 import IdentificationIconButtonSection from '@features/pill_identification_search/components/organisms/IdentificationIconButtonSection';
 import IdentificationSearchActions from '@features/pill_identification_search/components/organisms/IdentificationSearchActions';
 import { styles } from '@features/pill_identification_search/styles/organisms/PillIdentificationSearchModal';
+import { COLOR, COLOR_BG } from '@constants/color';
+import { px } from '@utils/responsive';
 
 interface IPillIdentificationSearchFormProps {
   onSearchComplete?: () => void;
@@ -53,7 +55,14 @@ const PillIdentificationSearchForm = memo(
           );
         case 'other':
           return (
-            <View key={key} style={{ marginBottom: 20 }}>
+            <View
+              key={key}
+              style={{
+                paddingBottom: px(16),
+                backgroundColor: COLOR['white'],
+                paddingHorizontal: px(20),
+              }}
+            >
               <IdentificationSection title={section.title}>
                 <MarkSection />
               </IdentificationSection>
@@ -65,7 +74,7 @@ const PillIdentificationSearchForm = memo(
     };
 
     return (
-      <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <View style={{ flex: 1, backgroundColor: COLOR_BG['base'] }}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContentContainer}

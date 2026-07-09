@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   },
   mainText: {},
   subText: {
-    color: COLOR_PRIMARY[100],
+    color: COLOR['primary'],
   },
   icon: {
     marginTop: px(20),

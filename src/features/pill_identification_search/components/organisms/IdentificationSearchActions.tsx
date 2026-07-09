@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { View } from 'react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import Button from '@features/pill_identification_search/components/atoms/Button';
 import { styles } from '@features/pill_identification_search/styles/organisms/PillIdentificationSearchModal';
 
@@ -17,10 +17,15 @@ const IdentificationSearchActions = memo(
           width="48%"
           label="초기화"
           pressHandler={onReset}
-          background={'#fff'}
-          color={COLOR_PRIMARY[100]}
+          background={COLOR_BG['surface']}
+          color={COLOR['primary']}
         />
-        <Button width="48%" label="검색하기" pressHandler={onSearch} />
+        <Button
+          width="48%"
+          label="검색하기"
+          color={COLOR_TEXT['white']}
+          pressHandler={onSearch}
+        />
       </View>
     );
   },

@@ -5,7 +5,7 @@ import { styles } from '../../styles/molecules/Pagination';
 import { IPaginationProps } from '@features/pill_identification_search/types/search_id_types';
 import { PAGE_GROUP_SIZE } from '@features/pill_identification_search/constants/identificationSearch';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
 const Pagination = ({
@@ -34,7 +34,7 @@ const Pagination = ({
       >
         <ChevronLeft
           size={fontPx(16)}
-          color={COLOR_PRIMARY[400]}
+          color={COLOR_TEXT['title']}
           strokeWidth={2}
         />
       </TouchableOpacity>,
@@ -73,7 +73,7 @@ const Pagination = ({
       >
         <ChevronRight
           size={fontPx(16)}
-          color={COLOR_PRIMARY[400]}
+          color={COLOR_TEXT['title']}
           strokeWidth={2}
         />
       </TouchableOpacity>,

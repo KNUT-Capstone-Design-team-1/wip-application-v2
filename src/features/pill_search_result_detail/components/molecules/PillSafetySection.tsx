@@ -180,7 +180,11 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
                   ? data.prohibitedIngredients.join(', ')
                   : '-'}
               </BaseText>
-              <BaseText weight="medium" size={12} style={styles.smallInfoText}>
+              <BaseText
+                weight="semiBold"
+                size={11}
+                style={styles.smallInfoText}
+              >
                 {`\n※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
               </BaseText>
             </>

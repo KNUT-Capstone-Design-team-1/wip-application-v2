@@ -3,8 +3,8 @@ import { BaseText } from '@components/common/BaseText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
-import { px, fontPx } from '@utils/responsive';
-import { COLOR_PRIMARY } from '@constants/color';
+import { fontPx } from '@utils/responsive';
+import { COLOR } from '@constants/color';
 import { ChevronLeft } from 'lucide-react-native';
 
 interface SubHeaderProps {
@@ -25,7 +25,7 @@ const SubHeader = ({ title }: SubHeaderProps) => {
         <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
           <ChevronLeft
             size={fontPx(24)}
-            color={COLOR_PRIMARY[200]}
+            color={COLOR['secondary']}
             strokeWidth={2.5}
           />
         </TouchableOpacity>

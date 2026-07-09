@@ -1,4 +1,4 @@
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 
@@ -7,11 +7,11 @@ export const styles = StyleSheet.create({
     marginBottom: px(20),
   },
   title: {
-    color: COLOR_PRIMARY[200],
+    color: COLOR_TEXT['subTitle'],
     textAlign: 'left',
   },
   externalLinkButton: {
-    backgroundColor: '#004A94',
+    backgroundColor: COLOR['tertiary'],
     padding: px(8),
     borderRadius: px(5),
     marginTop: px(8),
@@ -19,15 +19,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   externalLinkButtonText: {
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
   },
   sourceText: {
-    color: COLOR_GRAY[300],
-    marginTop: px(10),
+    color: COLOR_TEXT['sub'],
+    marginTop: px(12),
     textAlign: 'left',
   },
   disclaimerText: {
-    color: COLOR['alert'],
+    color: COLOR_TEXT['sub'],
     lineHeight: px(16),
   },
   disclaimerContainer: {
@@ -38,17 +38,18 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   reportButtonText: {
-    color: COLOR['alert'],
-    textDecorationLine: 'underline',
+    color: COLOR['tertiary'],
+    borderBottomWidth: px(1),
+    borderBottomColor: COLOR['tertiary'],
   },
   normalText: {
-    color: COLOR['black'],
+    color: COLOR_TEXT['body'],
   },
   warningText: {
     color: COLOR['alert'],
   },
   smallInfoText: {
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['sub'],
     marginTop: px(4),
   },
 });

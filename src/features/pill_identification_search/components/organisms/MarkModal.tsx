@@ -6,7 +6,7 @@ import {
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import SearchInput from '../molecules/SearchInput';
 import { BaseText } from '@components/common/BaseText';
 import MarkList from '../molecules/MarkList';
@@ -80,7 +80,7 @@ const MarkModal = ({
                 right: px(10),
               }}
             >
-              <X size={fontPx(24)} color={COLOR_GRAY[200]} strokeWidth={3} />
+              <X size={fontPx(24)} color={COLOR_TEXT['sub']} strokeWidth={3} />
             </TouchableOpacity>
 
             {/* 타이틀 */}
@@ -112,7 +112,7 @@ const MarkModal = ({
             <View style={styles.markListContainer}>
               {loading ? (
                 <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
+                  <ActivityIndicator size="large" color={COLOR['primary']} />
                   <BaseText style={styles.loadingText} size={16} weight="bold">
                     검색 중...
                   </BaseText>

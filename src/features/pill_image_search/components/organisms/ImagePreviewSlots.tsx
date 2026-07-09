@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Pressable } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImagePreviewSlots';
 import { CircleQuestionMark, Plus, X } from 'lucide-react-native';
-import { COLOR, COLOR_GRAY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { useCameraGuideModalStore } from '@features/pill_image_search/store/camera_guide_store';
 
@@ -32,8 +32,8 @@ const ImagePreviewSlots = ({
           <Pressable onPress={() => setIsGuideModalVisible(true)}>
             <CircleQuestionMark
               size={fontPx(24)}
-              fill={COLOR_GRAY[400]}
-              color={COLOR['white']}
+              fill={COLOR_TEXT['sub']}
+              color={COLOR_TEXT['white']}
               strokeWidth={2}
             />
           </Pressable>
@@ -58,7 +58,7 @@ const ImagePreviewSlots = ({
               <View style={styles.emptySlot}>
                 <Plus
                   size={fontPx(24)}
-                  color={COLOR_GRAY[400]}
+                  color={COLOR_TEXT['disabled']}
                   strokeWidth={3}
                 />
               </View>
@@ -88,7 +88,7 @@ const ImagePreviewSlots = ({
               <View style={styles.emptySlot}>
                 <Plus
                   size={fontPx(24)}
-                  color={COLOR_GRAY[400]}
+                  color={COLOR_TEXT['disabled']}
                   strokeWidth={3}
                 />
               </View>
