@@ -12,11 +12,13 @@ export const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 0,
+    paddingLeft: px(4),
+    paddingTop: px(8),
+    paddingBottom: px(12),
   },
   notLastViewedPllDataWrapper: {
     flex: 1,
-    height: px(60),
-    display: 'flex',
+    height: px(30),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -29,5 +31,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
     paddingRight: px(16),
+    minHeight: px(32),
   },
 });

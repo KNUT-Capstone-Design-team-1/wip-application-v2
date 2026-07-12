@@ -23,7 +23,7 @@ const LastViewedPill = () => {
 
   return (
     <View style={styles.searchContainer}>
-      <BaseText weight={'medium'} size={16} style={styles.searchTitle}>
+      <BaseText weight={'semiBold'} size={18} style={styles.searchTitle}>
         최근 조회한 알약
       </BaseText>
       <ScrollView
@@ -36,7 +36,7 @@ const LastViewedPill = () => {
           <View style={styles.notLastViewedPllDataWrapper}>
             <BaseText
               weight={'medium'}
-              size={14}
+              size={16}
               style={styles.notLastViewedPllDataText}
             >
               최근 조회한 알약이 없습니다.

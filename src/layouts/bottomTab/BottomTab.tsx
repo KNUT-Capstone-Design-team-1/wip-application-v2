@@ -31,46 +31,45 @@ const BottomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       ]}
       pointerEvents="box-none"
     >
-      <View>
-        <View style={styles.bottomTabList}>
-          {state.routes.map((route, index) => {
-            const { options } = descriptors[route.key];
-            const isFocused = state.index === index;
+      <View style={styles.bottomTabList}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
 
-            // Find matching config for icons and labels
-            const config = TAB_CONFIGS.find((c) => {
-              if (route.name === 'index') return c.key === 'home';
+          // Find matching config for icons and labels
+          const config = TAB_CONFIGS.find((c) => {
+            if (route.name === 'index') return c.key === 'home';
 
-              const normalizedPath = `/${route.name.replace(/\/index$/, '')}`;
-              return c.path === normalizedPath;
+            const normalizedPath = `/${route.name.replace(/\/index$/, '')}`;
+            return c.path === normalizedPath;
+          });
+
+          if (!config) return null;
+
+          const handlePress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
             });
 
-            if (!config) return null;
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+            }
+          };
 
-            const handlePress = () => {
-              const event = navigation.emit({
-                type: 'tabPress',
-                target: route.key,
-                canPreventDefault: true,
-              });
-
-              if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(route.name, route.params);
-              }
-            };
-
-            return (
-              <TabItem
-                key={route.key}
-                icon={config.icon(isFocused)}
-                label={config.label}
-                isActive={isFocused}
-                onPress={handlePress}
-                isCenter={config.isCenter}
-              />
-            );
-          })}
-        </View>
+          return (
+            <TabItem
+              key={route.key}
+              icon={config.icon(isFocused)}
+              label={config.label}
+              isActive={isFocused}
+              onPress={handlePress}
+              isCenter={config.isCenter}
+              size={config.size}
+            />
+          );
+        })}
       </View>
     </LinearGradient>
   );

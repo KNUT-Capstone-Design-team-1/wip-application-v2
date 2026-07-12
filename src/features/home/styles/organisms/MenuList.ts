@@ -3,11 +3,11 @@ import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   menuListWrapper: {
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: px(10),
-    marginTop: px(20),
+    alignItems: 'center',
+    gap: px(22),
+    marginTop: px(60),
   },
 });

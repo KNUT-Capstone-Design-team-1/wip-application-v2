@@ -16,15 +16,14 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: COLOR_BG['tabbar'],
-    borderRadius: px(30),
+    borderRadius: px(24),
     marginHorizontal: px(20),
-    paddingHorizontal: px(16),
   },
   tabItem: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: px(10),
+    paddingVertical: px(12),
     gap: px(8),
   },
   label: {

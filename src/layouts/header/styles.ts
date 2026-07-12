@@ -25,15 +25,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     height: px(40),
   },
-  logoText: {},
+  logoText: { textAlign: 'center' },
   menuButton: {
     width: px(40),
     height: px(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  settingButton: {
-    marginLeft: px(8),
     justifyContent: 'center',
     alignItems: 'center',
   },

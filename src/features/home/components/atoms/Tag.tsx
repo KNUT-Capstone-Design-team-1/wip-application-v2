@@ -3,13 +3,14 @@ import { styles } from '../../styles/atoms/Tag';
 import { X } from 'lucide-react-native';
 import { BaseText } from '@components/common/BaseText';
 import { fontPx } from '@utils/responsive';
-import { COLOR_TEXT } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 
 interface ITagProps {
   title: string;
   onPressHandler: () => void;
   onDeleteHandler?: () => void;
   showDelete?: boolean;
+  backgroundColor?: string;
 }
 
 const Tag = ({
@@ -17,9 +18,10 @@ const Tag = ({
   onPressHandler,
   onDeleteHandler,
   showDelete = false,
+  backgroundColor = COLOR_BG['surface'],
 }: ITagProps) => {
   return (
-    <View style={styles.tagContainer}>
+    <View style={[styles.tagContainer, { backgroundColor }]}>
       <TouchableOpacity
         style={styles.tagWrapper}
         onPress={onPressHandler}
