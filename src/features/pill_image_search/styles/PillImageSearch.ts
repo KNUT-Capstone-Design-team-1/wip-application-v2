@@ -1,14 +1,13 @@
 import { COLOR_BG, COLOR_LINE } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
-import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR_BG['surface'],
     paddingHorizontal: px(20),
-    paddingBottom: px(40) + bottomTabSize.height,
+    paddingBottom: px(40),
   },
   contentContainer: {},
   hr: {

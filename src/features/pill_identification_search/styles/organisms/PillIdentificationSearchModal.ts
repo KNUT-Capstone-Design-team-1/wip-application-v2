@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
-import { bottomTabSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   modalOverlay: {
@@ -46,8 +45,7 @@ export const styles = StyleSheet.create({
   bottomButtons: {
     flexDirection: 'row',
     paddingHorizontal: px(20),
-    paddingTop: px(10),
-    paddingBottom: px(15) + bottomTabSize.height,
+    paddingTop: px(12),
     borderTopWidth: px(1),
     borderTopColor: COLOR_LINE['separator'],
     justifyContent: 'space-between',
