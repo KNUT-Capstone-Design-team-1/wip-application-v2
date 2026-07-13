@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, Text } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { View } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
+import { px } from '@utils/responsive';
 
 // Base64 문자열 탐지용 정규식 (예: {data:image/png;base64,...})
 const base64Regex = /^data:image\/[a-zA-Z]+;base64,/;
@@ -18,7 +19,11 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
 
         if (!trimmed) {
           // 빈 줄이면 단순 개행
-          return <Text key={index}>{'\n'}</Text>;
+          return (
+            <BaseText size={16} weight="medium" key={index}>
+              {'\n'}
+            </BaseText>
+          );
         }
 
         // base64 문자열인지 확인
@@ -41,17 +46,16 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
 
         // 일반 텍스트일 경우
         return (
-          <Text
+          <BaseText
             key={index}
+            size={16}
+            weight="medium"
             style={{
-              fontSize: fontPx(16),
               lineHeight: px(22),
-              fontFamily: 'Paperlogy',
-              fontWeight: 500,
             }}
           >
             {trimmed}
-          </Text>
+          </BaseText>
         );
       })}
     </View>

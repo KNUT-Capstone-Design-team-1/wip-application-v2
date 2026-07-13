@@ -1,17 +1,16 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT, COLOR_LINE } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR['black'],
+    backgroundColor: COLOR_BG['camera'],
     justifyContent: 'space-between',
   },
   topOverlay: {
     paddingHorizontal: px(20),
     paddingBottom: px(20),
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     zIndex: 1,
   },
   closeButton: {
@@ -24,9 +23,6 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
     color: COLOR['white'],
     textAlign: 'center',
     marginBottom: px(16),
@@ -39,10 +35,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 500,
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
     marginBottom: px(6),
     textAlign: 'center',
   },
@@ -56,7 +49,7 @@ export const styles = StyleSheet.create({
     borderRadius: px(8),
     borderWidth: px(2),
     borderStyle: 'dashed',
-    borderColor: COLOR['white'],
+    borderColor: COLOR_LINE['border'],
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -102,7 +95,6 @@ export const styles = StyleSheet.create({
   },
   bottomOverlay: {
     paddingTop: px(20),
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     alignItems: 'center',
     zIndex: 1,
   },
@@ -110,7 +102,7 @@ export const styles = StyleSheet.create({
     width: px(80),
     height: px(80),
     borderRadius: px(40),
-    backgroundColor: COLOR_GRAY[400],
+    backgroundColor: COLOR_BG['btnGray'],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -118,6 +110,6 @@ export const styles = StyleSheet.create({
     width: px(64),
     height: px(64),
     borderRadius: px(32),
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
   },
 });

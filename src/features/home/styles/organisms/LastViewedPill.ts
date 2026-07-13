@@ -1,31 +1,29 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/index';
-import { FONT_PAPERLOGY_WEIGHT } from '@constants/font';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR_TEXT } from '@constants/index';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchContainer: {
     width: '100%',
   },
   searchTitle: {
-    fontSize: fontPx(16),
-    color: COLOR_PRIMARY[300],
+    color: COLOR_TEXT['subTitle'],
     marginBottom: px(8),
-    ...FONT_PAPERLOGY_WEIGHT['regular'],
   },
   scrollView: {
     flexGrow: 0,
+    paddingLeft: px(4),
+    paddingTop: px(8),
+    paddingBottom: px(12),
   },
   notLastViewedPllDataWrapper: {
     flex: 1,
-    height: px(60),
-    display: 'flex',
+    height: px(30),
     justifyContent: 'center',
     alignItems: 'center',
   },
   notLastViewedPllDataText: {
-    color: COLOR_GRAY[200],
-    ...FONT_PAPERLOGY_WEIGHT['medium'],
+    color: COLOR_TEXT['disabled'],
   },
   searchTagList: {
     display: 'flex',
@@ -33,5 +31,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
     paddingRight: px(16),
+    minHeight: px(32),
   },
 });

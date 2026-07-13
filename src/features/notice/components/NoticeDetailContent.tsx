@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../styles/NoticeDetailContent';
 import { INoticeData } from '../types/notice_type';
 import RenderNoticeContent from './RenderNoticeContent';
@@ -18,28 +19,36 @@ const NoticeDetailContent = ({
 
   return (
     <View style={styles.noticeDetailWrapper}>
-      <Text style={styles.noticeTitle}>{noticeDetailContent.title}</Text>
+      <BaseText size={20} weight="bold" style={styles.noticeTitle}>
+        {noticeDetailContent.title}
+      </BaseText>
       <View style={styles.noticeDateWrapper}>
-        <Text
+        <BaseText
+          size={12}
+          weight="regular"
           style={styles.noticeDate}
-        >{`등록일 : ${formatDate(noticeDetailContent.createDate)}`}</Text>
+        >{`등록일 : ${formatDate(noticeDetailContent.createDate)}`}</BaseText>
         {isContentModified && (
-          <Text
+          <BaseText
+            size={12}
+            weight="regular"
             style={styles.noticeDate}
-          >{`수정일 : ${formatDate(noticeDetailContent.updateDate)}`}</Text>
+          >{`수정일 : ${formatDate(noticeDetailContent.updateDate)}`}</BaseText>
         )}
       </View>
       <View style={styles.hr} />
-      <Text style={styles.noticeContent}>
+      <BaseText size={14} weight="medium" style={styles.noticeContent}>
         {noticeDetailContent.contents ? (
           <RenderNoticeContent contents={noticeDetailContent.contents} />
         ) : (
           <View>
-            <Text>&apos;내용이 없습니다.&apos;</Text>
+            <BaseText size={14} weight="medium">
+              &apos;내용이 없습니다.&apos;
+            </BaseText>
           </View>
         )}
         {/*{noticeDetailContent.contents ?? '내용이 없습니다.'}*/}
-      </Text>
+      </BaseText>
     </View>
   );
 };

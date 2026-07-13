@@ -1,8 +1,9 @@
 import { Image } from '@components/common/CustomImage';
-import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { View, TouchableOpacity, Pressable } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImagePreviewSlots';
 import { CircleQuestionMark, Plus, X } from 'lucide-react-native';
-import { COLOR, COLOR_GRAY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { useCameraGuideModalStore } from '@features/pill_image_search/store/camera_guide_store';
 
@@ -22,74 +23,78 @@ const ImagePreviewSlots = ({
   );
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.titleWrapper}>
-          <Text style={styles.title}>촬영된 이미지</Text>
-          <Pressable onPress={() => setIsGuideModalVisible(true)}>
-            <CircleQuestionMark
-              size={fontPx(24)}
-              fill={COLOR_GRAY[400]}
-              color={COLOR['white']}
-              strokeWidth={2}
-            />
-          </Pressable>
+    <View style={styles.container}>
+      <View style={styles.titleWrapper}>
+        <BaseText size={20} weight="bold" style={styles.title}>
+          촬영된 이미지
+        </BaseText>
+        <Pressable onPress={() => setIsGuideModalVisible(true)}>
+          <CircleQuestionMark
+            size={fontPx(24)}
+            fill={COLOR_TEXT['sub']}
+            color={COLOR_TEXT['white']}
+            strokeWidth={2}
+          />
+        </Pressable>
+      </View>
+      <View style={styles.slotsWrapper}>
+        {/* 앞면 */}
+        <View style={styles.slot}>
+          <BaseText size={14} weight="semiBold" style={styles.label}>
+            앞면
+          </BaseText>
+          {frontImage ? (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: frontImage }} style={styles.image} />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => onRemove('front')}
+              >
+                <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.emptySlot}>
+              <Plus
+                size={fontPx(24)}
+                color={COLOR_TEXT['disabled']}
+                strokeWidth={3}
+              />
+            </View>
+          )}
         </View>
-        <View style={styles.slotsWrapper}>
-          {/* 앞면 */}
-          <View style={styles.slot}>
-            <Text style={styles.label}>앞면</Text>
-            {frontImage ? (
-              <View style={styles.imageContainer}>
-                <Image source={{ uri: frontImage }} style={styles.image} />
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => onRemove('front')}
-                >
-                  <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.emptySlot}>
-                <Plus
-                  size={fontPx(24)}
-                  color={COLOR_GRAY[400]}
-                  strokeWidth={3}
-                />
-              </View>
-            )}
-          </View>
 
-          {/* 뒷면 */}
-          <View style={styles.slot}>
-            <Text style={styles.label}>뒷면</Text>
-            {backImage ? (
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{ uri: backImage }}
-                  style={styles.image}
-                  cachePolicy={'memory'}
-                />
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => onRemove('back')}
-                >
-                  <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.emptySlot}>
-                <Plus
-                  size={fontPx(24)}
-                  color={COLOR_GRAY[400]}
-                  strokeWidth={3}
-                />
-              </View>
-            )}
-          </View>
+        {/* 뒷면 */}
+        <View style={styles.slot}>
+          <BaseText size={14} weight="semiBold" style={styles.label}>
+            뒷면
+          </BaseText>
+          {backImage ? (
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: backImage }}
+                style={styles.image}
+                cachePolicy={'memory'}
+              />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => onRemove('back')}
+              >
+                <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.emptySlot}>
+              <Plus
+                size={fontPx(24)}
+                color={COLOR_TEXT['disabled']}
+                strokeWidth={3}
+              />
+            </View>
+          )}
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

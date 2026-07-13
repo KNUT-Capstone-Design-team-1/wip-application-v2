@@ -1,43 +1,36 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_PRIMARY } from '../../constants';
-import { FONT_JALNAN2_WEIGHT, FONT_PAPERLOGY_WEIGHT } from '@constants/font';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_TEXT } from '../../constants';
+import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
+
+const HEADER_MIN_HEIGHT = px(54);
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLOR.white,
+    backgroundColor: COLOR['white'],
     paddingHorizontal: px(8),
   },
   HeaderContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: px(50),
+    minHeight: HEADER_MIN_HEIGHT,
     paddingHorizontal: px(12),
   },
   subHeaderContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: px(50),
+    minHeight: HEADER_MIN_HEIGHT,
   },
   logoWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: px(40),
   },
-  logoText: {
-    fontSize: fontPx(18),
-    ...FONT_JALNAN2_WEIGHT['regular'],
-  },
+  logoText: {},
   menuButton: {
     width: px(40),
     height: px(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  settingButton: {
-    marginLeft: px(8),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -49,9 +42,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: fontPx(18),
-    color: COLOR_PRIMARY[200],
+    color: COLOR_TEXT['subTitle'],
     textAlign: 'center',
-    ...FONT_PAPERLOGY_WEIGHT['bold'],
   },
 });

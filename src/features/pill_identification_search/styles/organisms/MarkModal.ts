@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { px } from '@utils/responsive';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,11 +28,8 @@ export const styles = StyleSheet.create({
     zIndex: 10,
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
     textAlign: 'center',
-    fontWeight: 700,
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['title'],
     marginBottom: px(16),
   },
   searchWrapper: {
@@ -45,10 +42,7 @@ export const styles = StyleSheet.create({
     marginBottom: px(10),
   },
   errorText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
     color: COLOR['error'],
-    fontSize: fontPx(13),
     textAlign: 'center',
   },
   markListContainer: {
@@ -60,11 +54,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
     marginTop: px(10),
-    fontSize: fontPx(16),
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['sub'],
   },
   emptyState: {
     flex: 1,
@@ -73,10 +64,7 @@ export const styles = StyleSheet.create({
     paddingVertical: px(60),
   },
   emptyText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(16),
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['sub'],
     textAlign: 'center',
   },
 });

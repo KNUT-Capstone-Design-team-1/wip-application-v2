@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   gridContainer: {},
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderRadius: px(8),
     borderWidth: 2,
-    borderColor: COLOR_GRAY[150],
+    borderColor: COLOR_LINE['border'],
     paddingVertical: px(4),
     paddingHorizontal: px(2),
     alignItems: 'center',
@@ -32,23 +32,10 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   gridTitle: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(12),
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['title'],
     textAlign: 'center',
     marginTop: px(4),
     lineHeight: fontPx(12),
-  },
-  footerLoader: {
-    paddingVertical: px(20),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footerText: {
-    fontSize: fontPx(12),
-    color: COLOR_GRAY[200],
-    marginTop: px(8),
   },
   emptyContainer: {
     flex: 1,
@@ -57,9 +44,6 @@ export const styles = StyleSheet.create({
     paddingVertical: px(60),
   },
   emptyText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(16),
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['sub'],
   },
 });

@@ -8,6 +8,8 @@ import {
 } from '@features/pill_identification_search/types/search_id_types';
 import { useSearchIdStore } from '../../store/search_id_store';
 import { SECTION_KEY_TO_STORE_KEY } from '../../constants/pillIdentificationData';
+import { COLOR } from '@constants/color';
+import { px } from '@utils/responsive';
 
 interface IIdentificationIconButtonSectionProps {
   sectionKey: string;
@@ -58,7 +60,13 @@ const IdentificationIconButtonSection = memo(
     }
 
     return (
-      <View style={{ marginBottom: 20 }}>
+      <View
+        style={{
+          marginBottom: px(2),
+          backgroundColor: COLOR['white'],
+          paddingHorizontal: px(20),
+        }}
+      >
         <IdentificationSection
           title={section.title}
           direction="column"

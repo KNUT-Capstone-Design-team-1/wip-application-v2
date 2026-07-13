@@ -6,13 +6,12 @@ import {
   ViewStyle,
   StyleProp,
   TouchableOpacity,
-  Text,
 } from 'react-native';
 import { IconStyles, styles } from '../styles/unifiedSearchStyles';
 import SearchIcon from '@assets/icons/search.svg';
-import { CircleXIcon } from 'lucide-react-native';
+import { CircleXIcon, Search } from 'lucide-react-native';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/index';
+import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/index';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import { px } from '@utils/responsive';
 
@@ -62,7 +61,7 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
       style={[
         styles.container,
         containerStyle,
-        { borderColor: isFocused ? COLOR_PRIMARY[100] : COLOR_GRAY[200] },
+        { borderColor: isFocused ? COLOR['primary'] : COLOR_LINE['border'] },
       ]}
     >
       <TextInput
@@ -73,7 +72,7 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
         onChangeText={handleTextChange}
         onSubmitEditing={() => handleSearch()}
         returnKeyType="search"
-        placeholderTextColor={COLOR_GRAY[300]}
+        placeholderTextColor={COLOR_TEXT['disabled']}
         multiline={false}
         autoCorrect={false}
         autoCapitalize="none"
@@ -89,11 +88,10 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
           />
         </TouchableOpacity>
       ) : (
-        <SearchIcon
-          width={IconStyles['searchIcon'].size}
-          height={IconStyles['searchIcon'].size}
-          fill={IconStyles['searchIcon'].color}
-          style={{ marginTop: px(-2) }}
+        <Search
+          size={IconStyles['searchIcon'].size}
+          color={IconStyles['searchIcon'].color}
+          strokeWidth={IconStyles['searchIcon'].strokeWidth}
         />
       )}
       <FullSizeLoading visible={loading} />

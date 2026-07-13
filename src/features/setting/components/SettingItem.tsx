@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { ISettingListType } from '@features/setting/types/setting_type';
 import { styles } from '@features/setting/styles/SettingList';
 
@@ -12,8 +13,12 @@ const SettingItem: React.FC<SettingItemProps> = ({ item, onPress }) => {
   return (
     <TouchableOpacity style={styles.settingItem} onPress={() => onPress(item)}>
       <View style={styles.settingItemTextBox}>
-        <Text style={styles.text}>{item.title}</Text>
-        <Text style={styles.text}>{item.value}</Text>
+        <BaseText weight="medium" size={16} style={styles.text}>
+          {item.title}
+        </BaseText>
+        <BaseText weight="medium" size={16} style={styles.text}>
+          {item.value}
+        </BaseText>
       </View>
     </TouchableOpacity>
   );

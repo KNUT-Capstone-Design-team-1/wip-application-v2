@@ -4,6 +4,7 @@ export interface TabItemProps {
   isActive: boolean;
   onPress: () => void;
   isCenter?: boolean;
+  size?: number;
 }
 
 export interface TabConfig {
@@ -12,4 +13,5 @@ export interface TabConfig {
   icon: (isActive: boolean) => React.ReactNode;
   path: string;
   isCenter: boolean;
+  size?: number;
 }

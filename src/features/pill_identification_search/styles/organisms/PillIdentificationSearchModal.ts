@@ -1,16 +1,15 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
-import { COLOR_PRIMARY, COLOR_GRAY } from '@constants/color';
-import { bottomTabSize } from '@constants/size';
+import { px } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: COLOR_BG['overlay'],
     justifyContent: 'flex-end',
   },
   modalContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: COLOR_BG['surface'],
     borderTopLeftRadius: px(20),
     borderTopRightRadius: px(20),
     height: '97%',
@@ -24,14 +23,11 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(20),
     paddingBottom: px(15),
     borderBottomWidth: 1,
-    borderBottomColor: COLOR_GRAY[150],
+    borderBottomColor: COLOR_LINE['separator'],
     position: 'relative',
   },
   modalTitle: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
-    color: COLOR_PRIMARY[100],
+    color: COLOR['primary'],
   },
   closeButton: {
     position: 'absolute',
@@ -40,24 +36,19 @@ export const styles = StyleSheet.create({
     padding: px(5),
   },
   closeButtonText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(24),
-    fontWeight: 700,
-    color: COLOR_GRAY[200],
+    color: COLOR_TEXT['title'],
   },
   scrollView: {
     flex: 1,
   },
-  scrollContentContainer: {
-    padding: px(20),
-  },
+  scrollContentContainer: {},
   bottomButtons: {
     flexDirection: 'row',
     paddingHorizontal: px(20),
-    paddingTop: px(10),
-    paddingBottom: px(15) + bottomTabSize.height,
+    paddingTop: px(12),
     borderTopWidth: px(1),
-    borderTopColor: COLOR_GRAY[150],
+    borderTopColor: COLOR_LINE['separator'],
     justifyContent: 'space-between',
+    backgroundColor: COLOR_BG['surface'],
   },
 });

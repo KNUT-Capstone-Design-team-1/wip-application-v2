@@ -6,7 +6,7 @@ import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_ph
 import { INearbyPharmacies } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
 
@@ -91,7 +91,7 @@ const NearbyPharmacyScreen = () => {
   if (loading && !location) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
+        <ActivityIndicator size="large" color={COLOR['primary']} />
       </View>
     );
   }

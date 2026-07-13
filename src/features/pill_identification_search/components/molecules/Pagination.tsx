@@ -1,10 +1,11 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/molecules/Pagination';
 import { IPaginationProps } from '@features/pill_identification_search/types/search_id_types';
 import { PAGE_GROUP_SIZE } from '@features/pill_identification_search/constants/identificationSearch';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
 const Pagination = ({
@@ -33,7 +34,7 @@ const Pagination = ({
       >
         <ChevronLeft
           size={fontPx(16)}
-          color={COLOR_PRIMARY[400]}
+          color={COLOR_TEXT['title']}
           strokeWidth={2}
         />
       </TouchableOpacity>,
@@ -47,13 +48,15 @@ const Pagination = ({
           style={[styles.pageButton, i === page && styles.pageButtonActive]}
           onPress={() => setPage(i)}
         >
-          <Text
+          <BaseText
             style={
               i === page ? styles.pageButtonTextActive : styles.pageButtonText
             }
+            size={14}
+            weight="medium"
           >
             {i}
-          </Text>
+          </BaseText>
         </TouchableOpacity>,
       );
     }
@@ -70,7 +73,7 @@ const Pagination = ({
       >
         <ChevronRight
           size={fontPx(16)}
-          color={COLOR_PRIMARY[400]}
+          color={COLOR_TEXT['title']}
           strokeWidth={2}
         />
       </TouchableOpacity>,

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
-import { COLOR_GRAY } from '@constants/color';
+import { px } from '@utils/responsive';
+import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   selectMarkContainer: {
@@ -11,18 +11,18 @@ export const styles = StyleSheet.create({
     marginBottom: px(10),
     gap: px(16),
     padding: px(8),
-    borderWidth: 1,
-    borderColor: COLOR_GRAY[100],
+    borderWidth: px(1.5),
+    borderColor: COLOR_LINE['border'],
     borderRadius: px(15),
-    backgroundColor: '#fff',
+    backgroundColor: COLOR['white'],
     // ios
-    shadowColor: '#000',
+    shadowColor: COLOR['shadow'],
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: px(1),
     },
     shadowOpacity: 0.18,
-    shadowRadius: 1.0,
+    shadowRadius: px(1.0),
     // android
     elevation: 1,
   },
@@ -35,10 +35,7 @@ export const styles = StyleSheet.create({
     height: '100%',
   },
   markTitle: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(14),
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['label'],
     textAlign: 'center',
   },
   selectedMarkDelete: {

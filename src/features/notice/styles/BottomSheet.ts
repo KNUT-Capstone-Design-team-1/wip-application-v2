@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   bottomSheetContainer: {
@@ -15,15 +15,14 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: COLOR['black'],
-    opacity: 0.5,
+    backgroundColor: COLOR_BG['overlay'],
   },
   bottomSheet: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     height: '38%',
-    backgroundColor: COLOR_PRIMARY['300'],
+    backgroundColor: COLOR_BG['sheetNotice'],
     borderTopRightRadius: px(24),
     borderTopLeftRadius: px(24),
   },
@@ -63,31 +62,19 @@ export const styles = StyleSheet.create({
     // padding: px(16),
     paddingHorizontal: px(16),
     paddingVertical: px(8),
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
   },
-  sheetCloseToday: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
-    color: COLOR_PRIMARY[300],
+  sheetCloseTodayText: {
+    color: COLOR_TEXT['body'],
   },
-  sheetCloseButton: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
-    color: COLOR['black'],
+  sheetCloseButtonText: {
+    color: COLOR_TEXT['body'],
   },
   title: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(18),
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
   },
   contents: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    fontSize: fontPx(14),
-    color: COLOR['white'],
+    color: COLOR_TEXT['white'],
   },
   detailButton: {
     position: 'absolute',
@@ -98,12 +85,9 @@ export const styles = StyleSheet.create({
     zIndex: 10,
   },
   detailButtonText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
     color: COLOR['white'],
-    fontSize: fontPx(14),
     borderBottomWidth: px(1),
-    borderBottomColor: COLOR['white'],
+    borderBottomColor: COLOR_BG['surface'],
     paddingBottom: px(2),
   },
 });

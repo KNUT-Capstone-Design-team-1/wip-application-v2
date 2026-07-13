@@ -1,20 +1,20 @@
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
-    marginBottom: px(20),
+    paddingVertical: px(16),
+    backgroundColor: COLOR_BG['surface'],
+    paddingHorizontal: screenPadding.horizontal,
   },
   title: {
-    fontFamily: 'Paperlogy',
-    color: COLOR_PRIMARY[200],
-    fontSize: fontPx(16),
-    fontWeight: 700,
+    color: COLOR_TEXT['subTitle'],
     textAlign: 'left',
   },
   externalLinkButton: {
-    backgroundColor: '#004A94',
+    backgroundColor: COLOR['tertiary'],
     padding: px(8),
     borderRadius: px(5),
     marginTop: px(8),
@@ -22,24 +22,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   externalLinkButtonText: {
-    fontFamily: 'Paperlogy',
-    color: COLOR['white'],
-    fontWeight: 700,
-    fontSize: fontPx(14),
+    color: COLOR_TEXT['white'],
   },
   sourceText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
-    color: COLOR_GRAY[300],
-    fontWeight: 600,
-    marginTop: px(10),
+    color: COLOR_TEXT['sub'],
+    marginTop: px(12),
     textAlign: 'left',
   },
   disclaimerText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
-    color: COLOR['alert'],
-    fontWeight: 600,
+    color: COLOR_TEXT['sub'],
     lineHeight: px(16),
   },
   disclaimerContainer: {
@@ -50,29 +41,18 @@ export const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   reportButtonText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
-    color: COLOR['alert'],
-    fontWeight: 600,
-    textDecorationLine: 'underline',
+    color: COLOR['tertiary'],
+    borderBottomWidth: px(1),
+    borderBottomColor: COLOR['tertiary'],
   },
   normalText: {
-    fontFamily: 'Paperlogy',
-    color: COLOR['black'],
-    fontWeight: 500,
-    fontSize: fontPx(14),
+    color: COLOR_TEXT['body'],
   },
   warningText: {
-    fontFamily: 'Paperlogy',
     color: COLOR['alert'],
-    fontWeight: 700,
-    fontSize: fontPx(14),
   },
   smallInfoText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
-    color: COLOR_GRAY[400],
-    fontWeight: 500,
+    color: COLOR_TEXT['sub'],
     marginTop: px(4),
   },
 });

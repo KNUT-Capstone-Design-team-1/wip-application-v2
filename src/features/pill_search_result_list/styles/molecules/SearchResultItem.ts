@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchItemWrapper: {
@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     width: px(100),
     height: px(100),
     borderWidth: px(1),
-    borderColor: COLOR_GRAY[100],
+    borderColor: COLOR_LINE['border'],
     borderRadius: px(10),
     overflow: 'hidden', // 이미지가 borderRadius 밖으로 나가지 않도록
   },
@@ -22,52 +22,28 @@ export const styles = StyleSheet.create({
     paddingVertical: px(2),
     gap: px(4),
   },
-  searchItemTitle: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 700,
-    fontSize: fontPx(14),
-  },
+  searchItemTitle: {},
   searchItemClassName: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(12),
-    color: COLOR['item'],
-  },
-  searchItemEtcOtcCode: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(11),
     color: COLOR['item'],
   },
   searchItemEntpName: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(11),
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['label'],
   },
   searchItemPrintText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(11),
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['body'],
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
   fallbackImageContainer: {
     flex: 1,
-    backgroundColor: COLOR_GRAY[150],
+    backgroundColor: COLOR_BG['base'],
     justifyContent: 'center',
     alignItems: 'center',
   },
   fallbackImageText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    color: COLOR_PRIMARY[400],
-    fontSize: fontPx(14),
+    color: COLOR_TEXT['disabled'],
   },
-  infoTitleWrapper: {
-    gap: px(1),
-  },
+  infoTitleWrapper: {},
   infoPrintWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -75,7 +51,7 @@ export const styles = StyleSheet.create({
   infoSeparator: {
     width: px(2),
     height: '60%',
-    backgroundColor: COLOR_GRAY[200],
+    backgroundColor: COLOR_LINE['separator'],
     marginHorizontal: px(8),
   },
   infoEntpWrapper: {

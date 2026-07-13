@@ -1,10 +1,11 @@
 import { memo, useMemo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/molecules/DetailSection';
 import { decodeHtmlContent } from '../../utils/htmlDecoder';
 import { IDetailSectionProps } from '@features/pill_search_result_detail/types/pill_detail_type';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
 const DetailSection = ({
@@ -31,24 +32,28 @@ const DetailSection = ({
         onPress={onToggle}
         activeOpacity={0.7}
       >
-        <Text style={styles.detailInfoHeadText}>{title}</Text>
+        <BaseText weight="bold" size={20} style={styles.detailInfoHeadText}>
+          {title}
+        </BaseText>
         {isOpen ? (
           <ChevronDown
             size={fontPx(24)}
-            color={COLOR_PRIMARY[200]}
+            color={COLOR['secondary']}
             strokeWidth={2}
           />
         ) : (
           <ChevronUp
             size={fontPx(24)}
-            color={COLOR_PRIMARY[200]}
+            color={COLOR['secondary']}
             strokeWidth={2}
           />
         )}
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.detailInfoContent}>
-          <Text style={styles.detailInfoText}>{decodedContent}</Text>
+          <BaseText weight="medium" size={16} style={styles.detailInfoText}>
+            {decodedContent}
+          </BaseText>
         </View>
       )}
     </View>

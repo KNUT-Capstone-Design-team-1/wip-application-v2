@@ -1,23 +1,32 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   pillSaveContentWrapper: {
     flex: 1,
     borderRadius: px(10),
-    borderColor: COLOR_GRAY[250],
+    borderColor: COLOR_LINE['border'],
     borderWidth: px(1),
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     minHeight: px(190),
     paddingBottom: px(6),
     overflow: 'hidden',
+    shadowColor: COLOR['shadow'],
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
   },
   closeButton: {
     position: 'absolute',
     top: px(4),
     right: px(4),
-    backgroundColor: COLOR_GRAY[400],
+    backgroundColor: COLOR_BG['btnGray'],
     padding: px(4),
     borderRadius: px(50),
   },
@@ -25,7 +34,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: px(82),
     borderWidth: px(1),
-    borderColor: COLOR_GRAY[100],
+    borderColor: COLOR_LINE['border'],
     marginBottom: px(4),
   },
   pillInfoWrapper: {
@@ -33,30 +42,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(6),
   },
   pillName: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(12),
-    fontWeight: 700,
-    color: COLOR['black'],
+    color: COLOR_TEXT['title'],
     marginBottom: px(2),
     lineHeight: fontPx(18),
   },
   pillClassName: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(10),
     color: COLOR['item'],
   },
   pillEntpName: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(10),
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['label'],
   },
   pillPrintText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
-    fontSize: fontPx(10),
-    color: COLOR_PRIMARY[400],
+    color: COLOR_TEXT['body'],
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
@@ -68,7 +65,7 @@ export const styles = StyleSheet.create({
   pillInfoSeparator: {
     width: px(2),
     height: '60%',
-    backgroundColor: COLOR_GRAY[200],
+    backgroundColor: COLOR_LINE['separator'],
     marginHorizontal: px(8),
   },
   pillInfoEntpWrapper: {

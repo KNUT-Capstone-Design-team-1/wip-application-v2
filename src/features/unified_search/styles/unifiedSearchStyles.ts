@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     height: px(34),
     borderWidth: px(1),
     // 그림자 추가 (iOS)
-    shadowColor: COLOR['black'],
+    shadowColor: COLOR['shadow'],
     shadowOffset: { width: 0, height: px(1) },
     shadowOpacity: 0.1,
     shadowRadius: px(2),
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     lineHeight: fontPx(18),
     includeFontPadding: false,
     paddingVertical: 0,
-    fontFamily: 'Paperlogy',
+    fontFamily: 'Pretendard',
     fontWeight: 500,
   },
   clearButton: {
@@ -36,12 +36,13 @@ export const styles = StyleSheet.create({
 
 export const IconStyles = {
   clearIcon: {
-    size: fontPx(14),
-    color: COLOR_GRAY[300],
+    size: fontPx(16),
+    color: COLOR_TEXT['sub'],
     strokeWidth: px(2),
   },
   searchIcon: {
-    size: fontPx(14),
-    color: COLOR_GRAY[300],
+    size: fontPx(16),
+    color: COLOR_TEXT['sub'],
+    strokeWidth: px(2),
   },
 };

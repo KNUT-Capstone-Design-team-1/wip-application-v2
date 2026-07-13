@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import SearchInput from '../molecules/SearchInput';
+import { BaseText } from '@components/common/BaseText';
 import MarkList from '../molecules/MarkList';
 import Pagination from '../molecules/Pagination';
 import { styles } from '../../styles/organisms/MarkModal';
@@ -80,11 +80,13 @@ const MarkModal = ({
                 right: px(10),
               }}
             >
-              <X size={fontPx(24)} color={COLOR_GRAY[200]} strokeWidth={3} />
+              <X size={fontPx(24)} color={COLOR_TEXT['sub']} strokeWidth={3} />
             </TouchableOpacity>
 
             {/* 타이틀 */}
-            <Text style={styles.title}>마크 검색</Text>
+            <BaseText style={styles.title} size={18} weight="bold">
+              마크 검색
+            </BaseText>
 
             {/* 검색 입력 */}
             <View style={styles.searchWrapper}>
@@ -100,7 +102,9 @@ const MarkModal = ({
             {/* 에러 메시지 */}
             {error && (
               <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{error}</Text>
+                <BaseText style={styles.errorText} size={13} weight="bold">
+                  {error}
+                </BaseText>
               </View>
             )}
 
@@ -108,14 +112,16 @@ const MarkModal = ({
             <View style={styles.markListContainer}>
               {loading ? (
                 <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
-                  <Text style={styles.loadingText}>검색 중...</Text>
+                  <ActivityIndicator size="large" color={COLOR['primary']} />
+                  <BaseText style={styles.loadingText} size={16} weight="bold">
+                    검색 중...
+                  </BaseText>
                 </View>
               ) : markDataList.length === 0 && !error ? (
                 <View style={styles.emptyState}>
-                  <Text style={styles.emptyText}>
+                  <BaseText style={styles.emptyText} size={16} weight="bold">
                     검색어를 입력하여 마크를 검색해주세요
-                  </Text>
+                  </BaseText>
                 </View>
               ) : (
                 <MarkList data={markDataList} onSelect={handleSelect} />

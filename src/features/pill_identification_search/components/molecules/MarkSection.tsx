@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity } from 'react-native';
+import { View, Modal, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { Image } from 'expo-image';
 import Button from '../atoms/Button';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { styles } from '../../styles/molecules/MarkSection';
 import { useMarkModal } from '../../hooks/useMarkModal';
 import MarkModal from '../organisms/MarkModal';
@@ -70,13 +71,15 @@ const MarkSection = () => {
             />
           </View>
           <View style={{ justifyContent: 'center' }}>
-            <Text style={styles.markTitle}>{selectedMarkTitle}</Text>
+            <BaseText style={styles.markTitle} size={14} weight="bold">
+              {selectedMarkTitle}
+            </BaseText>
           </View>
           <TouchableOpacity
             style={styles.selectedMarkDelete}
             onPress={deleteSelectedMark}
           >
-            <X size={fontPx(18)} color={COLOR_GRAY[400]} strokeWidth={2} />
+            <X size={fontPx(18)} color={COLOR_TEXT['sub']} strokeWidth={2} />
           </TouchableOpacity>
         </View>
       )}
@@ -86,7 +89,7 @@ const MarkSection = () => {
         label="마크 선택하기"
         pressHandler={openMarkModal}
         background="#fff"
-        color={COLOR_PRIMARY[100]}
+        color={COLOR['primary']}
         width="100%"
       />
     </View>

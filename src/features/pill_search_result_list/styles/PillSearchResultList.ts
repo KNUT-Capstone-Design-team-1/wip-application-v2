@@ -1,25 +1,21 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_GRAY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   pillSearchResultListRoot: {
     flex: 1,
-    backgroundColor: COLOR['white'],
-    paddingVertical: px(20),
+    backgroundColor: COLOR_BG['surface'],
   },
   searchCountLabel: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 500,
-    color: COLOR_GRAY[400],
-    fontSize: fontPx(12),
+    color: COLOR_TEXT['sub'],
     includeFontPadding: false,
     textAlignVertical: 'center',
     marginLeft: px(2),
   },
   searchBarWrapper: {
     marginBottom: px(10),
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     zIndex: 10,
     paddingHorizontal: px(20),
   },
@@ -31,13 +27,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
   },
   loadingText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 600,
     marginTop: px(16),
-    fontSize: fontPx(16),
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['sub'],
   },
 });

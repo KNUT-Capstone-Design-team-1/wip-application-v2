@@ -1,14 +1,13 @@
-import { COLOR, COLOR_PRIMARY, COLOR_GRAY } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR['white'],
   },
   logoContainer: {
-    flex: 4,
+    aspectRatio: 2,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -24,17 +23,11 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   statusText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(18),
-    fontWeight: 700,
-    color: COLOR_PRIMARY[100],
+    color: COLOR_TEXT['white'],
     marginBottom: px(12),
   },
   noticeText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
-    fontWeight: 500,
-    color: COLOR_GRAY[400],
+    color: COLOR_TEXT['white'],
     marginBottom: px(16),
     textAlign: 'center',
     paddingHorizontal: px(20),
@@ -43,13 +36,13 @@ export const styles = StyleSheet.create({
   progressBarContainer: {
     width: px(250),
     height: px(10),
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR['tertiary'],
     borderRadius: px(5),
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
-    backgroundColor: COLOR_PRIMARY[100],
+    backgroundColor: COLOR['white'],
     borderRadius: px(5),
   },
   detailsContainer: {
@@ -57,10 +50,7 @@ export const styles = StyleSheet.create({
     marginTop: px(8),
   },
   percentText: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(16),
-    color: COLOR_PRIMARY[100],
-    fontWeight: 700,
+    color: COLOR_TEXT['white'],
     marginBottom: px(4),
   },
 });

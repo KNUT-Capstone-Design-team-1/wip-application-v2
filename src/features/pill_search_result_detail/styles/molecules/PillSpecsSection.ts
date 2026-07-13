@@ -1,18 +1,17 @@
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   infoWrapper: {
     gap: px(2),
-    paddingBottom: px(0),
-    paddingVertical: px(12),
+    paddingTop: px(12),
+    paddingHorizontal: screenPadding.horizontal,
+    backgroundColor: COLOR_BG['surface'],
   },
   sectionTitle: {
-    fontFamily: 'Paperlogy',
-    color: COLOR_PRIMARY[200],
-    fontSize: fontPx(16),
-    fontWeight: 700,
+    color: COLOR_TEXT['subTitle'],
     textAlign: 'left',
     marginBottom: px(4),
     marginTop: px(12),

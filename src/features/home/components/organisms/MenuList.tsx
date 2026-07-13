@@ -6,45 +6,33 @@ import { useToast } from '@hooks/use_toast';
 import MenuButton from '../molecules/MenuButton';
 import { px } from '@utils/responsive';
 
-interface IMenuListProps {
-  onPillIdentificationPress?: () => void;
-}
-
-const MenuList = ({ onPillIdentificationPress }: IMenuListProps) => {
+const MenuList = () => {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const handlePress = (path: string, index: number) => {
+  const handlePress = (path: string) => {
     // path가 dev 이면 개발 중 toast 추가
     if (path === 'dev') {
       showToast({ message: '아직 개발 중인 기능입니다.' });
       return;
     }
-    // 첫 번째 버튼(식별 검색)은 모달로 열기
-    if (index === 0 && onPillIdentificationPress) {
-      onPillIdentificationPress();
-    } else {
-      router.push(path);
-    }
+    router.push(path);
   };
 
   return (
-    <>
-      <View style={styles.menuListWrapper}>
-        {BUTTON_LIST.map((button, index) => (
-          <MenuButton
-            key={index}
-            imageSource={button.img}
-            width={'48%'}
-            height={px(140)}
-            title={button.title}
-            content={button.content}
-            backgroundColor={button.backgroundColor}
-            onPress={() => handlePress(button.path, index)}
-          />
-        ))}
-      </View>
-    </>
+    <View style={styles.menuListWrapper}>
+      {BUTTON_LIST.map((button, index) => (
+        <MenuButton
+          key={index}
+          imageSource={button.img}
+          width={'100%'}
+          height={px(110)}
+          title={button.title}
+          content={button.content}
+          onPress={() => handlePress(button.path)}
+        />
+      ))}
+    </View>
   );
 };
 

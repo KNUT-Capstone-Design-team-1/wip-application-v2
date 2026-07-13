@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, Pressable } from 'react-native';
+import { View, Modal, TouchableOpacity, Pressable } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import PillIdentificationSearchForm from './PillIdentificationSearchForm';
 import { styles } from '@features/pill_identification_search/styles/organisms/PillIdentificationSearchModal';
 
@@ -23,9 +24,13 @@ const PillIdentificationSearchModal: React.FC<
         <View style={styles.modalContainer}>
           {/* 헤더 */}
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>식별 검색</Text>
+            <BaseText style={styles.modalTitle} size={18} weight="bold">
+              식별 검색
+            </BaseText>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>✕</Text>
+              <BaseText style={styles.closeButtonText} size={24} weight="bold">
+                ✕
+              </BaseText>
             </TouchableOpacity>
           </View>
 

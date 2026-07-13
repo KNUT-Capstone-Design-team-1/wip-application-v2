@@ -1,5 +1,6 @@
 import { memo, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/PillDetailInfo';
 import { IPillDetailInfoProps } from '../../types/pill_detail_type';
 
@@ -8,7 +9,7 @@ import PillSpecsSection from '../molecules/PillSpecsSection';
 import PillSafetySection from '../molecules/PillSafetySection';
 import PillDescriptionSection from '../molecules/PillDescriptionSection';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
 const PillDetailInfo = ({
@@ -35,19 +36,21 @@ const PillDetailInfo = ({
         style={styles.infoMoreBtn}
         onPress={() => setMoreInfo((prev) => !prev)}
       >
-        <Text style={styles.infoMoreBtnText}>
+        {/* 더보기 가운데 정렬용 */}
+        <View style={{ width: fontPx(24), height: fontPx(24) }} />
+        <BaseText weight="semiBold" size={16} style={styles.infoMoreBtnText}>
           {moreInfo ? '접기' : '더보기'}
-        </Text>
+        </BaseText>
         {moreInfo ? (
           <ChevronUp
             size={fontPx(24)}
-            color={COLOR_GRAY[300]}
+            color={COLOR_TEXT['sub']}
             strokeWidth={2}
           />
         ) : (
           <ChevronDown
             size={fontPx(24)}
-            color={COLOR_GRAY[300]}
+            color={COLOR_TEXT['sub']}
             strokeWidth={2}
           />
         )}

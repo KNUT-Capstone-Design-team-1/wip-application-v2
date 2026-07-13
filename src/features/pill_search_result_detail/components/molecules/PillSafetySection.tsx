@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Linking, Alert } from 'react-native';
+import { View, TouchableOpacity, Linking, Alert } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import InfoRow from '../atoms/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
@@ -55,21 +56,27 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>[ 주의 및 특수 분류 정보 ]</Text>
+      <BaseText weight="bold" size={16} style={styles.title}>
+        [ 주의 및 특수 분류 정보 ]
+      </BaseText>
       <InfoRow
         label="운전/기계조작"
         value={
           data.isDrivingWarning ? (
             <>
-              <Text style={styles.warningText}>⚠️ 주의</Text>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
+                ⚠️ 주의
+              </BaseText>
               {`\n`}
-              <Text style={styles.normalText}>해당 문구: </Text>
-              <Text style={styles.warningText}>
+              <BaseText weight="medium" size={14} style={styles.normalText}>
+                해당 문구:{' '}
+              </BaseText>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
                 {Array.isArray(data.drivingWarningKeywords) &&
                 data.drivingWarningKeywords.length > 0
                   ? data.drivingWarningKeywords.join(', ')
                   : '-'}
-              </Text>
+              </BaseText>
             </>
           ) : (
             '해당 없음 (X)'
@@ -82,14 +89,18 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isNarcotic ? (
             <>
-              <Text style={styles.warningText}>⚠️ 주의</Text>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
+                ⚠️ 주의
+              </BaseText>
               {`\n`}
-              <Text style={styles.normalText}>해당 성분: </Text>
-              <Text style={styles.warningText}>
+              <BaseText weight="medium" size={14} style={styles.normalText}>
+                해당 성분:{' '}
+              </BaseText>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
                 {Array.isArray(data.narcoticIngredients)
                   ? data.narcoticIngredients.join(', ')
                   : '-'}
-              </Text>
+              </BaseText>
             </>
           ) : (
             '해당 없음 (X)'
@@ -101,14 +112,18 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isCannabis ? (
             <>
-              <Text style={styles.warningText}>⚠️ 주의</Text>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
+                ⚠️ 주의
+              </BaseText>
               {`\n`}
-              <Text style={styles.normalText}>해당 성분: </Text>
-              <Text style={styles.warningText}>
+              <BaseText weight="medium" size={14} style={styles.normalText}>
+                해당 성분:{' '}
+              </BaseText>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
                 {Array.isArray(data.cannabisIngredients)
                   ? data.cannabisIngredients.join(', ')
                   : '-'}
-              </Text>
+              </BaseText>
             </>
           ) : (
             '해당 없음 (X)'
@@ -120,14 +135,18 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isPsychotropic ? (
             <>
-              <Text style={styles.warningText}>⚠️ 주의</Text>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
+                ⚠️ 주의
+              </BaseText>
               {`\n`}
-              <Text style={styles.normalText}>해당 성분: </Text>
-              <Text style={styles.warningText}>
+              <BaseText weight="medium" size={14} style={styles.normalText}>
+                해당 성분:{' '}
+              </BaseText>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
                 {Array.isArray(data.psychotropicIngredients)
                   ? data.psychotropicIngredients.join(', ')
                   : '-'}
-              </Text>
+              </BaseText>
             </>
           ) : (
             '해당 없음 (X)'
@@ -139,9 +158,9 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         style={styles.externalLinkButton}
         onPress={() => Linking.openURL(nifdsUrl)}
       >
-        <Text style={styles.externalLinkButtonText}>
+        <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
           마약 정보 데이터베이스
-        </Text>
+        </BaseText>
       </TouchableOpacity>
 
       <InfoRow
@@ -149,17 +168,25 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         value={
           data.isProhibited ? (
             <>
-              <Text style={styles.warningText}>⚠️ 주의</Text>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
+                ⚠️ 주의
+              </BaseText>
               {`\n`}
-              <Text style={styles.normalText}>해당 성분: </Text>
-              <Text style={styles.warningText}>
+              <BaseText weight="medium" size={14} style={styles.normalText}>
+                해당 성분:{' '}
+              </BaseText>
+              <BaseText weight="bold" size={14} style={styles.warningText}>
                 {Array.isArray(data.prohibitedIngredients)
                   ? data.prohibitedIngredients.join(', ')
                   : '-'}
-              </Text>
-              <Text style={styles.smallInfoText}>
+              </BaseText>
+              <BaseText
+                weight="semiBold"
+                size={11}
+                style={styles.smallInfoText}
+              >
                 {`\n※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
-              </Text>
+              </BaseText>
             </>
           ) : (
             '해당 없음 (X)'
@@ -171,24 +198,26 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
         style={styles.externalLinkButton}
         onPress={() => Linking.openURL(kadaUrl)}
       >
-        <Text style={styles.externalLinkButtonText}>
+        <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
           도핑 금지 약물 확인 (KADA)
-        </Text>
+        </BaseText>
       </TouchableOpacity>
 
       <View style={styles.disclaimerContainer}>
-        <Text style={styles.disclaimerText}>
+        <BaseText weight="semiBold" size={12} style={styles.disclaimerText}>
           * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 최신
           정보는 마약 정보 데이터베이스 및 KADA 홈페이지를 확인해 주세요.
-        </Text>
+        </BaseText>
         <TouchableOpacity style={styles.reportButton} onPress={handleReport}>
-          <Text style={styles.reportButtonText}>잘못된 정보 신고하기</Text>
+          <BaseText weight="semiBold" size={12} style={styles.reportButtonText}>
+            잘못된 정보 신고하기
+          </BaseText>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.sourceText}>
+      <BaseText weight="semiBold" size={12} style={styles.sourceText}>
         * 출처: 식약처 마약정보DB, 한국도핑방지위원회(KADA)
-      </Text>
+      </BaseText>
     </View>
   );
 };

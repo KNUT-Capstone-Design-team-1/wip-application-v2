@@ -9,7 +9,7 @@ const PillDetailSkeleton = () => {
     <View style={styles.container}>
       {/* 이미지 스켈레톤 */}
       <View style={styles.imageContainer}>
-        <SkeletonBox width={'90%'} height={px(180)} borderRadius={px(8)} />
+        <SkeletonBox width={'100%'} height={px(180)} borderRadius={px(8)} />
       </View>
 
       {/* 정보 스켈레톤 */}

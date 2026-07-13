@@ -1,21 +1,22 @@
 import { View, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePathname } from 'expo-router';
-import { PAGE_TITLES } from './constants';
 import Header from './header/Header';
 import SubHeader from './header/SubHeader';
+import { px } from '@utils/responsive';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const isMainPage = pathname === '/';
-  const pageTitle = PAGE_TITLES[pathname] || '페이지';
 
   return (
-    <View style={styles.container}>
-      {isMainPage ? <Header /> : <SubHeader title={pageTitle} />}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {isMainPage ? <Header /> : <SubHeader />}
       <View style={styles.content}>{children}</View>
     </View>
   );
@@ -28,7 +29,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 0,
   },
 });
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
 import { px } from '@utils/responsive';
@@ -8,7 +9,7 @@ import { TabItemProps } from './types';
 import { GRADIENT_COLORS, ACTIVE_COLOR } from './constants';
 
 export const TabItem = React.memo(
-  ({ icon, label, isActive, onPress }: TabItemProps) => {
+  ({ icon, label, isActive, onPress, size }: TabItemProps) => {
     // 활성화 상태인 경우에만 파란색 그라데이션 적용, 비활성화는 회색
     const gradientColors = isActive
       ? GRADIENT_COLORS
@@ -25,7 +26,7 @@ export const TabItem = React.memo(
       >
         {isActive ? (
           <MaskedView
-            style={{ width: px(22), height: px(22) }}
+            style={{ width: size, height: size }}
             maskElement={
               <View
                 style={{
@@ -49,9 +50,14 @@ export const TabItem = React.memo(
         ) : (
           <>{icon}</>
         )}
-        <Text style={[styles.label, isActive && { color: ACTIVE_COLOR }]}>
+        <BaseText
+          fontFamily="Jalnan2"
+          weight="regular"
+          size={10}
+          style={[styles.label, isActive && { color: ACTIVE_COLOR }]}
+        >
           {label}
-        </Text>
+        </BaseText>
       </TouchableOpacity>
     );
   },

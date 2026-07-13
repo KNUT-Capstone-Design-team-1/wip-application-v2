@@ -1,6 +1,9 @@
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { TERMS } from '../constants/terms';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { screenPadding } from '@constants/size';
 
 const Terms = () => {
   return (
@@ -8,7 +11,9 @@ const Terms = () => {
       style={styles.termsContainer}
       contentContainerStyle={styles.contentContainer}
     >
-      <Text style={styles.termsText}>{TERMS}</Text>
+      <BaseText weight="regular" size={16} style={styles.termsText}>
+        {TERMS}
+      </BaseText>
     </ScrollView>
   );
 };
@@ -16,18 +21,16 @@ const Terms = () => {
 const styles = StyleSheet.create({
   termsContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLOR_BG['surface'],
+    paddingTop: screenPadding.top,
+    paddingHorizontal: screenPadding.horizontal,
   },
   contentContainer: {
-    padding: px(20),
     paddingBottom: px(50), // 하단 여백 추가
   },
   termsText: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 400,
-    fontSize: fontPx(16),
     lineHeight: px(24), // 가독성을 위해 줄 간격 추가
-    color: '#444',
+    color: COLOR_TEXT['body'],
   },
 });
 

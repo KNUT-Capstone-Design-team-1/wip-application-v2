@@ -1,15 +1,18 @@
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_save/styles/PillSave';
 import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
 import { usePillSaveList } from '@features/pill_save/hooks/use_pill_save_list';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
 
 /**
  * 저장된 알약 개수 표시 헤더
  */
 const SaveCountHeader = ({ count }: { count: number }) => (
   <View style={styles.header}>
-    <Text style={styles.countText}>전체 개수 {count}</Text>
+    <BaseText size={14} weight="semiBold" style={styles.countText}>
+      전체 개수 {count}
+    </BaseText>
   </View>
 );
 
@@ -18,8 +21,10 @@ const SaveCountHeader = ({ count }: { count: number }) => (
  */
 const LoadingView = () => (
   <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color={COLOR_PRIMARY[100]} />
-    <Text style={styles.loadingText}>데이터를 불러오는 중...</Text>
+    <ActivityIndicator size="large" color={COLOR['primary']} />
+    <BaseText size={16} weight="bold" style={styles.loadingText}>
+      데이터를 불러오는 중...
+    </BaseText>
   </View>
 );
 

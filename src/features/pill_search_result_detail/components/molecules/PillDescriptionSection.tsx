@@ -26,8 +26,6 @@ const PillDescriptionSection = ({ data }: IPillDescriptionSectionProps) => {
         content={data.EE_DOC_DATA}
       />
 
-      <View style={styles.sectionDivider} />
-
       <DetailSection
         title="용법/용량"
         isOpen={showUsage}
@@ -35,7 +33,6 @@ const PillDescriptionSection = ({ data }: IPillDescriptionSectionProps) => {
         content={data.UD_DOC_DATA}
       />
 
-      <View style={styles.sectionDivider} />
       <DetailSection
         title="사용상 주의사항"
         isOpen={showWarning}

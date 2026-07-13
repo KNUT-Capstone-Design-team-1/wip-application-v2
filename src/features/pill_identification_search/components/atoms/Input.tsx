@@ -1,6 +1,6 @@
 import { View, TextInput, DimensionValue } from 'react-native';
 import { useState, useEffect } from 'react';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { styles } from '../../styles/atoms/Input';
 
 interface IInputProps {
@@ -40,7 +40,10 @@ export const Input = ({
       style={[
         styles.inputWrapper,
         { width: width, height: height },
-        isFocused && { borderColor: COLOR_PRIMARY[100] },
+        isFocused && {
+          borderColor: COLOR['primary'],
+          backgroundColor: '#FFFFFF',
+        },
       ]}
     >
       <TextInput
@@ -50,12 +53,15 @@ export const Input = ({
         onSubmitEditing={handleSubmit}
         style={styles.input}
         placeholder={placeholder}
-        placeholderTextColor={COLOR_GRAY[200]}
+        placeholderTextColor={COLOR_TEXT['disabled']}
         onChangeText={(text) => {
           setLocalValue(text);
           inputChangeHandler(text);
         }}
         value={localValue}
+        autoCorrect={false}
+        spellCheck={false}
+        autoCapitalize="none"
       />
     </View>
   );

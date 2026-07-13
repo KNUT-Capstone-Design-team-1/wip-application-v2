@@ -1,39 +1,31 @@
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
+import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   noticeDataWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: px(16),
+    paddingBottom: px(16),
     borderBottomWidth: px(1),
-    borderBottomColor: '#e0e0e0',
-    backgroundColor: '#fff',
+    borderBottomColor: COLOR_LINE['separator'],
+    backgroundColor: COLOR_BG['surface'],
   },
   noticeTitle: {
-    fontFamily: 'Paperlogy',
-    fontSize: fontPx(14),
-    fontWeight: 700,
-    color: '#333',
+    color: COLOR_TEXT['title'],
     marginBottom: px(4),
   },
   noticeDate: {
-    fontFamily: 'Paperlogy',
-    fontWeight: 400,
-    fontSize: fontPx(12),
-    color: '#999',
+    color: COLOR_TEXT['sub'],
   },
   badge: {
-    backgroundColor: '#32D2FF',
+    backgroundColor: COLOR_BG['btnPrimary'],
     paddingHorizontal: px(8),
     paddingVertical: px(4),
     borderRadius: px(4),
   },
   badgeText: {
-    fontFamily: 'Jalnan2',
-    color: '#fff',
-    fontSize: fontPx(12),
-    fontWeight: 200,
+    color: COLOR_TEXT['white'],
   },
 });

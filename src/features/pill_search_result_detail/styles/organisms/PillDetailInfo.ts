@@ -1,29 +1,23 @@
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
-  infoContainer: {
-    paddingHorizontal: px(4),
-  },
+  infoContainer: {},
   infoMoreBtn: {
-    borderBottomColor: COLOR_GRAY[100],
-    borderBottomWidth: px(1.5),
-    marginBottom: px(16),
+    marginBottom: px(8),
     paddingVertical: px(12),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: px(4),
+    backgroundColor: COLOR_BG['surface'],
   },
   infoMoreBtnText: {
-    fontFamily: 'Paperlogy',
-    color: COLOR_GRAY[300],
-    fontSize: fontPx(16),
-    fontWeight: 600,
+    color: COLOR_TEXT['sub'],
     textAlign: 'center',
   },
   detailInfoContainer: {
-    paddingBottom: px(200),
+    paddingBottom: px(20),
   },
 });

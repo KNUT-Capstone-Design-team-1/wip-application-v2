@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY } from '@constants/color';
+import { COLOR_LINE } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
   hr: {
     width: '100%',
     height: px(1),
-    backgroundColor: COLOR_GRAY[100],
+    backgroundColor: COLOR_LINE['border'],
   },
   searchResultListLoadingWrapper: {
     paddingVertical: px(20),

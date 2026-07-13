@@ -4,7 +4,7 @@ import PillIdentificationSearchForm from '../components/organisms/PillIdentifica
 
 const PillIdentificationSearchScreen: React.FC = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1 }}>
       <PillIdentificationSearchForm />
     </View>
   );

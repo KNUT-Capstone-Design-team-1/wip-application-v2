@@ -1,4 +1,5 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import React, { ReactNode } from 'react';
 import { styles } from '../../styles/molecules/IdentificationSection';
 
@@ -15,7 +16,9 @@ const IdentificationSection = ({
 }: IIdentificationSectionProps) => {
   return (
     <View style={styles.identificationSection}>
-      <Text style={styles.titleText}>{title}</Text>
+      <BaseText style={styles.titleText} size={16} weight="semiBold">
+        {title}
+      </BaseText>
       <View style={styles.childrenContainer}>{children}</View>
     </View>
   );

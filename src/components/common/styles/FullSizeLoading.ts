@@ -1,31 +1,28 @@
-import { COLOR } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: COLOR_BG['overlay'],
     justifyContent: 'center',
     alignItems: 'center',
   },
   content: {
-    backgroundColor: COLOR['white'],
+    backgroundColor: COLOR_BG['surface'],
     paddingVertical: px(32),
     paddingHorizontal: px(24),
     borderRadius: px(16),
     alignItems: 'center',
     elevation: 5,
-    shadowColor: COLOR['black'],
+    shadowColor: COLOR['shadow'],
     shadowOffset: { width: 0, height: px(2) },
     shadowOpacity: 0.25,
     shadowRadius: px(3.84),
   },
   message: {
-    fontFamily: 'Paperlogy',
     marginTop: px(15),
-    fontSize: fontPx(16),
-    color: COLOR['black'],
-    fontWeight: 600,
+    color: COLOR_TEXT['title'],
   },
 });

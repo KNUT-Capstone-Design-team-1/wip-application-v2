@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_GRAY, COLOR_PRIMARY } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   paginationContainer: {
@@ -13,25 +13,21 @@ export const styles = StyleSheet.create({
   paginationButton: {
     paddingVertical: px(10),
     paddingHorizontal: px(20),
-    backgroundColor: COLOR_PRIMARY[200],
+    backgroundColor: COLOR['secondary'],
     borderRadius: px(8),
     minWidth: px(80),
     alignItems: 'center',
   },
   paginationButtonDisabled: {
-    backgroundColor: COLOR_GRAY[100],
+    backgroundColor: COLOR_BG['btnDisabled'],
   },
   paginationButtonText: {
-    color: '#fff',
-    fontSize: fontPx(14),
-    fontWeight: '600',
+    color: COLOR_TEXT['white'],
   },
   paginationButtonTextDisabled: {
-    color: '#888888',
+    color: COLOR_TEXT['disabled'],
   },
   pageIndicator: {
-    fontSize: fontPx(14),
-    color: '#333',
-    fontWeight: '600',
+    color: COLOR_TEXT['body'],
   },
 });

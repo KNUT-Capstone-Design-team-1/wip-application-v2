@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, ActivityIndicator, Modal, Text } from 'react-native';
+import { View, ActivityIndicator, Modal } from 'react-native';
 import { styles } from './styles/FullSizeLoading';
-import { COLOR_PRIMARY } from '@constants/color';
+import { COLOR } from '@constants/color';
+import { BaseText } from './BaseText';
 
 interface IFullSizeLoadingProps {
   visible: boolean;
@@ -18,8 +19,12 @@ const FullSizeLoading = ({
     <Modal transparent animationType="fade" visible={visible}>
       <View style={styles.container}>
         <View style={styles.content}>
-          <ActivityIndicator size="large" color={COLOR_PRIMARY[200]} />
-          {message && <Text style={styles.message}>{message}</Text>}
+          <ActivityIndicator size="large" color={COLOR['secondary']} />
+          {message && (
+            <BaseText weight={'semiBold'} size={16} style={styles.message}>
+              {message}
+            </BaseText>
+          )}
         </View>
       </View>
     </Modal>

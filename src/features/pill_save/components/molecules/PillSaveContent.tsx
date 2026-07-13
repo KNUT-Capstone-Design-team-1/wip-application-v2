@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
 import {
   IPillSaveContentProps,
   IPillSaveData,
@@ -35,25 +36,45 @@ const DeleteButton = ({ onPress }: { onPress: () => void }) => (
  */
 const PillInfo = ({ pill }: { pill: IPillSaveData }) => (
   <View style={styles.pillInfoWrapper}>
-    <Text style={styles.pillName} numberOfLines={2}>
+    <BaseText size={12} weight="bold" style={styles.pillName} numberOfLines={2}>
       {pill.ITEM_NAME}
-    </Text>
-    <Text style={styles.pillClassName} numberOfLines={1}>
+    </BaseText>
+    <BaseText
+      size={10}
+      weight="semiBold"
+      style={styles.pillClassName}
+      numberOfLines={1}
+    >
       {pill.CLASS_NAME}
-    </Text>
+    </BaseText>
     <View style={styles.pillInfoPrintWrapper}>
-      <Text style={styles.pillPrintText} numberOfLines={1}>
+      <BaseText
+        size={10}
+        weight="semiBold"
+        style={styles.pillPrintText}
+        numberOfLines={1}
+      >
         {pill.PRINT_FRONT || '없음'}
-      </Text>
+      </BaseText>
       <View style={styles.pillInfoSeparator} />
-      <Text style={styles.pillPrintText} numberOfLines={1}>
+      <BaseText
+        size={10}
+        weight="semiBold"
+        style={styles.pillPrintText}
+        numberOfLines={1}
+      >
         {pill.PRINT_BACK || '없음'}
-      </Text>
+      </BaseText>
     </View>
     <View style={styles.pillInfoEntpWrapper}>
-      <Text style={styles.pillEntpName} numberOfLines={1}>
+      <BaseText
+        size={10}
+        weight="semiBold"
+        style={styles.pillEntpName}
+        numberOfLines={1}
+      >
         {pill.ENTP_NAME}
-      </Text>
+      </BaseText>
     </View>
   </View>
 );
