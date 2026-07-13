@@ -5,10 +5,9 @@ import { px, fontPx } from '@utils/responsive';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR_BG['surface'],
   },
   logoContainer: {
-    flex: 4,
+    aspectRatio: 2,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -24,11 +23,11 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   statusText: {
-    color: COLOR['primary'],
+    color: COLOR_TEXT['white'],
     marginBottom: px(12),
   },
   noticeText: {
-    color: COLOR_TEXT['sub'],
+    color: COLOR_TEXT['white'],
     marginBottom: px(16),
     textAlign: 'center',
     paddingHorizontal: px(20),
@@ -37,13 +36,13 @@ export const styles = StyleSheet.create({
   progressBarContainer: {
     width: px(250),
     height: px(10),
-    backgroundColor: COLOR_BG['surface'],
+    backgroundColor: COLOR['tertiary'],
     borderRadius: px(5),
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
-    backgroundColor: COLOR['primary'],
+    backgroundColor: COLOR['white'],
     borderRadius: px(5),
   },
   detailsContainer: {
@@ -51,7 +50,7 @@ export const styles = StyleSheet.create({
     marginTop: px(8),
   },
   percentText: {
-    color: COLOR['primary'],
+    color: COLOR_TEXT['white'],
     marginBottom: px(4),
   },
 });

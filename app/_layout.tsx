@@ -22,6 +22,7 @@ const RootLayout = () => {
   if (isInitializing) {
     return (
       <SafeAreaProvider>
+        <StatusBar style="auto" />
         <DatabaseUpdateView
           status={updateProgress.status}
           progress={updateProgress.progress}
