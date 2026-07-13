@@ -2,6 +2,8 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { TERMS } from '../constants/terms';
 import { px } from '@utils/responsive';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { screenPadding } from '@constants/size';
 
 const Terms = () => {
   return (
@@ -19,15 +21,16 @@ const Terms = () => {
 const styles = StyleSheet.create({
   termsContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLOR_BG['surface'],
+    paddingTop: screenPadding.top,
+    paddingHorizontal: screenPadding.horizontal,
   },
   contentContainer: {
-    padding: px(20),
     paddingBottom: px(50), // 하단 여백 추가
   },
   termsText: {
     lineHeight: px(24), // 가독성을 위해 줄 간격 추가
-    color: '#444',
+    color: COLOR_TEXT['body'],
   },
 });
 

@@ -3,9 +3,7 @@ import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
-  container: {
-    marginTop: px(30),
-  },
+  container: {},
   titleWrapper: {
     flexDirection: 'row',
     marginBottom: px(20),

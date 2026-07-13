@@ -12,6 +12,15 @@ export const styles = StyleSheet.create({
     minHeight: px(190),
     paddingBottom: px(6),
     overflow: 'hidden',
+    shadowColor: COLOR['shadow'],
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
   },
   closeButton: {
     position: 'absolute',

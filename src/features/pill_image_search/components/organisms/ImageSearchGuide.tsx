@@ -10,7 +10,7 @@ import { fontPx } from '@utils/responsive';
 const ImageSearchGuide = () => {
   return (
     <View style={styles.contentContainer}>
-      <BaseText size={18} weight="bold" style={styles.title}>
+      <BaseText size={20} weight="bold" style={styles.title}>
         {content.title}
       </BaseText>
       <View style={styles.contentTitleWrapper}>

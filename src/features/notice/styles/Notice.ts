@@ -1,28 +1,24 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    padding: px(16),
-    borderBottomWidth: px(1),
-    borderBottomColor: '#e0e0e0',
-  },
-  headerTitle: {
-    color: '#333',
+    paddingTop: screenPadding.top,
+    paddingHorizontal: screenPadding.horizontal,
+    backgroundColor: COLOR_BG['surface'],
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: COLOR_BG['surface'],
   },
   loadingText: {
     marginTop: px(16),
-    color: '#666',
+    color: COLOR_TEXT['subTitle'],
   },
   emptyContainer: {
     flex: 1,
@@ -30,6 +26,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    color: '#999',
+    color: COLOR_TEXT['sub'],
   },
 });

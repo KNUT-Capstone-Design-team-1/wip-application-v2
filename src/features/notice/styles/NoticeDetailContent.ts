@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   noticeDetailWrapper: {
     display: 'flex',
-    padding: px(10),
+    paddingBottom: px(12),
   },
   noticeTitle: {
     marginBottom: px(8),
-    color: '#333',
+    color: COLOR_TEXT['title'],
   },
   noticeDateWrapper: {
     display: 'flex',
@@ -16,17 +17,14 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   noticeDate: {
-    color: '#999',
-    marginBottom: px(12),
+    color: COLOR_TEXT['sub'],
   },
   hr: {
     height: px(1),
-    backgroundColor: '#e0e0e0',
-    marginTop: px(8),
+    backgroundColor: COLOR_LINE['separator'],
+    marginVertical: px(16),
   },
   noticeContent: {
-    marginTop: px(20),
-    lineHeight: px(20),
-    color: '#444',
+    color: COLOR_TEXT['body'],
   },
 });

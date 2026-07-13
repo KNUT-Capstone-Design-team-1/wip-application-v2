@@ -32,7 +32,7 @@ const DetailSection = ({
         onPress={onToggle}
         activeOpacity={0.7}
       >
-        <BaseText weight="bold" size={18} style={styles.detailInfoHeadText}>
+        <BaseText weight="bold" size={20} style={styles.detailInfoHeadText}>
           {title}
         </BaseText>
         {isOpen ? (

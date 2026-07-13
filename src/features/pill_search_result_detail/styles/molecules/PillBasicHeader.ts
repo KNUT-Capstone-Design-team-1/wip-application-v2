@@ -1,13 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
-import { COLOR } from '@constants/color';
+import { COLOR, COLOR_BG } from '@constants/color';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   headerWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: px(16),
+    paddingHorizontal: screenPadding.horizontal,
+    backgroundColor: COLOR_BG['surface'],
   },
   nameScrollWrapper: { marginRight: px(8) },
   nameViewWrapper: { paddingRight: px(8) },

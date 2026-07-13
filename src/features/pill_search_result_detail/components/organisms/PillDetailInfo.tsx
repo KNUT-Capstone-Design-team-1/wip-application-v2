@@ -36,6 +36,8 @@ const PillDetailInfo = ({
         style={styles.infoMoreBtn}
         onPress={() => setMoreInfo((prev) => !prev)}
       >
+        {/* 더보기 가운데 정렬용 */}
+        <View style={{ width: fontPx(24), height: fontPx(24) }} />
         <BaseText weight="semiBold" size={16} style={styles.infoMoreBtnText}>
           {moreInfo ? '접기' : '더보기'}
         </BaseText>

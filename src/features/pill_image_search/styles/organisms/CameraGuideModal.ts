@@ -11,7 +11,8 @@ export const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: COLOR_BG['surface'],
-    paddingBottom: px(32),
+    paddingTop: px(24),
+    paddingBottom: px(28),
     paddingHorizontal: px(16),
     borderRadius: px(16),
     elevation: 5,

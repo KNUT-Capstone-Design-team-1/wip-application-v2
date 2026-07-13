@@ -1,11 +1,13 @@
 import { COLOR } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR['white'],
+    paddingHorizontal: screenPadding.horizontal,
   },
   imageContainer: {
     alignItems: 'center',
@@ -15,7 +17,7 @@ export const styles = StyleSheet.create({
     borderRadius: px(18),
   },
   infoContainer: {
-    padding: px(20),
+    paddingVertical: px(20),
   },
   titleRow: {
     flexDirection: 'row',

@@ -1,27 +1,30 @@
-import { COLOR, COLOR_TEXT } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
-  detailSectionWrapper: {},
+  detailSectionWrapper: {
+    marginTop: px(8),
+    backgroundColor: COLOR_BG['surface'],
+    paddingHorizontal: screenPadding.horizontal,
+    paddingVertical: px(16),
+  },
   detailInfoHeadWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: px(10),
-    paddingVertical: px(4),
   },
   detailInfoHeadText: {
     color: COLOR_TEXT['subTitle'],
     flex: 1,
   },
   detailInfoContent: {
-    paddingVertical: px(4),
+    paddingTop: px(16),
     paddingHorizontal: px(4),
-    backgroundColor: COLOR['white'],
-    borderRadius: px(8),
   },
   detailInfoText: {
     color: COLOR['black'],
-    lineHeight: px(30),
+    lineHeight: px(28),
   },
 });

@@ -23,80 +23,78 @@ const ImagePreviewSlots = ({
   );
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.titleWrapper}>
-          <BaseText size={18} weight="bold" style={styles.title}>
-            촬영된 이미지
+    <View style={styles.container}>
+      <View style={styles.titleWrapper}>
+        <BaseText size={20} weight="bold" style={styles.title}>
+          촬영된 이미지
+        </BaseText>
+        <Pressable onPress={() => setIsGuideModalVisible(true)}>
+          <CircleQuestionMark
+            size={fontPx(24)}
+            fill={COLOR_TEXT['sub']}
+            color={COLOR_TEXT['white']}
+            strokeWidth={2}
+          />
+        </Pressable>
+      </View>
+      <View style={styles.slotsWrapper}>
+        {/* 앞면 */}
+        <View style={styles.slot}>
+          <BaseText size={14} weight="semiBold" style={styles.label}>
+            앞면
           </BaseText>
-          <Pressable onPress={() => setIsGuideModalVisible(true)}>
-            <CircleQuestionMark
-              size={fontPx(24)}
-              fill={COLOR_TEXT['sub']}
-              color={COLOR_TEXT['white']}
-              strokeWidth={2}
-            />
-          </Pressable>
+          {frontImage ? (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: frontImage }} style={styles.image} />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => onRemove('front')}
+              >
+                <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.emptySlot}>
+              <Plus
+                size={fontPx(24)}
+                color={COLOR_TEXT['disabled']}
+                strokeWidth={3}
+              />
+            </View>
+          )}
         </View>
-        <View style={styles.slotsWrapper}>
-          {/* 앞면 */}
-          <View style={styles.slot}>
-            <BaseText size={14} weight="semiBold" style={styles.label}>
-              앞면
-            </BaseText>
-            {frontImage ? (
-              <View style={styles.imageContainer}>
-                <Image source={{ uri: frontImage }} style={styles.image} />
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => onRemove('front')}
-                >
-                  <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.emptySlot}>
-                <Plus
-                  size={fontPx(24)}
-                  color={COLOR_TEXT['disabled']}
-                  strokeWidth={3}
-                />
-              </View>
-            )}
-          </View>
 
-          {/* 뒷면 */}
-          <View style={styles.slot}>
-            <BaseText size={14} weight="semiBold" style={styles.label}>
-              뒷면
-            </BaseText>
-            {backImage ? (
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{ uri: backImage }}
-                  style={styles.image}
-                  cachePolicy={'memory'}
-                />
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => onRemove('back')}
-                >
-                  <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.emptySlot}>
-                <Plus
-                  size={fontPx(24)}
-                  color={COLOR_TEXT['disabled']}
-                  strokeWidth={3}
-                />
-              </View>
-            )}
-          </View>
+        {/* 뒷면 */}
+        <View style={styles.slot}>
+          <BaseText size={14} weight="semiBold" style={styles.label}>
+            뒷면
+          </BaseText>
+          {backImage ? (
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: backImage }}
+                style={styles.image}
+                cachePolicy={'memory'}
+              />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => onRemove('back')}
+              >
+                <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.emptySlot}>
+              <Plus
+                size={fontPx(24)}
+                color={COLOR_TEXT['disabled']}
+                strokeWidth={3}
+              />
+            </View>
+          )}
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

@@ -7,6 +7,8 @@ import HealthKrFloatingButton from '@features/pill_search_result_list/components
 import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 import SearchConditionTags from '@features/pill_search_result_list/components/molecules/SearchConditionTags';
 import { useFetchMarkImages } from '@features/pill_search_result_list/hooks/use_fetch_mark_images';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLOR } from '@constants/color';
 
 /**
  * 상단 검색바 섹션
@@ -40,7 +42,7 @@ const ResultInfoSection = ({
  */
 const InitialLoadingView = () => (
   <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color="#007AFF" />
+    <ActivityIndicator size="large" color={COLOR['primary']} />
     <BaseText style={styles.loadingText} weight="semiBold" size={16}>
       검색 중...
     </BaseText>
@@ -48,6 +50,7 @@ const InitialLoadingView = () => (
 );
 
 const PillSearchResultListScreen = () => {
+  const insets = useSafeAreaInsets();
   const { searchResultData, isLoading, markImages, totalDataCount } =
     useSearchResultListStore();
 
@@ -57,7 +60,12 @@ const PillSearchResultListScreen = () => {
   const isInitialLoading = isLoading && searchResultData.length === 0;
 
   return (
-    <View style={styles.pillSearchResultListRoot}>
+    <View
+      style={[
+        styles.pillSearchResultListRoot,
+        { paddingBottom: insets.bottom },
+      ]}
+    >
       <SearchBarSection />
 
       <ResultInfoSection count={totalDataCount} markImages={markImages} />

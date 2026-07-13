@@ -36,24 +36,26 @@ const PillSearchResultDetailScreen = () => {
     <ScrollView style={styles.scrollViewWrapper}>
       <View style={styles.viewWrapper}>
         {/* 알약 이미지 */}
-        <View style={styles.pillImgWrapper}>
-          {itemImageStr || pillData.ITEM_IMAGE ? (
-            <Image
-              style={styles.pillImg}
-              source={{ uri: itemImageStr || pillData.ITEM_IMAGE || '' }}
-              contentFit="contain"
-            />
-          ) : (
-            <View style={styles.pillDetailNoImageWrapper}>
-              <BaseText
-                weight="semiBold"
-                size={16}
-                style={styles.pillDetailNoImageText}
-              >
-                이미지가 없습니다
-              </BaseText>
-            </View>
-          )}
+        <View style={styles.pillImgContainer}>
+          <View style={styles.pillImgWrapper}>
+            {itemImageStr || pillData.ITEM_IMAGE ? (
+              <Image
+                style={styles.pillImg}
+                source={{ uri: itemImageStr || pillData.ITEM_IMAGE || '' }}
+                contentFit="contain"
+              />
+            ) : (
+              <View style={styles.pillDetailNoImageWrapper}>
+                <BaseText
+                  weight="semiBold"
+                  size={16}
+                  style={styles.pillDetailNoImageText}
+                >
+                  이미지가 없습니다
+                </BaseText>
+              </View>
+            )}
+          </View>
         </View>
 
         {/* 알약 정보 */}

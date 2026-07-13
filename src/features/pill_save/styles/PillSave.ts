@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(8),
   },
   header: {
-    paddingVertical: px(12),
+    paddingBottom: px(12),
     marginHorizontal: px(12),
     borderBottomWidth: px(1),
     borderBottomColor: COLOR_LINE['separator'],

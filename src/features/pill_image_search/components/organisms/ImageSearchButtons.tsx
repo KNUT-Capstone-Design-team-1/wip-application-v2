@@ -233,10 +233,7 @@ const ImageSearchButtons = ({
           <View style={styles.hr}></View>
           <TouchableOpacity
             activeOpacity={0.7}
-            style={[
-              styles.button,
-              { backgroundColor: COLOR_BG['btnPrimary'], borderRadius: 50 },
-            ]}
+            style={[styles.button, { backgroundColor: COLOR_BG['btnPrimary'] }]}
             onPress={onApply}
           >
             <BaseText size={20} weight="bold" style={styles.searchButtonText}>

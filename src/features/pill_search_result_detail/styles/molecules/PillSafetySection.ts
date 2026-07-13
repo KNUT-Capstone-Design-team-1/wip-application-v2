@@ -1,10 +1,13 @@
-import { COLOR, COLOR_TEXT } from '@constants/color';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
-    marginBottom: px(20),
+    paddingVertical: px(16),
+    backgroundColor: COLOR_BG['surface'],
+    paddingHorizontal: screenPadding.horizontal,
   },
   title: {
     color: COLOR_TEXT['subTitle'],

@@ -1,25 +1,29 @@
 import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   scrollViewWrapper: {
-    backgroundColor: COLOR_BG['surface'],
     flex: 1,
+    backgroundColor: COLOR_BG['surface'],
   },
   viewWrapper: {
-    backgroundColor: COLOR_BG['surface'],
+    backgroundColor: COLOR_BG['base'],
     flex: 1,
     overflow: 'hidden',
-    paddingHorizontal: px(16),
+  },
+  pillImgContainer: {
+    paddingTop: screenPadding.top,
+    paddingHorizontal: screenPadding.horizontal,
+    paddingBottom: px(16),
+    backgroundColor: COLOR_BG['surface'],
   },
   pillImgWrapper: {
     aspectRatio: 1299 / 709,
     borderRadius: px(18),
-    marginTop: px(16),
     overflow: 'hidden',
     width: '100%',
-    backgroundColor: COLOR_BG['surface'],
   },
   pillImg: {
     height: '100%',
@@ -48,10 +52,11 @@ export const styles = StyleSheet.create({
     paddingVertical: px(16),
   },
   disclaimerWrapper: {
-    marginTop: px(24),
     marginBottom: px(40),
-    padding: px(16),
-    backgroundColor: COLOR_BG['base'],
+    marginHorizontal: screenPadding.horizontal,
+    paddingVertical: px(12),
+    paddingHorizontal: px(16),
+    backgroundColor: COLOR_BG['surface'],
     borderRadius: px(8),
     borderWidth: 1,
     borderColor: COLOR_LINE['border'],

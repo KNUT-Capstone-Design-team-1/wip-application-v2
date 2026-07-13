@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(8),
   },
   pillSaveListContent: {
-    paddingTop: px(14),
+    paddingTop: px(8),
     paddingBottom: px(20) + bottomTabSize.height,
   },
   pillSaveColumnWrapper: {

@@ -8,7 +8,6 @@ import {
   IPillSaveListProps,
 } from '@features/pill_save/types/pill_save_type';
 import { styles } from '@features/pill_save/styles/organisms/PillSaveList';
-import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
 import NotItem from '@components/common/NotItem';
 import { px } from '@utils/responsive';
 
@@ -19,7 +18,7 @@ const EmptyBox = () => (
   <NotItem
     mainText={'보관된 알약이 없습니다.'}
     subText={'북마크 아이콘을 누르면 보관함에 저장돼요!'}
-    marginTop={'60%'}
+    marginTop={'40%'}
   />
 );
 

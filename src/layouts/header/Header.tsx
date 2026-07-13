@@ -1,15 +1,12 @@
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { px } from '@utils/responsive';
 import { styles } from './styles';
 import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 
 const Header = () => {
-  const insets = useSafeAreaInsets();
-
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <View style={styles.HeaderContent}>
         <View style={styles.logoWrapper}>
           <BaseText

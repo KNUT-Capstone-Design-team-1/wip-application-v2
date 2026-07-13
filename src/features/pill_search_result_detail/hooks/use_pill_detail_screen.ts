@@ -5,6 +5,7 @@ import { usePillBox } from '@features/pill_save/hooks/use_pill_box';
 import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
 import { useRecentViewedPillStore } from '@store/recent_viewed_pill_store';
 import { TRecentViewedPill } from '@common_types/recent_viewed_pill';
+import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 
 export const usePillDetailScreen = () => {
   const { itemImage, ITEM_SEQ } = useLocalSearchParams();
@@ -15,6 +16,7 @@ export const usePillDetailScreen = () => {
   const [loading, setLoading] = useState(true);
   const { loadPillDetail } = usePillDetail();
   const { setRecentViewedPills } = useRecentViewedPillStore();
+  const { setTitle, resetTitle } = useHeaderTitleStore();
 
   const { saveState, toggleSave } = usePillBox(pillData?.ITEM_SEQ ?? '');
 
@@ -42,7 +44,13 @@ export const usePillDetailScreen = () => {
         ITEM_SEQ: pillData.ITEM_SEQ,
         ITEM_NAME: pillData.ITEM_NAME,
       } as TRecentViewedPill);
+
+      setTitle(pillData.ITEM_NAME);
     }
+
+    return () => {
+      resetTitle();
+    };
   }, [pillData?.ITEM_SEQ]);
 
   useEffect(() => {

@@ -1,16 +1,16 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { COLOR_BG } from '@constants/color';
 
 export const styles = StyleSheet.create({
   settingList: {
     display: 'flex',
     height: '100%',
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: COLOR_BG['surface'],
   },
   settingItem: {
     display: 'flex',
-    justifyContent: 'center',
     width: '100%',
     height: px(70),
   },

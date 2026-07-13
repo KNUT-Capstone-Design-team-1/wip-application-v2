@@ -1,12 +1,14 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { COLOR_BG } from '@constants/color';
+import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
   scrollViewWrapper: {
-    backgroundColor: '#fff',
+    backgroundColor: COLOR_BG['surface'],
     flex: 1,
-    paddingHorizontal: px(5),
-    paddingTop: px(12),
+    paddingHorizontal: screenPadding.horizontal,
+    paddingTop: screenPadding.top,
     paddingBottom: px(20),
   },
 });

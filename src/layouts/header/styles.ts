@@ -1,6 +1,9 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_TEXT } from '../../constants';
 import { px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
+
+const HEADER_MIN_HEIGHT = px(54);
 
 export const styles = StyleSheet.create({
   container: {
@@ -11,21 +14,20 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: px(50),
+    minHeight: HEADER_MIN_HEIGHT,
     paddingHorizontal: px(12),
   },
   subHeaderContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: px(50),
+    minHeight: HEADER_MIN_HEIGHT,
   },
   logoWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: px(40),
   },
-  logoText: { textAlign: 'center' },
+  logoText: {},
   menuButton: {
     width: px(40),
     height: px(40),

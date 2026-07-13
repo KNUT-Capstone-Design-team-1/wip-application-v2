@@ -5,7 +5,7 @@ import { px } from '@utils/responsive';
 export const styles = StyleSheet.create({
   imageSearchButtonsWrapper: {
     display: 'flex',
-    gap: px(12),
+    gap: px(14),
   },
   button: {
     display: 'flex',
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
     width: '100%',
-    height: px(45),
+    height: px(48),
     borderRadius: px(10),
   },
   text: {
@@ -35,6 +35,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: px(1),
     backgroundColor: COLOR_LINE['separator'],
-    marginVertical: px(24),
+    marginVertical: px(30),
   },
 });

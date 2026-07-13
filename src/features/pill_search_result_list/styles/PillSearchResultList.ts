@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
   pillSearchResultListRoot: {
     flex: 1,
     backgroundColor: COLOR_BG['surface'],
-    paddingVertical: px(20),
   },
   searchCountLabel: {
     color: COLOR_TEXT['sub'],
