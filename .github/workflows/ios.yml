@@ -60,8 +60,7 @@ jobs:
       - name: pull-eas-env
         run: |
           eas env:pull \
-            --environment production \
-            --local
+            --environment production
 
       - name: cache-cocoapods
         uses: actions/cache@v4

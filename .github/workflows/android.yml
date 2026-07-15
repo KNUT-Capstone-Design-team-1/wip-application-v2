@@ -42,8 +42,7 @@ jobs:
       - name: pull-eas-env
         run: |
           eas env:pull \
-            --environment production \
-            --local
+            --environment production
 
       - name: versioning
         run: |
