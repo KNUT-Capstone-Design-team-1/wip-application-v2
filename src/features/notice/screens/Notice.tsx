@@ -5,6 +5,7 @@ import { useNoticeStore } from '../store/notice_store';
 import { useNotices } from '../hooks/use_notice';
 import NoticeList from '../components/NoticeList';
 import { BaseText } from '@components/common/BaseText';
+import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
 
 const Notice = () => {
   const { noticeData, isNoticeLoading } = useNoticeStore();
@@ -36,6 +37,9 @@ const Notice = () => {
       ) : (
         <NoticeList noticeData={noticeData} />
       )}
+
+      {/* 최하단 배너 광고 */}
+      <GlobalBannerAd />
     </View>
   );
 };

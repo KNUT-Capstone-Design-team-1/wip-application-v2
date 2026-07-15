@@ -210,6 +210,19 @@ export default {
       ],
 
       ['expo-file-system'],
+      [
+        'react-native-google-mobile-ads',
+        {
+          androidAppId:
+            process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID ||
+            'ca-app-pub-3940256099942544~3347511713',
+          iosAppId:
+            process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID ||
+            'ca-app-pub-3940256099942544~1458002511',
+          userTrackingUsageDescription:
+            '맞춤형 광고 제공을 위해 사용자의 데이터가 사용됩니다.',
+        },
+      ],
     ],
 
     extra: {

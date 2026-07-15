@@ -9,8 +9,11 @@ import { useSearchResultListStore } from '@features/pill_search_result_list/stor
 import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
 import { requestReview } from '@utils/store_review';
+import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 
 export const useUnifiedSearch = () => {
+  const { showInterstitial } = useInterstitialAd();
+
   const [loading, setLoading] = useState(false);
 
   const { showToast } = useToast();
@@ -79,12 +82,15 @@ export const useUnifiedSearch = () => {
         setTotalDataCount(totalDataCount);
         setSearchResultData(pillDatas);
 
-        handleNavigation();
+        // 검색 완료 후 전면 광고 호출 및 화면 전환
+        showInterstitial(() => {
+          handleNavigation();
 
-        // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
-        setTimeout(() => {
-          requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
-        }, 500);
+          // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+          setTimeout(() => {
+            requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
+          }, 500);
+        });
       } catch (e) {
         logger.error(`UnifiedSearch search Failed: ${e.stack || e}`);
 

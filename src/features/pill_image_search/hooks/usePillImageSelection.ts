@@ -11,6 +11,7 @@ import { File } from 'expo-file-system';
 import { Alert } from 'react-native';
 import logger from '@utils/logger';
 import { requestReview } from '@utils/store_review';
+import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 
 // 이미지에서 알약 특징(모양, 색상, 식별문자 등)을 추출하는 헬퍼 함수
 const extractPillFeatures = async (frontUri: string, backUri: string) => {
@@ -51,6 +52,8 @@ const searchPillData = async (searchParam: any) => {
 
 // 알약 이미지 선택 로직을 관리하는 커스텀 Hook
 export const usePillImageSelection = () => {
+  const { showInterstitial } = useInterstitialAd();
+
   const {
     pillImages,
     hasImage,
@@ -149,15 +152,18 @@ export const usePillImageSelection = () => {
 
       const { totalDataCount, results } = await searchPillData(searchParam);
 
-      setSearchResultData(results);
-      setTotalDataCount(totalDataCount);
+      // 검색이 완료되면 전면 광고 호출 및 화면 전환
+      showInterstitial(() => {
+        setSearchResultData(results);
+        setTotalDataCount(totalDataCount);
 
-      router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
+        router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
 
-      // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
-      setTimeout(() => {
-        requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
-      }, 500);
+        // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+        setTimeout(() => {
+          requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
+        }, 500);
+      });
     } catch (e) {
       logger.error(`[IMAGE-SEARCH] Failed to image search. ${e.stack || e}`);
 

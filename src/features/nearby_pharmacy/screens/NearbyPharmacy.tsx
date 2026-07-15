@@ -9,6 +9,7 @@ import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
+import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
 
 /*
 TODO: Custom marker 필요
@@ -118,6 +119,9 @@ const NearbyPharmacyScreen = () => {
           onClosePress={handleCloseInfoCard}
         />
       )}
+
+      {/* 최하단 배너 광고 */}
+      <GlobalBannerAd />
     </View>
   );
 };
