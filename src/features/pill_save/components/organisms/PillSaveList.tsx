@@ -64,7 +64,7 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
     return <EmptyBox />;
   }
 
-  // 2열 정렬을 맞추기 위해 홀수일 경우 빈 아이템 추가
+  // 다열 정렬을 맞추기 위해 아이템 개수가 안 맞으면 빈 아이템 추가
   const formattedData =
     pillSaveData.length % 2 !== 0
       ? [...pillSaveData, { ITEM_SEQ: 'EMPTY_ITEM' } as IPillSaveData]

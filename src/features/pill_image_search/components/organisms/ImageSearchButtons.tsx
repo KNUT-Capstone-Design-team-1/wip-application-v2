@@ -53,20 +53,20 @@ const ImageSearchButtons = ({
   const handleCameraCapture = (imageUri: string) => {
     onImageSelect?.(imageUri);
 
-    // 이번에 새로 촬영하기 직전 상태의 이미지 총 개수 (0~2장)
+    // 이번에 새로 촬영하기 직전 상태의 이미지 총 개수
     const currentCountBeforeCapture =
       (pillImages?.front ? 1 : 0) + (pillImages?.back ? 1 : 0);
 
     const hasOneImageBeforeCapture = currentCountBeforeCapture === 1;
 
-    // 촬영 전 사진이 1장이었다면, 이번 촬영으로 2장이 채워지므로 카메라 닫기
+    // 촬영 전 사진이 일부 있었다면, 이번 촬영으로 가득 채워지므로 카메라 닫기
     if (hasOneImageBeforeCapture) {
       setTimeout(() => setShowCamera(false), 300);
       return;
     }
 
-    // 촬영 직전 2장(전체 교체)이었던 경우에만 즉시 안내 모달 표시
-    // 맨 처음 촬영(0장)일 때는 자연스럽게 이어서 찍을 수 있도록 모달을 생략함
+    // 촬영 직전 가득 차있었던 경우에만 즉시 안내 모달 표시
+    // 맨 처음 촬영일 때는 자연스럽게 이어서 찍을 수 있도록 모달을 생략함
     const isReplacing = currentCountBeforeCapture === 2;
     if (!isReplacing) {
       return;
@@ -103,7 +103,7 @@ const ImageSearchButtons = ({
 
   // 카메라 모달 닫기 버튼 클릭 핸들러
   const handleCameraClose = () => {
-    // 모달을 닫을 시점의 최종 이미지 총 개수 (0~2장)
+    // 모달을 닫을 시점의 최종 이미지 총 개수
     const currentCount =
       (pillImages?.front ? 1 : 0) + (pillImages?.back ? 1 : 0);
 
@@ -140,7 +140,7 @@ const ImageSearchButtons = ({
             );
 
             if (shouldKeepOldBackImage) {
-              // 2장 상태에서 1장만 찍고 종료(유지)를 선택한 경우:
+              // 가득 찬 상태에서 일부만 찍고 종료(유지)를 선택한 경우:
               // 새로 찍은 앞면(pillImages?.front)과 기존에 저장해둔 뒷면(initialPillImages.back)을 결합
               onMultipleImageSelect([
                 pillImages!.front!,

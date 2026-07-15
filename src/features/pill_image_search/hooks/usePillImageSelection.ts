@@ -13,7 +13,12 @@ import logger from '@utils/logger';
 import { requestReview } from '@utils/store_review';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 
-// 이미지에서 알약 특징(모양, 색상, 식별문자 등)을 추출하는 헬퍼 함수
+/**
+ * 이미지에서 알약 특징(모양, 색상, 식별문자 등) 추출
+ * @param frontUri 앞면 이미지 URI
+ * @param backUri 뒷면 이미지 URI
+ * @returns 추출된 특징 파라미터 객체
+ */
 const extractPillFeatures = async (frontUri: string, backUri: string) => {
   // 이미지 파일을 Base64로 변환 (병렬 처리)
   const [frontBase64, backBase64] = await Promise.all([
@@ -41,7 +46,11 @@ const extractPillFeatures = async (frontUri: string, backUri: string) => {
   };
 };
 
-// 추출된 특징 파라미터를 기반으로 로컬 DB에서 알약 데이터를 검색하는 헬퍼 함수
+/**
+ * 추출된 특징 파라미터 기반으로 로컬 DB에서 알약 데이터 검색
+ * @param searchParam 추출된 검색용 파라미터 객체
+ * @returns 전체 검색 데이터 개수 및 결과 목록
+ */
 const searchPillData = async (searchParam: any) => {
   const totalDataCount = await getPillDataCount(searchParam);
 
@@ -50,7 +59,10 @@ const searchPillData = async (searchParam: any) => {
   return { totalDataCount, results };
 };
 
-// 알약 이미지 선택 로직을 관리하는 커스텀 Hook
+/**
+ * 알약 이미지 선택 및 통합 검색 흐름을 관리하는 커스텀 Hook
+ * @returns 상태값 및 이벤트 핸들러 모음
+ */
 export const usePillImageSelection = () => {
   const { showInterstitial } = useInterstitialAd();
 
@@ -74,7 +86,7 @@ export const usePillImageSelection = () => {
     setTotalDataCount,
   } = useSearchResultListStore();
 
-  // 단일 이미지 등록 핸들러 (빈 공간에 순차적으로 사진을 채움)
+  // 단일 이미지 등록 (빈 공간에 순차적으로 사진 채움)
   const handleImageSelect = useCallback(
     (imageUri: string) => {
       const hasBothImages = !!(pillImages.front && pillImages.back);
@@ -98,7 +110,7 @@ export const usePillImageSelection = () => {
     [pillImages, resetPillImages, setFrontImage, setBackImage],
   );
 
-  // 다중 이미지 등록 핸들러 (앨범/파일 탐색기에서 1~2장 선택 시 처리)
+  // 다중 이미지 등록 (앨범/파일 탐색기에서 다수 선택 시 처리)
   const handleMultipleImageSelect = useCallback(
     (images: string[]) => {
       const isSingleImage = images.length === 1;
@@ -115,7 +127,7 @@ export const usePillImageSelection = () => {
     [handleImageSelect, setPillImages],
   );
 
-  // 특정 위치(앞면/뒷면)의 이미지 삭제 핸들러
+  // 특정 위치(앞면/뒷면)의 이미지 삭제 처리
   const handleImageRemove = useCallback(
     (side: 'front' | 'back') => {
       const isFront = side === 'front';
@@ -129,7 +141,7 @@ export const usePillImageSelection = () => {
     [removeFrontImage, removeBackImage],
   );
 
-  // 선택된 두 장의 이미지를 서버로 전송하여 알약 특징 추출 및 DB 검색 수행 핸들러
+  // 선택된 여러 장의 이미지를 서버로 전송해 알약 특징 추출 및 DB 검색 수행
   const handleSearch = useCallback(async () => {
     const { front, back } = pillImages;
     const isMissingImage = !front || !back;
@@ -168,7 +180,7 @@ export const usePillImageSelection = () => {
 
     await adPromise;
 
-    setIsLoading(true); // 광고가 닫힌 후, API가 아직 끝나지 않았다면 로딩 화면 띄우기
+    setIsLoading(true); // 광고가 닫힌 후, API가 아직 끝나지 않았다면 로딩 화면 표시
 
     const searchData = await searchPromise; // API 완료 대기 (이미 끝났다면 즉시 통과)
 
@@ -185,13 +197,13 @@ export const usePillImageSelection = () => {
       return;
     }
 
-    // 5. 검색 완료 처리 및 화면 이동
+    // 검색 완료 처리 및 화면 이동
     setSearchResultData(searchData.results);
     setTotalDataCount(searchData.totalDataCount);
 
     router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
 
-    // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+    // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 처리
     setTimeout(() => {
       requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
     }, 500);
@@ -205,7 +217,7 @@ export const usePillImageSelection = () => {
     showInterstitial,
   ]);
 
-  // 앞면과 뒷면 이미지가 모두 선택되었는지 여부 확인 (true/false)
+  // 앞면과 뒷면 이미지가 모두 선택되었는지 여부 확인
   const isBothImagesSelected = !!(pillImages.front && pillImages.back);
 
   return {

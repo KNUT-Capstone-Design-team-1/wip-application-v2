@@ -4,8 +4,13 @@ import { Alert } from 'react-native';
 import logger from '@utils/logger';
 import { PillImages } from '../store/pill_image_store';
 
-// 1장만 선택/촬영되었을 때 나머지 1장에 대한 추가 선택 여부를 묻거나,
-// 2장 상태에서 1장만 변경 시 교체 여부를 묻고 처리하는 헬퍼 함수
+/**
+ * 단일 이미지 선택/촬영 시 추가 선택 여부를 묻거나, 다중 이미지 상태에서 일부 변경 시 교체 여부 처리
+ * @param firstImage 선택된 첫 번째 이미지 URI
+ * @param currentImages 현재 스토어에 저장된 이미지 상태
+ * @param onSuccess 성공 시 호출될 콜백 (최종 이미지 배열 전달)
+ * @param pickSecondImage 다음 이미지를 가져오는 비동기 함수
+ */
 const handleSingleImageSelection = (
   firstImage: string,
   currentImages: PillImages | undefined,
@@ -63,7 +68,10 @@ const handleSingleImageSelection = (
   ]);
 };
 
-// 앨범에서 두 번째 이미지를 선택하고 예외 처리를 담당하는 헬퍼 함수
+/**
+ * 앨범에서 추가 이미지 선택
+ * @returns 선택된 이미지 URI 또는 실패 시 null
+ */
 const pickSecondImageFromLibrary = async (): Promise<string | null> => {
   try {
     const secondResult = await ImagePicker.launchImageLibraryAsync({
@@ -87,7 +95,10 @@ const pickSecondImageFromLibrary = async (): Promise<string | null> => {
   }
 };
 
-// 파일 탐색기에서 두 번째 이미지를 선택하고 예외 처리를 담당하는 헬퍼 함수
+/**
+ * 파일 탐색기에서 추가 이미지 선택
+ * @returns 선택된 이미지 URI 또는 실패 시 null
+ */
 const pickSecondImageFromFiles = async (): Promise<string | null> => {
   try {
     const secondResult = await DocumentPicker.getDocumentAsync({
@@ -110,7 +121,11 @@ const pickSecondImageFromFiles = async (): Promise<string | null> => {
   }
 };
 
-// 앨범에서 다중(최대 2장) 이미지를 선택하는 함수
+/**
+ * 앨범에서 다중 이미지 선택
+ * @param onSuccess 성공 시 호출될 콜백 (최종 이미지 배열 전달)
+ * @param currentImages 현재 스토어에 저장된 이미지 상태 (옵션)
+ */
 export const pickMultipleImages = async (
   onSuccess: (images: string[]) => void,
   currentImages?: PillImages,
@@ -162,7 +177,10 @@ export const pickMultipleImages = async (
   }
 };
 
-// 앨범에서 단일(1장) 이미지를 선택하는 함수 (수정/자르기 화면 없음)
+/**
+ * 앨범에서 단일 이미지 선택 (수정/자르기 화면 없음)
+ * @param onSuccess 성공 시 호출될 콜백 (선택된 이미지 URI 전달)
+ */
 export const pickSingleImage = async (
   onSuccess: (imageUri: string) => void,
 ): Promise<void> => {
@@ -186,7 +204,11 @@ export const pickSingleImage = async (
   }
 };
 
-// 기기의 파일 탐색기에서 다중(최대 2장) 이미지를 선택하는 함수
+/**
+ * 기기의 파일 탐색기에서 다중 이미지 선택
+ * @param onSuccess 성공 시 호출될 콜백 (최종 이미지 배열 전달)
+ * @param currentImages 현재 스토어에 저장된 이미지 상태 (옵션)
+ */
 export const pickMultipleImagesFromFiles = async (
   onSuccess: (images: string[]) => void,
   currentImages?: PillImages,

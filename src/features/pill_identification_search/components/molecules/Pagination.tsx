@@ -40,7 +40,7 @@ const Pagination = ({
       </TouchableOpacity>,
     );
 
-    // 페이지 버튼들 (1, 2, 3, 4, 5)
+    // 여러 페이지 버튼 나열
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <TouchableOpacity
@@ -83,7 +83,7 @@ const Pagination = ({
   };
 
   if (totalPages <= 1) {
-    return null; // 페이지가 1개 이하면 표시 안 함
+    return null; // 단일 페이지면 표시 안 함
   }
 
   return (

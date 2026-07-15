@@ -41,7 +41,7 @@ const MarkModal = ({
   handlePageChange,
   handleGroupChange,
 }: IMarkModalProps) => {
-  // 모달이 열릴 때 초기 데이터 로드 (100개)
+  // 모달이 열릴 때 초기 데이터 대량 로드
   useEffect(() => {
     // 데이터가 없을 때만 로드 (이미 검색한 결과가 있으면 유지)
     if (markDataList.length === 0 && !loading) {

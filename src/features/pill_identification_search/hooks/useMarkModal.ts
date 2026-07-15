@@ -175,7 +175,7 @@ export const useMarkModal = () => {
   const totalPages = useMemo(() => {
     const loadedPages = Math.ceil(allMarkData.length / ITEMS_PER_PAGE);
 
-    // 데이터가 INITIAL_LOAD_COUNT 단위로 딱 떨어지면 더 있을 수 있으므로 +5 페이지 추가
+    // 데이터가 INITIAL_LOAD_COUNT 단위로 딱 떨어지면 더 있을 수 있으므로 여유 페이지 추가
     const isExactBatch =
       allMarkData.length > 0 && allMarkData.length % INITIAL_LOAD_COUNT === 0;
 

@@ -63,7 +63,7 @@ export const decodeHtmlContent = (content: string): string => {
     .map((line) => line.trim())
     .filter((line) => line.length > 0)
     .join('\n')
-    // 연속된 줄바꿈을 최대 2개로 제한
+    // 연속된 줄바꿈 개수 제한
     .replace(/\n{3,}/g, '\n\n')
     // 앞뒤 공백 제거
     .trim();

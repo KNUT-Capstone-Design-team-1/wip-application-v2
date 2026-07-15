@@ -8,9 +8,9 @@ const boundedWidth = Math.min(windowWidth, MAX_WIDTH);
 const scaleRatio = boundedWidth / BASE_WIDTH;
 
 /**
- * 레이아웃 수치(너비, 높이, 여백 등)를 반응형으로 변환합니다.
- * 기기 너비가 450px을 초과할 경우 450px을 기준으로 계산하여 과도한 팽창을 방지합니다.
- * @param size 원래 디자인 상의 크기 (기준: 350px 기기)
+ * 레이아웃 수치(너비, 높이, 여백 등) 반응형 변환
+ * 기기 너비 초과 시 최대 너비를 기준으로 계산해 과도한 팽창 방지
+ * @param size 원래 디자인 상의 크기 (기준 너비 기기)
  * @returns 반응형으로 계산된 크기
  */
 export const px = (size: number): number => {
@@ -18,10 +18,10 @@ export const px = (size: number): number => {
 };
 
 /**
- * 폰트 및 아이콘 크기를 반응형으로 변환합니다.
- * 스케일 비율을 factor만큼만 적용하여 팽창을 완화합니다.
+ * 폰트 및 아이콘 크기 반응형 변환
+ * 스케일 비율을 factor만큼만 적용해 팽창 완화
  * @param size 원래 디자인 상의 폰트 크기
- * @param factor 스케일 적용 비율 (기본값: 1)
+ * @param factor 스케일 적용 비율 (기본값 설정)
  * @returns 반응형으로 계산된 폰트 크기
  */
 export const fontPx = (size: number, factor: number = 1): number => {

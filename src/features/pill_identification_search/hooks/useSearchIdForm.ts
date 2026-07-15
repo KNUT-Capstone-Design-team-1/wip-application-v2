@@ -26,7 +26,7 @@ export const useSearchIdForm = () => {
       return [0];
     }
 
-    // store가 비어있거나 '전체'만 있으면 index 0 반환
+    // store가 비어있거나 기본값만 있으면 기본 인덱스 반환
     const isEmptyStore =
       storeArray.length === 0 ||
       (storeArray.length === 1 && storeArray[0] === '전체');

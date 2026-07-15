@@ -16,7 +16,7 @@ export const useDoubleBackExit = () => {
       const onBackPress = () => {
         const currentTime = new Date().getTime();
 
-        // 2초(2000ms) 이내에 다시 누른 경우
+        // 특정 시간 이내에 다시 누른 경우
         if (currentTime - backPressTime.current < 2000) {
           // 앱 상태 갱신
           useAppStateStore.getState().setIsExited(true);
@@ -27,7 +27,7 @@ export const useDoubleBackExit = () => {
           return true; // 기본 동작(뒤로가기) 방지
         }
 
-        // 첫 번째 누른 경우 또는 2초가 지난 후 누른 경우
+        // 첫 번째 누른 경우 또는 특정 시간이 지난 후 누른 경우
         backPressTime.current = currentTime;
 
         // 이전 대화에서 세팅하신 Custom Toast를 띄워 사용자에게 알림

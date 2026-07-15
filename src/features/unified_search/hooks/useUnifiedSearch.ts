@@ -86,7 +86,7 @@ export const useUnifiedSearch = () => {
         showInterstitial(() => {
           handleNavigation();
 
-          // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+          // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 처리
           setTimeout(() => {
             requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
           }, 500);

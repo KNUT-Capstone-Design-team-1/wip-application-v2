@@ -39,7 +39,7 @@ const IdentificationIconButtonSection = memo(
         return [0];
       }
 
-      // store가 비어있으면 index 0(전체) 반환
+      // store가 비어있으면 기본값(전체) 반환
       if (storeArray.length === 0) {
         return [0];
       }

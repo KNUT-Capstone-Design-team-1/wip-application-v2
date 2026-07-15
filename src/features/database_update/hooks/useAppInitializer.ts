@@ -210,7 +210,7 @@ export const useAppInitializer = () => {
           message: '데이터 동기화 누락이 발견되어 해당 작업을 재시작합니다.',
         });
 
-        // 해당 테이블 1페이지부터 다시 시작하도록 상태 롤백
+        // 해당 테이블 첫 페이지부터 다시 시작하도록 상태 롤백
         await DatabaseUpdateService.initTable(updateCurrentTable);
         setUpdateCurrentPage(1);
         return;
@@ -270,7 +270,7 @@ export const useAppInitializer = () => {
           }
         }
 
-        // 데이터 삽입 (1페이지씩)
+        // 데이터 삽입 (페이지 단위)
         const insertResult = await DatabaseUpdateService.insertData(
           updateCurrentPage,
           updateCurrentTable,

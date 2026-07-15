@@ -13,7 +13,7 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
   progress,
   isUpdating,
 }) => {
-  // 스마트폰 너비 기준 30%, 70%는 대략 화면 높이의 14%, 32%에 해당합니다.
+  // 스마트폰 너비 기준 특정 비율이 대략 화면 높이의 일정 비율에 해당함을 감안하여 패딩 설정
   const paddingTopAnim = useRef(
     new Animated.Value(isUpdating ? 14 : 32),
   ).current;

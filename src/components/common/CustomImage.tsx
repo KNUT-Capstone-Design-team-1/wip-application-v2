@@ -6,7 +6,7 @@ export const Image: React.FC<ImageProps> = (props) => {
   const intrinsicSize = useMemo(() => {
     if (props.source && !Array.isArray(props.source)) {
       try {
-        // react-native의 기능을 이용해 로컬 이미지의 원본 크기를 추론합니다.
+        // react-native 기능으로 로컬 이미지의 원본 크기 추론
         const resolved = RNImage.resolveAssetSource(props.source as any);
         if (resolved && resolved.width && resolved.height) {
           return { width: resolved.width, height: resolved.height };
@@ -21,7 +21,7 @@ export const Image: React.FC<ImageProps> = (props) => {
   return (
     <ExpoImage
       {...props}
-      // 원본 크기를 기본값으로 깔아주고, 명시된 props.style이 이를 덮어쓰도록(override) 합니다.
+      // 원본 크기를 기본값으로 설정, 명시된 props.style이 덮어쓰도록(override) 함
       style={[intrinsicSize, props.style]}
     />
   );
