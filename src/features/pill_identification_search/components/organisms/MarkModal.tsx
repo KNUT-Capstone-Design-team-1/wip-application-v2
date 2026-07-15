@@ -69,6 +69,8 @@ const MarkModal = ({
           }}
         >
           <View style={styles.modalBox}>
+            {/* 상단 손잡이 (그랩바) */}
+            <View style={styles.grabber} />
             {/* 닫기 버튼 */}
             <TouchableOpacity
               onPress={onClose}
