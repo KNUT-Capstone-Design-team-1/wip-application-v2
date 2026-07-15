@@ -52,10 +52,7 @@ jobs:
       - name: install-dependencies
         run: |
           npm install -g eas-cli
-
-          if [ ! -d node_modules ]; then
-            yarn install --frozen-lockfile
-          fi
+          yarn install --frozen-lockfile
 
       - name: cache-cocoapods
         uses: actions/cache@v4
@@ -84,7 +81,7 @@ jobs:
 
       - name: versioning
         run: |
-          VERSION=$(node -e "console.log(require('./app.config').default.expo.version)")
+          VERSION=$(npx expo config --json | jq -r '.version')
           BUILD=$((100 + ${{ github.run_number }}))
 
           echo "VERSION=$VERSION" >> $GITHUB_ENV
