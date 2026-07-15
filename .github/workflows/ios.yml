@@ -57,11 +57,6 @@ jobs:
             yarn install --frozen-lockfile
           fi
 
-      - name: pull-eas-env
-        run: |
-          eas env:pull \
-            --environment production
-
       - name: cache-cocoapods
         uses: actions/cache@v4
         with:

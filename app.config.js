@@ -1,5 +1,13 @@
 const BUILD = process.env.BUILD ?? '1';
 
+const ADMOB_ANDROID_APP_ID =
+  process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID ??
+  'ca-app-pub-3940256099942544~3347511713';
+
+const ADMOB_IOS_APP_ID =
+  process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID ??
+  'ca-app-pub-3940256099942544~1458002511';
+
 export default {
   expo: {
     name: '이게뭐약',
@@ -213,12 +221,8 @@ export default {
       [
         'react-native-google-mobile-ads',
         {
-          androidAppId:
-            process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID ||
-            'ca-app-pub-3940256099942544~3347511713',
-          iosAppId:
-            process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID ||
-            'ca-app-pub-3940256099942544~1458002511',
+          androidAppId: ADMOB_ANDROID_APP_ID,
+          iosAppId: ADMOB_IOS_APP_ID,
           userTrackingUsageDescription:
             '맞춤형 광고 제공을 위해 사용자의 데이터가 사용됩니다.',
         },

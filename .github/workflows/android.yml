@@ -39,11 +39,6 @@ jobs:
           npm install -g eas-cli
           yarn install --frozen-lockfile
 
-      - name: pull-eas-env
-        run: |
-          eas env:pull \
-            --environment production
-
       - name: versioning
         run: |
           VERSION=$(node -e "console.log(require('./app.config').default.expo.version)")
