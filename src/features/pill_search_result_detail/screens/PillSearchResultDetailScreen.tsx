@@ -7,8 +7,14 @@ import { styles } from '@features/pill_search_result_detail/styles/PillSearchRes
 import { usePillDetailScreen } from '@features/pill_search_result_detail/hooks/use_pill_detail_screen';
 
 const PillSearchResultDetailScreen = () => {
-  const { pillData, loading, itemImageStr, saveState, handleSaveToggle } =
-    usePillDetailScreen();
+  const {
+    pillData,
+    loading,
+    itemImageStr,
+    saveState,
+    handleSaveToggle,
+    detailLoading,
+  } = usePillDetailScreen();
 
   if (loading) {
     return (
@@ -63,6 +69,7 @@ const PillSearchResultDetailScreen = () => {
           data={pillData}
           saveState={saveState}
           onSaveToggle={handleSaveToggle}
+          detailLoading={detailLoading}
         />
 
         {/* 의료 정보 면책 조항 */}

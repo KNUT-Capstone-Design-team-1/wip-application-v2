@@ -14,7 +14,7 @@ export const usePillDetailScreen = () => {
 
   const [pillData, setPillData] = useState<IPillDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loadPillDetail } = usePillDetail();
+  const { loadPillDetail, detailLoading } = usePillDetail();
   const { setRecentViewedPills } = useRecentViewedPillStore();
   const { setTitle, resetTitle } = useHeaderTitleStore();
 
@@ -79,5 +79,6 @@ export const usePillDetailScreen = () => {
     itemImageStr,
     saveState,
     handleSaveToggle,
+    detailLoading,
   };
 };

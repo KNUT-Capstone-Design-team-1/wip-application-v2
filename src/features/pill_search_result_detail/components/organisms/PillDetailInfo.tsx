@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/PillDetailInfo';
 import { IPillDetailInfoProps } from '../../types/pill_detail_type';
@@ -16,6 +16,7 @@ const PillDetailInfo = ({
   data,
   saveState,
   onSaveToggle,
+  detailLoading,
 }: IPillDetailInfoProps) => {
   const [moreInfo, setMoreInfo] = useState(false);
 
@@ -58,11 +59,26 @@ const PillDetailInfo = ({
 
       {/* 상세 정보 섹션 */}
       <View style={styles.detailInfoContainer}>
-        {/* 주의 및 특수 분류 정보 */}
-        <PillSafetySection data={data} />
+        {detailLoading ? (
+          <View style={{ padding: 40, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={COLOR_TEXT['sub']} />
+            <BaseText
+              weight="medium"
+              size={14}
+              style={{ marginTop: 16, color: COLOR_TEXT['sub'] }}
+            >
+              상세 데이터를 불러오는 중입니다...
+            </BaseText>
+          </View>
+        ) : (
+          <>
+            {/* 주의 및 특수 분류 정보 */}
+            <PillSafetySection data={data} />
 
-        {/* 효능, 용법, 주의사항 상세 정보 */}
-        <PillDescriptionSection data={data} />
+            {/* 효능, 용법, 주의사항 상세 정보 */}
+            <PillDescriptionSection data={data} />
+          </>
+        )}
       </View>
     </View>
   );

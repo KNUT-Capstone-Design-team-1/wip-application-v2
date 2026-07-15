@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { IPillDetail } from '@features/pill_search_result_detail/types/pill_detail_type';
 import { getPillDatasByItemSeq } from '@services/database/queries/pill_data';
 import { requestGetPillDetail } from '@services/apis/google_cloud/wip_pill_detail';
@@ -59,6 +59,8 @@ const applyApiDetailData = (
 };
 
 export const usePillDetail = () => {
+  const [detailLoading, setDetailLoading] = useState(true);
+
   const loadPillDetail = useCallback(
     async (
       itemSeq: string,
@@ -92,10 +94,13 @@ export const usePillDetail = () => {
         setPillData(combinedBasicData as IPillDetail);
         setLoading(false);
 
+        setDetailLoading(true);
+
         // API를 통해 상세 정보 (효능효과, 용법용량, 주의사항) 백그라운드 요청
-        fetchApiDetailData(itemSeq).then((apiDetailData) =>
-          applyApiDetailData(apiDetailData, setPillData),
-        );
+        fetchApiDetailData(itemSeq).then((apiDetailData) => {
+          applyApiDetailData(apiDetailData, setPillData);
+          setDetailLoading(false);
+        });
       } catch (e) {
         logger.error(
           `Failed to load pill detail. ${e instanceof Error ? e.stack : e}`,
@@ -107,5 +112,5 @@ export const usePillDetail = () => {
     [],
   );
 
-  return { loadPillDetail };
+  return { loadPillDetail, detailLoading };
 };
