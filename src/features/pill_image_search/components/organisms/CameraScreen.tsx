@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Image, Modal } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Modal } from 'react-native';
 import { Camera } from 'react-native-vision-camera';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '../../styles/organisms/CameraScreen';
 import { useCameraCapture } from '../../hooks/useCameraCapture';
-import { Plus, X } from 'lucide-react-native';
-import { COLOR } from '@constants/color';
-import { fontPx } from '@utils/responsive';
 import { useCameraConfig } from '@features/pill_image_search/hooks/useCameraConfig';
+import { CameraPermissionAlert } from '../molecules/CameraPermissionAlert';
+import { CameraHeader } from '../molecules/CameraHeader';
+import { CameraCaptureButton } from '../molecules/CameraCaptureButton';
 
 interface CameraScreenProps {
   visible: boolean;
@@ -19,6 +17,7 @@ interface CameraScreenProps {
   mode: 'camera' | 'album';
 }
 
+// 카메라 촬영 화면의 메인 컨테이너 컴포넌트
 const CameraScreen = ({
   visible,
   onClose,
@@ -26,82 +25,66 @@ const CameraScreen = ({
   frontImage,
   backImage,
 }: CameraScreenProps) => {
+  // 카메라 기기 설정 및 권한 훅
   const { device, format, hasPermission, requestPermission, getGuideWidth } =
     useCameraConfig();
-  const insets = useSafeAreaInsets();
 
+  // 사진 촬영 로직 훅
   const { cameraRef, capturePhoto, isProcessing } = useCameraCapture({
     onCapture,
   });
 
+  // 권한 안내 모달 표시 상태
+  const [showPermissionAlert, setShowPermissionAlert] = useState(false);
+
+  // 모달 팝업 시 카메라 권한 확인 및 요청
   useEffect(() => {
     if (visible && !hasPermission) {
-      requestPermission();
+      requestPermission().then((isGranted) => {
+        if (!isGranted) {
+          setShowPermissionAlert(true); // 권한 거부 시 커스텀 알림창 띄움
+        }
+      });
     }
   }, [visible, hasPermission]);
 
-  if (!visible) return null;
-  if (!hasPermission) return null;
-  if (!device) return null;
+  // 렌더링 조건 방어 로직
+  if (!visible) {
+    return null;
+  }
+
+  // 권한 거부 상태일 때 커스텀 안내 모달 렌더링
+  if (showPermissionAlert) {
+    return (
+      <CameraPermissionAlert
+        visible={showPermissionAlert}
+        onClose={onClose}
+        onCancel={() => {
+          setShowPermissionAlert(false);
+          onClose();
+        }}
+      />
+    );
+  }
+
+  // 권한이 없거나 카메라 기기를 못 찾았을 경우 렌더링 방지
+  if (!hasPermission || !device) {
+    return null;
+  }
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
-        {/* 상단 이미지 슬롯 오버레이 */}
-        <View
-          style={[styles.topOverlay, { paddingTop: Math.max(insets.top, 20) }]}
-        >
-          <TouchableOpacity
-            style={[styles.closeButton, { top: Math.max(insets.top, 20) + 10 }]}
-            onPress={onClose}
-          >
-            <X size={fontPx(24)} color={COLOR['white']} strokeWidth={3} />
-          </TouchableOpacity>
+        {/* 헤더 및 이미지 슬롯 영역 */}
+        <CameraHeader
+          onClose={onClose}
+          frontImage={frontImage}
+          backImage={backImage}
+        />
 
-          <BaseText size={18} weight="bold" style={styles.title}>
-            알약 검색
-          </BaseText>
-
-          <View style={styles.slotsWrapper}>
-            {/* 앞면 */}
-            <View style={styles.slot}>
-              <BaseText size={14} weight="medium" style={styles.label}>
-                앞면
-              </BaseText>
-              {frontImage ? (
-                <Image source={{ uri: frontImage }} style={styles.slotImage} />
-              ) : (
-                <View style={styles.emptySlot}>
-                  <Plus
-                    size={fontPx(24)}
-                    color={COLOR['white']}
-                    strokeWidth={2}
-                  />
-                </View>
-              )}
-            </View>
-
-            {/* 뒷면 */}
-            <View style={styles.slot}>
-              <BaseText size={14} weight="medium" style={styles.label}>
-                뒷면
-              </BaseText>
-              {backImage ? (
-                <Image source={{ uri: backImage }} style={styles.slotImage} />
-              ) : (
-                <View style={styles.emptySlot}>
-                  <Plus
-                    size={fontPx(24)}
-                    color={COLOR['white']}
-                    strokeWidth={2}
-                  />
-                </View>
-              )}
-            </View>
-          </View>
-        </View>
-        {/* 가이드 뷰 */}
+        {/* 중앙 카메라 뷰파인더 및 가이드라인 영역 */}
         <View style={styles.guideOverlay}>
+          {/* 실제 카메라 렌즈 뷰 */}
           <Camera
             ref={cameraRef}
             style={StyleSheet.absoluteFill}
@@ -112,6 +95,7 @@ const CameraScreen = ({
             photoQualityBalance="balanced"
             resizeMode="cover"
           />
+          {/* 촬영 규격 가이드 테두리 */}
           <View style={[styles.guideView, { width: getGuideWidth() }]}>
             <View style={[styles.guideCorner, styles.topLeft]} />
             <View style={[styles.guideCorner, styles.topRight]} />
@@ -120,21 +104,11 @@ const CameraScreen = ({
           </View>
         </View>
 
-        {/* 하단 촬영 버튼 */}
-        <View
-          style={[
-            styles.bottomOverlay,
-            { paddingBottom: Math.max(insets.bottom, 40) },
-          ]}
-        >
-          <TouchableOpacity
-            style={[styles.captureButton, isProcessing && { opacity: 0.5 }]}
-            onPress={capturePhoto}
-            disabled={isProcessing}
-          >
-            <View style={styles.captureButtonInner} />
-          </TouchableOpacity>
-        </View>
+        {/* 하단 셔터 버튼 영역 */}
+        <CameraCaptureButton
+          onCapture={capturePhoto}
+          isProcessing={isProcessing}
+        />
       </View>
     </Modal>
   );

@@ -112,4 +112,57 @@ export const styles = StyleSheet.create({
     borderRadius: px(32),
     backgroundColor: COLOR_BG['surface'],
   },
+  alertOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  alertBox: {
+    backgroundColor: COLOR_BG['surface'],
+    borderRadius: px(16),
+    width: '80%',
+    paddingTop: px(24),
+    paddingHorizontal: px(20),
+    paddingBottom: px(20),
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  alertTitle: {
+    color: COLOR_TEXT['title'],
+    marginBottom: px(12),
+  },
+  alertMessage: {
+    color: COLOR_TEXT['body'],
+    textAlign: 'center',
+    lineHeight: px(22),
+    marginBottom: px(24),
+  },
+  alertButtonRow: {
+    flexDirection: 'row',
+    width: '100%',
+    gap: px(12),
+  },
+  alertButton: {
+    flex: 1,
+    paddingVertical: px(12),
+    borderRadius: px(8),
+    alignItems: 'center',
+  },
+  alertCancelButton: {
+    backgroundColor: COLOR_BG['btnGray'],
+  },
+  alertConfirmButton: {
+    backgroundColor: COLOR_BG['btnPrimary'],
+  },
+  alertCancelText: {
+    color: COLOR['white'],
+  },
+  alertConfirmText: {
+    color: COLOR['white'],
+  },
 });
