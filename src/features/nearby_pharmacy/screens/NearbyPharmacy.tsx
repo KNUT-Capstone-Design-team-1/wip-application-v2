@@ -112,16 +112,18 @@ const NearbyPharmacyScreen = () => {
         />
       </MapView>
 
-      {selectedPharmacy && (
-        <PharmacyInfoCard
-          pharmacy={selectedPharmacy}
-          onCopyPress={handleCopy}
-          onClosePress={handleCloseInfoCard}
-        />
-      )}
+      <View style={styles.bottomOverlay}>
+        {selectedPharmacy && (
+          <PharmacyInfoCard
+            pharmacy={selectedPharmacy}
+            onCopyPress={handleCopy}
+            onClosePress={handleCloseInfoCard}
+          />
+        )}
 
-      {/* 최하단 배너 광고 */}
-      <GlobalBannerAd />
+        {/* 최하단 배너 광고 */}
+        <GlobalBannerAd />
+      </View>
     </View>
   );
 };

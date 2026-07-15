@@ -15,11 +15,14 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  infoContainer: {
+  bottomOverlay: {
     position: 'absolute',
-    bottom: px(20) + bottomTabSize.height,
-    left: px(20),
-    right: px(20),
+    bottom: bottomTabSize.height,
+    width: '100%',
+  },
+  infoContainer: {
+    marginHorizontal: px(20),
+    marginBottom: px(10),
     backgroundColor: COLOR_BG['surface'],
     borderRadius: px(15),
     paddingVertical: px(12),
