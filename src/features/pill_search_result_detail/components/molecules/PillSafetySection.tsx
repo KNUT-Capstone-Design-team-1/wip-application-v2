@@ -1,10 +1,12 @@
 import { memo, useCallback } from 'react';
 import { View, TouchableOpacity, Linking, Alert } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { BaseText } from '@components/common/BaseText';
 import InfoRow from '../atoms/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import { useExternalUrlStore } from '@store/external_url_store';
+import { useToast } from '@hooks/use_toast';
 import logger from '@utils/logger';
 
 interface IPillSafetySectionProps {
@@ -13,6 +15,7 @@ interface IPillSafetySectionProps {
 
 const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
   const { reportEmail, nifdsUrl, kadaUrl } = useExternalUrlStore();
+  const { showToast } = useToast();
 
   const handleReport = useCallback(() => {
     const subject = encodeURIComponent(
@@ -156,7 +159,17 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
 
       <TouchableOpacity
         style={styles.externalLinkButton}
-        onPress={() => Linking.openURL(nifdsUrl)}
+        onPress={async () => {
+          if (data.MATERIAL_ENG_NAME) {
+            await Clipboard.setStringAsync(data.MATERIAL_ENG_NAME);
+
+            showToast({
+              message: `검색 지원을 위해 ${data.MATERIAL_ENG_NAME}이(가) 복사되었습니다.`,
+            });
+          }
+
+          Linking.openURL(nifdsUrl);
+        }}
       >
         <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
           마약 정보 데이터베이스
@@ -196,7 +209,17 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
 
       <TouchableOpacity
         style={styles.externalLinkButton}
-        onPress={() => Linking.openURL(kadaUrl)}
+        onPress={async () => {
+          if (data.ITEM_NAME) {
+            await Clipboard.setStringAsync(data.ITEM_NAME);
+
+            showToast({
+              message: `검색 지원을 위해 ${data.ITEM_NAME}이(가) 복사되었습니다.`,
+            });
+          }
+
+          Linking.openURL(kadaUrl);
+        }}
       >
         <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
           도핑 금지 약물 확인 (KADA)
