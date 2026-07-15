@@ -164,11 +164,14 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
             await Clipboard.setStringAsync(data.MATERIAL_ENG_NAME);
 
             showToast({
-              message: `검색 지원을 위해 ${data.MATERIAL_ENG_NAME}이(가) 복사되었습니다.`,
+              message: `검색 지원을 위해 영문 성분명 (${data.MATERIAL_ENG_NAME})이 복사되었습니다.`,
             });
           }
 
-          Linking.openURL(nifdsUrl);
+          // 토스트 애니메이션이 충분히 보일 수 있도록 대기 후 브라우저 이동
+          setTimeout(() => {
+            Linking.openURL(nifdsUrl);
+          }, 800);
         }}
       >
         <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
@@ -210,15 +213,18 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       <TouchableOpacity
         style={styles.externalLinkButton}
         onPress={async () => {
-          if (data.ITEM_NAME) {
-            await Clipboard.setStringAsync(data.ITEM_NAME);
+          if (data.MATERIAL_ENG_NAME) {
+            await Clipboard.setStringAsync(data.MATERIAL_ENG_NAME);
 
             showToast({
-              message: `검색 지원을 위해 ${data.ITEM_NAME}이(가) 복사되었습니다.`,
+              message: `검색 지원을 위해 영문 성분명 (${data.MATERIAL_ENG_NAME})이 복사되었습니다.`,
             });
           }
 
-          Linking.openURL(kadaUrl);
+          // 토스트 애니메이션이 충분히 보일 수 있도록 대기 후 브라우저 이동
+          setTimeout(() => {
+            Linking.openURL(kadaUrl);
+          }, 800);
         }}
       >
         <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
