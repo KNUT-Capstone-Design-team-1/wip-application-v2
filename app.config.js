@@ -6,7 +6,7 @@ export default {
     slug: 'whatispill',
     scheme: 'whatispill',
     owner: 'mustbemadness',
-    version: '3.0.1',
+    version: '3.0.2',
     orientation: 'portrait',
     icon: './assets/icons/android-adaptive-icon.png',
 
@@ -58,6 +58,10 @@ export default {
         image: './assets/icons/splash-icon.png',
         resizeMode: 'contain',
         backgroundColor: '#ffffff',
+        dark: {
+          image: './assets/icons/splash-icon.png',
+          backgroundColor: '#ffffff',
+        },
       },
 
       adaptiveIcon: {
@@ -92,6 +96,10 @@ export default {
           image: './assets/icons/splash-icon.png',
           resizeMode: 'contain',
           backgroundColor: '#ffffff',
+          dark: {
+            image: './assets/icons/splash-icon.png',
+            backgroundColor: '#ffffff',
+          },
           imageWidth: 200,
         },
       ],
