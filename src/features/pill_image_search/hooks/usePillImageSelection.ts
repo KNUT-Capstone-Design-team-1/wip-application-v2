@@ -139,45 +139,70 @@ export const usePillImageSelection = () => {
       return;
     }
 
-    try {
-      setIsSearching(true);
-      setIsLoading(true);
+    // 상태 업데이트 및 백그라운드 API 검색 시작
+    setIsSearching(true);
+    let apiError: any = null;
 
-      const searchParam = await extractPillFeatures(front, back);
+    const searchPromise = (async () => {
+      try {
+        const searchParam = await extractPillFeatures(front, back);
 
-      logger.info(
-        `[IMAGE-SEARCH] Extracted features: ${JSON.stringify(searchParam)}`,
+        logger.info(
+          `[IMAGE-SEARCH] Extracted features: ${JSON.stringify(searchParam)}`,
+        );
+        setSearchParam(searchParam);
+
+        const { totalDataCount, results } = await searchPillData(searchParam);
+
+        return { totalDataCount, results };
+      } catch (e) {
+        apiError = e;
+        return null;
+      }
+    })();
+
+    // 전면 광고 호출 및 닫힘 대기
+    const adPromise = new Promise<void>((resolve) =>
+      showInterstitial(() => resolve()),
+    );
+
+    await adPromise;
+
+    setIsLoading(true); // 광고가 닫힌 후, API가 아직 끝나지 않았다면 로딩 화면 띄우기
+
+    const searchData = await searchPromise; // API 완료 대기 (이미 끝났다면 즉시 통과)
+
+    setIsLoading(false);
+    setIsSearching(false);
+
+    if (apiError || !searchData) {
+      logger.error(
+        `[IMAGE-SEARCH] Failed to image search. ${apiError?.stack || apiError}`,
       );
-      setSearchParam(searchParam);
-
-      const { totalDataCount, results } = await searchPillData(searchParam);
-
-      // 검색이 완료되면 전면 광고 호출 및 화면 전환
-      showInterstitial(() => {
-        setSearchResultData(results);
-        setTotalDataCount(totalDataCount);
-
-        router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
-
-        // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
-        setTimeout(() => {
-          requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
-        }, 500);
-      });
-    } catch (e) {
-      logger.error(`[IMAGE-SEARCH] Failed to image search. ${e.stack || e}`);
 
       Alert.alert('오류', '이미지 분석에 실패했습니다.\n다시 시도해 주세요.');
-    } finally {
-      setIsSearching(false);
-      setIsLoading(false);
+
+      return;
     }
+
+    // 5. 검색 완료 처리 및 화면 이동
+    setSearchResultData(searchData.results);
+    setTotalDataCount(searchData.totalDataCount);
+
+    router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
+
+    // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+    setTimeout(() => {
+      requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
+    }, 500);
   }, [
     pillImages,
     setIsSearching,
     setIsLoading,
     setSearchResultData,
     setSearchParam,
+    setTotalDataCount,
+    showInterstitial,
   ]);
 
   // 앞면과 뒷면 이미지가 모두 선택되었는지 여부 확인 (true/false)
