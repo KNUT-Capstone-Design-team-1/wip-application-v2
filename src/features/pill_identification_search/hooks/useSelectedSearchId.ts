@@ -11,13 +11,13 @@ import { useSearchResultListStore } from '../../pill_search_result_list/store/se
 import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
 import { ISearchPillData } from '../types/search_id_types';
+import { requestReview } from '@utils/store_review';
 
 /**
  * 식별 검색 Hook
  * - 초기 검색 (식별 검색)
  * - 식별 검색 상태 관리
  */
-
 export const useSelectedSearchId = () => {
   const { resetSelectedMark } = useMarkStore();
   const {
@@ -177,6 +177,11 @@ export const useSelectedSearchId = () => {
       setSearchParam(searchParam);
       setTotalDataCount(totalDataCount);
       setSearchResultData(results);
+
+      // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+      setTimeout(() => {
+        requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
+      }, 500);
 
       return results;
     } catch (e) {

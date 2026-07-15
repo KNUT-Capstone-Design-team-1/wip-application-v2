@@ -8,6 +8,7 @@ import {
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
+import { requestReview } from '@utils/store_review';
 
 export const useUnifiedSearch = () => {
   const [loading, setLoading] = useState(false);
@@ -79,6 +80,11 @@ export const useUnifiedSearch = () => {
         setSearchResultData(pillDatas);
 
         handleNavigation();
+
+        // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 (500ms)
+        setTimeout(() => {
+          requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
+        }, 500);
       } catch (e) {
         logger.error(`UnifiedSearch search Failed: ${e.stack || e}`);
 
