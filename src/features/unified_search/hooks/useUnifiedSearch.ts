@@ -90,7 +90,7 @@ export const useUnifiedSearch = () => {
           setTimeout(() => {
             requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
           }, 500);
-        });
+        }, 'UNIFIED_SEARCH');
       } catch (e) {
         logger.error(`UnifiedSearch search Failed: ${e.stack || e}`);
 

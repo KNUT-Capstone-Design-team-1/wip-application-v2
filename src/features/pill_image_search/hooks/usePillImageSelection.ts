@@ -175,7 +175,7 @@ export const usePillImageSelection = () => {
 
     // 전면 광고 호출 및 닫힘 대기
     const adPromise = new Promise<void>((resolve) =>
-      showInterstitial(() => resolve()),
+      showInterstitial(() => resolve(), 'IMAGE_SEARCH'),
     );
 
     await adPromise;
