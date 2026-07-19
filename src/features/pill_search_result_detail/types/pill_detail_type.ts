@@ -65,3 +65,29 @@ export interface IDetailSectionProps {
   onToggle: () => void;
   content?: string;
 }
+
+type TParagraph = {
+  tagName: string;
+  textIndent?: '0' | '';
+  content?: string;
+  table?: string;
+};
+
+type TArticle = {
+  title: string;
+  paragraphs: TParagraph[];
+};
+
+type TSection = {
+  title: string;
+  articles: TArticle[];
+};
+
+type TSectionItem = {
+  title: string;
+  sections: TSection[];
+};
+
+export interface ISectionItemProps {
+  sectionItem: TSectionItem | null;
+}

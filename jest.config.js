@@ -6,7 +6,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|expo|@expo)/)',
+    'node_modules/(?!(react-native|@react-native|expo|@expo|@nodable|is-unsafe|strnum|anynum)/)',
   ],
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
   moduleNameMapper: {

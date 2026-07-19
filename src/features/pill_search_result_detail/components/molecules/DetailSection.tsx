@@ -2,11 +2,12 @@ import { memo, useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/molecules/DetailSection';
-import { decodeHtmlContent } from '../../utils/htmlDecoder';
 import { IDetailSectionProps } from '@features/pill_search_result_detail/types/pill_detail_type';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import { xmlToJson } from '@features/pill_search_result_detail/utils/xml_parser';
+import SectionItem from './SectionItem';
 
 const DetailSection = ({
   title,
@@ -14,16 +15,11 @@ const DetailSection = ({
   onToggle,
   content,
 }: IDetailSectionProps) => {
-  const decodedContent = useMemo(() => {
-    if (!content) {
-      return '';
-    }
-    return decodeHtmlContent(content);
+  const parsedData = useMemo(() => {
+    if (!content) return null;
+    const result = xmlToJson(content);
+    return result.doc;
   }, [content]);
-
-  if (!content) {
-    return null;
-  }
 
   return (
     <View style={styles.detailSectionWrapper}>
@@ -51,9 +47,7 @@ const DetailSection = ({
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.detailInfoContent}>
-          <BaseText weight="medium" size={16} style={styles.detailInfoText}>
-            {decodedContent}
-          </BaseText>
+          <SectionItem sectionItem={parsedData} />
         </View>
       )}
     </View>

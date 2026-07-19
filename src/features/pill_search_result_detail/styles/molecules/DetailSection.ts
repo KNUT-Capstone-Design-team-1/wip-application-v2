@@ -20,7 +20,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   detailInfoContent: {
-    paddingTop: px(16),
     paddingHorizontal: px(4),
   },
   detailInfoText: {
