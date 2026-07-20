@@ -22,7 +22,7 @@ const RootLayout = () => {
   if (isInitializing) {
     return (
       <SafeAreaProvider>
-        <StatusBar style="auto" />
+        <StatusBar style="dark" />
         <DatabaseUpdateView
           status={updateProgress.status}
           progress={updateProgress.progress}
@@ -35,7 +35,7 @@ const RootLayout = () => {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
       <Layout>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />

@@ -5,11 +5,32 @@ import { px, fontPx } from '@utils/responsive';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: COLOR_BG['surface'],
+  },
+  topContainer: {
+    flex: 1,
   },
   logoContainer: {
-    aspectRatio: 2,
-    justifyContent: 'flex-start',
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingBottom: px(32),
+  },
+  topTitleWrapper: {
+    paddingBottom: px(4),
+    alignItems: 'center',
+  },
+  topTitle: {
+    color: COLOR_TEXT['subTitle'],
+  },
+  downContainer: {
+    alignItems: 'center',
+    backgroundColor: COLOR['primary'],
+    paddingTop: px(8),
+  },
+  downTitle: {
+    color: COLOR_TEXT['white'],
   },
   noticeContainer: {
     flex: 2,
