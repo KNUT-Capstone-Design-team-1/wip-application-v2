@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import WebView from 'react-native-webview';
 import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { styles } from '@features/pill_search_result_detail/styles/atoms/TableWebView';
@@ -7,20 +7,37 @@ import { styles } from '@features/pill_search_result_detail/styles/atoms/TableWe
 const TableWebView = ({ html }: { html: string }) => {
   const [height, setHeight] = useState(100);
 
+  const fontFace = Platform.select({
+    ios: `
+      @font-face {
+        font-family: 'Pretendard';
+        src: local('Pretendard-Regular');
+      }
+    `,
+    android: `
+      @font-face {
+        font-family: 'Pretendard';
+        src: url('file:///android_res/font/pretendard_regular.ttf');
+      }
+    `,
+    default: '',
+  });
+
   const customHtml = `
     <!DOCTYPE html>
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <style>
+          ${fontFace}
           body {
             margin: 0; padding: 0; background-color: transparent;
-            font-family: -apple-system, sans-serif;
+            font-family: 'Pretendard', -apple-system, sans-serif;
             overflow-x: auto; -webkit-overflow-scrolling: touch;
           }
           table {
             border-collapse: collapse; width: 100%; min-width: 500px;
-            font-size: 13px; color: ${COLOR_TEXT['body']};
+            font-size: 15px; color: ${COLOR_TEXT['body']};
           }
           tr:first-child {
             background-color: ${COLOR_BG['base']};
