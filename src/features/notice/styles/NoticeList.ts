@@ -1,18 +1,22 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { COLOR_LINE } from '@constants/color';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollView: {
+  noticeListWrapper: {
     flex: 1,
   },
-  scrollViewContent: {
-    paddingBottom: px(50), // 하단 여백 추가
+  noticeListItemWrapper: {
+    borderBottomWidth: px(1),
+    borderBottomColor: COLOR_LINE['separator'],
   },
-  noticeListWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
+  noticeBottomWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingTop: px(12),
+    gap: px(16),
   },
 });

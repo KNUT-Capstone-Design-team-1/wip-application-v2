@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_TEXT } from '../../constants';
 import { px } from '@utils/responsive';
-import { screenPadding } from '@constants/size';
 
 const HEADER_MIN_HEIGHT = px(54);
 

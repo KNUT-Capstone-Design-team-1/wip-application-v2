@@ -7,10 +7,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: px(16),
-    borderBottomWidth: px(1),
-    borderBottomColor: COLOR_LINE['separator'],
     backgroundColor: COLOR_BG['surface'],
+    paddingVertical: px(8),
   },
   noticeTitle: {
     color: COLOR_TEXT['title'],

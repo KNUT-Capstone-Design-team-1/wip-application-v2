@@ -5,9 +5,10 @@ import { useNoticeStore } from '../store/notice_store';
 import { useNotices } from '../hooks/use_notice';
 import NoticeList from '../components/NoticeList';
 import { BaseText } from '@components/common/BaseText';
-import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Notice = () => {
+  const insets = useSafeAreaInsets();
   const { noticeData, isNoticeLoading } = useNoticeStore();
   const { getNoticeList } = useNotices();
 
@@ -27,7 +28,7 @@ const Notice = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       {noticeData.length === 0 ? (
         <View style={styles.emptyContainer}>
           <BaseText size={16} weight="medium" style={styles.emptyText}>
@@ -37,9 +38,6 @@ const Notice = () => {
       ) : (
         <NoticeList noticeData={noticeData} />
       )}
-
-      {/* 최하단 배너 광고 */}
-      <GlobalBannerAd />
     </View>
   );
 };

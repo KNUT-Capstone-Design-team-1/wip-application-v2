@@ -19,10 +19,11 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: bottomTabSize.height,
     width: '100%',
+    zIndex: 999,
   },
   infoContainer: {
     marginHorizontal: px(20),
-    marginBottom: px(10),
+    marginBottom: px(22),
     backgroundColor: COLOR_BG['surface'],
     borderRadius: px(15),
     paddingVertical: px(12),

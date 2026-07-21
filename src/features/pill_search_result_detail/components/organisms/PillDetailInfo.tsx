@@ -12,6 +12,8 @@ import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 
+// TODO: Native 광고 추가 필요
+
 const PillDetailInfo = ({
   data,
   saveState,
@@ -74,6 +76,8 @@ const PillDetailInfo = ({
           <>
             {/* 주의 및 특수 분류 정보 */}
             <PillSafetySection data={data} />
+
+            {/* Native Ad 표시 위치 */}
 
             {/* 효능, 용법, 주의사항 상세 정보 */}
             <PillDescriptionSection data={data} />

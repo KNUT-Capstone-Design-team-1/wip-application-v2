@@ -4,18 +4,16 @@ import { COLOR_BG } from '@constants/color';
 
 export const styles = StyleSheet.create({
   settingList: {
-    display: 'flex',
-    height: '100%',
+    flex: 1,
     flexDirection: 'column',
+    justifyContent: 'space-between',
     backgroundColor: COLOR_BG['surface'],
   },
   settingItem: {
-    display: 'flex',
     width: '100%',
     height: px(70),
   },
   settingItemTextBox: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

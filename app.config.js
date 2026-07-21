@@ -223,8 +223,6 @@ export default {
         {
           androidAppId: ADMOB_ANDROID_APP_ID,
           iosAppId: ADMOB_IOS_APP_ID,
-          userTrackingUsageDescription:
-            '맞춤형 광고 제공을 위해 사용자의 데이터가 사용됩니다.',
         },
       ],
     ],

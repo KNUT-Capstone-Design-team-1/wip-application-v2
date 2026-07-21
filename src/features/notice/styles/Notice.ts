@@ -6,7 +6,6 @@ import { screenPadding } from '@constants/size';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: screenPadding.top,
     paddingHorizontal: screenPadding.horizontal,
     backgroundColor: COLOR_BG['surface'],
   },

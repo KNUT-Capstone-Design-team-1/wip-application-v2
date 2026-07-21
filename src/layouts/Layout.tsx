@@ -3,7 +3,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePathname } from 'expo-router';
 import Header from './header/Header';
 import SubHeader from './header/SubHeader';
-import NearbyPharmacyHeader from './header/NearbyPharmacyHeader';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,15 +13,10 @@ const Layout = ({ children }: LayoutProps) => {
   const pathname = usePathname();
 
   const isMainPage = pathname === '/';
-  const isNearbyPharmacy = pathname === '/nearby-pharmacy';
 
   const renderHeader = () => {
     if (isMainPage) {
       return <Header />;
-    }
-
-    if (isNearbyPharmacy) {
-      return <NearbyPharmacyHeader />;
     }
 
     return <SubHeader />;

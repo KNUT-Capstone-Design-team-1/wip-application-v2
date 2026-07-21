@@ -1,27 +1,13 @@
 import React, { memo } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { styles } from '@features/notice/styles/NoticeList';
-import {
-  INoticeData,
-  INoticeListProps,
-} from '@features/notice/types/notice_type';
+import { INoticeListProps } from '@features/notice/types/notice_type';
 import NoticeItem from '@features/notice/components/NoticeItem';
 import PrevNextPagination from '@features/notice/components/PrevNextPagination';
 import { usePagination } from '@features/notice/hooks/use_pagination';
 import { ITEMS_PER_PAGE } from '@features/notice/constants/notice';
-
-/**
- * 공지사항 아이템들을 렌더링하는 컨테이너 컴포넌트
- */
-const NoticeItemsContainer = ({ notices }: { notices: INoticeData[] }) => (
-  <View style={styles.noticeListWrapper}>
-    {notices.map((notice, index) => (
-      <View key={notice.idx || index}>
-        <NoticeItem noticeData={notice} />
-      </View>
-    ))}
-  </View>
-);
+import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
+import { BannerAdSize } from 'react-native-google-mobile-ads';
 
 /**
  * 페이지네이션 섹션 컴포넌트
@@ -59,19 +45,22 @@ const NoticeList = ({ noticeData }: INoticeListProps) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
-        showsVerticalScrollIndicator={true}
-      >
-        <NoticeItemsContainer notices={currentNotices} />
+      <View style={styles.noticeListWrapper}>
+        {currentNotices.map((notice, index) => (
+          <View key={notice.idx || index} style={styles.noticeListItemWrapper}>
+            <NoticeItem noticeData={notice} />
+          </View>
+        ))}
+      </View>
+      <View style={styles.noticeBottomWrapper}>
         <PaginationSection
           currentPage={currentPage}
           totalPages={totalPages}
           onPrevious={handlePrevious}
           onNext={handleNext}
         />
-      </ScrollView>
+        <GlobalBannerAd size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+      </View>
     </View>
   );
 };

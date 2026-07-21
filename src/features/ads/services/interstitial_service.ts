@@ -1,6 +1,7 @@
 import { InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
 import { AD_UNITS } from '../constants/ad_units';
 import logger from '@utils/logger';
+import { ADS_KEYWORDS } from '../constants/keyword';
 
 export type AdType = 'IMAGE_SEARCH' | 'UNIFIED_SEARCH' | 'DEFAULT';
 
@@ -21,7 +22,7 @@ class InterstitialService {
   private closeListeners: (() => void)[] = [];
 
   private constructor() {
-    this.initializeAd();
+    this.createAndLoadAd();
   }
 
   public static getInstance(): InterstitialService {
@@ -31,10 +32,20 @@ class InterstitialService {
     return InterstitialService.instance;
   }
 
-  private initializeAd() {
+  /**
+   * InterstitialAd 인스턴스는 1회용이므로, 로드/재로드 시마다 새로운 인스턴스를 생성합니다.
+   * load 실패 시 대응 로직 필요 (개발자 불이익은 없지만 Fill Rate 지표 저하 방지 및 앱 효율 저하 방지)
+   * 예시)
+   * - 최대 제시도 횟수 제한
+   * - 점진적 재시도 시간 증가
+   */
+  private createAndLoadAd() {
     if (!AD_UNITS.INTERSTITIAL) return;
 
+    this.loaded = false;
+
     this.ad = InterstitialAd.createForAdRequest(AD_UNITS.INTERSTITIAL, {
+      keywords: ADS_KEYWORDS,
       requestNonPersonalizedAdsOnly: true,
     });
 
@@ -47,8 +58,10 @@ class InterstitialService {
       logger.error(`Interstitial Ad Error: ${error}`);
       this.loaded = false;
       this.isShowing = false;
-      // 일정 시간 후 재시도 로직 추가 가능
-      setTimeout(() => this.reload(), 10000);
+
+      // 개발 환경에서는 터미널 연속 에러 방지를 위해 1시간 후 재시도, 운영에서는 10초 후 재시도
+      const retryTime = __DEV__ ? 3600000 : 10000;
+      setTimeout(() => this.createAndLoadAd(), retryTime);
     });
 
     this.ad.addAdEventListener(AdEventType.CLOSED, () => {
@@ -56,26 +69,25 @@ class InterstitialService {
       this.loaded = false;
       this.isShowing = false;
 
-      // 등록된 리스너 실행 후 리스너 큐 비우기 (일회성 실행)
+      // 등록된 리스너 실행 후 리스너 큐 비우기
       this.closeListeners.forEach((listener) => listener());
       this.closeListeners = [];
 
-      // 닫힌 후 다음 광고를 위해 미리 로드
-      this.reload();
+      // 닫힌 후 새 인스턴스로 다음 광고 미리 로드
+      this.createAndLoadAd();
     });
 
-    this.load();
+    this.ad.load();
   }
 
   public load() {
-    if (this.ad && !this.loaded) {
-      this.ad.load();
+    if (!this.loaded && !this.isShowing) {
+      this.createAndLoadAd();
     }
   }
 
   public reload() {
-    this.loaded = false;
-    this.load();
+    this.createAndLoadAd();
   }
 
   public isLoaded(): boolean {

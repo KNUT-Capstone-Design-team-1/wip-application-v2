@@ -10,6 +10,10 @@ import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomS
 import Toast from 'react-native-toast-message';
 import toastConfig from '@components/config/toastConfig';
 import { px } from '@utils/responsive';
+import { initAdMob } from '@features/ads/utils/config';
+
+// Mobile Ads SDK 초기화
+initAdMob();
 
 /**
  * 앱의 최상위 레이아웃 컴포넌트

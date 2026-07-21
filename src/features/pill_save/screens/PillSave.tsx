@@ -4,7 +4,6 @@ import { styles } from '@features/pill_save/styles/PillSave';
 import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
 import { usePillSaveList } from '@features/pill_save/hooks/use_pill_save_list';
 import { COLOR } from '@constants/color';
-import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
 
 /**
  * 저장된 알약 개수 표시 헤더
@@ -41,9 +40,6 @@ const PillSave = () => {
       <SaveCountHeader count={pillSaveData.length} />
 
       <PillSaveList pillSaveData={pillSaveData} onDataChange={deleteSaveData} />
-
-      {/* 최하단 배너 광고 */}
-      <GlobalBannerAd />
     </View>
   );
 };
