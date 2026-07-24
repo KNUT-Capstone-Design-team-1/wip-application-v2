@@ -20,7 +20,8 @@ interface GlobalNativeAdProps {
 }
 
 export const GlobalNativeAd = ({ banner = false }: GlobalNativeAdProps) => {
-  const { nativeAd, isAdLoaded, isAdError } = useNativeAd();
+  const { nativeAd, isAdLoaded, isAdError, adKey, isRefreshing } =
+    useNativeAd();
   const adHeight = px(90, 100);
 
   if (Platform.OS === 'web') {
@@ -48,7 +49,7 @@ export const GlobalNativeAd = ({ banner = false }: GlobalNativeAdProps) => {
     );
   }
 
-  if (!isAdLoaded || !nativeAd) {
+  if (!isAdLoaded || !nativeAd || isRefreshing) {
     return (
       <View style={styles.container}>
         <NativeAdSkeleton height={adHeight} />
@@ -57,7 +58,7 @@ export const GlobalNativeAd = ({ banner = false }: GlobalNativeAdProps) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View key={adKey} style={styles.container}>
       <NativeAdView nativeAd={nativeAd} style={[styles.adView]}>
         <View
           style={[
