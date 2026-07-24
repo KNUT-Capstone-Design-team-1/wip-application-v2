@@ -5,11 +5,10 @@ import { ISettingListType } from '@features/setting/types/setting_type';
 import { styles } from '@features/setting/styles/SettingList';
 import { useSetting } from '@features/setting/hooks/use_setting';
 import SettingItem from '@features/setting/components/SettingItem';
-import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
-import { BannerAdSize } from 'react-native-google-mobile-ads';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { bottomTabSize } from '@constants/size';
 import { px } from '@utils/responsive';
+import { GlobalNativeAd } from '@features/ads/components/GlobalNativeAd';
 
 // TODO: Native 광고로 교체 필요
 
@@ -52,7 +51,7 @@ const SettingList = () => {
           />
         ))}
       </View>
-      <GlobalBannerAd size={BannerAdSize.LARGE_BANNER} />
+      <GlobalNativeAd />
     </View>
   );
 };

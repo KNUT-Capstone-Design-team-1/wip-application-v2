@@ -11,6 +11,7 @@ import PillDescriptionSection from '../molecules/PillDescriptionSection';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import { GlobalNativeAd } from '@features/ads/components/GlobalNativeAd';
 
 // TODO: Native 광고 추가 필요
 
@@ -78,6 +79,7 @@ const PillDetailInfo = ({
             <PillSafetySection data={data} />
 
             {/* Native Ad 표시 위치 */}
+            <GlobalNativeAd banner={true} />
 
             {/* 효능, 용법, 주의사항 상세 정보 */}
             <PillDescriptionSection data={data} />

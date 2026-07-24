@@ -16,4 +16,11 @@ export const AD_UNITS = {
         ios: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID || '',
         default: '',
       }),
+  NATIVE: __DEV__
+    ? TestIds.NATIVE
+    : Platform.select({
+        android: process.env.EXPO_PUBLIC_ADMOB_ANDROID_NATIVE_ID || '',
+        ios: process.env.EXPO_PUBLIC_ADMOB_IOS_NATIVE_ID || '',
+        default: '',
+      }),
 };

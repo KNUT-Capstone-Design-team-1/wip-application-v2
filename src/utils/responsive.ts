@@ -13,8 +13,11 @@ const scaleRatio = boundedWidth / BASE_WIDTH;
  * @param size 원래 디자인 상의 크기 (기준 너비 기기)
  * @returns 반응형으로 계산된 크기
  */
-export const px = (size: number): number => {
-  return size * scaleRatio;
+export const px = (size: number, min?: number, max?: number): number => {
+  const scaledValue = size * scaleRatio;
+  if (min && scaledValue < min) return min;
+  if (max && scaledValue > max) return max;
+  return scaledValue;
 };
 
 /**
@@ -24,6 +27,14 @@ export const px = (size: number): number => {
  * @param factor 스케일 적용 비율 (기본값 설정)
  * @returns 반응형으로 계산된 폰트 크기
  */
-export const fontPx = (size: number, factor: number = 1): number => {
-  return size + (px(size) - size) * factor;
+export const fontPx = (
+  size: number,
+  factor: number = 1,
+  min?: number,
+  max?: number,
+): number => {
+  const scaledValue = size + (px(size) - size) * factor;
+  if (min && scaledValue < min) return min;
+  if (max && scaledValue > max) return max;
+  return scaledValue;
 };
