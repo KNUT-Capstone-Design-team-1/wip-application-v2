@@ -119,6 +119,6 @@ jobs:
       - name: upload-artifact
         uses: actions/upload-artifact@v5
         with:
-          name: wip-${{ env.VERSION }}-${{ env.BUILD }}
+          name: wip-${{ env.VERSION }}-${{ env.BUILD }}-ios
           path: |
             wip-${{ env.VERSION }}-${{ env.BUILD }}.ipa
