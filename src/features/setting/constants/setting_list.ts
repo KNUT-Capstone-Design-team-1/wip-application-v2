@@ -1,12 +1,11 @@
-import * as Application from 'expo-application';
 import { ISettingListType } from '@features/setting/types/setting_type';
 
 export const SEARCH_LIST: ISettingListType[] = [
   {
     id: 'NONE',
-    title: `앱 버전`,
-    value: `v${Application.nativeApplicationVersion}`,
-    path: '',
+    title: `버전 정보`,
+    value: '',
+    path: 'version-info',
   },
   {
     id: 'NONE',

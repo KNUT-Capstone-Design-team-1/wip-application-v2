@@ -1,3 +1,4 @@
+// 환경설정 테이블의 키 타입
 export type TConfigKey =
   | 'pillDataSchemaVersion'
   | 'pillDataDataVersion'
@@ -14,6 +15,7 @@ export type TConfigKey =
   | 'prohibitedListSchemaVersion'
   | 'prohibitedListDataVersion';
 
+// 데이터베이스 내 존재하는 테이블 이름 타입
 export type TDataTable =
   | 'pill_data'
   | 'mark_images'
@@ -34,6 +36,7 @@ export const ALL_DATA_TABLES: TDataTable[] = [
   'pill_data',
 ] as const;
 
+// 테이블명에 대한 한국어 라벨 매핑
 export const TABLE_NAME_MAP: Record<TDataTable, string> = {
   pill_data: '알약 정보',
   mark_images: '알약 마크',
@@ -44,6 +47,21 @@ export const TABLE_NAME_MAP: Record<TDataTable, string> = {
   prohibited_list: '금지 약물 정보',
 } as const;
 
+// 테이블명과 해당 테이블의 스키마/데이터 버전 설정 키 매핑
+export const TABLE_CONFIG_KEYS_MAP: Record<TDataTable, TConfigKey[]> = {
+  pill_data: ['pillDataSchemaVersion', 'pillDataDataVersion'],
+  mark_images: ['markImagesSchemaVersion', 'markImagesDataVersion'],
+  nearby_pharmacies: [
+    'nearbyPharmaciesSchemaVersion',
+    'nearbyPharmaciesDataVersion',
+  ],
+  cannabis: ['cannabisSchemaVersion', 'cannabisDataVersion'],
+  narcotics: ['narcoticsSchemaVersion', 'narcoticsDataVersion'],
+  psychotropics: ['psychotropicsSchemaVersion', 'psychotropicsDataVersion'],
+  prohibited_list: ['prohibitedListSchemaVersion', 'prohibitedListDataVersion'],
+} as const;
+
+// 데이터베이스 업데이트 및 초기화 결과 코드
 export type DATABSE_UPDATE_RESULT_CODE =
   | 'OK'
   | 'NO-UPDATED'
@@ -59,17 +77,13 @@ export type DATABSE_UPDATE_RESULT_CODE =
   | 'ERROR-INSERT-TABLE'
   | 'ERROR-UPDATE-DATABASE-VERSION';
 
-/**
- * 설정 테이블 스키마
- */
+// 설정 테이블 스키마
 export interface IConfig {
   key: TConfigKey;
   value: string | number;
 }
 
-/**
- * 알약 데이터 테이블 스키마
- */
+// 알약 데이터 테이블 스키마
 export interface IPillData {
   ITEM_SEQ: string; // 품목일련번호
   ITEM_NAME: string; // 품목명
@@ -119,18 +133,14 @@ export interface IPillData {
   OEM_ENTP_NAME: string; // 위탁제조업체
 }
 
-/**
- * 마크 이미지 테이블 스키마
- */
+// 마크 이미지 테이블 스키마
 export interface IMarkImages {
   code: string;
   title: string;
   base64: string;
 }
 
-/**
- * 주변 약국 테이블 스키마
- */
+// 주변 약국 테이블 스키마
 export interface INearbyPharmacies {
   id: string; // 암호화요양기호
   name: string; // 요양기관명
@@ -145,9 +155,7 @@ export interface INearbyPharmacies {
   Y: string; // Y 좌표
 }
 
-/**
- * 대마초 테이블 스키마
- */
+// 대마초 테이블 스키마
 export interface ICannabis {
   chemicalNameKr: string; // 품명(국문)
   chemicalNameEn: string; // 품명(영문)
@@ -158,9 +166,7 @@ export interface ICannabis {
   molecularWeight: string; // 분자량
 }
 
-/**
- * 마약 테이블 스키마
- */
+// 마약 테이블 스키마
 export interface INarcotics {
   chemicalNameKr: string; // 품명(국문)
   chemicalNameEn: string; // 품명(영문)
@@ -171,9 +177,7 @@ export interface INarcotics {
   molecularWeight: string; // 분자량
 }
 
-/**
- * 향정신성 테이블 스키마
- */
+// 향정신성 테이블 스키마
 export interface IPsychotropics {
   chemicalNameKr: string; // 품명(국문)
   chemicalNameEn: string; // 품명(영문)
@@ -184,13 +188,12 @@ export interface IPsychotropics {
   molecularWeight: string; // 분자량
 }
 
-/**
- * 도핑 금지 약물
- */
+// 도핑 금지 약물
 export interface IProhibitedList {
   contents: string; // 내용
 }
 
+// API를 통해 받아오는 원본 데이터 스키마 유니온 타입
 export type TResourceDataSchemas =
   | IPillData
   | IMarkImages
@@ -200,6 +203,7 @@ export type TResourceDataSchemas =
   | IPsychotropics
   | IProhibitedList;
 
+// 테이블 컬럼의 메타데이터 스키마 정의
 export interface ITableColumnSchema {
   name: string;
   type: 'TEXT' | 'BLOB' | 'INTEGER' | 'DOUBLE';
@@ -208,6 +212,7 @@ export interface ITableColumnSchema {
   isPK: boolean;
 }
 
+// SQL WHERE 절 생성을 위한 조건절 스키마
 export interface IWhereQueryClause {
   query: string;
   values: (str: any) => (string | number)[];
@@ -217,14 +222,17 @@ export interface IWhereQueryClause {
   };
 }
 
+// 파라미터를 받아 WHERE 쿼리 절 객체를 생성하는 함수 타입
 export type TWhereQueryClauseFunc = (
   param: Record<string, any>,
 ) => Record<string, IWhereQueryClause>;
 
+// 타입 T의 필드에 대응하는 조건절을 가진 검색 결과 객체 타입
 export type TQuerySearchParamResult<T> = Partial<
   Record<keyof T, IWhereQueryClause>
 >;
 
+// 알약 데이터 검색을 위한 파라미터 타입
 export type TPillDataSearchParam = Omit<
   IPillData,
   | 'DRUG_SHAPE'
@@ -245,8 +253,10 @@ export type TPillDataSearchParam = Omit<
   KEYWORD?: string; // 통합 검색어
 };
 
+// 마크 이미지 검색을 위한 파라미터 타입
 export type TMarkImagesSearchParam = Omit<IMarkImages, 'base64'>;
 
+// 주변 약국 검색을 위한 파라미터 타입
 export type TNearbyPharmaciesSearchParam = Omit<
   INearbyPharmacies,
   'postalCode' | 'telephone' | 'openData' | 'x' | 'y'
@@ -254,6 +264,7 @@ export type TNearbyPharmaciesSearchParam = Omit<
   coordinate: { x: number; y: number };
 };
 
+// 대마초 데이터 검색을 위한 파라미터 타입
 export type TCannabisSearchParam = Pick<
   ICannabis,
   'chemicalNameKr' | 'chemicalNameEn'
@@ -262,6 +273,7 @@ export type TCannabisSearchParam = Pick<
   containedInEn?: string;
 };
 
+// 마약 데이터 검색을 위한 파라미터 타입
 export type TNarcoticsSearchParam = Pick<
   INarcotics,
   'chemicalNameKr' | 'chemicalNameEn'
@@ -270,6 +282,7 @@ export type TNarcoticsSearchParam = Pick<
   containedInEn?: string;
 };
 
+// 향정신성 데이터 검색을 위한 파라미터 타입
 export type TPsychotropicsSearchParam = Pick<
   IPsychotropics,
   'chemicalNameKr' | 'chemicalNameEn'
@@ -278,4 +291,5 @@ export type TPsychotropicsSearchParam = Pick<
   containedInEn?: string;
 };
 
+// 병용 금기 데이터 검색을 위한 파라미터 타입
 export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'>;

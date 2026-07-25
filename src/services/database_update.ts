@@ -5,25 +5,10 @@ import {
   TConfigKey,
   TDataTable,
   TResourceDataSchemas,
+  TABLE_CONFIG_KEYS_MAP,
 } from './database/types';
 import { IDatabaseVersionResponse } from './apis/google_cloud/wip_database_version';
 import { logger } from '../utils';
-
-/**
- * 테이블 별 config 속성 맵
- */
-const TABLE_CONFIG_KEYS_MAP: Record<TDataTable, TConfigKey[]> = {
-  pill_data: ['pillDataSchemaVersion', 'pillDataDataVersion'],
-  mark_images: ['markImagesSchemaVersion', 'markImagesDataVersion'],
-  nearby_pharmacies: [
-    'nearbyPharmaciesSchemaVersion',
-    'nearbyPharmaciesDataVersion',
-  ],
-  cannabis: ['cannabisSchemaVersion', 'cannabisDataVersion'],
-  narcotics: ['narcoticsSchemaVersion', 'narcoticsDataVersion'],
-  psychotropics: ['psychotropicsSchemaVersion', 'psychotropicsDataVersion'],
-  prohibited_list: ['prohibitedListSchemaVersion', 'prohibitedListDataVersion'],
-} as const;
 
 /**
  * 서버 상에 있는 데이터 베이스 버전
