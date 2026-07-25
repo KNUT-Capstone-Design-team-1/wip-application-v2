@@ -6,7 +6,7 @@ export const PAGE_TITLES: { [key: string]: string } = {
   '/nearby-pharmacy': '주변 약국',
   '/pill-save': '보관함',
   '/setting': '설정',
-  '/version-info': '버전 정보',
+  '/app-info': '앱 정보',
   '/terms': '이용 약관',
   '/pill-search-result-list': '검색 결과',
   '/pill-search-result-detail': '상세정보',

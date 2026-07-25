@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { COLOR_TEXT, COLOR } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 import { BaseText } from '@components/common/BaseText';
 
@@ -26,6 +26,7 @@ export const VersionItem = ({ label, value }: VersionItemProps) => {
 const styles = StyleSheet.create({
   itemContainer: {
     paddingVertical: px(16),
+    paddingLeft: px(8),
     justifyContent: 'center',
   },
   label: {
@@ -33,6 +34,6 @@ const styles = StyleSheet.create({
     marginBottom: px(4),
   },
   value: {
-    color: COLOR.primary,
+    color: COLOR_TEXT['sub'],
   },
 });

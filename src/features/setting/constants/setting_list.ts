@@ -3,9 +3,9 @@ import { ISettingListType } from '@features/setting/types/setting_type';
 export const SEARCH_LIST: ISettingListType[] = [
   {
     id: 'NONE',
-    title: `버전 정보`,
+    title: `앱 정보`,
     value: '',
-    path: 'version-info',
+    path: 'app-info',
   },
   {
     id: 'NONE',
