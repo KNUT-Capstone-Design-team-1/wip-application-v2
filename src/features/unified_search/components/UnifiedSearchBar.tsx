@@ -8,12 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { IconStyles, styles } from '../styles/unifiedSearchStyles';
-import SearchIcon from '@assets/icons/search.svg';
 import { CircleXIcon, Search } from 'lucide-react-native';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
 import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/index';
 import FullSizeLoading from '@components/common/FullSizeLoading';
-import { px } from '@utils/responsive';
 
 interface IUnifiedSearchBarProps {
   containerStyle?: StyleProp<ViewStyle>;

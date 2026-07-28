@@ -21,6 +21,7 @@ import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocateFixed } from 'lucide-react-native';
+import { useAppTrackStore } from '@store/app_track_store';
 /*
 TODO: Custom marker 필요
 TODO: marker 위치가 정확한지 확인 필요
@@ -70,6 +71,7 @@ const NearbyPharmacyScreen = () => {
    */
   const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
     setSelectedPharmacy(pharmacy);
+    useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
   }, []);
 
   /**

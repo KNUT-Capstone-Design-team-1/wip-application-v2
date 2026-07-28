@@ -12,6 +12,7 @@ import { Alert } from 'react-native';
 import logger from '@utils/logger';
 import { requestReview } from '@utils/store_review';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
+import { useAppTrackStore } from '@store/app_track_store';
 
 /**
  * 이미지에서 알약 특징(모양, 색상, 식별문자 등) 추출
@@ -200,6 +201,7 @@ export const usePillImageSelection = () => {
     // 검색 완료 처리 및 화면 이동
     setSearchResultData(searchData.results);
     setTotalDataCount(searchData.totalDataCount);
+    useAppTrackStore.getState().increaseCoreActionCount('image_search');
 
     router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
 

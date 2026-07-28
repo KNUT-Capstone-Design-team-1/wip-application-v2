@@ -10,6 +10,7 @@ import {
 import { styles } from '@features/pill_save/styles/organisms/PillSaveList';
 import NotItem from '@components/common/NotItem';
 import { px } from '@utils/responsive';
+import { useAppTrackStore } from '@store/app_track_store';
 
 /**
  * 저장된 데이터가 없을 때 표시할 화면
@@ -28,6 +29,9 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
    */
   const handlePressDetail = useCallback(
     (itemSeq: string, itemImage: string) => {
+      // 보관함에 등록한 알약의 상세정보를 확인해야지만 기능을 사용했다고 판단
+      useAppTrackStore.getState().increaseSubActionCount('save_pill');
+
       router.push({
         pathname: '/pill-search-result-detail',
         params: { ITEM_SEQ: itemSeq, itemImage: itemImage },

@@ -10,6 +10,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
 import { requestReview } from '@utils/store_review';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
+import { useAppTrackStore } from '@store/app_track_store';
 
 export const useUnifiedSearch = () => {
   const { showInterstitial } = useInterstitialAd();
@@ -81,6 +82,7 @@ export const useUnifiedSearch = () => {
         setSearchParam({ KEYWORD: trimmedKeyword });
         setTotalDataCount(totalDataCount);
         setSearchResultData(pillDatas);
+        useAppTrackStore.getState().increaseCoreActionCount('unified_search');
 
         // 검색 완료 후 전면 광고 호출 및 화면 전환
         showInterstitial(() => {

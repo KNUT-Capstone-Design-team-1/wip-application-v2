@@ -12,6 +12,7 @@ import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
 import { ISearchPillData } from '../types/search_id_types';
 import { requestReview } from '@utils/store_review';
+import { useAppTrackStore } from '@store/app_track_store';
 
 /**
  * 식별 검색 Hook
@@ -177,6 +178,10 @@ export const useSelectedSearchId = () => {
       setSearchParam(searchParam);
       setTotalDataCount(totalDataCount);
       setSearchResultData(results);
+
+      useAppTrackStore
+        .getState()
+        .increaseCoreActionCount('identification_search');
 
       // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 처리
       setTimeout(() => {
