@@ -1,11 +1,16 @@
 import { Dimensions } from 'react-native';
 
-const BASE_WIDTH = 350;
+const BASE_WIDTH = 360;
+const BASE_HEIGHT = 780;
 const MAX_WIDTH = 450;
 
-const { width: windowWidth } = Dimensions.get('window');
+const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 const boundedWidth = Math.min(windowWidth, MAX_WIDTH);
-const scaleRatio = boundedWidth / BASE_WIDTH;
+
+const widthScale = boundedWidth / BASE_WIDTH;
+const heightScale = windowHeight / BASE_HEIGHT;
+
+const scaleRatio = Math.min(widthScale, heightScale);
 
 /**
  * 레이아웃 수치(너비, 높이, 여백 등) 반응형 변환
