@@ -11,7 +11,6 @@ import { useSearchResultListStore } from '../../pill_search_result_list/store/se
 import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
 import { ISearchPillData } from '../types/search_id_types';
-import { requestReview } from '@utils/store_review';
 import { useAppTrackStore } from '@store/app_track_store';
 
 /**
@@ -182,11 +181,6 @@ export const useSelectedSearchId = () => {
       useAppTrackStore
         .getState()
         .increaseCoreActionCount('identification_search');
-
-      // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 처리
-      setTimeout(() => {
-        requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
-      }, 500);
 
       return results;
     } catch (e) {

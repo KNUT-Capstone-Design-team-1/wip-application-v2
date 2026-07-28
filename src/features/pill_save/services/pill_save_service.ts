@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import logger from '@utils/logger';
+import { useAppTrackStore } from '@store/app_track_store';
 
 const SAVE_DATA_KEY = 'saveData';
 
@@ -71,6 +72,9 @@ export const pillSaveService = {
       nextStatus = true;
 
       await AsyncStorage.setItem(SAVE_DATA_KEY, JSON.stringify(nextList));
+
+      // 트래킹 횟수 추가
+      useAppTrackStore.getState().increaseReviewActionCount('bookmarked');
 
       return nextStatus;
     } catch (e) {

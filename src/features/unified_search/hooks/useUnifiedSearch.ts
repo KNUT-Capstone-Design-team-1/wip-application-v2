@@ -8,7 +8,6 @@ import {
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
-import { requestReview } from '@utils/store_review';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
 
@@ -87,11 +86,6 @@ export const useUnifiedSearch = () => {
         // 검색 완료 후 전면 광고 호출 및 화면 전환
         showInterstitial(() => {
           handleNavigation();
-
-          // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 처리
-          setTimeout(() => {
-            requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
-          }, 500);
         }, 'UNIFIED_SEARCH');
       } catch (e) {
         logger.error(`UnifiedSearch search Failed: ${e.stack || e}`);

@@ -10,7 +10,6 @@ import { router } from 'expo-router';
 import { File } from 'expo-file-system';
 import { Alert } from 'react-native';
 import logger from '@utils/logger';
-import { requestReview } from '@utils/store_review';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
 
@@ -204,11 +203,6 @@ export const usePillImageSelection = () => {
     useAppTrackStore.getState().increaseCoreActionCount('image_search');
 
     router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
-
-    // 화면 전환 애니메이션을 고려하여 리뷰 요청 지연 처리
-    setTimeout(() => {
-      requestReview(); // 검색 성공 시 리뷰 요청 (내부 로직에 따라 노출 여부 결정됨)
-    }, 500);
   }, [
     pillImages,
     setIsSearching,
