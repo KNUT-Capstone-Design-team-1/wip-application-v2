@@ -15,8 +15,6 @@ import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
-import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
-import { BannerAdSize } from 'react-native-google-mobile-ads';
 import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -150,16 +148,6 @@ const NearbyPharmacyScreen = () => {
           onMarkerPress={handleMarkerPress}
         />
       </MapView>
-      <View
-        style={{
-          position: 'absolute',
-          top: px(4),
-          width: '100%',
-          zIndex: 999,
-        }}
-      >
-        <GlobalBannerAd size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
-      </View>
 
       <View style={styles.bottomOverlay}>
         {selectedPharmacy && (
