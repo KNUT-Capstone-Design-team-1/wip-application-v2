@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { unifiedSearchService } from '../services/unifiedSearchService';
 import { logger } from '@utils/index';
 import {
@@ -10,12 +10,10 @@ import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
+import { useFullLoadingStore } from '@store/full_loading_store';
 
 export const useUnifiedSearch = () => {
   const { showInterstitial } = useInterstitialAd();
-
-  const [loading, setLoading] = useState(false);
-
   const { showToast } = useToast();
 
   const {
@@ -48,8 +46,10 @@ export const useUnifiedSearch = () => {
         return;
       }
 
-      setLoading(true);
       setIsLoading(true);
+
+      const { setShow, setHide } = useFullLoadingStore.getState();
+      setShow();
 
       try {
         const keywords = trimmedKeyword.split(/\s+/);
@@ -74,8 +74,23 @@ export const useUnifiedSearch = () => {
           return;
         }
 
-        const totalDataCount = await getPillDataCountByItemSeq(results);
-        const pillDatas = await getPillDatasByItemSeq(results);
+        // 광고와 데이터를 병렬 처리
+        const getPillData = (async () => {
+          // 백그라운드에서 후속 데이터 2개를 동시에 가져옴
+          const [totalDataCount, pillDatas] = await Promise.all([
+            getPillDataCountByItemSeq(results),
+            getPillDatasByItemSeq(results),
+          ]);
+
+          return { totalDataCount, pillDatas };
+        })();
+
+        // 전면 광고 표시
+        await new Promise<void>((resolve) => {
+          showInterstitial(() => resolve(), 'UNIFIED_SEARCH');
+        });
+
+        const { totalDataCount, pillDatas } = await getPillData;
 
         // 검색 조건 및 결과 저장
         setSearchParam({ KEYWORD: trimmedKeyword });
@@ -83,10 +98,8 @@ export const useUnifiedSearch = () => {
         setSearchResultData(pillDatas);
         useAppTrackStore.getState().increaseCoreActionCount('unified_search');
 
-        // 검색 완료 후 전면 광고 호출 및 화면 전환
-        showInterstitial(() => {
-          handleNavigation();
-        }, 'UNIFIED_SEARCH');
+        // 작업 완료 검색 결과 페이지로 이동
+        handleNavigation();
       } catch (e) {
         logger.error(`UnifiedSearch search Failed: ${e.stack || e}`);
 
@@ -95,12 +108,19 @@ export const useUnifiedSearch = () => {
           message: '통합 검색에 실패했습니다.\n나중에 다시 시도해 주세요.',
         });
       } finally {
-        setLoading(false);
         setIsLoading(false);
+        setHide();
       }
     },
-    [handleNavigation, setIsLoading, setSearchParam, setSearchResultData],
+    [
+      handleNavigation,
+      setIsLoading,
+      setSearchParam,
+      setSearchResultData,
+      showInterstitial,
+      showToast,
+    ],
   );
 
-  return { loading, search };
+  return { search };
 };

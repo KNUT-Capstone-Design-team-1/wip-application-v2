@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
 import { usePillImageSelection } from '../hooks/usePillImageSelection';
-import FullSizeLoading from '@components/common/FullSizeLoading';
 import { styles } from '../styles/PillImageSearch';
 import CameraGuideModal from '../components/organisms/CameraGuideModal';
 import { useCameraGuideModalStore } from '../store/camera_guide_store';
@@ -42,10 +41,6 @@ const PillImageSearch = () => {
           showApplyButton={isBothImagesSelected}
         />
       </View>
-      <FullSizeLoading
-        visible={isSearching}
-        message="이미지를 분석하여 알약을 찾는 중입니다..."
-      />
       <CameraGuideModal
         visible={isGuideModalVisible}
         onClose={() => setIsGuideModalVisible(false)}

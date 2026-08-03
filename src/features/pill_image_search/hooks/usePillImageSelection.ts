@@ -12,6 +12,7 @@ import { Alert } from 'react-native';
 import logger from '@utils/logger';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
+import { useFullLoadingStore } from '@store/full_loading_store';
 
 /**
  * 이미지에서 알약 특징(모양, 색상, 식별문자 등) 추출
@@ -152,57 +153,61 @@ export const usePillImageSelection = () => {
     }
 
     // 상태 업데이트 및 백그라운드 API 검색 시작
+
+    const { setShow, setHide } = useFullLoadingStore.getState();
+
+    setShow('이미지를 분석하여 알약을 찾는 중입니다...');
     setIsSearching(true);
     let apiError: any = null;
 
-    const searchPromise = (async () => {
-      try {
-        const searchParam = await extractPillFeatures(front, back);
+    try {
+      const searchPromise = (async () => {
+        try {
+          const searchParam = await extractPillFeatures(front, back);
 
-        logger.info(
-          `[IMAGE-SEARCH] Extracted features: ${JSON.stringify(searchParam)}`,
-        );
-        setSearchParam(searchParam);
+          logger.info(
+            `[IMAGE-SEARCH] Extracted features: ${JSON.stringify(searchParam)}`,
+          );
+          setSearchParam(searchParam);
 
-        const { totalDataCount, results } = await searchPillData(searchParam);
+          const { totalDataCount, results } = await searchPillData(searchParam);
 
-        return { totalDataCount, results };
-      } catch (e) {
-        apiError = e;
-        return null;
-      }
-    })();
+          return { totalDataCount, results };
+        } catch (e) {
+          apiError = e;
+          return null;
+        }
+      })();
 
-    // 전면 광고 호출 및 닫힘 대기
-    const adPromise = new Promise<void>((resolve) =>
-      showInterstitial(() => resolve(), 'IMAGE_SEARCH'),
-    );
-
-    await adPromise;
-
-    setIsLoading(true); // 광고가 닫힌 후, API가 아직 끝나지 않았다면 로딩 화면 표시
-
-    const searchData = await searchPromise; // API 완료 대기 (이미 끝났다면 즉시 통과)
-
-    setIsLoading(false);
-    setIsSearching(false);
-
-    if (apiError || !searchData) {
-      logger.error(
-        `[IMAGE-SEARCH] Failed to image search. ${apiError?.stack || apiError}`,
+      // 전면 광고 호출 및 닫힘 대기
+      const adPromise = new Promise<void>((resolve) =>
+        showInterstitial(() => resolve(), 'IMAGE_SEARCH'),
       );
 
-      Alert.alert('오류', '이미지 분석에 실패했습니다.\n다시 시도해 주세요.');
+      await adPromise;
 
-      return;
+      const searchData = await searchPromise; // API 완료 대기 (이미 끝났다면 즉시 통과)
+
+      if (apiError || !searchData) {
+        logger.error(
+          `[IMAGE-SEARCH] Failed to image search. ${apiError?.stack || apiError}`,
+        );
+
+        Alert.alert('오류', '이미지 분석에 실패했습니다.\n다시 시도해 주세요.');
+        return;
+      }
+
+      // 검색 완료 처리 및 화면 이동
+      setSearchResultData(searchData.results);
+      setTotalDataCount(searchData.totalDataCount);
+      useAppTrackStore.getState().increaseCoreActionCount('image_search');
+
+      router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
+    } finally {
+      setIsLoading(false);
+      setIsSearching(false);
+      setHide();
     }
-
-    // 검색 완료 처리 및 화면 이동
-    setSearchResultData(searchData.results);
-    setTotalDataCount(searchData.totalDataCount);
-    useAppTrackStore.getState().increaseCoreActionCount('image_search');
-
-    router.push('/pill-search-result-list'); // 검색 완료 후 결과 화면으로 이동
   }, [
     pillImages,
     setIsSearching,

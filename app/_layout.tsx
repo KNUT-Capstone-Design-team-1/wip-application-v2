@@ -11,6 +11,8 @@ import Toast from 'react-native-toast-message';
 import toastConfig from '@components/config/toastConfig';
 import { px } from '@utils/responsive';
 import { initAdMob } from '@features/ads/utils/config';
+import FullSizeLoading from '@components/common/FullSizeLoading';
+import { View } from 'react-native';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -46,7 +48,10 @@ const RootLayout = () => {
         </Stack>
       </Layout>
       <MainNoticeBottomSheet />
-      <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
+      <FullSizeLoading />
+      <View style={{ zIndex: 999999 }}>
+        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
+      </View>
     </SafeAreaProvider>
   );
 };

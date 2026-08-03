@@ -21,7 +21,12 @@ class InterstitialService {
   // 닫힘 이벤트 리스너 배열
   private closeListeners: (() => void)[] = [];
 
-  private constructor() {
+  // 광고 표시 시도 타임아웃 타이머 (표출 전 지연 방어용)
+  private preShowTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
+
+  private constructor() {}
+
+  public init() {
     this.createAndLoadAd();
   }
 
@@ -33,11 +38,30 @@ class InterstitialService {
   }
 
   /**
+   * 대기 중인 닫힘 리스너들을 iOS 네이티브 모달 닫기 애니메이션 완료(150ms) 후 일괄 실행합니다.
+   */
+  private flushCloseListeners() {
+    if (this.preShowTimeoutTimer) {
+      clearTimeout(this.preShowTimeoutTimer);
+      this.preShowTimeoutTimer = null;
+    }
+    const listeners = [...this.closeListeners];
+    this.closeListeners = [];
+
+    // 150ms 지연을 주어 iOS UIKit 모달 닫힘 애니메이션 완료 후 실행 (Navigation Race Condition 방지)
+    setTimeout(() => {
+      listeners.forEach((listener) => {
+        try {
+          listener();
+        } catch (err) {
+          logger.error(`Error in ad close listener: ${err}`);
+        }
+      });
+    }, 150);
+  }
+
+  /**
    * InterstitialAd 인스턴스는 1회용이므로, 로드/재로드 시마다 새로운 인스턴스를 생성합니다.
-   * load 실패 시 대응 로직 필요 (개발자 불이익은 없지만 Fill Rate 지표 저하 방지 및 앱 효율 저하 방지)
-   * 예시)
-   * - 최대 제시도 횟수 제한
-   * - 점진적 재시도 시간 증가
    */
   private createAndLoadAd() {
     if (!AD_UNITS.INTERSTITIAL) return;
@@ -54,10 +78,17 @@ class InterstitialService {
       this.loaded = true;
     });
 
+    this.ad.addAdEventListener(AdEventType.OPENED, () => {
+      logger.info('Interstitial Ad Opened');
+    });
+
     this.ad.addAdEventListener(AdEventType.ERROR, (error) => {
       logger.error(`Interstitial Ad Error: ${error}`);
       this.loaded = false;
       this.isShowing = false;
+
+      // 에러 발생 시 대기 중인 리스너 실행하여 블로킹 해제
+      this.flushCloseListeners();
 
       // 개발 환경에서는 터미널 연속 에러 방지를 위해 1시간 후 재시도, 운영에서는 10초 후 재시도
       const retryTime = __DEV__ ? 3600000 : 10000;
@@ -69,9 +100,8 @@ class InterstitialService {
       this.loaded = false;
       this.isShowing = false;
 
-      // 등록된 리스너 실행 후 리스너 큐 비우기
-      this.closeListeners.forEach((listener) => listener());
-      this.closeListeners = [];
+      // 닫힘 이벤트 수신 시 리스너 실행 (150ms iOS dismissal delay 내포)
+      this.flushCloseListeners();
 
       // 닫힌 후 새 인스턴스로 다음 광고 미리 로드
       this.createAndLoadAd();
@@ -116,12 +146,19 @@ class InterstitialService {
   }
 
   /**
-   * 광고 표시. 표시 불가 시 즉시 onClose 콜백을 실행해 앱 흐름 유지
+   * 광고 표시. 표시 불가 또는 예외 발생 시 즉시 콜백을 실행해 앱 흐름 유지
    * @param type 광고 타입 (횟수 체크용)
    * @param onClose 광고 닫힘(또는 표시 불가) 시 실행할 콜백
+   * @param onOpened 광고가 화면에 나타났을 때(또는 표시 불가) 실행할 콜백
    */
-  public show(type: AdType = 'DEFAULT', onClose?: () => void) {
+  public async show(type: AdType = 'DEFAULT', onClose?: () => void) {
     if (!this.shouldShowAdForType(type)) {
+      onClose?.();
+      return;
+    }
+
+    if (!this.loaded || !this.ad || this.isShowing) {
+      logger.warn('Interstitial Ad is not loaded or already showing.');
       onClose?.();
       return;
     }
@@ -130,16 +167,32 @@ class InterstitialService {
       this.closeListeners.push(onClose);
     }
 
-    if (this.loaded && this.ad && !this.isShowing) {
-      this.isShowing = true;
-      this.ad.show();
-    } else {
-      logger.warn('Interstitial Ad is not loaded or already showing.');
-      // 광고가 준비되지 않았으면 대기하지 않고 바로 콜백 실행
-      if (onClose) {
-        onClose();
-        this.closeListeners = []; // 실행 후 제거
+    this.isShowing = true;
+
+    // 2.5초 표출 시도 타임아웃: 네이티브 뷰가 뜨지 않을 때만 동작 (AdMob 정책 준수)
+    this.preShowTimeoutTimer = setTimeout(() => {
+      logger.warn(
+        'Interstitial Ad pre-show timeout expired. Skipping ad display.',
+      );
+      this.isShowing = false;
+      this.loaded = false;
+      this.flushCloseListeners();
+      this.createAndLoadAd();
+    }, 2500);
+
+    try {
+      await this.ad.show();
+      // 광고 표출 성공 시 즉시 타임아웃 해제 (AdMob 정책 준수: 유저가 보고 있는 동안 강제 닫기 방지)
+      if (this.preShowTimeoutTimer) {
+        clearTimeout(this.preShowTimeoutTimer);
+        this.preShowTimeoutTimer = null;
       }
+    } catch (error) {
+      logger.error(`Failed to show Interstitial Ad: ${error}`);
+      this.isShowing = false;
+      this.loaded = false;
+      this.flushCloseListeners();
+      this.createAndLoadAd();
     }
   }
 }

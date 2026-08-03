@@ -11,7 +11,6 @@ import { IconStyles, styles } from '../styles/unifiedSearchStyles';
 import { CircleXIcon, Search } from 'lucide-react-native';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
 import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/index';
-import FullSizeLoading from '@components/common/FullSizeLoading';
 
 interface IUnifiedSearchBarProps {
   containerStyle?: StyleProp<ViewStyle>;
@@ -20,7 +19,7 @@ interface IUnifiedSearchBarProps {
 const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
   const [keyword, setKeyword] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const { search, loading } = useUnifiedSearch();
+  const { search } = useUnifiedSearch();
 
   const handleSearch = useCallback(
     (targetKeyword?: string) => {
@@ -92,7 +91,6 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
           strokeWidth={IconStyles['searchIcon'].strokeWidth}
         />
       )}
-      <FullSizeLoading visible={loading} />
     </View>
   );
 };

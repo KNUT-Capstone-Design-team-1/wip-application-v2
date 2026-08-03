@@ -4,10 +4,11 @@ import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: COLOR_BG['overlay'],
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 99999,
   },
   content: {
     backgroundColor: COLOR_BG['surface'],
