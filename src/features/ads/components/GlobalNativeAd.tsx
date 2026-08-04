@@ -9,6 +9,7 @@ import {
 import { useNativeAd } from '../hooks/useNativeAd';
 import { NativeAdSkeleton } from './NativeAdSkeleton';
 import { GlobalBannerAd } from './GlobalBannerAd';
+import { AD_UNITS } from '../constants/ad_units';
 import { styles } from '@features/ads/styles/components/GlobalNativeAd';
 import { BaseText } from '@components/common/BaseText';
 import { px } from '@utils/responsive';
@@ -24,7 +25,7 @@ export const GlobalNativeAd = ({ banner = false }: GlobalNativeAdProps) => {
     useNativeAd();
   const adHeight = px(90, 100);
 
-  if (Platform.OS === 'web') {
+  if (Platform.OS === 'web' || !AD_UNITS.NATIVE) {
     return null;
   }
 

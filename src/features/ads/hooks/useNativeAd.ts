@@ -23,7 +23,7 @@ export const useNativeAd = () => {
     useCallback(() => {
       let isMounted = true;
 
-      if (Platform.OS === 'web') {
+      if (Platform.OS === 'web' || !AD_UNITS.NATIVE) {
         setIsAdError(true);
         return;
       }
