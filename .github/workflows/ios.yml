@@ -10,6 +10,15 @@ on:
         required: true
         default: main
 
+      environment:
+        description: Environments
+        type: choice
+        options:
+          - production
+          - development
+          - preview
+        default: production
+
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
@@ -100,7 +109,7 @@ jobs:
       
           eas build \
             -p ios \
-            --profile production \
+            --profile ${{ github.event.inputs.environment }} \
             --local \
             --non-interactive
 

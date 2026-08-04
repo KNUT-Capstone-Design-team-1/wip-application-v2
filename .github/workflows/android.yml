@@ -9,6 +9,14 @@ on:
         description: Branch
         required: true
         default: main
+      environment:
+        description: Environments
+        type: choice
+        options:
+          - production
+          - development
+          - preview
+        default: production
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -57,7 +65,7 @@ jobs:
         run: |
           eas build \
             -p android \
-            --profile production \
+            --profile ${{ github.event.inputs.environment }} \
             --local \
             --non-interactive
 
@@ -80,7 +88,7 @@ jobs:
         run: |
           eas build \
             -p android \
-            --profile production-apk \
+            --profile ${{ github.event.inputs.environment }}-apk \
             --local \
             --non-interactive
 
