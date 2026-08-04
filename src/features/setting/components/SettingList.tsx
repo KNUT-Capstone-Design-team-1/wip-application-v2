@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { SEARCH_LIST } from '@features/setting/constants/setting_list';
 import { ISettingListType } from '@features/setting/types/setting_type';
 import { styles } from '@features/setting/styles/SettingList';
@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { bottomTabSize } from '@constants/size';
 import { px } from '@utils/responsive';
 import { GlobalNativeAd } from '@features/ads/components/GlobalNativeAd';
+import { useFocusEffect } from 'expo-router';
 
 // TODO: Native 광고로 교체 필요
 
@@ -24,9 +25,11 @@ const SettingList = () => {
     setSettingList(updatedList);
   }, [loadPillStorageCount]);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData]),
+  );
 
   const onPressItem = useCallback(
     (item: ISettingListType) => {
