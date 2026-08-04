@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "apk": "eas build --platform android --profile production --local",
     "ipa": "eas build --platform ios --profile production --local",
-    "ipa_submit": "node scripts/submit_ios.js",
+    "submit-ipa": "node scripts/submit_ios.js",
     "eas-build-pre-install": "corepack enable",
     "prebuild": "npx expo prebuild",
     "rebuild": "npx expo prebuild --clean",
