@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImageSearchButtons';
 import { COLOR, COLOR_BG } from '@constants/color';
@@ -30,6 +30,9 @@ const ImageSearchButtons = ({
 }: ImageSearchButtonsProps) => {
   // 카메라 모달 표시 여부 상태
   const [showCamera, setShowCamera] = useState(false);
+
+  // 이미지 로딩 여부 상태
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   // 카메라 엽기 전 이미 선택되어 있던 이미지 상태
   const [initialPillImages, setInitialPillImages] = useState<PillImages | null>(
@@ -164,8 +167,10 @@ const ImageSearchButtons = ({
     if (!hasMultipleImageSelectCallback) {
       return;
     }
+    setIsImageLoading(true);
 
     await pickMultipleImages(onMultipleImageSelect, pillImages);
+    setIsImageLoading(false);
   };
 
   // '파일 탐색기에서 선택하기' 버튼 클릭 핸들러
@@ -175,8 +180,9 @@ const ImageSearchButtons = ({
     if (!hasMultipleImageSelectCallback) {
       return;
     }
-
+    setIsImageLoading(true);
     await pickMultipleImagesFromFiles(onMultipleImageSelect, pillImages);
+    setIsImageLoading(false);
   };
 
   return (
@@ -235,10 +241,15 @@ const ImageSearchButtons = ({
             activeOpacity={0.7}
             style={[styles.button, { backgroundColor: COLOR_BG['btnPrimary'] }]}
             onPress={onApply}
+            disabled={isImageLoading}
           >
-            <BaseText size={20} weight="bold" style={styles.searchButtonText}>
-              검색하기
-            </BaseText>
+            {isImageLoading ? (
+              <ActivityIndicator color={COLOR['white']} size={'large'} />
+            ) : (
+              <BaseText size={20} weight="bold" style={styles.searchButtonText}>
+                검색하기
+              </BaseText>
+            )}
           </TouchableOpacity>
         </View>
       )}
