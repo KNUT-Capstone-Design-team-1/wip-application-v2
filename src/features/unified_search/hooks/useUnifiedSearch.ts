@@ -96,6 +96,7 @@ export const useUnifiedSearch = () => {
         setSearchParam({ KEYWORD: trimmedKeyword });
         setTotalDataCount(totalDataCount);
         setSearchResultData(pillDatas);
+        useSearchResultListStore.setState({ hasMore: false }); // 통합검색 시 최대 검색 결과만 보여주게 임시 처리
         useAppTrackStore.getState().increaseCoreActionCount('unified_search');
 
         // 작업 완료 검색 결과 페이지로 이동
