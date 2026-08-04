@@ -62,6 +62,7 @@ jobs:
         env:
           BUILD: ${{ env.BUILD }}
           EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx6g -XX:MaxMetaspaceSize=1g'"
         run: |
           eas build \
             -p android \
@@ -85,6 +86,7 @@ jobs:
         env:
           BUILD: ${{ env.BUILD }}
           EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx6g -XX:MaxMetaspaceSize=1g'"
         run: |
           eas build \
             -p android \
