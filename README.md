@@ -87,6 +87,9 @@ npx expo lint
 # 프로젝트 상태 점검
 npx expo-doctor
 
+# 라이브러리 expo 권장 버전으로 맞추기
+npx expo install --fix
+
 # API 테스트
 yarn test:api
 
