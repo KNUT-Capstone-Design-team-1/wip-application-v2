@@ -9,6 +9,7 @@
     "production": {
       "extends": "base",
       "credentialsSource": "remote",
+      "environment": "production",
       "android": {
         "buildType": "app-bundle"
       }
@@ -16,6 +17,7 @@
     "production-apk": {
       "extends": "base",
       "credentialsSource": "remote",
+      "environment": "production",
       "android": {
         "buildType": "apk"
       }
@@ -23,6 +25,7 @@
     "preview": {
       "extends": "base",
       "credentialsSource": "remote",
+      "environment": "preview",
       "android": {
         "buildType": "app-bundle"
       }
@@ -30,6 +33,7 @@
     "preview-apk": {
       "extends": "base",
       "credentialsSource": "remote",
+      "environment": "preview",
       "android": {
         "buildType": "apk"
       }
@@ -37,6 +41,7 @@
     "development": {
       "extends": "base",
       "developmentClient": true,
+      "environment": "development",
       "distribution": "internal",
       "withoutCredentials": true
     }
