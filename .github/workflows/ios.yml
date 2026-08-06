@@ -123,7 +123,7 @@ jobs:
           fi
 
           cp "$IPA" \
-            "wip-${VERSION}-${BUILD}.ipa"
+            "wip-${VERSION}-${BUILD}-${{ github.event.inputs.environment }}.ipa"
 
       - name: upload-artifact
         uses: actions/upload-artifact@v5
