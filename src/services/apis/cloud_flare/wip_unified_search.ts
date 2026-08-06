@@ -10,13 +10,13 @@ interface UnifiedSearchResponse {
  * @param keywords 검색 단어 목록
  * @returns
  */
-export async function requestUnifiedSearch(keywords: string[]) {
+export async function requestUnifiedSearch(keywords: string[], limit: number) {
   const token = await getToken();
 
   try {
     // 실패 시 http 400 + message
     const response = await axios.get<UnifiedSearchResponse>(
-      `${process.env.EXPO_PUBLIC_CLOUD_FLARE_WIP_UNIFIED_SEARCH_URL as string}?${keywords.map((k) => `keyword=${k}`).join('&')}`,
+      `${process.env.EXPO_PUBLIC_CLOUD_FLARE_WIP_UNIFIED_SEARCH_URL as string}?${keywords.map((k) => `keyword=${k}`).join('&')}&limit=${limit}`,
       {
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
       },

@@ -53,7 +53,8 @@ export const useUnifiedSearch = () => {
 
       try {
         const keywords = trimmedKeyword.split(/\s+/);
-        const searchResult = await unifiedSearchService.search(keywords);
+        const searchResult = await unifiedSearchService.search(keywords, 50);
+        console.log(searchResult);
 
         if (!searchResult.success) {
           showToast({
