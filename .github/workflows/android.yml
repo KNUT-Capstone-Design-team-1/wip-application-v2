@@ -109,7 +109,7 @@ jobs:
       - name: upload-artifact
         uses: actions/upload-artifact@v5
         with:
-          name: wip-${{ env.VERSION }}-${{ env.BUILD }}-and
+          name: wip-${{ env.VERSION }}-${{ env.BUILD }}-${{ github.event.inputs.environment }}-and
           path: |
-            wip-${{ env.VERSION }}-${{ env.BUILD }}.aab
-            wip-${{ env.VERSION }}-${{ env.BUILD }}.apk
+            wip-${{ env.VERSION }}-${{ env.BUILD }}-${{ github.event.inputs.environment }}.aab
+            wip-${{ env.VERSION }}-${{ env.BUILD }}-${{ github.event.inputs.environment }}.apk
