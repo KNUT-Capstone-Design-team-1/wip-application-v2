@@ -4,7 +4,7 @@ import logger from '@utils/logger';
 import { ADS_KEYWORDS } from '../constants/keyword';
 import { useAppTrackStore } from '@store/app_track_store';
 
-export type AdType = 'IMAGE_SEARCH' | 'UNIFIED_SEARCH' | 'DEFAULT';
+export type AdType = 'IMAGE_SEARCH' | 'DEFAULT';
 
 class InterstitialService {
   private static instance: InterstitialService;
@@ -122,20 +122,14 @@ class InterstitialService {
    * 광고 타입별 호출 횟수를 증가시키고, 노출 주기에 해당하는지 검사합니다.
    * - 첫 검색 시 무조건 노출
    * - 이후 IMAGE_SEARCH: 2회마다 1회 노출 (0, 2, 4...)
-   * - 이후 UNIFIED_SEARCH: 3회마다 1회 노출 (0, 3, 6...)
    */
   private shouldShowAdForType(type: AdType): boolean {
-    const {
-      image_search: imageSearchCount,
-      unified_search: unifiedSearchCount,
-    } = useAppTrackStore.getState().coreActionCounts;
+    const { image_search: imageSearchCount } =
+      useAppTrackStore.getState().coreActionCounts;
 
     switch (type) {
       case 'IMAGE_SEARCH':
         return imageSearchCount % 2 === 0;
-
-      case 'UNIFIED_SEARCH':
-        return unifiedSearchCount % 3 === 0;
 
       default:
         return true;
