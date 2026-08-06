@@ -80,7 +80,7 @@ jobs:
           echo "Found: $AAB"
 
           cp "$AAB" \
-            "wip-${VERSION}-${BUILD}.aab"
+            "wip-${VERSION}-${BUILD}-${{ github.event.inputs.environment }}.aab"
 
       - name: build-apk-local
         env:
@@ -104,7 +104,7 @@ jobs:
           echo "Found: $APK"
 
           cp "$APK" \
-            "wip-${VERSION}-${BUILD}.apk"
+            "wip-${VERSION}-${BUILD}-${{ github.event.inputs.environment }}.apk"
 
       - name: upload-artifact
         uses: actions/upload-artifact@v5
