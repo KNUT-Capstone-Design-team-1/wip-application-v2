@@ -110,7 +110,6 @@ jobs:
           eas build \
             -p ios \
             --profile ${{ github.event.inputs.environment }} \
-            --environment ${{ github.event.inputs.environment }} \
             --local \
             --non-interactive
 
