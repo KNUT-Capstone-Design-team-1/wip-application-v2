@@ -14,8 +14,8 @@ on:
         type: choice
         options:
           - production
-          - development
           - preview
+          - development
         default: production
 
 env:
