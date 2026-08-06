@@ -67,7 +67,6 @@ jobs:
           eas build \
             -p android \
             --profile ${{ github.event.inputs.environment }} \
-            --environment ${{ github.event.inputs.environment }} \
             --local \
             --non-interactive
 
@@ -92,7 +91,6 @@ jobs:
           eas build \
             -p android \
             --profile ${{ github.event.inputs.environment }}-apk \
-            --environment ${{ github.event.inputs.environment }} \
             --local \
             --non-interactive
 
