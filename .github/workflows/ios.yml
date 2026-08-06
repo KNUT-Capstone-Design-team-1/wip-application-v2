@@ -58,35 +58,26 @@ jobs:
           restore-keys: |
             node-modules-${{ runner.os }}-
 
+      - name: remove-ios-folder
+        run: rm -rf ios
+
       - name: install-dependencies
         run: |
           npm install -g eas-cli
           yarn install --frozen-lockfile
 
-      - name: cache-cocoapods
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
-            ios/Pods
-          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            pods-${{ runner.os }}-
+      - name: regenerate-native-project
+        run: |
+          npx expo prebuild --platform ios --clean
 
       - name: setup-cocoapods
         run: |
           sudo gem install cocoapods
 
-      - name: install-pods-if-needed
+      - name: install-pods
         run: |
-          if [ -d ios ]; then
-            cd ios
-
-            if [ ! -d Pods ]; then
-              pod install
-            fi
-          fi
+          cd ios 
+          pod install
 
       - name: versioning
         run: |
@@ -102,7 +93,6 @@ jobs:
       - name: build-local
         env:
           BUILD: ${{ env.BUILD }}
-          EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
           DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
         run: |
           xcodebuild -version

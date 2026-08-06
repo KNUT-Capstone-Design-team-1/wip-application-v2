@@ -72,7 +72,6 @@ jobs:
         if: github.event.inputs.build_type == 'aab' || github.event.inputs.build_type == 'both'
         env:
           BUILD: ${{ env.BUILD }}
-          EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
           GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx6g -XX:MaxMetaspaceSize=1g'"
         run: |
           eas build \
@@ -97,7 +96,6 @@ jobs:
         if: github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both'
         env:
           BUILD: ${{ env.BUILD }}
-          EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
           GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx6g -XX:MaxMetaspaceSize=1g'"
         run: |
           eas build \
