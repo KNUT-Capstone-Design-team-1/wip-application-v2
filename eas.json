@@ -20,16 +20,24 @@
         "buildType": "apk"
       }
     },
+    "preview": {
+      "extends": "base",
+      "credentialsSource": "remote",
+      "android": {
+        "buildType": "app-bundle"
+      }
+    },
+    "preview-apk": {
+      "extends": "base",
+      "credentialsSource": "remote",
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "development": {
       "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "withoutCredentials": true
-    },
-    "preview": {
-      "extends": "base",
-      "distribution": "internal",
-      "credentialsSource": "remote"
     }
-  }
 }
