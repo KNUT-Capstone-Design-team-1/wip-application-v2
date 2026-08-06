@@ -9,6 +9,7 @@ on:
         description: Branch
         required: true
         default: main
+
       environment:
         description: Environments
         type: choice
@@ -17,6 +18,15 @@ on:
           - preview
           - development
         default: production
+
+      build_type:
+        description: Build Type
+        type: choice
+        options:
+          - both
+          - apk
+          - aab
+        default: both
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -59,6 +69,7 @@ jobs:
           echo "Build: $BUILD"
 
       - name: build-aab-local
+        if: github.event.inputs.build_type == 'aab' || github.event.inputs.build_type == 'both'
         env:
           BUILD: ${{ env.BUILD }}
           EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
@@ -83,6 +94,7 @@ jobs:
             "wip-${VERSION}-${BUILD}-${{ github.event.inputs.environment }}.aab"
 
       - name: build-apk-local
+        if: github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both'
         env:
           BUILD: ${{ env.BUILD }}
           EAS_LOCAL_BUILD_SKIP_CLEANUP: 1
