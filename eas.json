@@ -39,7 +39,10 @@
       "developmentClient": true,
       "environment": "development",
       "distribution": "internal",
-      "withoutCredentials": true
+      "withoutCredentials": true,
+      "android": {
+        "buildType": "apk"
+      }
     }
   }
 }
