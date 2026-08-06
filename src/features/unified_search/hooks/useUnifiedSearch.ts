@@ -8,12 +8,10 @@ import {
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
-import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
 import { useFullLoadingStore } from '@store/full_loading_store';
 
 export const useUnifiedSearch = () => {
-  const { showInterstitial } = useInterstitialAd();
   const { showToast } = useToast();
 
   const {
@@ -75,23 +73,10 @@ export const useUnifiedSearch = () => {
           return;
         }
 
-        // 광고와 데이터를 병렬 처리
-        const getPillData = (async () => {
-          // 백그라운드에서 후속 데이터 2개를 동시에 가져옴
-          const [totalDataCount, pillDatas] = await Promise.all([
-            getPillDataCountByItemSeq(results),
-            getPillDatasByItemSeq(results),
-          ]);
-
-          return { totalDataCount, pillDatas };
-        })();
-
-        // 전면 광고 표시
-        await new Promise<void>((resolve) => {
-          showInterstitial(() => resolve(), 'UNIFIED_SEARCH');
-        });
-
-        const { totalDataCount, pillDatas } = await getPillData;
+        const [totalDataCount, pillDatas] = await Promise.all([
+          getPillDataCountByItemSeq(results),
+          getPillDatasByItemSeq(results),
+        ]);
 
         // 검색 조건 및 결과 저장
         setSearchParam({ KEYWORD: trimmedKeyword });
@@ -119,7 +104,6 @@ export const useUnifiedSearch = () => {
       setIsLoading,
       setSearchParam,
       setSearchResultData,
-      showInterstitial,
       showToast,
     ],
   );
