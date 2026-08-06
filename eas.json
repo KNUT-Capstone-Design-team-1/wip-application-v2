@@ -15,9 +15,7 @@
       }
     },
     "production-apk": {
-      "extends": "base",
-      "credentialsSource": "remote",
-      "environment": "production",
+      "extends": "production",
       "android": {
         "buildType": "apk"
       }
@@ -31,9 +29,7 @@
       }
     },
     "preview-apk": {
-      "extends": "base",
-      "credentialsSource": "remote",
-      "environment": "preview",
+      "extends": "preview",
       "android": {
         "buildType": "apk"
       }
