@@ -205,6 +205,7 @@ export default {
 
           cameraPermission:
             '$(PRODUCT_NAME)에서 알약을 촬영하여 검색하기 위해 카메라 권한이 필요합니다',
+          microphonePermission: false,
         },
       ],
 
@@ -215,6 +216,8 @@ export default {
         {
           locationWhenInUsePermission:
             '$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다',
+          locationAlwaysAndWhenInUsePermission: false,
+          locationAlwaysPermission: false,
         },
       ],
 
