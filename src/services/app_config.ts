@@ -11,6 +11,7 @@ export const loadExternalConfig = async () => {
 
     useExternalUrlStore.getState().setUrls(externalUrls);
 
+    // 앱 실행 맨 첫 단계이기 때문에 로그를 콘솔로 남긴다
     console.log(`Complete load external URLs: ${JSON.stringify(externalUrls)}`);
 
     return true;

@@ -22,9 +22,7 @@ export const initAdMob = async () => {
     logger.info('AdMob Config Success');
 
     // google admob 초기화 (사전 실행 필수)
-    const status = await mobileAds().initialize();
-
-    logger.info(`AdMob SDK Initialization complete: ${status}`);
+    await mobileAds().initialize();
 
     // interstital 광고 객체 초기화 (광고 요청 대기)
     interstitialService.init();

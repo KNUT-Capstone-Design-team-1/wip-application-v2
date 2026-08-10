@@ -68,13 +68,10 @@ class InterstitialService {
     });
 
     this.ad.addAdEventListener(AdEventType.LOADED, () => {
-      logger.info('Interstitial Ad Loaded');
       this.loaded = true;
     });
 
-    this.ad.addAdEventListener(AdEventType.OPENED, () => {
-      logger.info('Interstitial Ad Opened');
-    });
+    this.ad.addAdEventListener(AdEventType.OPENED, () => {});
 
     this.ad.addAdEventListener(AdEventType.ERROR, (error) => {
       logger.error(`Interstitial Ad Error: ${error}`);
@@ -90,7 +87,6 @@ class InterstitialService {
     });
 
     this.ad.addAdEventListener(AdEventType.CLOSED, () => {
-      logger.info('Interstitial Ad Closed');
       this.loaded = false;
       this.isShowing = false;
 

@@ -76,7 +76,9 @@ export const useNativeAd = () => {
         })
         .catch((error) => {
           isFetching.current = false;
+
           console.error('[useNativeAd] NativeAd load error:', error);
+
           if (isMounted) {
             setIsAdError(true);
             setIsRefreshing(false);

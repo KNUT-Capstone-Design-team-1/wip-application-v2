@@ -194,6 +194,7 @@ export const useAppInitializer = () => {
 
         updateCheckRef.current = null;
       }
+
       console.log(`Complete update table ${updateCurrentTable}`);
     };
 
