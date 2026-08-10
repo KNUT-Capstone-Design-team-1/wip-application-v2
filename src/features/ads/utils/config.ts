@@ -19,7 +19,7 @@ export const initAdMob = async () => {
       testDeviceIdentifiers: ['EMULATOR'],
     });
 
-    logger.info('AdMob Config Success');
+    console.log('AdMob Config Success');
 
     // google admob 초기화 (사전 실행 필수)
     await mobileAds().initialize();
