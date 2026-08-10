@@ -227,6 +227,7 @@ export const useAppInitializer = () => {
 
     // 현재 테이블 작업을 마치고 다음 테이블로 이동 (전체 완료 시 앱 진입 허용)
     const moveToNextTable = async () => {
+      updateCheckRef.current = null;
       currentTableIndexRef.current += 1;
 
       await AsyncStorage.removeItem('pausedTable');
