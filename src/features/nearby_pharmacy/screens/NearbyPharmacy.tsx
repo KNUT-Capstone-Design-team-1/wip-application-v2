@@ -1,16 +1,7 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-} from 'react';
+import React from 'react';
 import { View, ActivityIndicator, Pressable } from 'react-native';
 import MapView from 'react-native-maps';
-import * as Clipboard from 'expo-clipboard';
 import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_pharmacy';
-import { INearbyPharmacies } from '@services/database/types';
-import { useToast } from '@hooks/use_toast';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
@@ -19,7 +10,6 @@ import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocateFixed } from 'lucide-react-native';
-import { useAppTrackStore } from '@store/app_track_store';
 /*
 TODO: Custom marker 필요
 TODO: marker 위치가 정확한지 확인 필요
@@ -31,91 +21,19 @@ TODO: 확대/축소 기준에 맞게 클러스터링 필요
  * 주변 약국 지도 화면
  */
 const NearbyPharmacyScreen = () => {
-  const { location, pharmacies, loading, errorMsg } = useNearbyPharmacy();
+  const {
+    mapRef,
+    initialRegion,
+    location,
+    pharmacies,
+    loading,
+    selectedPharmacy,
+    handleLocate,
+    handleCopy,
+    handleMarkerPress,
+    handleCloseInfoCard,
+  } = useNearbyPharmacy();
   const insets = useSafeAreaInsets();
-
-  const mapRef = useRef<MapView | null>(null);
-
-  const [selectedPharmacy, setSelectedPharmacy] =
-    useState<INearbyPharmacies | null>(null);
-
-  const { showToast } = useToast();
-
-  // 에러 메시지 감시
-  useEffect(() => {
-    if (errorMsg) {
-      showToast({ type: 'error', message: errorMsg });
-    }
-  }, [errorMsg, showToast]);
-
-  /**
-   * 약국 정보 클립보드 복사
-   */
-  const handleCopy = useCallback(
-    async (text: string) => {
-      if (!text) {
-        return;
-      }
-
-      await Clipboard.setStringAsync(text);
-
-      showToast({ message: '복사되었습니다.' });
-    },
-    [showToast],
-  );
-
-  /**
-   * 마크 클릭 시 해당 약국 선택
-   */
-  const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
-    setSelectedPharmacy(pharmacy);
-    useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
-  }, []);
-
-  /**
-   * 현재 위치로 이동
-   */
-  const handleLocate = useCallback(() => {
-    if (!location) {
-      return;
-    }
-
-    mapRef.current?.animateToRegion({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    });
-  }, [location]);
-
-  /**
-   * 정보 카드 닫기
-   */
-  const handleCloseInfoCard = useCallback(() => {
-    setSelectedPharmacy(null);
-  }, []);
-
-  /**
-   * 지도의 초기 위치 계산
-   */
-  const initialRegion = useMemo(() => {
-    if (location) {
-      return {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      };
-    }
-
-    // 기본 위치 (서울시청)
-    return {
-      latitude: 37.5665,
-      longitude: 126.978,
-      latitudeDelta: 0.05,
-      longitudeDelta: 0.05,
-    };
-  }, [location]);
 
   // 초기 로딩 중이며 위치 정보가 아직 없을 때만 로딩 스피너 표시
   if (loading && !location) {
