@@ -79,7 +79,7 @@ const PillSearchResultListScreen = () => {
         />
       )}
 
-      {searchResultData.length > 0 && <HealthKrFloatingButton />}
+      {!isInitialLoading && <HealthKrFloatingButton />}
     </View>
   );
 };
