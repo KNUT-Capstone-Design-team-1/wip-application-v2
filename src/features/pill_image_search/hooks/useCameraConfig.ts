@@ -11,10 +11,16 @@ import { DimensionValue } from 'react-native';
 // Camera 기기 설정, 포맷, 권한 및 뷰파인더 가이드라인 크기를 관리하는 커스텀 Hook
 export const useCameraConfig = () => {
   const { hasPermission, requestPermission } = useCameraPermission();
-  const device = useCameraDevice('back');
+  const device = useCameraDevice('back'); // 기본 wide-angle
   const format = useCameraFormat(device, [
     {
-      photoResolution: { width: 4000, height: 3000 }, //landscape(가로모드) 기준
+      photoResolution: { width: 4000, height: 3000 }, // landscape(가로모드) 4:3 비율 기준
+      videoResolution: { width: 2880, height: 2160 }, // 4:3 비율 고해상도 비디오 프리뷰
+      autoFocusSystem: 'phase-detection',
+    },
+    {
+      photoResolution: { width: 4000, height: 3000 },
+      videoResolution: { width: 1440, height: 1080 }, // 4:3 비율 일반 비디오 프리뷰
       autoFocusSystem: 'phase-detection',
     },
   ]);
