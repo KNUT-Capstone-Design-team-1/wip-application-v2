@@ -58,7 +58,15 @@ const checkAndPromptUpdates = async (
     return null;
   }
 
-  if (isForceUpdate) {
+  const pausedTable = await AsyncStorage.getItem('pausedTable');
+  const pausedPage = await AsyncStorage.getItem('pausedPage');
+
+  const hasValidPausedState =
+    pausedTable &&
+    pausedPage &&
+    updatesNeeded.some((u) => u.table === pausedTable);
+
+  if (isForceUpdate || hasValidPausedState) {
     return updatesNeeded; // 사용자 확인 없이 강제 진행
   }
 
