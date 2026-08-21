@@ -1,5 +1,5 @@
 import { View, ActivityIndicator } from 'react-native';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_search_result_list/styles/PillSearchResultList';
 import SearchResultList from '@features/pill_search_result_list/components/organisms/SearchResultList';
@@ -10,7 +10,7 @@ import SearchConditionTags from '@features/pill_search_result_list/components/mo
 import { useFetchMarkImages } from '@features/pill_search_result_list/hooks/use_fetch_mark_images';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLOR } from '@constants/color';
-import PillIdentificationSearchModal from '@features/pill_identification_search/components/organisms/PillIdentificationSearchModal';
+import { useRouter } from 'expo-router';
 import { useSyncSearchIdStore } from '@features/pill_search_result_list/hooks/useSyncSearchIdStore';
 
 /**
@@ -59,16 +59,16 @@ const PillSearchResultListScreen = () => {
   const { searchResultData, isLoading, markImages, totalDataCount } =
     useSearchResultListStore();
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const { syncToSearchIdStore } = useSyncSearchIdStore();
+  const router = useRouter();
 
   // 마크 이미지 데이터 페칭 훅 사용
   useFetchMarkImages();
 
   const handleTagPress = useCallback(() => {
     syncToSearchIdStore();
-    setIsModalVisible(true);
-  }, [syncToSearchIdStore]);
+    router.back(); // 중복 스택 생성을 방지하기 위해 이전 검색 폼 화면으로 돌아감
+  }, [syncToSearchIdStore, router]);
 
   const isInitialLoading = isLoading && searchResultData.length === 0;
 
@@ -97,11 +97,6 @@ const PillSearchResultListScreen = () => {
       )}
 
       {!isInitialLoading && <HealthKrFloatingButton />}
-
-      <PillIdentificationSearchModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-      />
     </View>
   );
 };
