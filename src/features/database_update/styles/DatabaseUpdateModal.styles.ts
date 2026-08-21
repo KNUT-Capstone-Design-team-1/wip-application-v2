@@ -1,84 +1,69 @@
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: COLOR_BG['overlay'],
     justifyContent: 'center',
     alignItems: 'center',
     padding: px(20),
   },
   modalContainer: {
-    width: '100%',
-    backgroundColor: '#fff',
+    width: '85%',
+    maxWidth: px(320),
+    backgroundColor: COLOR_BG['surface'],
     borderRadius: px(16),
-    padding: px(24),
+    paddingHorizontal: px(14),
+    paddingVertical: px(14),
     alignItems: 'center',
   },
   title: {
-    marginBottom: px(12),
-    color: '#333',
+    marginBottom: px(4),
+    color: COLOR_TEXT['title'],
+  },
+  subTitle: {
+    marginBottom: px(8),
+    color: COLOR_TEXT['sub'],
+    textAlign: 'center',
   },
   description: {
     marginBottom: px(16),
-    color: '#555',
+    color: COLOR_TEXT['body'],
     textAlign: 'center',
   },
-  listContainer: {
-    width: '100%',
-    maxHeight: px(150),
-    backgroundColor: '#f5f5f5',
-    borderRadius: px(8),
-    marginBottom: px(16),
-  },
-  listContent: {
-    padding: px(12),
-  },
-  listItem: {
-    marginBottom: px(8),
-  },
-  listTitle: {
-    color: '#333',
-  },
-  listVersion: {
-    color: '#666',
-    marginLeft: px(12),
-    marginTop: px(2),
-  },
-  warningContainer: {
-    marginBottom: px(24),
-    alignItems: 'center',
-  },
-  warningText: {
-    color: '#E53935', // 빨간 글씨
-    textAlign: 'center',
-    lineHeight: px(16),
-  },
+
   buttonContainer: {
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
-    gap: px(12),
+    gap: px(8),
   },
   cancelButton: {
     flex: 1,
     paddingVertical: px(12),
-    backgroundColor: '#f0f0f0',
-    borderRadius: px(8),
+    backgroundColor: COLOR_BG['surface'],
+    borderColor: COLOR['primary'],
+    borderWidth: 1,
+    borderRadius: px(14),
     alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelButtonText: {
-    color: '#666',
+    color: COLOR['primary'],
   },
   confirmButton: {
     flex: 1,
     paddingVertical: px(12),
-    backgroundColor: '#357AE8',
-    borderRadius: px(8),
+    backgroundColor: COLOR['primary'],
+    borderColor: COLOR['primary'],
+    borderWidth: 1,
+    borderRadius: px(14),
     alignItems: 'center',
+    justifyContent: 'center',
   },
   confirmButtonText: {
-    color: '#fff',
+    color: COLOR_TEXT['white'],
   },
 });

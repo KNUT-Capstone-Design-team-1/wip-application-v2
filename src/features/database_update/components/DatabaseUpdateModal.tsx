@@ -3,8 +3,6 @@ import { View, Modal } from 'react-native';
 import { useAppInitStore } from '../store/app_init_store';
 import { styles } from '../styles/DatabaseUpdateModal.styles';
 import { ModalHeader } from './DatabaseUpdateModal/ModalHeader';
-import { UpdateList } from './DatabaseUpdateModal/UpdateList';
-import { WarningMessage } from './DatabaseUpdateModal/WarningMessage';
 import { ActionButtons } from './DatabaseUpdateModal/ActionButtons';
 
 // 데이터베이스 업데이트 확인 커스텀 모달 컴포넌트
@@ -31,8 +29,6 @@ const DatabaseUpdateModal = () => {
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <ModalHeader />
-          <UpdateList data={updateModalData} />
-          <WarningMessage />
           <ActionButtons onCancel={handleCancel} onConfirm={handleConfirm} />
         </View>
       </View>

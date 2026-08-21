@@ -4,11 +4,14 @@ import { styles } from '../../styles/DatabaseUpdateModal.styles';
 
 export const ModalHeader = () => (
   <>
-    <BaseText fontFamily="Jalnan2" size={20} style={styles.title}>
-      최신 정보 업데이트
+    <BaseText size={18} weight="bold" style={styles.title}>
+      업데이트 안내
     </BaseText>
-    <BaseText size={15} style={styles.description}>
-      새로운 정보가 추가되었습니다.
+    <BaseText size={14} weight="bold" style={styles.subTitle}>
+      알약 정보 업데이트
+    </BaseText>
+    <BaseText size={14} style={styles.description}>
+      안정적인 서비스 이용을 위해 최신 버전으로 업데이트해주세요.
     </BaseText>
   </>
 );

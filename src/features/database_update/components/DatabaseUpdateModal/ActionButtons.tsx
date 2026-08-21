@@ -12,13 +12,13 @@ export const ActionButtons = ({
 }) => (
   <View style={styles.buttonContainer}>
     <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-      <BaseText size={15} weight="medium" style={styles.cancelButtonText}>
+      <BaseText size={16} weight="bold" style={styles.cancelButtonText}>
         다음에
       </BaseText>
     </TouchableOpacity>
 
     <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-      <BaseText size={15} weight="bold" style={styles.confirmButtonText}>
+      <BaseText size={16} weight="bold" style={styles.confirmButtonText}>
         업데이트
       </BaseText>
     </TouchableOpacity>
