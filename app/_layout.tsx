@@ -5,6 +5,7 @@ import Layout from '@layouts/Layout';
 import {
   useAppInitializer,
   DatabaseUpdateView,
+  DatabaseUpdateModal,
 } from '@features/database_update';
 import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomSheet';
 import Toast from 'react-native-toast-message';
@@ -34,6 +35,7 @@ const RootLayout = () => {
           progress={updateProgress.progress}
           isUpdating={updateProgress.isUpdating}
         />
+        <DatabaseUpdateModal />
         <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
       </SafeAreaProvider>
     );

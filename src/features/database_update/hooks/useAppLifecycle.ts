@@ -34,10 +34,6 @@ export const useAppLifecycle = (
             useAppInitStore.getState().updateCurrentPage.toString(),
           );
 
-          await AsyncStorage.setItem(
-            'pausedTableIndex',
-            currentTableIndexRef.current.toString(),
-          );
           return;
         }
 

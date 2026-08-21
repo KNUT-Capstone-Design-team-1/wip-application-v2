@@ -27,6 +27,8 @@ export const checkRequireTableUpdate = async (
   code: DATABSE_UPDATE_RESULT_CODE;
   newSchemaVersion: number;
   newDataVersion: number;
+  oldSchemaVersion?: number;
+  oldDataVersion?: number;
 }> => {
   // API 호출을 최소화하기 위해 싱글턴 패턴으로 처리
   if (!DATABASE_VERSION_ON_SERVER) {
@@ -41,10 +43,6 @@ export const checkRequireTableUpdate = async (
     TABLE_CONFIG_KEYS_MAP[table],
   );
 
-  if (!currentVersion?.length) {
-    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
-  }
-
   const currentSchemaVersion = currentVersion.find((v) =>
     v.key.endsWith('SchemaVersion'),
   )?.value;
@@ -54,20 +52,36 @@ export const checkRequireTableUpdate = async (
   )?.value;
 
   if (currentSchemaVersion == null || currentDataVersion == null) {
-    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
+    return {
+      code: 'REQUIRE-UPDATE',
+      newSchemaVersion,
+      newDataVersion,
+    };
   }
 
-  const isOldSchema = Number(currentSchemaVersion) < Number(newSchemaVersion);
-  if (isOldSchema) {
-    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
+  const oldSchemaVersion = Number(currentSchemaVersion);
+  const oldDataVersion = Number(currentDataVersion);
+
+  const isOldSchema = oldSchemaVersion < Number(newSchemaVersion);
+  const isOldData = oldDataVersion < Number(newDataVersion);
+
+  if (isOldSchema || isOldData) {
+    return {
+      code: 'REQUIRE-UPDATE',
+      newSchemaVersion,
+      newDataVersion,
+      oldSchemaVersion,
+      oldDataVersion,
+    };
   }
 
-  const isOldData = Number(currentDataVersion) < Number(newDataVersion);
-  if (isOldData) {
-    return { code: 'REQUIRE-UPDATE', newSchemaVersion, newDataVersion };
-  }
-
-  return { code: 'UNNECESSARY-UPDATE', newSchemaVersion, newDataVersion };
+  return {
+    code: 'UNNECESSARY-UPDATE',
+    newSchemaVersion,
+    newDataVersion,
+    oldSchemaVersion,
+    oldDataVersion,
+  };
 };
 
 /**

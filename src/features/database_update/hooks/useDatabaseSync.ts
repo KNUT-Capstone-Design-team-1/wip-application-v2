@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAppInitStore } from '../store/app_init_store';
 import { DatabaseUpdateService } from '@services/index';
 import logger from '@utils/logger';
-import { ALL_DATA_TABLES, TABLE_NAME_MAP } from '@services/database/types';
+import { TABLE_NAME_MAP } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
 import { IUpdateProgress } from '../types';
 
@@ -18,6 +18,7 @@ export const useDatabaseSync = (
     status,
     updateCurrentTable,
     updateCurrentPage,
+    tablesToUpdate,
     setStatus,
     setUpdateCurrentTable,
     setUpdateCurrentPage,
@@ -25,37 +26,19 @@ export const useDatabaseSync = (
     setOverallProgress,
   } = useAppInitStore();
 
-  const updateCheckRef = useRef<any>(null);
   const expectedTotalCountRef = useRef<number>(0);
 
   useEffect(() => {
-    if (status !== 'RUNNING' || !updateCurrentTable) {
+    const shouldSkipSync =
+      status !== 'RUNNING' ||
+      !updateCurrentTable ||
+      tablesToUpdate.length === 0;
+
+    if (shouldSkipSync) {
       return;
     }
 
     let isCancelled = false;
-
-    // 첫 페이지 접근 시 테이블 업데이트 필요 여부를 확인하고 초기화
-    const checkAndUpdateFirstPage = async () => {
-      if (updateCheckRef.current.code !== 'REQUIRE-UPDATE') {
-        console.log(`No update required for ${updateCurrentTable}`);
-        return false;
-      }
-
-      setUpdateProgress({
-        status: `${TABLE_NAME_MAP[updateCurrentTable]} 데이터 동기화 진행중`,
-        progress: currentTableIndexRef.current / ALL_DATA_TABLES.length,
-        isUpdating: true,
-      });
-
-      const initResult =
-        await DatabaseUpdateService.initTable(updateCurrentTable);
-
-      if (initResult !== 'OK') {
-        throw new Error(`Failed init table ${updateCurrentTable}`);
-      }
-      return true;
-    };
 
     // 데이터 삽입 완료 후 누락된 데이터가 없는지 검증
     const verifyDataIntegrity = async () => {
@@ -73,14 +56,16 @@ export const useDatabaseSync = (
 
     // 테이블 업데이트가 성공적으로 완료되면 버전 정보를 저장
     const finalizeTableUpdate = async () => {
-      if (updateCheckRef.current) {
+      const currentUpdateInfo = tablesToUpdate.find(
+        (u) => u.table === updateCurrentTable,
+      );
+
+      if (currentUpdateInfo) {
         await DatabaseUpdateService.updateDatabaseVersion(
           updateCurrentTable,
-          updateCheckRef.current.newSchemaVersion,
-          updateCheckRef.current.newDataVersion,
+          currentUpdateInfo.schemaVer,
+          currentUpdateInfo.dataVer,
         );
-
-        updateCheckRef.current = null;
       }
 
       console.log(`Complete update table ${updateCurrentTable}`);
@@ -115,14 +100,12 @@ export const useDatabaseSync = (
 
     // 현재 테이블 작업을 마치고 다음 테이블로 이동 (전체 완료 시 앱 진입 허용)
     const moveToNextTable = async () => {
-      updateCheckRef.current = null;
       currentTableIndexRef.current += 1;
 
       await AsyncStorage.removeItem('pausedTable');
       await AsyncStorage.removeItem('pausedPage');
-      await AsyncStorage.removeItem('pausedTableIndex');
 
-      if (currentTableIndexRef.current >= ALL_DATA_TABLES.length) {
+      if (currentTableIndexRef.current >= tablesToUpdate.length) {
         setStatus('COMPLETED');
         setUpdateProgress((prev) => ({
           status: '완료',
@@ -136,27 +119,27 @@ export const useDatabaseSync = (
         return;
       }
 
-      setUpdateCurrentTable(ALL_DATA_TABLES[currentTableIndexRef.current]);
+      setUpdateCurrentTable(
+        tablesToUpdate[currentTableIndexRef.current].table as any,
+      );
       setUpdateCurrentPage(1);
     };
 
     // 페이지 단위로 데이터를 조회하여 삽입하는 메인 루프 처리
     const processNext = async () => {
       try {
-        // 일시정지 복구 시 updateCheckRef가 없으면 다시 조회하여 버전 정보를 채움
-        if (!updateCheckRef.current) {
-          updateCheckRef.current =
-            await DatabaseUpdateService.checkRequireTableUpdate(
-              updateCurrentTable,
-            );
-        }
-
         if (updateCurrentPage === 1) {
-          const isUpdateRequired = await checkAndUpdateFirstPage();
+          setUpdateProgress({
+            status: `${TABLE_NAME_MAP[updateCurrentTable]} 데이터 동기화 진행중`,
+            progress: currentTableIndexRef.current / tablesToUpdate.length,
+            isUpdating: true,
+          });
 
-          if (!isUpdateRequired) {
-            await moveToNextTable();
-            return;
+          const initResult =
+            await DatabaseUpdateService.initTable(updateCurrentTable);
+
+          if (initResult !== 'OK') {
+            throw new Error(`Failed init table ${updateCurrentTable}`);
           }
         }
 
@@ -180,7 +163,7 @@ export const useDatabaseSync = (
 
         const newOverallProgress =
           (currentTableIndexRef.current + tableUpdateProgress) /
-          ALL_DATA_TABLES.length;
+          tablesToUpdate.length;
 
         setOverallProgress(newOverallProgress);
 
@@ -220,6 +203,7 @@ export const useDatabaseSync = (
     status,
     updateCurrentTable,
     updateCurrentPage,
+    tablesToUpdate,
     setStatus,
     setTotalPages,
     setOverallProgress,
