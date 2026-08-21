@@ -56,8 +56,13 @@ const InitialLoadingView = () => (
 
 const PillSearchResultListScreen = () => {
   const insets = useSafeAreaInsets();
-  const { searchResultData, isLoading, markImages, totalDataCount } =
-    useSearchResultListStore();
+  const {
+    searchResultData,
+    isLoading,
+    markImages,
+    totalDataCount,
+    searchParam,
+  } = useSearchResultListStore();
 
   const { syncToSearchIdStore } = useSyncSearchIdStore();
   const router = useRouter();
@@ -66,9 +71,15 @@ const PillSearchResultListScreen = () => {
   useFetchMarkImages();
 
   const handleTagPress = useCallback(() => {
+    // 통합검색(KEYWORD 파라미터 사용)인 경우 식별검색 폼으로 이동하지 않음
+    // TODO: 나중에 통합검색 필터나 전용 화면이 추가되면 해당 화면으로 라우팅되도록 작업 필요
+    if (searchParam?.KEYWORD) {
+      return;
+    }
+
     syncToSearchIdStore();
-    router.back(); // 중복 스택 생성을 방지하기 위해 이전 검색 폼 화면으로 돌아감
-  }, [syncToSearchIdStore, router]);
+    router.navigate('/pill-identification-search'); // 식별 검색 화면으로 이동 (navigate로 중복 스택 방지)
+  }, [syncToSearchIdStore, router, searchParam]);
 
   const isInitialLoading = isLoading && searchResultData.length === 0;
 
