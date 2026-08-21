@@ -6,7 +6,7 @@ import {
   getPillDatas,
 } from '@services/database/queries/pill_data';
 import { TPillDataSearchParam } from '@services/database/types';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
 import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
@@ -19,7 +19,10 @@ import { useAppTrackStore } from '@store/app_track_store';
  * - 식별 검색 상태 관리
  */
 export const useSelectedSearchId = () => {
+  const pathname = usePathname();
+
   const { resetSelectedMark } = useMarkStore();
+
   const {
     setSearchResultData,
     setIsLoading,
@@ -169,7 +172,9 @@ export const useSelectedSearchId = () => {
       const searchParam = buildSearchParam(rawParam);
 
       setIsLoading(true);
-      router.push('/pill-search-result-list');
+      if (pathname !== '/pill-search-result-list') {
+        router.push('/pill-search-result-list');
+      }
 
       const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
       const totalDataCount = await getPillDataCount(searchParam);

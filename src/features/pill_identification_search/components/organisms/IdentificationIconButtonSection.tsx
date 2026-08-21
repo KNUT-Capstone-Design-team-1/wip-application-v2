@@ -33,7 +33,9 @@ const IdentificationIconButtonSection = memo(
     );
 
     const selectedIndexes = useMemo(() => {
-      if (!section.datas) return [0];
+      if (!section.datas) {
+        return [0];
+      }
 
       if (!Array.isArray(storeArray)) {
         return [0];

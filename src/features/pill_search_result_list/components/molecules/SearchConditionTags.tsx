@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { useSearchResultListStore } from '../../store/search_result_list_store';
 import { styles } from '../../styles/molecules/SearchConditionTags';
@@ -8,9 +8,13 @@ import { SEARCH_CONDITION_LABELS } from '@constants/search';
 
 interface SearchConditionTagsProps {
   markImages?: { code: string; base64: string }[];
+  onPress?: () => void;
 }
 
-const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
+const SearchConditionTags = ({
+  markImages,
+  onPress,
+}: SearchConditionTagsProps) => {
   const { searchParam } = useSearchResultListStore();
 
   if (!searchParam) {
@@ -122,7 +126,12 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
     return (
       <View style={styles.tagList}>
         {tags.map((tag, index) => (
-          <View key={`${tag.label}-${index}`} style={styles.tag}>
+          <TouchableOpacity
+            key={`${tag.label}-${index}`}
+            style={styles.tag}
+            onPress={onPress}
+            activeOpacity={0.7}
+          >
             <BaseText style={styles.tagLabel} weight="semiBold" size={12}>
               {tag.label}:
             </BaseText>
@@ -139,7 +148,7 @@ const SearchConditionTags = ({ markImages }: SearchConditionTagsProps) => {
                   style={styles.tagImage}
                 />
               ))}
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     );
