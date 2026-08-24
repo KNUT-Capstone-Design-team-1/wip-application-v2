@@ -210,6 +210,24 @@ export const useNearbyPharmacy = () => {
   }, []);
 
   /**
+   * 지도 카메라를 주어진 좌표로 이동
+   */
+  const centerMapOn = useCallback(
+    (coords: { latitude: number; longitude: number }) => {
+      mapRef.current?.animateToRegion(
+        {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        300,
+      );
+    },
+    [],
+  );
+
+  /**
    * 타임아웃이 적용된 현재 위치 정보 가져오기.
    * Balanced 정확도 실패 시 Low 정확도로 1회 재시도.
    */
@@ -248,6 +266,7 @@ export const useNearbyPharmacy = () => {
       const lastLocation = await Location.getLastKnownPositionAsync();
       if (lastLocation) {
         setLocation(lastLocation);
+        centerMapOn(lastLocation.coords);
         hasLocation = true;
       }
 
@@ -255,6 +274,7 @@ export const useNearbyPharmacy = () => {
       const currentLocation = await getCurrentPositionWithTimeout();
       if (currentLocation) {
         setLocation(currentLocation);
+        centerMapOn(currentLocation.coords);
         hasLocation = true;
       }
     } catch (e) {
@@ -270,7 +290,7 @@ export const useNearbyPharmacy = () => {
     } finally {
       setLoading(false);
     }
-  }, [checkPermissionsAndServices, getCurrentPositionWithTimeout]);
+  }, [checkPermissionsAndServices, getCurrentPositionWithTimeout, centerMapOn]);
 
   // 위치 상태가 변경될 때마다 알아서 API 페칭
   useEffect(() => {
