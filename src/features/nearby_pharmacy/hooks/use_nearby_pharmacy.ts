@@ -8,6 +8,7 @@ import logger from '@utils/logger';
 import { useFocusEffect } from 'expo-router';
 import MapView from 'react-native-maps';
 import { useAppTrackStore } from '@store/app_track_store';
+import { NEARBY_PHARMACY_RADIUS_KM } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
 
 export const useNearbyPharmacy = () => {
   const { showToast } = useToast();
@@ -305,6 +306,9 @@ export const useNearbyPharmacy = () => {
   useFocusEffect(
     useCallback(() => {
       initializeLocation();
+      showToast({
+        message: `${NEARBY_PHARMACY_RADIUS_KM}km 이내 약국만 표시됩니다`,
+      });
     }, [initializeLocation]),
   );
 
