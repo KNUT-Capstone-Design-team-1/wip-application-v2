@@ -13,6 +13,7 @@ import toastConfig from '@components/config/toastConfig';
 import { px } from '@utils/responsive';
 import { initAdMob } from '@features/ads/utils/config';
 import FullSizeLoading from '@components/common/FullSizeLoading';
+import CommonModal from '@components/common/CommonModal';
 import { View } from 'react-native';
 
 // Mobile Ads SDK 초기화
@@ -51,6 +52,7 @@ const RootLayout = () => {
       </Layout>
       <MainNoticeBottomSheet />
       <FullSizeLoading />
+      <CommonModal />
       <View style={{ zIndex: 999999 }}>
         <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
       </View>

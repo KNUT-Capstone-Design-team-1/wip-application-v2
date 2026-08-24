@@ -12,9 +12,13 @@ const FullSizeLoading = () => {
   const { showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!isLoading) return;
+    if (!isLoading) {
+      return;
+    }
 
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android') {
+      return;
+    }
 
     const onBackPress = () => {
       const currentTime = new Date().getTime();
@@ -38,10 +42,14 @@ const FullSizeLoading = () => {
       'hardwareBackPress',
       onBackPress,
     );
-    return () => subscription.remove();
+    return () => {
+      subscription.remove();
+    };
   }, [isLoading]);
 
-  if (!isLoading) return null;
+  if (!isLoading) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

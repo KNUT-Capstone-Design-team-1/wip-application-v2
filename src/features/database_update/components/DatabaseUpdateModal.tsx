@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Modal } from 'react-native';
 import { useAppInitStore } from '../store/app_init_store';
-import { styles } from '../styles/DatabaseUpdateModal.styles';
+import BaseModal from '@components/common/BaseModal';
 import { ModalHeader } from './DatabaseUpdateModal/ModalHeader';
 import { ActionButtons } from './DatabaseUpdateModal/ActionButtons';
+import { styles } from '../styles/DatabaseUpdateModal.styles';
 
 // 데이터베이스 업데이트 확인 커스텀 모달 컴포넌트
 const DatabaseUpdateModal = () => {
@@ -25,14 +25,14 @@ const DatabaseUpdateModal = () => {
   };
 
   return (
-    <Modal transparent animationType="fade" visible={true}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <ModalHeader />
-          <ActionButtons onCancel={handleCancel} onConfirm={handleConfirm} />
-        </View>
-      </View>
-    </Modal>
+    <BaseModal
+      visible={true}
+      onBackPress={handleCancel}
+      contentStyle={styles.modalContainer}
+    >
+      <ModalHeader />
+      <ActionButtons onCancel={handleCancel} onConfirm={handleConfirm} />
+    </BaseModal>
   );
 };
 
