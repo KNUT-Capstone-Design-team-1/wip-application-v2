@@ -1,30 +1,48 @@
 import React, { memo } from 'react';
-import { Marker } from 'react-native-maps';
+import PharmacyMarker from '@features/nearby_pharmacy/components/atoms/PharmacyMarker';
+import PharmacyClusterMarker from '@features/nearby_pharmacy/components/atoms/PharmacyClusterMarker';
 import { IPharmacyMarkersProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
 
 const PharmacyMarkers = ({
-  pharmacies,
-  onMarkerPress,
+  clusters,
+  pharmaciesById,
+  selectedPharmacyId,
+  onPharmacyPress,
+  onClusterPress,
 }: IPharmacyMarkersProps) => {
   return (
     <>
-      {pharmacies.map((pharmacy) => {
-        const latitude = parseFloat(pharmacy.Y);
-        const longitude = parseFloat(pharmacy.X);
+      {clusters.map((item) => {
+        const [longitude, latitude] = item.geometry.coordinates;
+        const coordinate = { latitude, longitude };
 
-        if (isNaN(latitude) || isNaN(longitude)) {
-          return null;
+        // 클러스터
+        if ('cluster' in item.properties && item.properties.cluster) {
+          const clusterId = item.properties.cluster_id as number;
+          const pointCount = item.properties.point_count as number;
+
+          return (
+            <PharmacyClusterMarker
+              key={`cluster-${clusterId}`}
+              coordinate={coordinate}
+              count={pointCount}
+              onPress={() => onClusterPress(clusterId)}
+            />
+          );
         }
 
+        // 개별 약국
+        const pharmacyId = item.properties.pharmacyId as string;
+        const pharmacy = pharmaciesById.get(pharmacyId);
+        if (!pharmacy) return null;
+
         return (
-          <Marker
-            key={pharmacy.id}
-            coordinate={{
-              latitude,
-              longitude,
-            }}
-            title={pharmacy.name}
-            onPress={() => onMarkerPress(pharmacy)}
+          <PharmacyMarker
+            key={`pharmacy-${pharmacyId}`}
+            coordinate={coordinate}
+            pharmacy={pharmacy}
+            selected={selectedPharmacyId === pharmacyId}
+            onPress={onPharmacyPress}
           />
         );
       })}

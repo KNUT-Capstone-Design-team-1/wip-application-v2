@@ -20,6 +20,11 @@ export const useNearbyPharmacy = () => {
 
   const [pharmacies, setPharmacies] = useState<INearbyPharmacies[]>([]);
 
+  // 클러스터 아이콘 탭 시 표시할 약국 목록. null 이면 목록 미표시
+  const [clusterPharmacies, setClusterPharmacies] = useState<
+    INearbyPharmacies[] | null
+  >(null);
+
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<MapView | null>(null);
 
@@ -92,6 +97,55 @@ export const useNearbyPharmacy = () => {
   const handleCloseInfoCard = useCallback(() => {
     setSelectedPharmacy(null);
   }, []);
+
+  /**
+   * 클러스터 아이콘 탭 시 해당 클러스터의 약국 목록 표시
+   */
+  const openClusterList = useCallback((list: INearbyPharmacies[]) => {
+    setClusterPharmacies(list);
+    setSelectedPharmacy(null);
+  }, []);
+
+  /**
+   * 클러스터 약국 목록 닫기
+   */
+  const closeClusterList = useCallback(() => {
+    setClusterPharmacies(null);
+  }, []);
+
+  /**
+   * 클러스터 목록에서 특정 약국 선택 시 지도 이동 + 정보 카드 표시.
+   * InfoCard 가 화면 하단을 가리므로 target 위도를 남쪽으로 살짝 offset 하여
+   * 약국이 시각적으로 화면 중앙(위쪽 여유 영역의 중앙)에 오도록 한다.
+   */
+  const handleClusterPharmacySelect = useCallback(
+    (pharmacy: INearbyPharmacies) => {
+      const lat = parseFloat(pharmacy.Y);
+      const lng = parseFloat(pharmacy.X);
+
+      setClusterPharmacies(null);
+      setSelectedPharmacy(pharmacy);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const latitudeDelta = 0.005;
+        const longitudeDelta = 0.005;
+        const latOffset = latitudeDelta * 0.15;
+
+        mapRef.current?.animateToRegion(
+          {
+            latitude: lat - latOffset,
+            longitude: lng,
+            latitudeDelta,
+            longitudeDelta,
+          },
+          400,
+        );
+      }
+
+      useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
+    },
+    [],
+  );
 
   /**
    * 주어진 좌표 주변의 약국 정보를 가져옴
@@ -225,10 +279,14 @@ export const useNearbyPharmacy = () => {
     pharmacies,
     loading,
     selectedPharmacy,
+    clusterPharmacies,
     handleLocate,
     handleCopy,
     handleMarkerPress,
     handleCloseInfoCard,
+    openClusterList,
+    closeClusterList,
+    handleClusterPharmacySelect,
     fetchPharmacies,
     refreshLocation: initializeLocation,
   };
