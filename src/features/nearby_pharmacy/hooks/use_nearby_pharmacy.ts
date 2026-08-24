@@ -25,6 +25,12 @@ export const useNearbyPharmacy = () => {
     INearbyPharmacies[] | null
   >(null);
 
+  // 마지막으로 약국 fetch가 수행된 중심 좌표. 자동 재검색 판단용.
+  const [lastFetchedCenter, setLastFetchedCenter] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<MapView | null>(null);
 
@@ -148,7 +154,7 @@ export const useNearbyPharmacy = () => {
   );
 
   /**
-   * 주어진 좌표 주변의 약국 정보를 가져옴
+   * 주어진 좌표를 중심으로 3km 이내의 약국 정보를 가져옴
    */
   const fetchPharmacies = useCallback(
     async (coords: { x: number; y: number }) => {
@@ -161,6 +167,7 @@ export const useNearbyPharmacy = () => {
         );
 
         setPharmacies(result);
+        setLastFetchedCenter({ lat: coords.y, lng: coords.x });
       } catch (e) {
         logger.error(`Failed to fetch pharmacies. ${e.stack || e}`);
 
@@ -288,6 +295,7 @@ export const useNearbyPharmacy = () => {
     closeClusterList,
     handleClusterPharmacySelect,
     fetchPharmacies,
+    lastFetchedCenter,
     refreshLocation: initializeLocation,
   };
 };

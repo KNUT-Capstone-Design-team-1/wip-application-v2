@@ -11,7 +11,14 @@ import PharmacyClusterList from '@features/nearby_pharmacy/components/molecules/
 import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LocateFixed } from 'lucide-react-native';
+import { LocateFixed, RotateCw } from 'lucide-react-native';
+import { BaseText } from '@components/common/BaseText';
+import {
+  KM_PER_LAT_DEGREE,
+  KM_PER_LON_DEGREE,
+  RESEARCH_DISPLACEMENT_RATIO,
+  RESEARCH_MAX_DISPLACEMENT_KM,
+} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
 /*
 TODO: marker 위치가 정확한지 확인 필요
 TODO: 현재 위치를 기준으로 반경 몇 m이내의 약국만 표시된다는 안내 필요
@@ -36,6 +43,8 @@ const NearbyPharmacyScreen = () => {
     openClusterList,
     closeClusterList,
     handleClusterPharmacySelect,
+    fetchPharmacies,
+    lastFetchedCenter,
   } = useNearbyPharmacy();
   const insets = useSafeAreaInsets();
 
@@ -85,6 +94,27 @@ const NearbyPharmacyScreen = () => {
     [getClusterPharmacyIds, pharmaciesById, openClusterList, mapRef, insets],
   );
 
+  // 지도 중심이 임계값 이상 이동했는지 (zoom in은 비율, zoom out은 절대 상한 기준)
+  const shouldResearch = useMemo(() => {
+    if (!lastFetchedCenter) return false;
+
+    const displacementKm = Math.max(
+      Math.abs(region.latitude - lastFetchedCenter.lat) * KM_PER_LAT_DEGREE,
+      Math.abs(region.longitude - lastFetchedCenter.lng) * KM_PER_LON_DEGREE,
+    );
+    const visibleHeightKm = region.latitudeDelta * KM_PER_LAT_DEGREE;
+    const thresholdKm = Math.min(
+      visibleHeightKm * RESEARCH_DISPLACEMENT_RATIO,
+      RESEARCH_MAX_DISPLACEMENT_KM,
+    );
+
+    return displacementKm > thresholdKm;
+  }, [region, lastFetchedCenter]);
+
+  const handleResearchHere = useCallback(() => {
+    fetchPharmacies({ x: region.longitude, y: region.latitude });
+  }, [fetchPharmacies, region]);
+
   // 초기 로딩 중이며 위치 정보가 아직 없을 때만 로딩 스피너 표시
   if (loading && !location) {
     return (
@@ -120,6 +150,51 @@ const NearbyPharmacyScreen = () => {
           onClusterPress={handleClusterPress}
         />
       </MapView>
+
+      {shouldResearch && (
+        <Pressable
+          onPress={handleResearchHere}
+          disabled={loading}
+          style={({ pressed }) => [
+            {
+              position: 'absolute',
+              top: insets.top + px(16),
+              alignSelf: 'center',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: px(6),
+              backgroundColor: COLOR['white'],
+              paddingVertical: px(8),
+              paddingHorizontal: px(14),
+              borderRadius: px(20),
+              elevation: 4,
+              shadowColor: COLOR['shadow'],
+              shadowOffset: { width: 0, height: px(2) },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              opacity: pressed || loading ? 0.6 : 1,
+              zIndex: 990,
+            },
+          ]}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color={COLOR['primary']} />
+          ) : (
+            <RotateCw
+              size={px(16)}
+              color={COLOR['primary']}
+              strokeWidth={2.5}
+            />
+          )}
+          <BaseText
+            weight="medium"
+            size={13}
+            style={{ color: COLOR['primary'] }}
+          >
+            현재 지도에서 검색
+          </BaseText>
+        </Pressable>
+      )}
 
       <View style={styles.bottomOverlay}>
         {clusterPharmacies ? (
