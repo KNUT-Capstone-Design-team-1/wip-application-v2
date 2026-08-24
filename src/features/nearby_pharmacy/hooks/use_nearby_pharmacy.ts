@@ -210,17 +210,26 @@ export const useNearbyPharmacy = () => {
   }, []);
 
   /**
-   * 타임아웃이 적용된 현재 위치 정보 가져오기
+   * 타임아웃이 적용된 현재 위치 정보 가져오기.
+   * Balanced 정확도 실패 시 Low 정확도로 1회 재시도.
    */
   const getCurrentPositionWithTimeout = useCallback(async () => {
-    return await Promise.race([
-      Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      }),
-      new Promise<null>((_, reject) =>
-        setTimeout(() => reject(new Error('Location timeout')), 60 * 1000),
-      ),
-    ]);
+    const withTimeout = (accuracy: Location.Accuracy) =>
+      Promise.race([
+        Location.getCurrentPositionAsync({ accuracy }),
+        new Promise<null>((_, reject) =>
+          setTimeout(() => reject(new Error('Location timeout')), 60 * 1000),
+        ),
+      ]);
+
+    try {
+      return await withTimeout(Location.Accuracy.Balanced);
+    } catch (e) {
+      logger.warn(
+        `Balanced accuracy failed, retrying with Low. ${e?.message || e}`,
+      );
+      return await withTimeout(Location.Accuracy.Low);
+    }
   }, []);
 
   /**
