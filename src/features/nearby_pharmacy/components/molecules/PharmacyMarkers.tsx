@@ -34,7 +34,9 @@ const PharmacyMarkers = ({
         // 개별 약국
         const pharmacyId = item.properties.pharmacyId as string;
         const pharmacy = pharmaciesById.get(pharmacyId);
-        if (!pharmacy) return null;
+        if (!pharmacy) {
+          return null;
+        }
 
         return (
           <PharmacyMarker

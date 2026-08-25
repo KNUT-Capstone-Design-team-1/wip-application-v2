@@ -1,35 +1,19 @@
-import React, { useCallback } from 'react';
-import { View, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, ScrollView } from 'react-native';
 import { X } from 'lucide-react-native';
 import { IPharmacyClusterListProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR_TEXT } from '@constants/color';
 import { BaseText } from '@components/common/BaseText';
 import { fontPx } from '@utils/responsive';
-import { useToast } from '@hooks/use_toast';
-import logger from '@utils/logger';
+import { usePharmacyCall } from '@features/nearby_pharmacy/hooks/use_pharmacy_call';
 
 const PharmacyClusterList = ({
   pharmacies,
   onPharmacyPress,
   onClosePress,
 }: IPharmacyClusterListProps) => {
-  const { showToast } = useToast();
-
-  const handleCallPress = useCallback(
-    async (telephone: string) => {
-      const digits = telephone.replace(/[^0-9+*#]/g, '');
-      if (!digits) return;
-
-      try {
-        await Linking.openURL(`tel:${digits}`);
-      } catch (e) {
-        logger.error(`Failed to open dialer. ${e?.stack || e}`);
-        showToast({ type: 'error', message: '전화 앱을 열 수 없습니다.' });
-      }
-    },
-    [showToast],
-  );
+  const { callPharmacy } = usePharmacyCall();
 
   return (
     <View style={styles.clusterListContainer}>
@@ -83,7 +67,7 @@ const PharmacyClusterList = ({
               {!!item.telephone && (
                 <TouchableOpacity
                   style={styles.clusterListItemPhoneButton}
-                  onPress={() => handleCallPress(item.telephone)}
+                  onPress={() => callPharmacy(item.telephone)}
                   hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                   activeOpacity={0.6}
                 >

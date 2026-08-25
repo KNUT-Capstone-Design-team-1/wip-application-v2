@@ -262,7 +262,9 @@ export const useNearbyPharmacy = () => {
       setLoading(true);
 
       const isAllowed = await checkPermissionsAndServices();
-      if (!isAllowed) return;
+      if (!isAllowed) {
+        return;
+      }
 
       // 마지막 위치 시도 (즉시 렌더링)
       const lastLocation = await Location.getLastKnownPositionAsync();

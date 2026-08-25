@@ -3,16 +3,17 @@ import { View, ActivityIndicator, Pressable } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_pharmacy';
 import { usePharmacyClusters } from '@features/nearby_pharmacy/hooks/use_pharmacy_clusters';
+import { useClusterSelection } from '@features/nearby_pharmacy/hooks/use_cluster_selection';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
 import PharmacyClusterList from '@features/nearby_pharmacy/components/molecules/PharmacyClusterList';
+import ResearchHereButton from '@features/nearby_pharmacy/components/atoms/ResearchHereButton';
 import { px } from '@utils/responsive';
 import { bottomTabSize } from '@constants/size';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LocateFixed, RotateCw } from 'lucide-react-native';
-import { BaseText } from '@components/common/BaseText';
+import { LocateFixed } from 'lucide-react-native';
 import {
   KM_PER_LAT_DEGREE,
   KM_PER_LON_DEGREE,
@@ -55,48 +56,19 @@ const NearbyPharmacyScreen = () => {
     region,
   );
 
-  const pharmaciesById = useMemo(() => {
-    const map = new Map<string, (typeof pharmacies)[number]>();
-    for (const p of pharmacies) map.set(p.id, p);
-    return map;
-  }, [pharmacies]);
-
-  const handleClusterPress = useCallback(
-    (clusterId: number) => {
-      const ids = getClusterPharmacyIds(clusterId);
-      const list = ids
-        .map((id) => pharmaciesById.get(id))
-        .filter((p): p is (typeof pharmacies)[number] => !!p);
-
-      if (list.length === 0) return;
-
-      const coordinates = list
-        .map((p) => ({
-          latitude: parseFloat(p.Y),
-          longitude: parseFloat(p.X),
-        }))
-        .filter((c) => !isNaN(c.latitude) && !isNaN(c.longitude));
-
-      if (coordinates.length > 0) {
-        mapRef.current?.fitToCoordinates(coordinates, {
-          edgePadding: {
-            top: insets.top + px(80),
-            right: px(60),
-            bottom: bottomTabSize.height + insets.bottom + px(360),
-            left: px(60),
-          },
-          animated: true,
-        });
-      }
-
-      openClusterList(list);
-    },
-    [getClusterPharmacyIds, pharmaciesById, openClusterList, mapRef, insets],
-  );
+  const { pharmaciesById, handleClusterPress } = useClusterSelection({
+    pharmacies,
+    mapRef,
+    insets,
+    getClusterPharmacyIds,
+    openClusterList,
+  });
 
   // 지도 중심이 임계값 이상 이동했는지 (zoom in은 비율, zoom out은 절대 상한 기준)
   const shouldResearch = useMemo(() => {
-    if (!lastFetchedCenter) return false;
+    if (!lastFetchedCenter) {
+      return false;
+    }
 
     const displacementKm = Math.max(
       Math.abs(region.latitude - lastFetchedCenter.lat) * KM_PER_LAT_DEGREE,
@@ -152,48 +124,7 @@ const NearbyPharmacyScreen = () => {
       </MapView>
 
       {shouldResearch && (
-        <Pressable
-          onPress={handleResearchHere}
-          disabled={loading}
-          style={({ pressed }) => [
-            {
-              position: 'absolute',
-              top: insets.top + px(16),
-              alignSelf: 'center',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: px(6),
-              backgroundColor: COLOR['white'],
-              paddingVertical: px(8),
-              paddingHorizontal: px(14),
-              borderRadius: px(20),
-              elevation: 4,
-              shadowColor: COLOR['shadow'],
-              shadowOffset: { width: 0, height: px(2) },
-              shadowOpacity: 0.2,
-              shadowRadius: 4,
-              opacity: pressed || loading ? 0.6 : 1,
-              zIndex: 990,
-            },
-          ]}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color={COLOR['primary']} />
-          ) : (
-            <RotateCw
-              size={px(16)}
-              color={COLOR['primary']}
-              strokeWidth={2.5}
-            />
-          )}
-          <BaseText
-            weight="medium"
-            size={13}
-            style={{ color: COLOR['primary'] }}
-          >
-            현재 지도에서 검색
-          </BaseText>
-        </Pressable>
+        <ResearchHereButton loading={loading} onPress={handleResearchHere} />
       )}
 
       <View style={styles.bottomOverlay}>

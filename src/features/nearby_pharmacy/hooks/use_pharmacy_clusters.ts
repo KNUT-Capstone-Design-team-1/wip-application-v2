@@ -38,7 +38,9 @@ export const usePharmacyClusters = (
     for (const p of pharmacies) {
       const lat = parseFloat(p.Y);
       const lng = parseFloat(p.X);
-      if (isNaN(lat) || isNaN(lng)) continue;
+      if (isNaN(lat) || isNaN(lng)) {
+        continue;
+      }
 
       points.push({
         type: 'Feature',
@@ -52,7 +54,9 @@ export const usePharmacyClusters = (
   }, [pharmacies]);
 
   const clusters = useMemo<TPharmacyClusterItem[]>(() => {
-    if (!region) return [];
+    if (!region) {
+      return [];
+    }
 
     const zoom = Math.round(
       Math.log2(360 / Math.max(region.longitudeDelta, 0.00001)),
