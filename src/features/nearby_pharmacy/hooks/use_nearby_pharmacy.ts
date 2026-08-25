@@ -94,6 +94,7 @@ export const useNearbyPharmacy = () => {
    * 마크 클릭 시 해당 약국 선택
    */
   const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
+    setClusterPharmacies(null);
     setSelectedPharmacy(pharmacy);
     useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
   }, []);
