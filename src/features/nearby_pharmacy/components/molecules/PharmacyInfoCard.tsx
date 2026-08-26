@@ -6,12 +6,15 @@ import { X } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { BaseText } from '@components/common/BaseText';
+import { usePharmacyCall } from '@features/nearby_pharmacy/hooks/use_pharmacy_call';
 
 const PharmacyInfoCard = ({
   pharmacy,
   onCopyPress,
   onClosePress,
 }: IPharmacyInfoCardProps) => {
+  const { callPharmacy } = usePharmacyCall();
+
   return (
     <View style={styles.infoContainer}>
       <View style={styles.infoContent}>
@@ -27,7 +30,7 @@ const PharmacyInfoCard = ({
         <TouchableOpacity
           style={styles.copyButton}
           disabled={!pharmacy.telephone}
-          onPress={() => onCopyPress(pharmacy.telephone)}
+          onPress={() => callPharmacy(pharmacy.telephone)}
         >
           <BaseText
             weight="medium"

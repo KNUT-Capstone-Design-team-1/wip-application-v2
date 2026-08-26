@@ -8,6 +8,7 @@ import logger from '@utils/logger';
 import { useFocusEffect } from 'expo-router';
 import MapView from 'react-native-maps';
 import { useAppTrackStore } from '@store/app_track_store';
+import { NEARBY_PHARMACY_RADIUS_KM } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
 
 export const useNearbyPharmacy = () => {
   const { showToast } = useToast();
@@ -19,6 +20,17 @@ export const useNearbyPharmacy = () => {
     useState<INearbyPharmacies | null>(null);
 
   const [pharmacies, setPharmacies] = useState<INearbyPharmacies[]>([]);
+
+  // 클러스터 아이콘 탭 시 표시할 약국 목록. null 이면 목록 미표시
+  const [clusterPharmacies, setClusterPharmacies] = useState<
+    INearbyPharmacies[] | null
+  >(null);
+
+  // 마지막으로 약국 fetch가 수행된 중심 좌표. 자동 재검색 판단용.
+  const [lastFetchedCenter, setLastFetchedCenter] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<MapView | null>(null);
@@ -82,6 +94,7 @@ export const useNearbyPharmacy = () => {
    * 마크 클릭 시 해당 약국 선택
    */
   const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
+    setClusterPharmacies(null);
     setSelectedPharmacy(pharmacy);
     useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
   }, []);
@@ -94,7 +107,56 @@ export const useNearbyPharmacy = () => {
   }, []);
 
   /**
-   * 주어진 좌표 주변의 약국 정보를 가져옴
+   * 클러스터 아이콘 탭 시 해당 클러스터의 약국 목록 표시
+   */
+  const openClusterList = useCallback((list: INearbyPharmacies[]) => {
+    setClusterPharmacies(list);
+    setSelectedPharmacy(null);
+  }, []);
+
+  /**
+   * 클러스터 약국 목록 닫기
+   */
+  const closeClusterList = useCallback(() => {
+    setClusterPharmacies(null);
+  }, []);
+
+  /**
+   * 클러스터 목록에서 특정 약국 선택 시 지도 이동 + 정보 카드 표시.
+   * InfoCard 가 화면 하단을 가리므로 target 위도를 남쪽으로 살짝 offset 하여
+   * 약국이 시각적으로 화면 중앙(위쪽 여유 영역의 중앙)에 오도록 한다.
+   */
+  const handleClusterPharmacySelect = useCallback(
+    (pharmacy: INearbyPharmacies) => {
+      const lat = parseFloat(pharmacy.Y);
+      const lng = parseFloat(pharmacy.X);
+
+      setClusterPharmacies(null);
+      setSelectedPharmacy(pharmacy);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const latitudeDelta = 0.005;
+        const longitudeDelta = 0.005;
+        const latOffset = latitudeDelta * 0.15;
+
+        mapRef.current?.animateToRegion(
+          {
+            latitude: lat - latOffset,
+            longitude: lng,
+            latitudeDelta,
+            longitudeDelta,
+          },
+          400,
+        );
+      }
+
+      useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
+    },
+    [],
+  );
+
+  /**
+   * 주어진 좌표를 중심으로 3km 이내의 약국 정보를 가져옴
    */
   const fetchPharmacies = useCallback(
     async (coords: { x: number; y: number }) => {
@@ -107,6 +169,7 @@ export const useNearbyPharmacy = () => {
         );
 
         setPharmacies(result);
+        setLastFetchedCenter({ lat: coords.y, lng: coords.x });
       } catch (e) {
         logger.error(`Failed to fetch pharmacies. ${e.stack || e}`);
 
@@ -149,17 +212,44 @@ export const useNearbyPharmacy = () => {
   }, []);
 
   /**
-   * 타임아웃이 적용된 현재 위치 정보 가져오기
+   * 지도 카메라를 주어진 좌표로 이동
+   */
+  const centerMapOn = useCallback(
+    (coords: { latitude: number; longitude: number }) => {
+      mapRef.current?.animateToRegion(
+        {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        300,
+      );
+    },
+    [],
+  );
+
+  /**
+   * 타임아웃이 적용된 현재 위치 정보 가져오기.
+   * Balanced 정확도 실패 시 Low 정확도로 1회 재시도.
    */
   const getCurrentPositionWithTimeout = useCallback(async () => {
-    return await Promise.race([
-      Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      }),
-      new Promise<null>((_, reject) =>
-        setTimeout(() => reject(new Error('Location timeout')), 60 * 1000),
-      ),
-    ]);
+    const withTimeout = (accuracy: Location.Accuracy) =>
+      Promise.race([
+        Location.getCurrentPositionAsync({ accuracy }),
+        new Promise<null>((_, reject) =>
+          setTimeout(() => reject(new Error('Location timeout')), 60 * 1000),
+        ),
+      ]);
+
+    try {
+      return await withTimeout(Location.Accuracy.Balanced);
+    } catch (e) {
+      logger.warn(
+        `Balanced accuracy failed, retrying with Low. ${e?.message || e}`,
+      );
+      return await withTimeout(Location.Accuracy.Low);
+    }
   }, []);
 
   /**
@@ -172,12 +262,15 @@ export const useNearbyPharmacy = () => {
       setLoading(true);
 
       const isAllowed = await checkPermissionsAndServices();
-      if (!isAllowed) return;
+      if (!isAllowed) {
+        return;
+      }
 
       // 마지막 위치 시도 (즉시 렌더링)
       const lastLocation = await Location.getLastKnownPositionAsync();
       if (lastLocation) {
         setLocation(lastLocation);
+        centerMapOn(lastLocation.coords);
         hasLocation = true;
       }
 
@@ -185,6 +278,7 @@ export const useNearbyPharmacy = () => {
       const currentLocation = await getCurrentPositionWithTimeout();
       if (currentLocation) {
         setLocation(currentLocation);
+        centerMapOn(currentLocation.coords);
         hasLocation = true;
       }
     } catch (e) {
@@ -200,7 +294,7 @@ export const useNearbyPharmacy = () => {
     } finally {
       setLoading(false);
     }
-  }, [checkPermissionsAndServices, getCurrentPositionWithTimeout]);
+  }, [checkPermissionsAndServices, getCurrentPositionWithTimeout, centerMapOn]);
 
   // 위치 상태가 변경될 때마다 알아서 API 페칭
   useEffect(() => {
@@ -215,6 +309,9 @@ export const useNearbyPharmacy = () => {
   useFocusEffect(
     useCallback(() => {
       initializeLocation();
+      showToast({
+        message: `${NEARBY_PHARMACY_RADIUS_KM}km 이내 약국만 표시됩니다`,
+      });
     }, [initializeLocation]),
   );
 
@@ -225,11 +322,16 @@ export const useNearbyPharmacy = () => {
     pharmacies,
     loading,
     selectedPharmacy,
+    clusterPharmacies,
     handleLocate,
     handleCopy,
     handleMarkerPress,
     handleCloseInfoCard,
+    openClusterList,
+    closeClusterList,
+    handleClusterPharmacySelect,
     fetchPharmacies,
+    lastFetchedCenter,
     refreshLocation: initializeLocation,
   };
 };
