@@ -10,11 +10,18 @@ interface IPharmacyMarkerIconProps {
 }
 
 const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
-  const size = selected ? px(54) : px(34);
+  // 소수점 픽셀로 인한 Android 캔버스 캡처 오류 방지
+  const size = Math.round(selected ? px(54) : px(34));
   const strokeWidth = selected ? 3 : 2;
 
   return (
-    <View style={[styles.container, selected && styles.selectedContainer]}>
+    <View
+      style={[
+        styles.container,
+        selected && styles.selectedContainer,
+        { width: size, height: size },
+      ]}
+    >
       <MapPin
         size={size}
         color={COLOR['white']}

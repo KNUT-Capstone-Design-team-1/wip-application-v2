@@ -21,8 +21,9 @@ const PharmacyClusterMarker = ({
   count,
   onPress,
 }: IPharmacyClusterMarkerProps) => {
-  const size = px(34) + Math.log2(count);
-  const frameSize = size + px(24); // 충분한 여백 확보 (그림자 등)
+  // 소수점 픽셀로 인한 캡처 잘림 방지
+  const size = Math.round(px(34) + Math.log2(count));
+  const padding = Math.round(px(16));
 
   return (
     <Marker
@@ -37,10 +38,7 @@ const PharmacyClusterMarker = ({
         style={[
           styles.clusterCaptureFrame,
           {
-            width: frameSize,
-            height: frameSize,
-            alignItems: 'center',
-            justifyContent: 'center',
+            padding: padding,
           },
         ]}
       >

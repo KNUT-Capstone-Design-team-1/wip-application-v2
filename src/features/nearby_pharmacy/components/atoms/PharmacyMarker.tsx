@@ -26,8 +26,8 @@ const PharmacyMarker = ({
   selected,
   onPress,
 }: IPharmacyMarkerProps) => {
-  const iconSize = selected ? px(54) : px(34);
-  const frameSize = iconSize + px(24); // 충분한 여백 확보 (그림자 등)
+  // 소수점 픽셀로 인한 Android 캔버스 캡처 오류 방지를 위해 Math.round 사용
+  const padding = Math.round(px(16));
 
   return (
     <Marker
@@ -42,10 +42,7 @@ const PharmacyMarker = ({
         style={[
           styles.markerCaptureFrame,
           {
-            width: frameSize,
-            height: frameSize,
-            alignItems: 'center',
-            justifyContent: 'center',
+            padding: padding,
           },
         ]}
       >
