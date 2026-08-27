@@ -10,11 +10,6 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR['marker'],
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: COLOR['shadow'],
-    shadowOffset: { width: 0, height: px(2) },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 4,
   },
   clusterCount: {
     color: COLOR_BG['surface'],
