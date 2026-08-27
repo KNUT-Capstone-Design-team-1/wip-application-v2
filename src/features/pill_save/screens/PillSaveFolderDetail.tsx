@@ -1,29 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
+import { View } from 'react-native';
 import { styles } from '@features/pill_save/styles/PillSave';
 import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
 import { useLocalSearchParams } from 'expo-router';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
-import { COLOR } from '@constants/color';
-
-const LoadingView = () => (
-  <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color={COLOR['primary']} />
-    <BaseText size={16} weight="bold" style={styles.loadingText}>
-      데이터를 불러오는 중...
-    </BaseText>
-  </View>
-);
-
-const SaveCountHeader = ({ count }: { count: number }) => (
-  <View style={styles.header}>
-    <BaseText size={14} weight="semiBold" style={styles.countText}>
-      전체 개수 {count}
-    </BaseText>
-  </View>
-);
+import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
+import { PillSaveCountHeader } from '@features/pill_save/components/atoms/PillSaveCountHeader';
 
 const PillSaveFolderDetail = () => {
   const { id } = useLocalSearchParams();
@@ -51,12 +34,12 @@ const PillSaveFolderDetail = () => {
   };
 
   if (loading) {
-    return <LoadingView />;
+    return <PillSaveLoadingView />;
   }
 
   return (
     <View style={styles.pillSaveRoot}>
-      <SaveCountHeader count={pillSaveData.length} />
+      <PillSaveCountHeader count={pillSaveData.length} />
       <PillSaveList pillSaveData={pillSaveData} onDataChange={handleDelete} />
     </View>
   );

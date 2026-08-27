@@ -74,6 +74,11 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
     )
   `);
 
+  // item_seq로 조회 및 삭제 시 성능 향상을 위한 인덱스 추가
+  await db.execAsync(`
+    CREATE INDEX IF NOT EXISTS idx_saved_pills_item_seq ON saved_pills(item_seq);
+  `);
+
   // 외래키 제약조건 활성화
   await db.execAsync('PRAGMA foreign_keys = ON;');
 
@@ -81,6 +86,7 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
   const defaultFolder = await db.getFirstAsync(
     `SELECT id FROM saved_pill_folders WHERE is_default = 1 LIMIT 1`,
   );
+
   if (!defaultFolder) {
     await db.runAsync(
       `INSERT INTO saved_pill_folders (name, is_default) VALUES (?, ?)`,

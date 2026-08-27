@@ -1,0 +1,44 @@
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
+import { BaseText } from '@components/common/BaseText';
+import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
+import { Check } from 'lucide-react-native';
+import { ISavedPillFolder } from '@services/database/types';
+import { styles } from '@features/pill_save/styles/molecules/FolderSelectListItem';
+
+// 폴더 선택 모달에서 사용하는 개별 폴더 리스트 아이템 컴포넌트
+export const FolderSelectListItem = ({
+  item,
+  isSelected,
+  onPress,
+}: {
+  item: ISavedPillFolder & { pill_count: number };
+  isSelected: boolean;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity
+    style={[styles.folderItem, isSelected && styles.folderItemSelected]}
+    onPress={onPress}
+    activeOpacity={0.7}
+  >
+    <View style={[styles.folderInfo, styles.shrinkText]}>
+      <BaseText
+        size={18}
+        weight={isSelected ? 'bold' : 'medium'}
+        style={[
+          isSelected ? styles.folderNameSelected : styles.folderName,
+          styles.shrinkText,
+        ]}
+        numberOfLines={1}
+      >
+        {item.name}
+      </BaseText>
+      <View style={styles.separator} />
+      <BaseText size={14} style={styles.folderCount}>
+        알약 {item.pill_count}개
+      </BaseText>
+    </View>
+    {isSelected && <Check size={fontPx(20)} color={COLOR['primary']} />}
+  </TouchableOpacity>
+);

@@ -12,9 +12,7 @@ import NotItem from '@components/common/NotItem';
 import { px } from '@utils/responsive';
 import { useAppTrackStore } from '@store/app_track_store';
 
-/**
- * 저장된 데이터가 없을 때 표시할 화면
- */
+// 저장된 데이터가 없을 때 표시할 화면
 const EmptyBox = () => (
   <NotItem
     mainText={'보관된 알약이 없습니다.'}
@@ -23,6 +21,7 @@ const EmptyBox = () => (
   />
 );
 
+// 알약 보관함 상세 화면에서 저장된 알약 데이터 리스트를 그려주는 컴포넌트
 const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
   /**
    * 상세 페이지로 이동
@@ -40,9 +39,7 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
     [],
   );
 
-  /**
-   * 리스트 아이템 렌더링
-   */
+  // 리스트 아이템 렌더링
   const renderItem: ListRenderItem<IPillSaveData> = useCallback(
     ({ item }) => {
       if (item.ITEM_SEQ === 'EMPTY_ITEM') {
