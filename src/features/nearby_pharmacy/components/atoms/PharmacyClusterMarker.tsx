@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { Marker, LatLng } from 'react-native-maps';
 import { px } from '@utils/responsive';
@@ -10,11 +10,7 @@ interface IPharmacyClusterMarkerProps {
   onPress: () => void;
 }
 
-/**
- * 여러 약국 마커를 하나로 묶어 표시하는 클러스터 마커.
- *
- * NOTE: Android 캡처 잘림 방지를 위해 외부 래퍼에 여유 공간(Padding)을 둡니다.
- */
+// 여러 약국 마커를 하나로 묶어 표시하는 클러스터 마커.
 const PharmacyClusterMarker = ({
   coordinate,
   count,
@@ -24,6 +20,7 @@ const PharmacyClusterMarker = ({
 
   // 클러스터 마커 크기
   const size = Math.round(px(32));
+
   // 캡처 영역 확보를 위한 외부 래퍼 크기 (상하좌우 여유 확보)
   const wrapperSize = size + Math.round(px(8));
 
