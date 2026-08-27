@@ -36,7 +36,7 @@ const PillSave = () => {
   }
 
   return (
-    <View style={[styles.pillSaveRoot, { backgroundColor: COLOR_BG['base'] }]}>
+    <View style={styles.pillSaveRoot}>
       <View style={styles.header}>
         <BaseText size={14} weight="semiBold" style={styles.countText}>
           내 폴더 목록
