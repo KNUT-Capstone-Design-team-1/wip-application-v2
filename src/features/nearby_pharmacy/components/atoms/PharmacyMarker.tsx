@@ -4,6 +4,7 @@ import { Marker, LatLng } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
 import PharmacyMarkerIcon from '@features/nearby_pharmacy/components/atoms/PharmacyMarkerIcon';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyMarker';
+import { px } from '@utils/responsive';
 
 interface IPharmacyMarkerProps {
   coordinate: LatLng;
@@ -25,6 +26,9 @@ const PharmacyMarker = ({
   selected,
   onPress,
 }: IPharmacyMarkerProps) => {
+  const iconSize = selected ? px(54) : px(34);
+  const frameSize = iconSize + px(24); // 충분한 여백 확보 (그림자 등)
+
   return (
     <Marker
       coordinate={coordinate}
@@ -33,7 +37,18 @@ const PharmacyMarker = ({
       anchor={{ x: 0.5, y: 0.5 }}
       centerOffset={{ x: 0, y: 0 }}
     >
-      <View collapsable={false} style={styles.markerCaptureFrame}>
+      <View
+        collapsable={false}
+        style={[
+          styles.markerCaptureFrame,
+          {
+            width: frameSize,
+            height: frameSize,
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+        ]}
+      >
         <PharmacyMarkerIcon selected={selected} />
       </View>
     </Marker>

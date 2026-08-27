@@ -22,6 +22,7 @@ const PharmacyClusterMarker = ({
   onPress,
 }: IPharmacyClusterMarkerProps) => {
   const size = px(34) + Math.log2(count);
+  const frameSize = size + px(24); // 충분한 여백 확보 (그림자 등)
 
   return (
     <Marker
@@ -31,7 +32,18 @@ const PharmacyClusterMarker = ({
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={true}
     >
-      <View collapsable={false} style={styles.clusterCaptureFrame}>
+      <View
+        collapsable={false}
+        style={[
+          styles.clusterCaptureFrame,
+          {
+            width: frameSize,
+            height: frameSize,
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+        ]}
+      >
         <View
           style={[
             styles.markerWrapper,
