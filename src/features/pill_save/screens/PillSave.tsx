@@ -1,45 +1,63 @@
-import { View, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, FlatList } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_save/styles/PillSave';
-import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
-import { usePillSaveList } from '@features/pill_save/hooks/use_pill_save_list';
-import { COLOR } from '@constants/color';
+import { pillSaveService } from '@features/pill_save/services/pill_save_service';
+import { ISavedPillFolder } from '@services/database/types';
+import { COLOR_BG } from '@constants/color';
+import { px } from '@utils/responsive';
+import { useRouter, useFocusEffect } from 'expo-router';
 
-/**
- * 저장된 알약 개수 표시 헤더
- */
-const SaveCountHeader = ({ count }: { count: number }) => (
-  <View style={styles.header}>
-    <BaseText size={14} weight="semiBold" style={styles.countText}>
-      전체 개수 {count}
-    </BaseText>
-  </View>
-);
-
-/**
- * 로딩 화면
- */
-const LoadingView = () => (
-  <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color={COLOR['primary']} />
-    <BaseText size={16} weight="bold" style={styles.loadingText}>
-      데이터를 불러오는 중...
-    </BaseText>
-  </View>
-);
+import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
+import { PillSaveFolderItem } from '@features/pill_save/components/molecules/PillSaveFolderItem';
 
 const PillSave = () => {
-  const { pillSaveData, loading, deleteSaveData } = usePillSaveList();
+  const [folders, setFolders] = useState<
+    (ISavedPillFolder & { pill_count: number; preview_images?: string[] })[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const loadFolders = useCallback(async () => {
+    setLoading(true);
+    const data = await pillSaveService.getFolders();
+    setFolders(data);
+    setLoading(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadFolders();
+    }, [loadFolders]),
+  );
 
   if (loading) {
-    return <LoadingView />;
+    return <PillSaveLoadingView />;
   }
 
   return (
     <View style={styles.pillSaveRoot}>
-      <SaveCountHeader count={pillSaveData.length} />
+      <View style={styles.header}>
+        <BaseText size={14} weight="semiBold" style={styles.countText}>
+          내 폴더 목록
+        </BaseText>
+      </View>
 
-      <PillSaveList pillSaveData={pillSaveData} onDataChange={deleteSaveData} />
+      <FlatList
+        data={folders}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ padding: px(20), paddingBottom: px(100) }}
+        renderItem={({ item }) => (
+          <PillSaveFolderItem
+            item={item}
+            onPress={() =>
+              router.push(
+                `/pill-save-folder/${item.id}?name=${encodeURIComponent(item.name)}`,
+              )
+            }
+          />
+        )}
+      />
     </View>
   );
 };

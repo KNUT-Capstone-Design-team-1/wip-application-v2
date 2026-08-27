@@ -21,30 +21,32 @@ export const usePillDetailScreen = () => {
 
   const [pillData, setPillData] = useState<IPillDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFolderModalVisible, setFolderModalVisible] = useState(false);
+
   const { loadPillDetail, detailLoading } = usePillDetail();
   const { setRecentViewedPills } = useRecentViewedPillStore();
   const { setTitle, resetTitle } = useHeaderTitleStore();
 
-  const { saveState, toggleSave } = usePillBox(pillData?.ITEM_SEQ ?? '');
+  const {
+    savedFolderIds,
+    isSaved,
+    checkSavedStatus,
+    loading: boxLoading,
+  } = usePillBox(pillData?.ITEM_SEQ ?? '');
 
-  const handleSaveToggle = useCallback(() => {
-    if (!pillData) {
-      return;
-    }
+  const openFolderModal = useCallback(() => {
+    if (!pillData) return;
+    setFolderModalVisible(true);
+  }, [pillData]);
 
-    toggleSave({
-      ITEM_SEQ: pillData.ITEM_SEQ,
-      ITEM_NAME: pillData.ITEM_NAME,
-      ENTP_NAME: pillData.ENTP_NAME,
-      ITEM_IMAGE: itemImageStr || pillData.ITEM_IMAGE || '',
-      CHART: pillData.CHART || '',
-      CLASS_NAME: pillData.CLASS_NAME || '',
-      PRINT_FRONT: pillData.PRINT_FRONT || '',
-      PRINT_BACK: pillData.PRINT_BACK || '',
-    });
+  const closeFolderModal = useCallback(() => {
+    setFolderModalVisible(false);
+  }, []);
 
+  const handleSaveComplete = useCallback(() => {
     isSave.current = true;
-  }, [pillData, toggleSave, itemImageStr]);
+    checkSavedStatus(); // Refresh saved status after modal closes
+  }, [checkSavedStatus]);
 
   // 최근 조회 저장
   useEffect(() => {
@@ -88,7 +90,6 @@ export const usePillDetailScreen = () => {
 
       const timer = setTimeout(() => {
         isStay.current = true;
-        console.log(`${STAY_DURATION}초 체류 완료`);
       }, STAY_DURATION);
 
       return () => {
@@ -98,8 +99,6 @@ export const usePillDetailScreen = () => {
           useAppTrackStore
             .getState()
             .increaseReviewActionCount('detail_viewed');
-
-          // 화면 전환 애니메이션 등으로 바쁜 작업이 끝나고 스레드가 한가해질 때 실행됨
         }
 
         if (isStay.current || isSave.current) {
@@ -115,8 +114,12 @@ export const usePillDetailScreen = () => {
     pillData,
     loading,
     itemImageStr,
-    saveState,
-    handleSaveToggle,
+    isSaved, // passed down as saveState
+    savedFolderIds,
+    isFolderModalVisible,
+    openFolderModal,
+    closeFolderModal,
+    handleSaveComplete,
     detailLoading,
   };
 };

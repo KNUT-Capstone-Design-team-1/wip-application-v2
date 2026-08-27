@@ -25,11 +25,4 @@ export const SEARCH_LIST: ISettingListType[] = [
     value: '',
     path: '',
   },
-  {
-    id: 'CLEAR_STORAGE',
-    title: `보관함 초기화`,
-    // 비동기로 동작하기 때문에 동적으로 가져오기 위해서 컴포넌트 내에서 처리하도록 수정
-    value: '',
-    path: '',
-  },
 ];
