@@ -101,6 +101,9 @@
     "node": ">=20"
   },
   "packageManager": "yarn@1.22.22",
+  "resolutions": {
+    "expo-constants": "18.0.14"
+  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
