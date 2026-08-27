@@ -13,7 +13,11 @@ const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
 
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <MapPin size={size} color={COLOR['white']} fill={COLOR['marker']} />
+      <MapPin
+        size={size}
+        color={COLOR['white']}
+        fill={selected ? COLOR['markerSelected'] : COLOR['marker']}
+      />
     </View>
   );
 };

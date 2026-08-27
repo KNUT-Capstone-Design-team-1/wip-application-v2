@@ -59,6 +59,7 @@ const PALETTE = {
 
   // Object
   marker: '#F43E1E',
+  markerSelected: '#C92F17',
 };
 
 export const COLOR = {
@@ -77,6 +78,7 @@ export const COLOR = {
   tertiary: PALETTE['color-tertiary'],
   tertiaryPressed: PALETTE['color-tertiary-pressed'],
   marker: PALETTE['marker'],
+  markerSelected: PALETTE['markerSelected'],
 };
 
 export const COLOR_BG = {
