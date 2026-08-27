@@ -1,26 +1,27 @@
 import { useEffect, useState, useCallback } from 'react';
-import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import logger from '@utils/logger';
 
 /**
- * 개별 알약 저장 상태 관리 및 토글 훅
+ * 개별 알약이 어느 폴더들에 저장되어 있는지 상태 관리하는 훅
  */
 export const usePillBox = (itemSeq: string) => {
-  const [saveState, setSaveState] = useState(false);
+  const [savedFolderIds, setSavedFolderIds] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
 
   /**
    * 저장 여부 확인
    */
   const checkSavedStatus = useCallback(async () => {
+    setLoading(true);
     try {
-      const isSaved = await pillSaveService.isPillSaved(itemSeq);
-
-      setSaveState(isSaved);
-    } catch (e) {
+      const folderIds = await pillSaveService.getPillSavedFolderIds(itemSeq);
+      setSavedFolderIds(folderIds);
+    } catch (e: any) {
       logger.error(`Failed to check saved status. ${e.stack || e}`);
-
-      setSaveState(false);
+      setSavedFolderIds([]);
+    } finally {
+      setLoading(false);
     }
   }, [itemSeq]);
 
@@ -28,18 +29,10 @@ export const usePillBox = (itemSeq: string) => {
     checkSavedStatus();
   }, [checkSavedStatus]);
 
-  /**
-   * 저장 상태 토글
-   */
-  const toggleSave = useCallback(async (saveItem: IPillSaveData) => {
-    try {
-      const nextStatus = await pillSaveService.toggleSave(saveItem);
-
-      setSaveState(nextStatus);
-    } catch (e) {
-      logger.error(`Failed to toggle save status. ${e.stack || e}`);
-    }
-  }, []);
-
-  return { saveState, toggleSave };
+  return {
+    savedFolderIds,
+    isSaved: savedFolderIds.length > 0,
+    checkSavedStatus,
+    loading,
+  };
 };

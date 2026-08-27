@@ -293,3 +293,20 @@ export type TPsychotropicsSearchParam = Pick<
 
 // 병용 금기 데이터 검색을 위한 파라미터 타입
 export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'>;
+
+// 저장된 알약 폴더 스키마
+export interface ISavedPillFolder {
+  id: number;
+  name: string;
+  is_default: boolean; // 1(true) 또는 0(false)
+  created_at: string;
+}
+
+// 저장된 알약(다대다 매핑) 스키마
+export interface ISavedPill {
+  idx: number;
+  folder_id: number;
+  item_seq: string;
+  item_name: string;
+  created_at: string;
+}
