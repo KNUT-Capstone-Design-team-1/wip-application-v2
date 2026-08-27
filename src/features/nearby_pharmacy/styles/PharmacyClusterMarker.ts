@@ -3,9 +3,6 @@ import { COLOR, COLOR_BG } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
-  clusterCaptureFrame: {
-    backgroundColor: 'transparent',
-  },
   markerWrapper: {
     backgroundColor: COLOR['marker'],
     justifyContent: 'center',

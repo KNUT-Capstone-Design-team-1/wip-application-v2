@@ -21,9 +21,8 @@ const PharmacyClusterMarker = ({
   count,
   onPress,
 }: IPharmacyClusterMarkerProps) => {
-  // 소수점 픽셀로 인한 캡처 잘림 방지
-  const size = Math.round(px(34) + Math.log2(count));
-  const padding = Math.round(px(16));
+  // 클러스터 마커 크기를 고정하여 캡처 잘림 현상 방지
+  const size = Math.round(px(38));
 
   return (
     <Marker

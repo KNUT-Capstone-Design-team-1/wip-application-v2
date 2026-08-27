@@ -10,9 +10,8 @@ interface IPharmacyMarkerIconProps {
 }
 
 const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
-  // 소수점 픽셀로 인한 Android 캔버스 캡처 오류 방지
-  const size = Math.round(selected ? px(54) : px(34));
-  const strokeWidth = selected ? 3 : 2;
+  const size = Math.round(px(34));
+  const strokeWidth = 2;
 
   return (
     <View

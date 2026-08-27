@@ -3,8 +3,6 @@ import { View } from 'react-native';
 import { Marker, LatLng } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
 import PharmacyMarkerIcon from '@features/nearby_pharmacy/components/atoms/PharmacyMarkerIcon';
-import { styles } from '@features/nearby_pharmacy/styles/PharmacyMarker';
-import { px } from '@utils/responsive';
 
 interface IPharmacyMarkerProps {
   coordinate: LatLng;
@@ -26,9 +24,6 @@ const PharmacyMarker = ({
   selected,
   onPress,
 }: IPharmacyMarkerProps) => {
-  // 소수점 픽셀로 인한 Android 캔버스 캡처 오류 방지를 위해 Math.round 사용
-  const padding = Math.round(px(16));
-
   return (
     <Marker
       coordinate={coordinate}
@@ -36,6 +31,7 @@ const PharmacyMarker = ({
       tracksViewChanges={true}
       anchor={{ x: 0.5, y: 0.5 }}
       centerOffset={{ x: 0, y: 0 }}
+      zIndex={selected ? 1 : 0}
     >
       <View collapsable={false}>
         <PharmacyMarkerIcon selected={selected} />
