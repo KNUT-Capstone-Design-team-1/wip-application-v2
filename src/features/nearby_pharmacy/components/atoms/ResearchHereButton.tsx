@@ -25,7 +25,7 @@ const ResearchHereButton = ({ loading, onPress }: IResearchHereButtonProps) => {
       style={({ pressed }) => [
         {
           position: 'absolute',
-          top: insets.top + px(16),
+          top: insets.top,
           alignSelf: 'center',
           flexDirection: 'row',
           alignItems: 'center',
@@ -45,11 +45,11 @@ const ResearchHereButton = ({ loading, onPress }: IResearchHereButtonProps) => {
       ]}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={COLOR['primary']} />
+        <ActivityIndicator size="small" color={COLOR['secondary']} />
       ) : (
-        <RotateCw size={px(16)} color={COLOR['primary']} strokeWidth={2.5} />
+        <RotateCw size={px(16)} color={COLOR['secondary']} strokeWidth={2.5} />
       )}
-      <BaseText weight="medium" size={13} style={{ color: COLOR['primary'] }}>
+      <BaseText weight="bold" size={13} style={{ color: COLOR['secondary'] }}>
         현재 지도에서 검색
       </BaseText>
     </Pressable>

@@ -56,6 +56,9 @@ const PALETTE = {
   // Default
   white: '#FFFFFF',
   black: '#000000',
+
+  // Object
+  marker: '#F43E1E',
 };
 
 export const COLOR = {
@@ -73,6 +76,7 @@ export const COLOR = {
   secondaryPressed: PALETTE['color-secondary-pressed'],
   tertiary: PALETTE['color-tertiary'],
   tertiaryPressed: PALETTE['color-tertiary-pressed'],
+  marker: PALETTE['marker'],
 };
 
 export const COLOR_BG = {

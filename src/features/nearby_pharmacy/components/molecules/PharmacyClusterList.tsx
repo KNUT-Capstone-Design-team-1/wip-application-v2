@@ -6,15 +6,11 @@ import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR_TEXT } from '@constants/color';
 import { BaseText } from '@components/common/BaseText';
 import { fontPx } from '@utils/responsive';
-import { usePharmacyCall } from '@features/nearby_pharmacy/hooks/use_pharmacy_call';
-
 const PharmacyClusterList = ({
   pharmacies,
   onPharmacyPress,
   onClosePress,
 }: IPharmacyClusterListProps) => {
-  const { callPharmacy } = usePharmacyCall();
-
   return (
     <View style={styles.clusterListContainer}>
       <View style={styles.clusterListHeader}>
@@ -64,22 +60,6 @@ const PharmacyClusterList = ({
                   {item.address}
                 </BaseText>
               </TouchableOpacity>
-              {!!item.telephone && (
-                <TouchableOpacity
-                  style={styles.clusterListItemPhoneButton}
-                  onPress={() => callPharmacy(item.telephone)}
-                  hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-                  activeOpacity={0.6}
-                >
-                  <BaseText
-                    weight="medium"
-                    size={13}
-                    style={styles.clusterListItemPhone}
-                  >
-                    {item.telephone}
-                  </BaseText>
-                </TouchableOpacity>
-              )}
             </View>
           );
         })}
