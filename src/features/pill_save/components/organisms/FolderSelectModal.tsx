@@ -78,11 +78,31 @@ const FolderSelectModal = ({
   };
 
   const handleCreateFolder = async () => {
-    if (!newFolderName.trim() || isSaving) {
+    const trimmedName = newFolderName.trim();
+
+    if (!trimmedName || isSaving) {
       return;
     }
 
-    const newId = await pillSaveService.createFolder(newFolderName.trim());
+    if (trimmedName.length > 255) {
+      showToast({
+        type: 'error',
+        message: '폴더 이름은 최대 255자까지 가능합니다.',
+      });
+      return;
+    }
+
+    // SQLite 및 폴더명으로 안전한 문자만 허용 (한글, 영문, 숫자, 공백, -, _)
+    const isValidName = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s\-_]+$/.test(trimmedName);
+    if (!isValidName) {
+      showToast({
+        type: 'error',
+        message: '폴더 이름에 특수문자는 사용할 수 없습니다.',
+      });
+      return;
+    }
+
+    const newId = await pillSaveService.createFolder(trimmedName);
     if (!newId) {
       return;
     }

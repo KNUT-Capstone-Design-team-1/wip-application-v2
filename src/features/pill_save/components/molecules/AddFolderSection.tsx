@@ -29,6 +29,7 @@ export const AddFolderSection = ({
           onChangeText={setNewFolderName}
           placeholder="새 폴더 이름"
           placeholderTextColor={COLOR_TEXT['disabled']}
+          maxLength={255}
           autoFocus
         />
         <TouchableOpacity
