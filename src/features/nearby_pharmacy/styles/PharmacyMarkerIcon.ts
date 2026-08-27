@@ -6,12 +6,5 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  selectedContainer: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: px(4) },
-    shadowOpacity: 0.4,
-    shadowRadius: px(5),
-    elevation: 8,
-    marginBottom: px(8),
-  },
+  selectedContainer: {},
 });

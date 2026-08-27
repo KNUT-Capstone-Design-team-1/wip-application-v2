@@ -37,15 +37,7 @@ const PharmacyMarker = ({
       anchor={{ x: 0.5, y: 0.5 }}
       centerOffset={{ x: 0, y: 0 }}
     >
-      <View
-        collapsable={false}
-        style={[
-          styles.markerCaptureFrame,
-          {
-            padding: padding,
-          },
-        ]}
-      >
+      <View collapsable={false}>
         <PharmacyMarkerIcon selected={selected} />
       </View>
     </Marker>

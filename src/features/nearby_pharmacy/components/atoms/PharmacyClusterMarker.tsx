@@ -33,15 +33,7 @@ const PharmacyClusterMarker = ({
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={true}
     >
-      <View
-        collapsable={false}
-        style={[
-          styles.clusterCaptureFrame,
-          {
-            padding: padding,
-          },
-        ]}
-      >
+      <View collapsable={false}>
         <View
           style={[
             styles.markerWrapper,
