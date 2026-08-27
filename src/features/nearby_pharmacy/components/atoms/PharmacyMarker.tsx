@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Marker, LatLng } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
 import PharmacyMarkerIcon from '@features/nearby_pharmacy/components/atoms/PharmacyMarkerIcon';
-import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
+import { styles } from '@features/nearby_pharmacy/styles/PharmacyMarker';
 
 interface IPharmacyMarkerProps {
   coordinate: LatLng;

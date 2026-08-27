@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
-import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { X } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import { BaseText } from '@components/common/BaseText';
 import { usePharmacyCall } from '@features/nearby_pharmacy/hooks/use_pharmacy_call';
+import PharmacyInfoRow from '@features/nearby_pharmacy/components/atoms/PharmacyInfoRow';
+import { styles } from '@features/nearby_pharmacy/styles/PharmacyInfoCard';
 
+// 지도에서 단일 약국 마커를 선택했을 때 하단에 나타나는 상세 정보 카드
 const PharmacyInfoCard = ({
   pharmacy,
   onCopyPress,
@@ -18,43 +19,36 @@ const PharmacyInfoCard = ({
   return (
     <View style={styles.infoContainer}>
       <View style={styles.infoContent}>
-        <TouchableOpacity
-          style={styles.copyButton}
+        <PharmacyInfoRow
+          text={pharmacy.name}
           onPress={() => onCopyPress(pharmacy.name)}
-        >
-          <BaseText weight="bold" size={18} style={styles.pharmacyName}>
-            {pharmacy.name}
-          </BaseText>
-        </TouchableOpacity>
+          weight="bold"
+          size={18}
+          textStyle={styles.pharmacyName}
+        />
 
-        <TouchableOpacity
-          style={styles.copyButton}
-          disabled={!pharmacy.telephone}
+        <PharmacyInfoRow
+          text={pharmacy.telephone || '전화번호 없음'}
           onPress={() => callPharmacy(pharmacy.telephone)}
-        >
-          <BaseText
-            weight="medium"
-            size={14}
-            style={[
-              styles.pharmacyPhone,
-              !pharmacy.telephone && {
-                color: COLOR_TEXT['disabled'],
-              },
-            ]}
-          >
-            {pharmacy.telephone || '전화번호 없음'}
-          </BaseText>
-        </TouchableOpacity>
+          disabled={!pharmacy.telephone}
+          weight="medium"
+          size={14}
+          textStyle={[
+            styles.pharmacyPhone,
+            !pharmacy.telephone && {
+              color: COLOR_TEXT['disabled'],
+            },
+          ]}
+        />
 
-        <TouchableOpacity
-          style={styles.copyButton}
-          disabled={!pharmacy.address}
+        <PharmacyInfoRow
+          text={pharmacy.address}
           onPress={() => onCopyPress(pharmacy.address)}
-        >
-          <BaseText weight="semiBold" size={14} style={styles.pharmacyAddress}>
-            {pharmacy.address}
-          </BaseText>
-        </TouchableOpacity>
+          disabled={!pharmacy.address}
+          weight="semiBold"
+          size={14}
+          textStyle={styles.pharmacyAddress}
+        />
       </View>
       <TouchableOpacity style={styles.closeButton} onPress={onClosePress}>
         <X size={fontPx(16)} color={COLOR_TEXT['sub']} strokeWidth={4} />

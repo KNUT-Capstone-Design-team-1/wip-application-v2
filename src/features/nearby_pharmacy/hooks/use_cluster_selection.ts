@@ -1,14 +1,11 @@
 import { RefObject, useCallback, useMemo } from 'react';
-import MapView from 'react-native-maps';
-import { EdgeInsets } from 'react-native-safe-area-context';
+import MapView, { Region } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
-import { px } from '@utils/responsive';
-import { bottomTabSize } from '@constants/size';
 
 interface IUseClusterSelectionParams {
   pharmacies: INearbyPharmacies[];
   mapRef: RefObject<MapView | null>;
-  insets: EdgeInsets;
+  region: Region;
   getClusterPharmacyIds: (clusterId: number) => string[];
   openClusterList: (list: INearbyPharmacies[]) => void;
 }
@@ -20,7 +17,7 @@ interface IUseClusterSelectionParams {
 export const useClusterSelection = ({
   pharmacies,
   mapRef,
-  insets,
+  region,
   getClusterPharmacyIds,
   openClusterList,
 }: IUseClusterSelectionParams) => {
@@ -51,20 +48,35 @@ export const useClusterSelection = ({
         .filter((c) => !isNaN(c.latitude) && !isNaN(c.longitude));
 
       if (coordinates.length > 0) {
-        mapRef.current?.fitToCoordinates(coordinates, {
-          edgePadding: {
-            top: insets.top + px(80),
-            right: px(60),
-            bottom: bottomTabSize.height + insets.bottom + px(360),
-            left: px(60),
+        const centerLat =
+          coordinates.reduce((sum, c) => sum + c.latitude, 0) /
+          coordinates.length;
+
+        const centerLng =
+          coordinates.reduce((sum, c) => sum + c.longitude, 0) /
+          coordinates.length;
+
+        // 현재 줌에서 2배 확대 (델타 절반), 최대 확대 제한
+        const newLatDelta = Math.max(region.latitudeDelta / 2, 0.002);
+        const newLngDelta = Math.max(region.longitudeDelta / 2, 0.002);
+
+        // 리스트가 하단을 가리므로 마커가 중앙보다 살짝 위쪽에 보이도록 보정
+        const latOffset = newLatDelta * 0.15;
+
+        mapRef.current?.animateToRegion(
+          {
+            latitude: centerLat - latOffset,
+            longitude: centerLng,
+            latitudeDelta: newLatDelta,
+            longitudeDelta: newLngDelta,
           },
-          animated: true,
-        });
+          400,
+        );
       }
 
       openClusterList(list);
     },
-    [getClusterPharmacyIds, pharmaciesById, openClusterList, mapRef, insets],
+    [getClusterPharmacyIds, pharmaciesById, openClusterList, mapRef, region],
   );
 
   return { pharmaciesById, handleClusterPress };

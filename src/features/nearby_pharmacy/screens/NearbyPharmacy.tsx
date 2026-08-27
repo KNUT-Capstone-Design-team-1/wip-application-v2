@@ -1,34 +1,25 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { View, ActivityIndicator, Pressable } from 'react-native';
-import MapView, { Region } from 'react-native-maps';
+import React, { useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { Region } from 'react-native-maps';
 import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_pharmacy';
 import { usePharmacyClusters } from '@features/nearby_pharmacy/hooks/use_pharmacy_clusters';
 import { useClusterSelection } from '@features/nearby_pharmacy/hooks/use_cluster_selection';
+import { useResearchPharmacy } from '@features/nearby_pharmacy/hooks/use_research_pharmacy';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
-import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
 import PharmacyClusterList from '@features/nearby_pharmacy/components/molecules/PharmacyClusterList';
 import ResearchHereButton from '@features/nearby_pharmacy/components/atoms/ResearchHereButton';
-import { px } from '@utils/responsive';
-import { bottomTabSize } from '@constants/size';
+import PharmacyLocateButton from '@features/nearby_pharmacy/components/atoms/PharmacyLocateButton';
+import PharmacyMap from '@features/nearby_pharmacy/components/organisms/PharmacyMap';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LocateFixed } from 'lucide-react-native';
-import {
-  KM_PER_LAT_DEGREE,
-  KM_PER_LON_DEGREE,
-  RESEARCH_DISPLACEMENT_RATIO,
-  RESEARCH_MAX_DISPLACEMENT_KM,
-} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
-/*
-TODO: marker 위치가 정확한지 확인 필요
-TODO: 현재 위치를 기준으로 반경 몇 m이내의 약국만 표시된다는 안내 필요
-*/
 
 /**
  * 주변 약국 지도 화면
+ * 약국 데이터를 가져오고, 지도를 표시하며, 마커/클러스터 클릭 이벤트를 관리
  */
 const NearbyPharmacyScreen = () => {
+  // 약국 데이터 및 위치 관련 전역 훅
   const {
     mapRef,
     initialRegion,
@@ -47,15 +38,20 @@ const NearbyPharmacyScreen = () => {
     fetchPharmacies,
     lastFetchedCenter,
   } = useNearbyPharmacy();
+
+  // 안전 영역(노치 등) 여백 값
   const insets = useSafeAreaInsets();
 
+  // 현재 지도 화면의 위경도 및 줌(Delta) 상태
   const [region, setRegion] = useState<Region>(initialRegion);
 
+  // 약국 데이터를 기반으로 클러스터(묶음) 생성
   const { clusters, getClusterPharmacyIds } = usePharmacyClusters(
     pharmacies,
     region,
   );
 
+  // 클러스터 마커 선택 시 하단 리스트를 띄우고 줌인하는 로직
   const { pharmaciesById, handleClusterPress } = useClusterSelection({
     pharmacies,
     mapRef,
@@ -64,28 +60,12 @@ const NearbyPharmacyScreen = () => {
     openClusterList,
   });
 
-  // 지도 중심이 임계값 이상 이동했는지 (zoom in은 비율, zoom out은 절대 상한 기준)
-  const shouldResearch = useMemo(() => {
-    if (!lastFetchedCenter) {
-      return false;
-    }
-
-    const displacementKm = Math.max(
-      Math.abs(region.latitude - lastFetchedCenter.lat) * KM_PER_LAT_DEGREE,
-      Math.abs(region.longitude - lastFetchedCenter.lng) * KM_PER_LON_DEGREE,
-    );
-    const visibleHeightKm = region.latitudeDelta * KM_PER_LAT_DEGREE;
-    const thresholdKm = Math.min(
-      visibleHeightKm * RESEARCH_DISPLACEMENT_RATIO,
-      RESEARCH_MAX_DISPLACEMENT_KM,
-    );
-
-    return displacementKm > thresholdKm;
-  }, [region, lastFetchedCenter]);
-
-  const handleResearchHere = useCallback(() => {
-    fetchPharmacies({ x: region.longitude, y: region.latitude });
-  }, [fetchPharmacies, region]);
+  // 사용자가 지도를 일정 거리 이상 이동했을 때 "현재 위치에서 검색" 버튼 표시 로직
+  const { shouldResearch, handleResearchHere } = useResearchPharmacy(
+    region,
+    lastFetchedCenter,
+    fetchPharmacies,
+  );
 
   // 초기 로딩 중이며 위치 정보가 아직 없을 때만 로딩 스피너 표시
   if (loading && !location) {
@@ -98,36 +78,25 @@ const NearbyPharmacyScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
+      {/* 지도 및 마커 렌더링 영역 */}
+      <PharmacyMap
+        mapRef={mapRef}
         initialRegion={initialRegion}
         onRegionChangeComplete={setRegion}
-        showsUserLocation={true}
-        showsMyLocationButton={false}
-        toolbarEnabled={false}
-        userInterfaceStyle="light"
-        maxZoomLevel={19}
-        mapPadding={{
-          top: 0,
-          bottom: bottomTabSize.height + insets.bottom,
-          left: 0,
-          right: 0,
-        }}
-      >
-        <PharmacyMarkers
-          clusters={clusters}
-          pharmaciesById={pharmaciesById}
-          selectedPharmacyId={selectedPharmacy?.id}
-          onPharmacyPress={handleMarkerPress}
-          onClusterPress={handleClusterPress}
-        />
-      </MapView>
+        insets={insets}
+        clusters={clusters}
+        pharmaciesById={pharmaciesById}
+        selectedPharmacyId={selectedPharmacy?.id}
+        onPharmacyPress={handleMarkerPress}
+        onClusterPress={handleClusterPress}
+      />
 
+      {/* 일정 거리 이동 시 나타나는 재검색 버튼 */}
       {shouldResearch && (
         <ResearchHereButton loading={loading} onPress={handleResearchHere} />
       )}
 
+      {/* 하단 약국 상세 정보 또는 클러스터(묶음) 목록 오버레이 */}
       <View style={styles.bottomOverlay}>
         {clusterPharmacies ? (
           <PharmacyClusterList
@@ -145,23 +114,9 @@ const NearbyPharmacyScreen = () => {
           )
         )}
       </View>
-      <Pressable
-        onPress={handleLocate}
-        style={({ pressed }) => [
-          {
-            position: 'absolute',
-            bottom: bottomTabSize.height + insets.bottom,
-            right: px(8),
-            backgroundColor: 'rgba(255,255,255,0.8)',
-            padding: px(8),
-            borderRadius: px(13),
-            opacity: pressed ? 0.5 : 1,
-            zIndex: 990,
-          },
-        ]}
-      >
-        <LocateFixed size={px(32)} color={COLOR['secondary']} strokeWidth={2} />
-      </Pressable>
+
+      {/* 현재 내 위치(GPS)로 카메라를 이동시키는 버튼 */}
+      <PharmacyLocateButton onPress={handleLocate} insets={insets} />
     </View>
   );
 };

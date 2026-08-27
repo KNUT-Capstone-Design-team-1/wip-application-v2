@@ -2,10 +2,13 @@ import React from 'react';
 import { View, TouchableOpacity, ScrollView } from 'react-native';
 import { X } from 'lucide-react-native';
 import { IPharmacyClusterListProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
-import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR_TEXT } from '@constants/color';
 import { BaseText } from '@components/common/BaseText';
 import { fontPx } from '@utils/responsive';
+import PharmacyClusterListItem from '@features/nearby_pharmacy/components/atoms/PharmacyClusterListItem';
+import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterList';
+
+// 클러스터 마커를 클릭했을 때, 해당 위치에 겹쳐 있는 약국들의 목록을 하단에 보여주는 리스트 컴포넌트
 const PharmacyClusterList = ({
   pharmacies,
   onPharmacyPress,
@@ -28,41 +31,14 @@ const PharmacyClusterList = ({
         showsVerticalScrollIndicator={true}
         keyboardShouldPersistTaps="handled"
       >
-        {pharmacies.map((item, index) => {
-          const isLast = index === pharmacies.length - 1;
-
-          return (
-            <View
-              key={item.id}
-              style={[
-                styles.clusterListItem,
-                isLast && styles.clusterListItemLast,
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => onPharmacyPress(item)}
-                activeOpacity={0.7}
-              >
-                <BaseText
-                  weight="bold"
-                  size={15}
-                  style={styles.clusterListItemName}
-                  numberOfLines={1}
-                >
-                  {item.name}
-                </BaseText>
-                <BaseText
-                  weight="medium"
-                  size={13}
-                  style={styles.clusterListItemAddress}
-                  numberOfLines={1}
-                >
-                  {item.address}
-                </BaseText>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
+        {pharmacies.map((item, index) => (
+          <PharmacyClusterListItem
+            key={item.id}
+            pharmacy={item}
+            isLast={index === pharmacies.length - 1}
+            onPress={onPharmacyPress}
+          />
+        ))}
       </ScrollView>
     </View>
   );

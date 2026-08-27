@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { View, Text } from 'react-native';
 import { Marker, LatLng } from 'react-native-maps';
-import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { px } from '@utils/responsive';
+import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterMarker';
 
 interface IPharmacyClusterMarkerProps {
   coordinate: LatLng;
@@ -35,7 +35,6 @@ const PharmacyClusterMarker = ({
         <View
           style={[
             styles.markerWrapper,
-            styles.clusterWrapper,
             { width: size, height: size, borderRadius: size / 2 },
           ]}
         >
