@@ -78,9 +78,6 @@ yarn run ipa
 # Expo 호환 라이브러리 설치
 npx expo install {library}
 
-# 라이브러리 업데이트
-npx expo install --fix
-
 # 코드 검사
 npx expo lint
 
