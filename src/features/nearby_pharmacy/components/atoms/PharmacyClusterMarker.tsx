@@ -21,25 +21,15 @@ const PharmacyClusterMarker = ({
   // 클러스터 마커 크기
   const size = Math.round(px(32));
 
-  // 캡처 영역 확보를 위한 외부 래퍼 크기 (상하좌우 여유 확보)
-  const wrapperSize = size + Math.round(px(8));
-
-  // 렌더링이 완료된 후 비트맵 캡처를 중단하여 성능을 확보
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (tracksViewChanges) {
-      timer = setTimeout(() => {
-        setTracksViewChanges(false);
-      }, 100);
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [tracksViewChanges]);
-
-  // count가 변경되면 다시 캡처하도록 유도
+  // count가 변경될 때마다 캡처를 활성화하고, 일정 시간 후 중단하여 성능 확보
   useEffect(() => {
     setTracksViewChanges(true);
+
+    const timer = setTimeout(() => {
+      setTracksViewChanges(false);
+    }, 150); // 150ms: 성능과 안정성의 최적 타협점
+
+    return () => clearTimeout(timer);
   }, [count]);
 
   return (
@@ -50,22 +40,14 @@ const PharmacyClusterMarker = ({
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={tracksViewChanges}
     >
-      <View collapsable={false}>
-        <View
-          style={[
-            styles.outerWrapper,
-            { width: wrapperSize, height: wrapperSize },
-          ]}
-        >
-          <View
-            style={[
-              styles.markerWrapper,
-              { width: size, height: size, borderRadius: size / 2 },
-            ]}
-          >
-            <Text style={styles.clusterCount}>{count}</Text>
-          </View>
-        </View>
+      <View
+        collapsable={false}
+        style={[
+          styles.markerWrapper,
+          { width: size, height: size, borderRadius: size / 2 },
+        ]}
+      >
+        <Text style={styles.clusterCount}>{count}</Text>
       </View>
     </Marker>
   );

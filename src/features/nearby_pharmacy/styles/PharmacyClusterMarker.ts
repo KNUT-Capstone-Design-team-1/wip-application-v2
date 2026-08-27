@@ -3,11 +3,6 @@ import { COLOR, COLOR_BG } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
-  outerWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
   markerWrapper: {
     backgroundColor: COLOR['marker'],
     justifyContent: 'center',

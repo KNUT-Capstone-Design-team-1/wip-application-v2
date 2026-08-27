@@ -9,13 +9,21 @@ interface IPharmacyMarkerIconProps {
 }
 
 const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
-  const size = Math.round(px(34));
+  const containerSize = Math.round(px(34));
+  const iconSize = containerSize - 2; // SVG 내부 여백 확보 (strokeWidth 고려)
   const strokeWidth = 2;
 
   return (
-    <View>
+    <View
+      style={{
+        width: containerSize,
+        height: containerSize,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <MapPin
-        size={size}
+        size={iconSize}
         color={COLOR['white']}
         fill={selected ? COLOR['markerSelected'] : COLOR['marker']}
         strokeWidth={strokeWidth}
