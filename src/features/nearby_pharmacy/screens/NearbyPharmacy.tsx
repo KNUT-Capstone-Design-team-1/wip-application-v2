@@ -59,7 +59,7 @@ const NearbyPharmacyScreen = () => {
   const { pharmaciesById, handleClusterPress } = useClusterSelection({
     pharmacies,
     mapRef,
-    insets,
+    region,
     getClusterPharmacyIds,
     openClusterList,
   });
@@ -107,6 +107,7 @@ const NearbyPharmacyScreen = () => {
         showsMyLocationButton={false}
         toolbarEnabled={false}
         userInterfaceStyle="light"
+        maxZoomLevel={19}
         mapPadding={{
           top: 0,
           bottom: bottomTabSize.height + insets.bottom,
