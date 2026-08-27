@@ -24,7 +24,6 @@ const PharmacyClusterMarker = ({
   // 소수점 픽셀로 인한 캡처 잘림 방지
   const size = Math.round(px(34) + Math.log2(count));
   const padding = Math.round(px(16));
-  const frameSize = size + padding * 2;
 
   return (
     <Marker
@@ -39,24 +38,10 @@ const PharmacyClusterMarker = ({
         style={[
           styles.clusterCaptureFrame,
           {
-            width: frameSize,
-            height: frameSize,
-            justifyContent: 'center',
-            alignItems: 'center',
+            padding: padding,
           },
         ]}
       >
-        {/* Android 마커 캡처용 가짜 그림자 (소프트웨어 캔버스에서 elevation이 잘리는 현상 우회) */}
-        <View
-          style={{
-            position: 'absolute',
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            backgroundColor: 'rgba(0, 0, 0, 0.25)',
-            top: (frameSize - size) / 2 + px(2), // y축 그림자 오프셋
-          }}
-        />
         <View
           style={[
             styles.markerWrapper,

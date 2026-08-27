@@ -27,10 +27,7 @@ const PharmacyMarker = ({
   onPress,
 }: IPharmacyMarkerProps) => {
   // 소수점 픽셀로 인한 Android 캔버스 캡처 오류 방지를 위해 Math.round 사용
-  // Android 마커 잘림 현상 방지를 위해 wrapper에 명시적인 크기를 지정합니다.
-  const iconSize = Math.round(selected ? px(54) : px(34));
   const padding = Math.round(px(16));
-  const frameSize = iconSize + padding * 2;
 
   return (
     <Marker
@@ -45,10 +42,7 @@ const PharmacyMarker = ({
         style={[
           styles.markerCaptureFrame,
           {
-            width: frameSize,
-            height: frameSize,
-            justifyContent: 'center',
-            alignItems: 'center',
+            padding: padding,
           },
         ]}
       >
