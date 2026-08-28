@@ -32,7 +32,7 @@ const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
       <MapPin
         size={iconSize}
         color={COLOR['white']}
-        fill={COLOR['markerSelected']}
+        fill={COLOR['marker']}
         strokeWidth={strokeWidth}
       />
     </View>
