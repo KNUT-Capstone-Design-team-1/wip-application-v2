@@ -5,6 +5,8 @@ import { px } from '@utils/responsive';
 export const styles = StyleSheet.create({
   markerWrapper: {
     backgroundColor: COLOR['marker'],
+    borderColor: COLOR['white'],
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -2,30 +2,37 @@ import React from 'react';
 import { View } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
-import { px } from '@utils/responsive';
+import {
+  styles,
+  getSelectedIconSize,
+} from '@features/nearby_pharmacy/styles/PharmacyMarkerIcon';
 
 interface IPharmacyMarkerIconProps {
   selected: boolean;
 }
 
+// 개별 약국 마커의 아이콘(선택 여부에 따라 디자인 변경)을 렌더링하는 컴포넌트
 const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
-  const containerSize = Math.round(px(34));
-  const iconSize = containerSize - 2; // SVG 내부 여백 확보 (strokeWidth 고려)
+  if (!selected) {
+    return (
+      <View style={styles.unselectedOuter}>
+        <View style={styles.unselectedMiddle}>
+          <View style={styles.unselectedInner} />
+        </View>
+      </View>
+    );
+  }
+
+  const iconSize = getSelectedIconSize();
   const strokeWidth = 2;
 
   return (
-    <View
-      style={{
-        width: containerSize,
-        height: containerSize,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <View style={styles.selectedContainer}>
+      <View style={styles.selectedHole} />
       <MapPin
         size={iconSize}
         color={COLOR['white']}
-        fill={selected ? COLOR['markerSelected'] : COLOR['marker']}
+        fill={COLOR['markerSelected']}
         strokeWidth={strokeWidth}
       />
     </View>

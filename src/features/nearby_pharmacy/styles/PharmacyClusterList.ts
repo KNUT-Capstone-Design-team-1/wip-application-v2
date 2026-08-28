@@ -46,7 +46,15 @@ export const styles = StyleSheet.create({
   },
   clusterListItemName: {
     color: COLOR_TEXT['title'],
+  },
+  clusterListItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: px(4),
+  },
+  clusterListItemDistance: {
+    color: COLOR['primary'],
+    marginLeft: px(8),
   },
   clusterListItemAddress: {
     color: COLOR_TEXT['body'],

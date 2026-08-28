@@ -103,6 +103,7 @@ const NearbyPharmacyScreen = () => {
             pharmacies={clusterPharmacies}
             onPharmacyPress={handleClusterPharmacySelect}
             onClosePress={closeClusterList}
+            userLocation={location}
           />
         ) : (
           selectedPharmacy && (
