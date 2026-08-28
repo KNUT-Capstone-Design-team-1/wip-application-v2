@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   clusterCount: {
     color: COLOR_BG['surface'],
     fontSize: px(13),
-    fontWeight: '700',
+    fontWeight: 'bold',
     includeFontPadding: false,
   },
 });
