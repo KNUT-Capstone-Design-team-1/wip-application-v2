@@ -6,6 +6,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
 import { PillSaveCountHeader } from '@features/pill_save/components/atoms/PillSaveCountHeader';
 import FolderSelectModal from '@features/pill_save/components/organisms/FolderSelectModal';
+import { PillSaveEditBottomBar } from '@features/pill_save/components/organisms/PillSaveEditBottomBar';
 import { usePillSaveFolderDetail } from '@features/pill_save/hooks/use_pill_save_folder_detail';
 
 // 특정 알약 보관함(폴더) 내부의 알약 목록을 보여주는 상세 화면 컴포넌트
@@ -53,6 +54,12 @@ const PillSaveFolderDetail = () => {
         isEditing={isEditing}
         selectedSeqs={selectedSeqs}
         onItemSelect={handleItemSelect}
+        onLongPressItem={(seq) => {
+          if (!isEditing) {
+            toggleEdit();
+            handleItemSelect(seq);
+          }
+        }}
       />
 
       {isModalVisible && (
@@ -67,6 +74,15 @@ const PillSaveFolderDetail = () => {
           })}
           initialSelectedIds={[]}
           onSaveComplete={handleSaveComplete}
+        />
+      )}
+
+      {isEditing && (
+        <PillSaveEditBottomBar
+          onMove={handleMove}
+          onCopy={handleCopy}
+          onDelete={handleMultipleDelete}
+          selectedCount={selectedSeqs.length}
         />
       )}
     </View>

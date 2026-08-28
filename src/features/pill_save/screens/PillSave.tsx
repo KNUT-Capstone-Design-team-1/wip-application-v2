@@ -5,7 +5,9 @@ import { styles } from '@features/pill_save/styles/PillSave';
 import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
 import { PillSaveHeader } from '@features/pill_save/components/molecules/PillSaveHeader';
 import { FolderEditModal } from '@features/pill_save/components/organisms/FolderEditModal';
+import { FolderSortModal } from '@features/pill_save/components/organisms/FolderSortModal';
 import PillSaveFolderList from '@features/pill_save/components/organisms/PillSaveFolderList';
+import { PillSaveEditBottomBar } from '@features/pill_save/components/organisms/PillSaveEditBottomBar';
 import { usePillSaveFolders } from '@features/pill_save/hooks/use_pill_save_folders';
 
 // 알약 보관함(폴더 목록) 메인 화면 컴포넌트
@@ -15,17 +17,21 @@ const PillSave = () => {
     loading,
     isEditing,
     setIsEditing,
-    editingFolderId,
-    setEditingFolderId,
+    selectedFolderIds,
     isAdding,
-    setIsAdding,
     isRenaming,
-    setIsRenaming,
     folderInputName,
     setFolderInputName,
+    sortOption,
+    isSortModalVisible,
+    setIsSortModalVisible,
+    handleSortChange,
     handleCreateOrRenameFolder,
+    handleRenameRequest,
     handleDeleteFolder,
-    updateFoldersOrder,
+    toggleFolderSelection,
+    handleOpenAddModal,
+    handleCancelModal,
   } = usePillSaveFolders();
 
   // 로딩 중일 때 조기 반환 (Early Return)
@@ -38,24 +44,23 @@ const PillSave = () => {
       <PillSaveHeader
         isEditing={isEditing}
         folderCount={folders.length}
-        onCancelEdit={() => setIsEditing(false)}
-        onRenameRequest={() => {
-          setIsRenaming(true);
-          setFolderInputName(
-            folders.find((f) => f.id === editingFolderId)?.name || '',
-          );
-        }}
-        onDeleteRequest={handleDeleteFolder}
-        onAddRequest={() => setIsAdding(true)}
+        onAddRequest={handleOpenAddModal}
+        onSortRequest={() => setIsSortModalVisible(true)}
       />
 
       <PillSaveFolderList
         folders={folders}
         isEditing={isEditing}
-        editingFolderId={editingFolderId}
+        selectedFolderIds={selectedFolderIds}
         setIsEditing={setIsEditing}
-        setEditingFolderId={setEditingFolderId}
-        updateFoldersOrder={updateFoldersOrder}
+        toggleFolderSelection={toggleFolderSelection}
+      />
+
+      <FolderSortModal
+        visible={isSortModalVisible}
+        onClose={() => setIsSortModalVisible(false)}
+        currentSort={sortOption}
+        onSortChange={handleSortChange}
       />
 
       <FolderEditModal
@@ -63,12 +68,17 @@ const PillSave = () => {
         isAdding={isAdding}
         folderInputName={folderInputName}
         setFolderInputName={setFolderInputName}
-        onCancel={() => {
-          setIsAdding(false);
-          setIsRenaming(false);
-        }}
+        onCancel={handleCancelModal}
         onConfirm={handleCreateOrRenameFolder}
       />
+
+      {isEditing && (
+        <PillSaveEditBottomBar
+          onRename={handleRenameRequest}
+          onDelete={handleDeleteFolder}
+          selectedCount={selectedFolderIds.length}
+        />
+      )}
     </View>
   );
 };

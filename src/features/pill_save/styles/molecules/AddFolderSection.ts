@@ -27,8 +27,11 @@ export const styles = StyleSheet.create({
     borderColor: COLOR['primary'],
     borderRadius: px(8),
     paddingHorizontal: px(12),
+    paddingVertical: 0,
     color: COLOR_TEXT['title'],
     fontFamily: 'Pretendard-Medium',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   addFolderConfirmBtn: {
     backgroundColor: COLOR['primary'],

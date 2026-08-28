@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { COLOR_TEXT } from '@constants/color';
+import { COLOR_TEXT, COLOR_LINE } from '@constants/color';
 import { styles } from '@features/pill_save/styles/PillSave';
 import { px } from '@utils/responsive';
 
@@ -28,14 +28,15 @@ export const PillSaveCountHeader = ({
   allSelected = false,
 }: Props) => (
   <View
-    style={[
-      styles.header,
-      {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      },
-    ]}
+    style={{
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: px(16),
+      paddingHorizontal: px(20),
+      borderBottomWidth: 1,
+      borderBottomColor: COLOR_LINE.border,
+    }}
   >
     <BaseText size={14} weight="semiBold" style={styles.countText}>
       총 {count}개
@@ -43,53 +44,15 @@ export const PillSaveCountHeader = ({
 
     <View style={{ flexDirection: 'row', gap: px(12) }}>
       {isEditing ? (
-        <>
-          <TouchableOpacity onPress={onSelectAll}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={{ color: COLOR_TEXT.title }}
-            >
-              {allSelected ? '전체해제' : '전체선택'}
-            </BaseText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onMove}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={{ color: COLOR_TEXT.title }}
-            >
-              이동
-            </BaseText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onCopy}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={{ color: COLOR_TEXT.title }}
-            >
-              복사
-            </BaseText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onDelete}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={{ color: COLOR_TEXT.title }}
-            >
-              삭제
-            </BaseText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onToggleEdit}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={{ color: COLOR_TEXT.sub }}
-            >
-              취소
-            </BaseText>
-          </TouchableOpacity>
-        </>
+        <TouchableOpacity onPress={onSelectAll}>
+          <BaseText
+            size={14}
+            weight="medium"
+            style={{ color: COLOR_TEXT.title }}
+          >
+            {allSelected ? '전체해제' : '전체선택'}
+          </BaseText>
+        </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={onToggleEdit}>
           <BaseText

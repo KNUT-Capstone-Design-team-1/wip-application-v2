@@ -1,3 +1,4 @@
+// 주의 및 특수 분류 정보를 표시하고 관련 외부 링크 및 오류 신고 기능을 제공하는 섹션 컴포넌트
 import { memo, useCallback } from 'react';
 import { View, TouchableOpacity, Linking, Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
@@ -9,13 +10,95 @@ import { useExternalUrlStore } from '@store/external_url_store';
 import { useToast } from '@hooks/use_toast';
 import logger from '@utils/logger';
 
+interface IWarningRowProps {
+  label: string;
+  isWarning?: boolean;
+  prefixLabel?: string;
+  items?: string[] | null;
+  footerNote?: string;
+}
+
+// 주의 및 특수 분류 정보를 통일된 포맷으로 렌더링하는 경고 행 컴포넌트
+const WarningRow = memo(
+  ({
+    label,
+    isWarning = false,
+    prefixLabel = '해당 성분: ',
+    items,
+    footerNote,
+  }: IWarningRowProps) => {
+    const value = isWarning ? (
+      <>
+        <BaseText weight="bold" size={14} style={styles.warningText}>
+          ⚠️ 주의
+        </BaseText>
+        {`\n`}
+        <BaseText weight="medium" size={14} style={styles.normalText}>
+          {prefixLabel}
+        </BaseText>
+        <BaseText weight="bold" size={14} style={styles.warningText}>
+          {Array.isArray(items) && items.length > 0 ? items.join(', ') : '-'}
+        </BaseText>
+        {footerNote ? (
+          <BaseText weight="semiBold" size={11} style={styles.smallInfoText}>
+            {`\n${footerNote}`}
+          </BaseText>
+        ) : null}
+      </>
+    ) : (
+      '해당 없음 (X)'
+    );
+
+    return <InfoRow label={label} value={value} />;
+  },
+);
+
+WarningRow.displayName = 'WarningRow';
+
+interface IExternalLinkButtonProps {
+  title: string;
+  url: string;
+  materialEngName?: string;
+}
+
+// 영문 성분명을 복사하고 외부 링크 URL로 이동하는 버튼 컴포넌트
+const ExternalLinkButton = memo(
+  ({ title, url, materialEngName }: IExternalLinkButtonProps) => {
+    const { showToast } = useToast();
+
+    const handlePress = useCallback(async () => {
+      if (materialEngName) {
+        await Clipboard.setStringAsync(materialEngName);
+
+        showToast({
+          message: `검색 지원을 위해 영문 성분명 (${materialEngName})이 복사되었습니다.`,
+        });
+      }
+
+      // 토스트 애니메이션이 충분히 보일 수 있도록 대기 후 브라우저 이동
+      setTimeout(() => {
+        Linking.openURL(url);
+      }, 800);
+    }, [materialEngName, showToast, url]);
+
+    return (
+      <TouchableOpacity style={styles.externalLinkButton} onPress={handlePress}>
+        <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
+          {title}
+        </BaseText>
+      </TouchableOpacity>
+    );
+  },
+);
+
+ExternalLinkButton.displayName = 'ExternalLinkButton';
+
 interface IPillSafetySectionProps {
   data: IPillDetail;
 }
 
 const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
   const { reportEmail, nifdsUrl, kadaUrl } = useExternalUrlStore();
-  const { showToast } = useToast();
 
   const handleReport = useCallback(() => {
     const subject = encodeURIComponent(
@@ -62,175 +145,50 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
       <BaseText weight="bold" size={16} style={styles.title}>
         [ 주의 및 특수 분류 정보 ]
       </BaseText>
-      <InfoRow
+
+      <WarningRow
         label="운전/기계조작"
-        value={
-          data.isDrivingWarning ? (
-            <>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                ⚠️ 주의
-              </BaseText>
-              {`\n`}
-              <BaseText weight="medium" size={14} style={styles.normalText}>
-                해당 문구:{' '}
-              </BaseText>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                {Array.isArray(data.drivingWarningKeywords) &&
-                data.drivingWarningKeywords.length > 0
-                  ? data.drivingWarningKeywords.join(', ')
-                  : '-'}
-              </BaseText>
-            </>
-          ) : (
-            '해당 없음 (X)'
-          )
-        }
+        isWarning={data.isDrivingWarning}
+        prefixLabel="해당 문구: "
+        items={data.drivingWarningKeywords}
       />
 
-      <InfoRow
+      <WarningRow
         label="마약류 (마약)"
-        value={
-          data.isNarcotic ? (
-            <>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                ⚠️ 주의
-              </BaseText>
-              {`\n`}
-              <BaseText weight="medium" size={14} style={styles.normalText}>
-                해당 성분:{' '}
-              </BaseText>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                {Array.isArray(data.narcoticIngredients)
-                  ? data.narcoticIngredients.join(', ')
-                  : '-'}
-              </BaseText>
-            </>
-          ) : (
-            '해당 없음 (X)'
-          )
-        }
+        isWarning={data.isNarcotic}
+        items={data.narcoticIngredients}
       />
-      <InfoRow
+
+      <WarningRow
         label="마약류 (대마)"
-        value={
-          data.isCannabis ? (
-            <>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                ⚠️ 주의
-              </BaseText>
-              {`\n`}
-              <BaseText weight="medium" size={14} style={styles.normalText}>
-                해당 성분:{' '}
-              </BaseText>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                {Array.isArray(data.cannabisIngredients)
-                  ? data.cannabisIngredients.join(', ')
-                  : '-'}
-              </BaseText>
-            </>
-          ) : (
-            '해당 없음 (X)'
-          )
-        }
+        isWarning={data.isCannabis}
+        items={data.cannabisIngredients}
       />
-      <InfoRow
+
+      <WarningRow
         label="마약류 (향정)"
-        value={
-          data.isPsychotropic ? (
-            <>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                ⚠️ 주의
-              </BaseText>
-              {`\n`}
-              <BaseText weight="medium" size={14} style={styles.normalText}>
-                해당 성분:{' '}
-              </BaseText>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                {Array.isArray(data.psychotropicIngredients)
-                  ? data.psychotropicIngredients.join(', ')
-                  : '-'}
-              </BaseText>
-            </>
-          ) : (
-            '해당 없음 (X)'
-          )
-        }
+        isWarning={data.isPsychotropic}
+        items={data.psychotropicIngredients}
       />
 
-      <TouchableOpacity
-        style={styles.externalLinkButton}
-        onPress={async () => {
-          if (data.MATERIAL_ENG_NAME) {
-            await Clipboard.setStringAsync(data.MATERIAL_ENG_NAME);
+      <ExternalLinkButton
+        title="마약 정보 데이터베이스"
+        url={nifdsUrl}
+        materialEngName={data.MATERIAL_ENG_NAME}
+      />
 
-            showToast({
-              message: `검색 지원을 위해 영문 성분명 (${data.MATERIAL_ENG_NAME})이 복사되었습니다.`,
-            });
-          }
-
-          // 토스트 애니메이션이 충분히 보일 수 있도록 대기 후 브라우저 이동
-          setTimeout(() => {
-            Linking.openURL(nifdsUrl);
-          }, 800);
-        }}
-      >
-        <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
-          마약 정보 데이터베이스
-        </BaseText>
-      </TouchableOpacity>
-
-      <InfoRow
+      <WarningRow
         label="도핑 금지"
-        value={
-          data.isProhibited ? (
-            <>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                ⚠️ 주의
-              </BaseText>
-              {`\n`}
-              <BaseText weight="medium" size={14} style={styles.normalText}>
-                해당 성분:{' '}
-              </BaseText>
-              <BaseText weight="bold" size={14} style={styles.warningText}>
-                {Array.isArray(data.prohibitedIngredients)
-                  ? data.prohibitedIngredients.join(', ')
-                  : '-'}
-              </BaseText>
-              <BaseText
-                weight="semiBold"
-                size={11}
-                style={styles.smallInfoText}
-              >
-                {`\n※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고`}
-              </BaseText>
-            </>
-          ) : (
-            '해당 없음 (X)'
-          )
-        }
+        isWarning={data.isProhibited}
+        items={data.prohibitedIngredients}
+        footerNote="※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고"
       />
 
-      <TouchableOpacity
-        style={styles.externalLinkButton}
-        onPress={async () => {
-          if (data.MATERIAL_ENG_NAME) {
-            await Clipboard.setStringAsync(data.MATERIAL_ENG_NAME);
-
-            showToast({
-              message: `검색 지원을 위해 영문 성분명 (${data.MATERIAL_ENG_NAME})이 복사되었습니다.`,
-            });
-          }
-
-          // 토스트 애니메이션이 충분히 보일 수 있도록 대기 후 브라우저 이동
-          setTimeout(() => {
-            Linking.openURL(kadaUrl);
-          }, 800);
-        }}
-      >
-        <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
-          도핑 금지 약물 확인 (KADA)
-        </BaseText>
-      </TouchableOpacity>
+      <ExternalLinkButton
+        title="도핑 금지 약물 확인 (KADA)"
+        url={kadaUrl}
+        materialEngName={data.MATERIAL_ENG_NAME}
+      />
 
       <View style={styles.disclaimerContainer}>
         <BaseText weight="semiBold" size={12} style={styles.disclaimerText}>

@@ -42,9 +42,18 @@ export const useFolderSelectModal = ({
 
   // 폴더 목록 불러오기
   const loadFolders = useCallback(async () => {
-    const data = await pillSaveService.getFolders();
+    let data = await pillSaveService.getFolders();
+
+    // 이동이나 복사 모드일 때 현재 폴더(sourceId)를 최상단에 고정
+    if ((mode === 'move' || mode === 'copy') && sourceId !== undefined) {
+      const sourceFolder = data.find((f) => f.id === sourceId);
+      if (sourceFolder) {
+        data = [sourceFolder, ...data.filter((f) => f.id !== sourceId)];
+      }
+    }
+
     setFolders(data);
-  }, []);
+  }, [mode, sourceId]);
 
   // 모달 열릴 때 초기 상태 및 폴더 세팅
   useEffect(() => {
@@ -55,15 +64,19 @@ export const useFolderSelectModal = ({
     loadFolders();
 
     if (initialSelectedIds.length === 0) {
-      pillSaveService.getFolders().then((data) => {
-        const defaultFolder = data.find((f) => f.is_default);
+      if (mode === 'save') {
+        pillSaveService.getFolders().then((data) => {
+          const defaultFolder = data.find((f) => f.is_default);
 
-        if (!defaultFolder) {
-          return;
-        }
+          if (!defaultFolder) {
+            return;
+          }
 
-        setSelectedIds([defaultFolder.id]);
-      });
+          setSelectedIds([defaultFolder.id]);
+        });
+      } else {
+        setSelectedIds([]);
+      }
     } else {
       setSelectedIds(initialSelectedIds);
     }
@@ -75,13 +88,17 @@ export const useFolderSelectModal = ({
 
   // 폴더 선택/해제 토글
   const toggleFolder = (id: number) => {
-    if (isSaving) {
+    if (isSaving || ((mode === 'move' || mode === 'copy') && id === sourceId)) {
       return;
     }
 
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id],
-    );
+    if (mode === 'move') {
+      setSelectedIds((prev) => (prev.includes(id) ? [] : [id]));
+    } else {
+      setSelectedIds((prev) =>
+        prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id],
+      );
+    }
   };
 
   // 새 폴더 생성
@@ -125,10 +142,13 @@ export const useFolderSelectModal = ({
 
   // 선택된 폴더들에 알약 저장/이동/복사 처리
   const handleSave = async () => {
-    if (selectedIds.length === 0) {
+    if (selectedIds.length === 0 && mode !== 'save') {
       showToast({
         type: 'error',
-        message: '저장할 폴더를 한 개 이상 선택해주세요.',
+        message:
+          mode === 'move'
+            ? '이동할 폴더를 선택해주세요.'
+            : '복사할 폴더를 선택해주세요.',
       });
 
       return;
@@ -148,7 +168,7 @@ export const useFolderSelectModal = ({
       onSaveComplete(selectedIds);
 
       onClose();
-    } catch (e) {
+    } catch {
       showToast({
         type: 'error',
         message: '알약 저장 중 오류가 발생했습니다.',

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLOR_BG['surface'],
     padding: px(16),
-    marginBottom: px(12),
     borderRadius: px(16),
   },
   folderInfoContainer: {

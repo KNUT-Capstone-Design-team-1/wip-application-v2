@@ -5,6 +5,15 @@ import { ISavedPillFolder } from '@services/database/types';
 import logger from '@utils/logger';
 import { useAppTrackStore } from '@store/app_track_store';
 
+// 일관된 서비스 에러 로깅 헬퍼 함수
+const logServiceError = (action: string, error: unknown) => {
+  logger.error(`[PILL-SAVE-SERVICE] Failed to ${action}: ${error}`);
+};
+
+// SQL IN 절 파라미터용 플레이스홀더 문자열 생성 헬퍼 함수
+const createPlaceholders = (count: number): string =>
+  count > 0 ? new Array(count).fill('?').join(',') : '';
+
 /**
  * 폴더별 프리뷰 이미지(최대 4개)를 가져오는 헬퍼 함수
  */
@@ -29,6 +38,43 @@ const getFolderPreviewImages = async (
   return images.map((img) => img.ITEM_IMAGE).filter(Boolean);
 };
 
+// 이미 대상 폴더들에 저장되어 있는 (folder_id, item_seq) 조합 조회 헬퍼 함수
+const getExistingFolderPillSet = async (
+  db: SQLiteDatabase,
+  folderIds: number[],
+  itemSeqs: string[],
+): Promise<Set<string>> => {
+  if (folderIds.length === 0 || itemSeqs.length === 0) {
+    return new Set();
+  }
+
+  const targetPlaceholders = createPlaceholders(folderIds.length);
+  const itemPlaceholders = createPlaceholders(itemSeqs.length);
+
+  const existingRows = await db.getAllAsync<{
+    folder_id: number;
+    item_seq: string;
+  }>(
+    `SELECT folder_id, item_seq FROM saved_pills WHERE folder_id IN (${targetPlaceholders}) AND item_seq IN (${itemPlaceholders})`,
+    [...folderIds, ...itemSeqs],
+  );
+
+  return new Set(existingRows.map((r) => `${r.folder_id}_${r.item_seq}`));
+};
+
+// 알약-폴더 조합 목록을 DB에 일괄 삽입하는 헬퍼 함수
+const insertPillCombinations = async (
+  db: SQLiteDatabase,
+  combinations: { item: { seq: string; name: string }; targetId: number }[],
+): Promise<void> => {
+  if (combinations.length === 0) return;
+
+  const insertQuery = `INSERT INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
+  for (const { item, targetId } of combinations) {
+    await db.runAsync(insertQuery, [targetId, item.seq, item.name]);
+  }
+};
+
 /**
  * 트랜잭션을 안전하게 실행하기 위한 헬퍼 함수
  */
@@ -42,13 +88,11 @@ const runInTransaction = async (
     await action();
 
     await db.runAsync('COMMIT');
-  } catch (e: any) {
+  } catch (e: unknown) {
     try {
       await db.runAsync('ROLLBACK');
     } catch (rollbackError) {
-      logger.error(
-        `[PILL-SAVE-SERVICE] Failed to rollback transaction: ${rollbackError}`,
-      );
+      logServiceError('rollback transaction', rollbackError);
     }
 
     throw e;
@@ -62,18 +106,30 @@ export const pillSaveService = {
   /**
    * 폴더 목록 및 각 폴더별 알약 개수 가져오기
    */
-  async getFolders(): Promise<
+  async getFolders(
+    sortBy:
+      | 'createdAt_asc'
+      | 'createdAt_desc'
+      | 'name_asc'
+      | 'pillCount_desc' = 'name_asc',
+  ): Promise<
     (ISavedPillFolder & { pill_count: number; preview_images?: string[] })[]
   > {
     try {
       const db = await getDatabase();
+
+      let orderClause = 'f.created_at ASC';
+      if (sortBy === 'createdAt_desc') orderClause = 'f.created_at DESC';
+      if (sortBy === 'name_asc') orderClause = 'f.name ASC';
+      if (sortBy === 'pillCount_desc')
+        orderClause = 'pill_count DESC, f.created_at DESC';
 
       const selectFoldersQuery = `
         SELECT 
           f.*, 
           (SELECT COUNT(*) FROM saved_pills p WHERE p.folder_id = f.id) as pill_count 
         FROM saved_pill_folders f 
-        ORDER BY f.sort_order ASC, f.is_default DESC, f.created_at ASC
+        ORDER BY f.is_default DESC, ${orderClause}
       `;
 
       const rows = await db.getAllAsync<
@@ -87,13 +143,17 @@ export const pillSaveService = {
           }
 
           const previewImages = await getFolderPreviewImages(db, row.id);
-          return { ...row, preview_images: previewImages };
+
+          return {
+            ...row,
+            preview_images: previewImages,
+          };
         }),
       );
 
       return result;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to get folders: ${e}`);
+    } catch (e) {
+      logServiceError('get folders', e);
       return [];
     }
   },
@@ -111,8 +171,8 @@ export const pillSaveService = {
       const result = await db.runAsync(insertQuery, [name]);
 
       return result.lastInsertRowId;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to create folder: ${e}`);
+    } catch (e) {
+      logServiceError('create folder', e);
       return null;
     }
   },
@@ -130,31 +190,8 @@ export const pillSaveService = {
       await db.runAsync(updateQuery, [name, folderId]);
 
       return true;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to rename folder: ${e}`);
-      return false;
-    }
-  },
-
-  /**
-   * 폴더 순서 일괄 업데이트
-   */
-  async updateFoldersOrder(folderIds: number[]): Promise<boolean> {
-    try {
-      if (!folderIds || folderIds.length === 0) return true;
-
-      const db = await getDatabase();
-      const updateQuery = `UPDATE saved_pill_folders SET sort_order = ? WHERE id = ?`;
-
-      await runInTransaction(db, async () => {
-        for (let i = 0; i < folderIds.length; i++) {
-          await db.runAsync(updateQuery, [i, folderIds[i]]);
-        }
-      });
-
-      return true;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to update folders order: ${e}`);
+    } catch (e) {
+      logServiceError('rename folder', e);
       return false;
     }
   },
@@ -166,13 +203,12 @@ export const pillSaveService = {
     try {
       const db = await getDatabase();
 
-      // CASCADE 제약조건이 있으므로 폴더 삭제 시 saved_pills도 삭제됨
       const deleteQuery = `DELETE FROM saved_pill_folders WHERE id = ? AND is_default = 0`;
       await db.runAsync(deleteQuery, [folderId]);
 
       return true;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to delete folder: ${e}`);
+    } catch (e) {
+      logServiceError('delete folder', e);
       return false;
     }
   },
@@ -188,15 +224,14 @@ export const pillSaveService = {
       if (!itemSeqs || itemSeqs.length === 0) return true;
 
       const db = await getDatabase();
-
-      const placeholders = itemSeqs.map(() => '?').join(',');
+      const placeholders = createPlaceholders(itemSeqs.length);
       const query = `DELETE FROM saved_pills WHERE folder_id = ? AND item_seq IN (${placeholders})`;
 
       await db.runAsync(query, [folderId, ...itemSeqs]);
 
       return true;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to delete multiple pills: ${e}`);
+    } catch (e) {
+      logServiceError('delete multiple pills', e);
       return false;
     }
   },
@@ -216,10 +251,8 @@ export const pillSaveService = {
       ]);
 
       return rows.map((r) => r.folder_id);
-    } catch (e: any) {
-      logger.error(
-        `[PILL-SAVE-SERVICE] Failed to get pill saved folders: ${e}`,
-      );
+    } catch (e) {
+      logServiceError('get pill saved folders', e);
       return [];
     }
   },
@@ -252,8 +285,8 @@ export const pillSaveService = {
       if (folderIds.length > 0) {
         useAppTrackStore.getState().increaseReviewActionCount('bookmarked');
       }
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to save pill to folders: ${e}`);
+    } catch (e) {
+      logServiceError('save pill to folders', e);
       throw e;
     }
   },
@@ -270,28 +303,37 @@ export const pillSaveService = {
       if (items.length === 0 || targetFolderIds.length === 0) return;
 
       const db = await getDatabase();
-
       const itemSeqs = items.map((i) => i.seq);
-      const placeholders = itemSeqs.map(() => '?').join(',');
 
-      const deleteQuery = `DELETE FROM saved_pills WHERE folder_id = ? AND item_seq IN (${placeholders})`;
-      const insertQuery = `INSERT OR IGNORE INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
+      const existingSet = await getExistingFolderPillSet(
+        db,
+        targetFolderIds,
+        itemSeqs,
+      );
 
-      const combinations = items.flatMap((item) =>
-        targetFolderIds.map((targetId) => ({ item, targetId })),
+      const combinations = items
+        .flatMap((item) =>
+          targetFolderIds.map((targetId) => ({ item, targetId })),
+        )
+        .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
+
+      const seqsToDelete = itemSeqs.filter((seq) =>
+        targetFolderIds.some(
+          (targetId) => !existingSet.has(`${targetId}_${seq}`),
+        ),
       );
 
       await runInTransaction(db, async () => {
-        // 기존 폴더에서 일괄 삭제
-        await db.runAsync(deleteQuery, [sourceFolderId, ...itemSeqs]);
-
-        // 대상 폴더들에 순차적으로 삽입
-        for (const { item, targetId } of combinations) {
-          await db.runAsync(insertQuery, [targetId, item.seq, item.name]);
+        if (seqsToDelete.length > 0) {
+          const deletePlaceholders = createPlaceholders(seqsToDelete.length);
+          const deleteQuery = `DELETE FROM saved_pills WHERE folder_id = ? AND item_seq IN (${deletePlaceholders})`;
+          await db.runAsync(deleteQuery, [sourceFolderId, ...seqsToDelete]);
         }
+
+        await insertPillCombinations(db, combinations);
       });
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to move pills: ${e}`);
+    } catch (e) {
+      logServiceError('move pills', e);
       throw e;
     }
   },
@@ -307,19 +349,27 @@ export const pillSaveService = {
       if (items.length === 0 || targetFolderIds.length === 0) return;
 
       const db = await getDatabase();
-      const insertQuery = `INSERT OR IGNORE INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
+      const itemSeqs = items.map((i) => i.seq);
 
-      const combinations = items.flatMap((item) =>
-        targetFolderIds.map((targetId) => ({ item, targetId })),
+      const existingSet = await getExistingFolderPillSet(
+        db,
+        targetFolderIds,
+        itemSeqs,
       );
 
+      const combinations = items
+        .flatMap((item) =>
+          targetFolderIds.map((targetId) => ({ item, targetId })),
+        )
+        .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
+
+      if (combinations.length === 0) return;
+
       await runInTransaction(db, async () => {
-        for (const { item, targetId } of combinations) {
-          await db.runAsync(insertQuery, [targetId, item.seq, item.name]);
-        }
+        await insertPillCombinations(db, combinations);
       });
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to copy pills: ${e}`);
+    } catch (e) {
+      logServiceError('copy pills', e);
       throw e;
     }
   },
@@ -340,10 +390,8 @@ export const pillSaveService = {
       await db.runAsync(deleteQuery, [itemSeq, folderId]);
 
       return true;
-    } catch (e: any) {
-      logger.error(
-        `[PILL-SAVE-SERVICE] Failed to delete pill from folder: ${e}`,
-      );
+    } catch (e) {
+      logServiceError('delete pill from folder', e);
       return false;
     }
   },
@@ -376,8 +424,8 @@ export const pillSaveService = {
       ]);
 
       return rows;
-    } catch (e: any) {
-      logger.error(`[PILL-SAVE-SERVICE] Failed to get pills by folder: ${e}`);
+    } catch (e) {
+      logServiceError('get pills by folder', e);
       return [];
     }
   },

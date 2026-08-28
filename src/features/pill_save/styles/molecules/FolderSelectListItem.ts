@@ -25,6 +25,13 @@ export const styles = StyleSheet.create({
     color: COLOR_TEXT['title'],
     marginRight: px(8),
   },
+  folderItemDisabled: {
+    backgroundColor: COLOR_BG['base'],
+  },
+  folderNameDisabled: {
+    color: COLOR_TEXT['disabled'],
+    marginRight: px(8),
+  },
   folderNameSelected: {
     color: COLOR['primary'],
     marginRight: px(8),

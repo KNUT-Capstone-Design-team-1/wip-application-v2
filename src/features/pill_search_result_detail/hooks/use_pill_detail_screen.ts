@@ -48,21 +48,24 @@ export const usePillDetailScreen = () => {
     checkSavedStatus(); // Refresh saved status after modal closes
   }, [checkSavedStatus]);
 
+  const itemSeq = pillData?.ITEM_SEQ;
+  const itemName = pillData?.ITEM_NAME;
+
   // 최근 조회 저장
   useEffect(() => {
-    if (pillData?.ITEM_SEQ) {
+    if (itemSeq && itemName) {
       setRecentViewedPills({
-        ITEM_SEQ: pillData.ITEM_SEQ,
-        ITEM_NAME: pillData.ITEM_NAME,
+        ITEM_SEQ: itemSeq,
+        ITEM_NAME: itemName,
       } as TRecentViewedPill);
 
-      setTitle(pillData.ITEM_NAME);
+      setTitle(itemName);
     }
 
     return () => {
       resetTitle();
     };
-  }, [pillData?.ITEM_SEQ]);
+  }, [itemSeq, itemName, resetTitle, setRecentViewedPills, setTitle]);
 
   useEffect(() => {
     const initData = async () => {

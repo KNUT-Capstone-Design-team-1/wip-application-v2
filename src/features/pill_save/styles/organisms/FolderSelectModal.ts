@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['surface'],
     borderTopLeftRadius: px(20),
     borderTopRightRadius: px(20),
-    padding: px(20),
+    paddingBottom: px(20),
     maxHeight: '80%',
   },
   list: {
