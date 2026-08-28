@@ -10,6 +10,7 @@ interface IPharmacyInfoRowProps {
   weight: 'bold' | 'semiBold' | 'medium' | 'regular';
   size: number;
   textStyle?: StyleProp<TextStyle>;
+  rightElement?: React.ReactNode;
 }
 
 // 정보 카드의 개별 텍스트 줄 (클릭 시 액션 처리)
@@ -20,6 +21,7 @@ const PharmacyInfoRow = ({
   weight,
   size,
   textStyle,
+  rightElement,
 }: IPharmacyInfoRowProps) => {
   return (
     <TouchableOpacity
@@ -30,6 +32,7 @@ const PharmacyInfoRow = ({
       <BaseText weight={weight} size={size} style={textStyle}>
         {text}
       </BaseText>
+      {rightElement}
     </TouchableOpacity>
   );
 };

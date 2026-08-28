@@ -6,6 +6,7 @@ import {
   TWhereQueryClauseFunc,
 } from '../types';
 import { buildWhereClause } from '../util';
+import { getDistance } from '@utils/location';
 
 /**
  * nearby_pharmacies 테이블 조회를 위한 WHERE param 생성
@@ -79,11 +80,28 @@ export const getNearbyPharmacies = async (
   const { page = 1, limit = 30 } = queryOption;
   const offset = (page - 1) * limit;
 
-  const result = await db.getAllAsync<INearbyPharmacies>(sql, [
+  let result = await db.getAllAsync<INearbyPharmacies>(sql, [
     ...whereValues,
     offset,
     limit,
   ]);
+
+  if (params.coordinate) {
+    const { x, y } = params.coordinate;
+
+    // DB에서 꺼내올 때 거리를 계산하여 매핑하고 가까운 순으로 정렬
+    result = result
+      .map((pharmacy) => {
+        const dist = getDistance(
+          y,
+          x,
+          parseFloat(pharmacy.Y),
+          parseFloat(pharmacy.X),
+        );
+        return { ...pharmacy, distance: dist };
+      })
+      .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+  }
 
   return result;
 };

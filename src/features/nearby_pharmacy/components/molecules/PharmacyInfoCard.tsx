@@ -6,6 +6,8 @@ import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { usePharmacyCall } from '@features/nearby_pharmacy/hooks/use_pharmacy_call';
 import PharmacyInfoRow from '@features/nearby_pharmacy/components/atoms/PharmacyInfoRow';
+import { BaseText } from '@components/common/BaseText';
+import { getFormattedDistance } from '@utils/location';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyInfoCard';
 
 // 지도에서 단일 약국 마커를 선택했을 때 하단에 나타나는 상세 정보 카드
@@ -16,6 +18,11 @@ const PharmacyInfoCard = ({
 }: IPharmacyInfoCardProps) => {
   const { callPharmacy } = usePharmacyCall();
 
+  const distanceText =
+    pharmacy.distance !== undefined
+      ? getFormattedDistance(pharmacy.distance)
+      : '';
+
   return (
     <View style={styles.infoContainer}>
       <View style={styles.infoContent}>
@@ -25,6 +32,17 @@ const PharmacyInfoCard = ({
           weight="bold"
           size={18}
           textStyle={styles.pharmacyName}
+          rightElement={
+            !!distanceText && (
+              <BaseText
+                weight="medium"
+                size={13}
+                style={styles.pharmacyDistance}
+              >
+                {distanceText}
+              </BaseText>
+            )
+          }
         />
 
         <PharmacyInfoRow

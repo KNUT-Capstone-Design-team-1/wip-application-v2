@@ -30,5 +30,4 @@ export interface IPharmacyClusterListProps {
   pharmacies: INearbyPharmacies[];
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
   onClosePress: () => void;
-  userLocation: Location.LocationObject | null;
 }

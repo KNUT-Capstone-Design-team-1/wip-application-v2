@@ -41,6 +41,10 @@ export const styles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
+  pharmacyDistance: {
+    color: COLOR['primary'],
+    marginLeft: px(8),
+  },
   closeButton: {
     position: 'absolute',
     top: px(8),

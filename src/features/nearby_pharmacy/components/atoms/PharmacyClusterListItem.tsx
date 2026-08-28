@@ -9,7 +9,6 @@ interface IPharmacyClusterListItemProps {
   isLast: boolean;
   distanceText: string;
   onPress: (pharmacy: INearbyPharmacies) => void;
-  onCallPress: (telephone: string) => void;
 }
 
 // 클러스터 마커 클릭 시 나타나는 리스트 내의 개별 약국 아이템 렌더링 컴포넌트
@@ -18,7 +17,6 @@ const PharmacyClusterListItem = ({
   isLast,
   distanceText,
   onPress,
-  onCallPress,
 }: IPharmacyClusterListItemProps) => {
   return (
     <View
@@ -53,22 +51,6 @@ const PharmacyClusterListItem = ({
           {pharmacy.address}
         </BaseText>
       </TouchableOpacity>
-      {!!pharmacy.telephone && (
-        <TouchableOpacity
-          style={styles.clusterListItemPhoneButton}
-          onPress={() => onCallPress(pharmacy.telephone)}
-          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          activeOpacity={0.6}
-        >
-          <BaseText
-            weight="medium"
-            size={13}
-            style={styles.clusterListItemPhone}
-          >
-            {pharmacy.telephone}
-          </BaseText>
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
