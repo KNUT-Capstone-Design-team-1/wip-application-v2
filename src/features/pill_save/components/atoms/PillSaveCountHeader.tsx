@@ -1,13 +1,106 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
+import { COLOR_TEXT } from '@constants/color';
 import { styles } from '@features/pill_save/styles/PillSave';
+import { px } from '@utils/responsive';
+
+interface Props {
+  count: number;
+  isEditing?: boolean;
+  onToggleEdit?: () => void;
+  onSelectAll?: () => void;
+  onMove?: () => void;
+  onCopy?: () => void;
+  onDelete?: () => void;
+  allSelected?: boolean;
+}
 
 // 저장된 전체 알약 개수를 표시하는 헤더 컴포넌트
-export const PillSaveCountHeader = ({ count }: { count: number }) => (
-  <View style={styles.header}>
+export const PillSaveCountHeader = ({
+  count,
+  isEditing = false,
+  onToggleEdit,
+  onSelectAll,
+  onMove,
+  onCopy,
+  onDelete,
+  allSelected = false,
+}: Props) => (
+  <View
+    style={[
+      styles.header,
+      {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+    ]}
+  >
     <BaseText size={14} weight="semiBold" style={styles.countText}>
-      전체 개수 {count}
+      총 {count}개
     </BaseText>
+
+    <View style={{ flexDirection: 'row', gap: px(12) }}>
+      {isEditing ? (
+        <>
+          <TouchableOpacity onPress={onSelectAll}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={{ color: COLOR_TEXT.title }}
+            >
+              {allSelected ? '전체해제' : '전체선택'}
+            </BaseText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onMove}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={{ color: COLOR_TEXT.title }}
+            >
+              이동
+            </BaseText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onCopy}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={{ color: COLOR_TEXT.title }}
+            >
+              복사
+            </BaseText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onDelete}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={{ color: COLOR_TEXT.title }}
+            >
+              삭제
+            </BaseText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onToggleEdit}>
+            <BaseText
+              size={14}
+              weight="medium"
+              style={{ color: COLOR_TEXT.sub }}
+            >
+              취소
+            </BaseText>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <TouchableOpacity onPress={onToggleEdit}>
+          <BaseText
+            size={14}
+            weight="medium"
+            style={{ color: COLOR_TEXT.title }}
+          >
+            편집
+          </BaseText>
+        </TouchableOpacity>
+      )}
+    </View>
   </View>
 );

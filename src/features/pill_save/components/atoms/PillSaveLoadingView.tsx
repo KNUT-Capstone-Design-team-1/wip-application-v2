@@ -4,7 +4,7 @@ import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_save/styles/PillSave';
 import { COLOR } from '@constants/color';
 
-// 데이터 로딩 시 표시되는 공통 스피너 컴포넌트
+// 알약 보관함 데이터 로딩 시 표시되는 로딩 뷰 컴포넌트
 export const PillSaveLoadingView = () => (
   <View style={styles.loadingContainer}>
     <ActivityIndicator size="large" color={COLOR['primary']} />

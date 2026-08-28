@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR_TEXT } from '@constants/color';
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronsUpDown } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
 import { ISavedPillFolder } from '@services/database/types';
 import { FolderIconPreview } from '@features/pill_save/components/atoms/FolderIconPreview';
@@ -11,17 +11,25 @@ import { styles } from '@features/pill_save/styles/molecules/PillSaveFolderItem'
 interface IPillSaveFolderItemProps {
   item: ISavedPillFolder & { pill_count: number; preview_images?: string[] };
   onPress: () => void;
+  onLongPress?: () => void;
+  drag?: () => void;
+  isEditing?: boolean;
+  opacity?: number;
 }
 
 // 폴더 목록 화면에서 보여지는 개별 폴더 리스트 아이템 컴포넌트
 export const PillSaveFolderItem = ({
   item,
   onPress,
+  onLongPress,
+  drag,
+  opacity = 1,
 }: IPillSaveFolderItemProps) => (
   <TouchableOpacity
-    style={styles.folderItemWrapper}
+    style={[styles.folderItemWrapper, { opacity }]}
     activeOpacity={0.7}
     onPress={onPress}
+    onLongPress={onLongPress}
   >
     <FolderIconPreview images={item.preview_images} />
     <View style={styles.folderInfoContainer}>
@@ -35,9 +43,17 @@ export const PillSaveFolderItem = ({
       </BaseText>
       <View style={styles.separator} />
       <BaseText size={14} style={styles.folderCount}>
-        알약 {item.pill_count}개
+        총 {item.pill_count}개
       </BaseText>
     </View>
-    <ChevronRight size={fontPx(20)} color={COLOR_TEXT['disabled']} />
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      {drag ? (
+        <TouchableOpacity onPressIn={drag}>
+          <ChevronsUpDown size={fontPx(20)} color={COLOR_TEXT['disabled']} />
+        </TouchableOpacity>
+      ) : (
+        <ChevronsUpDown size={fontPx(20)} color={COLOR_TEXT['disabled']} />
+      )}
+    </View>
   </TouchableOpacity>
 );

@@ -22,7 +22,13 @@ const EmptyBox = () => (
 );
 
 // 알약 보관함 상세 화면에서 저장된 알약 데이터 리스트를 그려주는 컴포넌트
-const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
+const PillSaveList = ({
+  pillSaveData,
+  onDataChange,
+  isEditing,
+  selectedSeqs,
+  onItemSelect,
+}: IPillSaveListProps) => {
   /**
    * 상세 페이지로 이동
    */
@@ -51,14 +57,19 @@ const PillSaveList = ({ pillSaveData, onDataChange }: IPillSaveListProps) => {
           <PillSaveContent
             saveData={item}
             onPressDetail={() =>
-              handlePressDetail(item.ITEM_SEQ, item.ITEM_IMAGE)
+              isEditing
+                ? onItemSelect?.(item.ITEM_SEQ)
+                : handlePressDetail(item.ITEM_SEQ, item.ITEM_IMAGE)
             }
             onPressDelete={() => onDataChange?.(item.ITEM_SEQ)}
+            isEditing={isEditing}
+            isSelected={selectedSeqs?.includes(item.ITEM_SEQ)}
+            onSelect={() => onItemSelect?.(item.ITEM_SEQ)}
           />
         </View>
       );
     },
-    [handlePressDetail, onDataChange],
+    [handlePressDetail, onDataChange, isEditing, selectedSeqs, onItemSelect],
   );
 
   if (pillSaveData.length === 0) {

@@ -1,0 +1,173 @@
+import { useState, useEffect, useCallback } from 'react';
+import { pillSaveService } from '@features/pill_save/services/pill_save_service';
+import { ISavedPillFolder } from '@services/database/types';
+import { useToast } from '@hooks/use_toast';
+import { validateFolderName } from '@utils/validation';
+
+interface UseFolderSelectModalProps {
+  isVisible: boolean;
+  itemSeq?: string;
+  itemName?: string;
+  items?: { seq: string; name: string }[];
+  mode?: 'save' | 'move' | 'copy';
+  sourceId?: number;
+  initialSelectedIds: number[];
+  onSaveComplete: (selectedIds: number[]) => void;
+  onClose: () => void;
+}
+
+// 알약 보관 폴더 선택 모달의 비즈니스 로직(선택, 생성, 저장 등)을 담당하는 커스텀 훅
+export const useFolderSelectModal = ({
+  isVisible,
+  itemSeq,
+  itemName,
+  items,
+  mode = 'save',
+  sourceId,
+  initialSelectedIds,
+  onSaveComplete,
+  onClose,
+}: UseFolderSelectModalProps) => {
+  const [folders, setFolders] = useState<
+    (ISavedPillFolder & { pill_count: number })[]
+  >([]);
+
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const [newFolderName, setNewFolderName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const { showToast } = useToast();
+
+  // 폴더 목록 불러오기
+  const loadFolders = useCallback(async () => {
+    const data = await pillSaveService.getFolders();
+    setFolders(data);
+  }, []);
+
+  // 모달 열릴 때 초기 상태 및 폴더 세팅
+  useEffect(() => {
+    if (!isVisible) {
+      return;
+    }
+
+    loadFolders();
+
+    if (initialSelectedIds.length === 0) {
+      pillSaveService.getFolders().then((data) => {
+        const defaultFolder = data.find((f) => f.is_default);
+
+        if (!defaultFolder) {
+          return;
+        }
+
+        setSelectedIds([defaultFolder.id]);
+      });
+    } else {
+      setSelectedIds(initialSelectedIds);
+    }
+
+    setIsAdding(false);
+    setNewFolderName('');
+    setIsSaving(false);
+  }, [isVisible, initialSelectedIds, loadFolders]);
+
+  // 폴더 선택/해제 토글
+  const toggleFolder = (id: number) => {
+    if (isSaving) {
+      return;
+    }
+
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id],
+    );
+  };
+
+  // 새 폴더 생성
+  const handleCreateFolder = async () => {
+    const trimmedName = newFolderName.trim();
+
+    if (!trimmedName || isSaving) {
+      return;
+    }
+
+    const isDuplicateName = folders.some((f) => f.name === trimmedName);
+
+    if (isDuplicateName) {
+      showToast({ type: 'error', message: '이미 존재하는 폴더 이름입니다.' });
+      return;
+    }
+
+    const validation = validateFolderName(trimmedName);
+
+    if (!validation.isValid) {
+      showToast({
+        type: 'error',
+        message: validation.message,
+      });
+
+      return;
+    }
+
+    const newId = await pillSaveService.createFolder(trimmedName);
+
+    if (!newId) {
+      return;
+    }
+
+    await loadFolders();
+
+    setSelectedIds((prev) => [...prev, newId]);
+    setIsAdding(false);
+    setNewFolderName('');
+  };
+
+  // 선택된 폴더들에 알약 저장/이동/복사 처리
+  const handleSave = async () => {
+    if (selectedIds.length === 0) {
+      showToast({
+        type: 'error',
+        message: '저장할 폴더를 한 개 이상 선택해주세요.',
+      });
+
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      if (mode === 'move' && items && sourceId !== undefined) {
+        await pillSaveService.movePillsToFolders(items, sourceId, selectedIds);
+      } else if (mode === 'copy' && items) {
+        await pillSaveService.copyPillsToFolders(items, selectedIds);
+      } else if (mode === 'save' && itemSeq && itemName) {
+        await pillSaveService.savePillToFolders(itemSeq, itemName, selectedIds);
+      }
+
+      onSaveComplete(selectedIds);
+
+      onClose();
+    } catch (e) {
+      showToast({
+        type: 'error',
+        message: '알약 저장 중 오류가 발생했습니다.',
+      });
+
+      setIsSaving(false);
+    }
+  };
+
+  return {
+    folders,
+    selectedIds,
+    isAdding,
+    setIsAdding,
+    newFolderName,
+    setNewFolderName,
+    isSaving,
+    toggleFolder,
+    handleCreateFolder,
+    handleSave,
+  };
+};

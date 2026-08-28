@@ -57,9 +57,14 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       is_default INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
       created_at DATETIME DEFAULT (datetime('now', 'localtime'))
     )
   `);
+
+  await db.execAsync(
+    `ALTER TABLE saved_pill_folders ADD COLUMN IF NOT EXISTS sort_order INTEGER NOT NULL DEFAULT 0;`,
+  );
 
   // 알약-폴더 매핑 테이블 생성 (item_seq, folder_id 중복 방지를 위한 UNIQUE 제약 조건 추가)
   await db.execAsync(`

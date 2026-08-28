@@ -15,6 +15,7 @@ import { initAdMob } from '@features/ads/utils/config';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import CommonModal from '@components/common/CommonModal';
 import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -29,34 +30,46 @@ const RootLayout = () => {
   // 초기화 중이면 로딩 화면 표시
   if (isInitializing) {
     return (
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <DatabaseUpdateView
-          status={updateProgress.status}
-          progress={updateProgress.progress}
-          isUpdating={updateProgress.isUpdating}
-        />
-        <DatabaseUpdateModal />
-        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <DatabaseUpdateView
+            status={updateProgress.status}
+            progress={updateProgress.progress}
+            isUpdating={updateProgress.isUpdating}
+          />
+          <DatabaseUpdateModal />
+          <Toast
+            config={toastConfig}
+            position="bottom"
+            bottomOffset={px(100)}
+          />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     );
   }
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" />
-      <Layout>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </Layout>
-      <MainNoticeBottomSheet />
-      <FullSizeLoading />
-      <CommonModal />
-      <View style={{ zIndex: 999999 }}>
-        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
-      </View>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <Layout>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+        </Layout>
+        <MainNoticeBottomSheet />
+        <FullSizeLoading />
+        <CommonModal />
+        <View style={{ zIndex: 999999 }}>
+          <Toast
+            config={toastConfig}
+            position="bottom"
+            bottomOffset={px(100)}
+          />
+        </View>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 };
 

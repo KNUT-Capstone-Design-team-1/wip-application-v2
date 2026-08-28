@@ -4,7 +4,7 @@ import { BaseText } from '@components/common/BaseText';
 import { COLOR } from '@constants/color';
 import { styles } from '@features/pill_save/styles/atoms/SaveActionBtn';
 
-// 하단 저장하기 액션 버튼 컴포넌트
+// 폴더 선택 모달에서 최종 저장을 실행하는 버튼 컴포넌트
 export const SaveActionBtn = ({
   isSaving,
   onPress,

@@ -2,8 +2,6 @@ import React from 'react';
 import { View, TouchableOpacity, TextInput } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR, COLOR_TEXT } from '@constants/color';
-import { fontPx } from '@utils/responsive';
-import { Plus } from 'lucide-react-native';
 import { styles } from '@features/pill_save/styles/molecules/AddFolderSection';
 
 // 폴더 선택 모달에서 새 폴더를 추가하는 영역 컴포넌트
@@ -44,15 +42,5 @@ export const AddFolderSection = ({
     );
   }
 
-  return (
-    <TouchableOpacity
-      style={styles.addFolderBtn}
-      onPress={() => setIsAdding(true)}
-    >
-      <Plus size={fontPx(20)} color={COLOR_TEXT['sub']} />
-      <BaseText size={16} weight="medium" style={styles.addFolderText}>
-        새 폴더 추가
-      </BaseText>
-    </TouchableOpacity>
-  );
+  return null;
 };

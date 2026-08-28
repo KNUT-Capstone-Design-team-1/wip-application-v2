@@ -10,11 +10,6 @@ export const styles = StyleSheet.create({
     padding: px(16),
     marginBottom: px(12),
     borderRadius: px(16),
-    elevation: 2,
-    shadowColor: COLOR_TEXT['title'],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: px(4),
   },
   folderInfoContainer: {
     flex: 1,

@@ -1,27 +1,44 @@
 import { memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { IPillSaveContentProps } from '@features/pill_save/types/pill_save_type';
 import { styles } from '@features/pill_save/styles/molecules/PillSaveContent';
 
 import { PillImage } from '@features/pill_save/components/atoms/PillImage';
 import { DeleteButton } from '@features/pill_save/components/atoms/DeleteButton';
 import { PillInfo } from '@features/pill_save/components/molecules/PillInfo';
+import { CheckCircle2, Circle } from 'lucide-react-native';
+import { COLOR } from '@constants/color';
 
 // 저장된 알약 개별 아이템 카드 컴포넌트
 const PillSaveContent = ({
   saveData,
   onPressDetail,
   onPressDelete,
+  isEditing,
+  isSelected,
 }: IPillSaveContentProps) => {
   return (
     <TouchableOpacity
-      style={styles.pillSaveContentWrapper}
+      style={[
+        styles.pillSaveContentWrapper,
+        isSelected && { borderColor: COLOR.primary, borderWidth: 2 },
+      ]}
       onPress={onPressDetail}
       activeOpacity={0.9}
     >
       <PillImage uri={saveData.ITEM_IMAGE} />
 
-      <DeleteButton onPress={onPressDelete} />
+      {isEditing ? (
+        <View style={{ position: 'absolute', top: 8, right: 8 }}>
+          {isSelected ? (
+            <CheckCircle2 color={COLOR.primary} size={24} />
+          ) : (
+            <Circle color="#C4C4C4" size={24} />
+          )}
+        </View>
+      ) : (
+        <DeleteButton onPress={onPressDelete} />
+      )}
 
       <PillInfo pill={saveData} />
     </TouchableOpacity>

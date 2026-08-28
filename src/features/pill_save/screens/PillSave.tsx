@@ -1,62 +1,73 @@
-import React, { useState, useCallback } from 'react';
-import { View, FlatList } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
+import React from 'react';
+import { View } from 'react-native';
 import { styles } from '@features/pill_save/styles/PillSave';
-import { pillSaveService } from '@features/pill_save/services/pill_save_service';
-import { ISavedPillFolder } from '@services/database/types';
-import { COLOR_BG } from '@constants/color';
-import { px } from '@utils/responsive';
-import { useRouter, useFocusEffect } from 'expo-router';
 
 import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
-import { PillSaveFolderItem } from '@features/pill_save/components/molecules/PillSaveFolderItem';
+import { PillSaveHeader } from '@features/pill_save/components/molecules/PillSaveHeader';
+import { FolderEditModal } from '@features/pill_save/components/organisms/FolderEditModal';
+import PillSaveFolderList from '@features/pill_save/components/organisms/PillSaveFolderList';
+import { usePillSaveFolders } from '@features/pill_save/hooks/use_pill_save_folders';
 
+// 알약 보관함(폴더 목록) 메인 화면 컴포넌트
 const PillSave = () => {
-  const [folders, setFolders] = useState<
-    (ISavedPillFolder & { pill_count: number; preview_images?: string[] })[]
-  >([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const {
+    folders,
+    loading,
+    isEditing,
+    setIsEditing,
+    editingFolderId,
+    setEditingFolderId,
+    isAdding,
+    setIsAdding,
+    isRenaming,
+    setIsRenaming,
+    folderInputName,
+    setFolderInputName,
+    handleCreateOrRenameFolder,
+    handleDeleteFolder,
+    updateFoldersOrder,
+  } = usePillSaveFolders();
 
-  const loadFolders = useCallback(async () => {
-    setLoading(true);
-    const data = await pillSaveService.getFolders();
-    setFolders(data);
-    setLoading(false);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      loadFolders();
-    }, [loadFolders]),
-  );
-
+  // 로딩 중일 때 조기 반환 (Early Return)
   if (loading) {
     return <PillSaveLoadingView />;
   }
 
   return (
     <View style={styles.pillSaveRoot}>
-      <View style={styles.header}>
-        <BaseText size={14} weight="semiBold" style={styles.countText}>
-          내 폴더 목록
-        </BaseText>
-      </View>
+      <PillSaveHeader
+        isEditing={isEditing}
+        folderCount={folders.length}
+        onCancelEdit={() => setIsEditing(false)}
+        onRenameRequest={() => {
+          setIsRenaming(true);
+          setFolderInputName(
+            folders.find((f) => f.id === editingFolderId)?.name || '',
+          );
+        }}
+        onDeleteRequest={handleDeleteFolder}
+        onAddRequest={() => setIsAdding(true)}
+      />
 
-      <FlatList
-        data={folders}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ padding: px(20), paddingBottom: px(100) }}
-        renderItem={({ item }) => (
-          <PillSaveFolderItem
-            item={item}
-            onPress={() =>
-              router.push(
-                `/pill-save-folder/${item.id}?name=${encodeURIComponent(item.name)}`,
-              )
-            }
-          />
-        )}
+      <PillSaveFolderList
+        folders={folders}
+        isEditing={isEditing}
+        editingFolderId={editingFolderId}
+        setIsEditing={setIsEditing}
+        setEditingFolderId={setEditingFolderId}
+        updateFoldersOrder={updateFoldersOrder}
+      />
+
+      <FolderEditModal
+        visible={isAdding || isRenaming}
+        isAdding={isAdding}
+        folderInputName={folderInputName}
+        setFolderInputName={setFolderInputName}
+        onCancel={() => {
+          setIsAdding(false);
+          setIsRenaming(false);
+        }}
+        onConfirm={handleCreateOrRenameFolder}
       />
     </View>
   );

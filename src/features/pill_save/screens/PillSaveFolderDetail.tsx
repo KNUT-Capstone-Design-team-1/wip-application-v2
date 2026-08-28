@@ -1,46 +1,74 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { styles } from '@features/pill_save/styles/PillSave';
 import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
 import { useLocalSearchParams } from 'expo-router';
-import { pillSaveService } from '@features/pill_save/services/pill_save_service';
-import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
 import { PillSaveCountHeader } from '@features/pill_save/components/atoms/PillSaveCountHeader';
+import FolderSelectModal from '@features/pill_save/components/organisms/FolderSelectModal';
+import { usePillSaveFolderDetail } from '@features/pill_save/hooks/use_pill_save_folder_detail';
 
+// 특정 알약 보관함(폴더) 내부의 알약 목록을 보여주는 상세 화면 컴포넌트
 const PillSaveFolderDetail = () => {
   const { id } = useLocalSearchParams();
   const folderId = parseInt(Array.isArray(id) ? id[0] : id, 10);
 
-  const [pillSaveData, setPillSaveData] = useState<IPillSaveData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    pillSaveData,
+    loading,
+    isEditing,
+    selectedSeqs,
+    isModalVisible,
+    setIsModalVisible,
+    modalMode,
+    allSelected,
+    toggleEdit,
+    handleSelectAll,
+    handleItemSelect,
+    handleMove,
+    handleCopy,
+    handleSaveComplete,
+    handleMultipleDelete,
+  } = usePillSaveFolderDetail(folderId);
 
-  const loadData = useCallback(async () => {
-    if (isNaN(folderId)) return;
-    setLoading(true);
-    const data = await pillSaveService.getPillsByFolder(folderId);
-    setPillSaveData(data);
-    setLoading(false);
-  }, [folderId]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const handleDelete = async (itemSeq: string) => {
-    await pillSaveService.deletePillFromFolder(itemSeq, folderId);
-    // Remove from local state
-    setPillSaveData((prev) => prev.filter((item) => item.ITEM_SEQ !== itemSeq));
-  };
-
+  // 로딩 중일 때 조기 반환
   if (loading) {
     return <PillSaveLoadingView />;
   }
 
   return (
     <View style={styles.pillSaveRoot}>
-      <PillSaveCountHeader count={pillSaveData.length} />
-      <PillSaveList pillSaveData={pillSaveData} onDataChange={handleDelete} />
+      <PillSaveCountHeader
+        count={pillSaveData.length}
+        isEditing={isEditing}
+        onToggleEdit={toggleEdit}
+        onSelectAll={handleSelectAll}
+        onMove={handleMove}
+        onCopy={handleCopy}
+        onDelete={handleMultipleDelete}
+        allSelected={allSelected}
+      />
+      <PillSaveList
+        pillSaveData={pillSaveData}
+        isEditing={isEditing}
+        selectedSeqs={selectedSeqs}
+        onItemSelect={handleItemSelect}
+      />
+
+      {isModalVisible && (
+        <FolderSelectModal
+          isVisible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          mode={modalMode}
+          sourceId={folderId}
+          items={selectedSeqs.map((seq) => {
+            const found = pillSaveData.find((p) => p.ITEM_SEQ === seq);
+            return { seq, name: found?.ITEM_NAME || '' };
+          })}
+          initialSelectedIds={[]}
+          onSaveComplete={handleSaveComplete}
+        />
+      )}
     </View>
   );
 };
