@@ -1,9 +1,8 @@
 import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { COLOR, COLOR_TEXT } from '@constants/color';
-import { CheckCircle2, Circle } from 'lucide-react-native';
 import { FolderIconPreview } from '@features/pill_save/components/atoms/FolderIconPreview';
+import { SelectionRadioButton } from '@features/pill_save/components/atoms/SelectionRadioButton';
 import { styles } from '@features/pill_save/styles/molecules/PillSaveFolderItem';
 
 import { IPillSaveFolderItemProps } from '@features/pill_save/types/pill_save_type';
@@ -19,13 +18,11 @@ const RightAccessory = memo(
     isEditing?: boolean;
     isSelected?: boolean;
   }) => {
-    if (!isEditing || isDefault) return null;
+    if (!isEditing || isDefault) {
+      return null;
+    }
 
-    return isSelected ? (
-      <CheckCircle2 size={24} color={COLOR_TEXT.white} fill={COLOR.primary} />
-    ) : (
-      <Circle size={24} color={COLOR_TEXT.disabled} fill="#FFF" />
-    );
+    return <SelectionRadioButton isSelected={isSelected} />;
   },
 );
 
@@ -47,13 +44,16 @@ export const PillSaveFolderItem = memo(
         onPress={onPress}
         onLongPress={onLongPress}
       >
-        <FolderIconPreview images={item.preview_images} />
+        <FolderIconPreview
+          images={item.preview_images}
+          totalCount={item.pill_count}
+        />
 
         <View style={styles.folderInfoContainer}>
           <BaseText
             size={18}
             weight="bold"
-            style={[styles.folderName, isSelected && { color: COLOR.primary }]}
+            style={styles.folderName}
             numberOfLines={1}
           >
             {item.name}

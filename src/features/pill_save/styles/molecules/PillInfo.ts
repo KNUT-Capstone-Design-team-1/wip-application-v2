@@ -22,7 +22,6 @@ export const styles = StyleSheet.create({
     color: COLOR_TEXT['body'],
     includeFontPadding: false,
     textAlignVertical: 'center',
-    flex: 1,
   },
   pillInfoPrintWrapper: {
     flexDirection: 'row',
@@ -30,10 +29,10 @@ export const styles = StyleSheet.create({
     marginTop: px(2),
   },
   pillInfoSeparator: {
-    width: px(1),
-    height: px(10),
+    width: px(2),
+    height: '60%',
     backgroundColor: COLOR_LINE['separator'],
-    marginHorizontal: px(6),
+    marginHorizontal: px(8),
   },
   pillInfoEntpWrapper: {
     flexGrow: 1,

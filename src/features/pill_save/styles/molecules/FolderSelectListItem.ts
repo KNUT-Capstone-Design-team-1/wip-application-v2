@@ -8,33 +8,31 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: px(16),
-    paddingHorizontal: px(12),
+    paddingHorizontal: px(24),
     borderBottomWidth: 1,
-    borderBottomColor: COLOR_BG['base'],
+    borderBottomColor: '#F1F5F9',
   },
   folderItemSelected: {
     backgroundColor: '#F0F9FF',
-    borderRadius: px(8),
     borderBottomWidth: 0,
   },
   folderInfo: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: px(16),
   },
   folderName: {
     color: COLOR_TEXT['title'],
-    marginRight: px(8),
   },
   folderItemDisabled: {
     backgroundColor: COLOR_BG['base'],
   },
   folderNameDisabled: {
     color: COLOR_TEXT['disabled'],
-    marginRight: px(8),
   },
   folderNameSelected: {
     color: COLOR['primary'],
-    marginRight: px(8),
   },
   folderCount: {
     color: COLOR_TEXT['sub'],
@@ -46,7 +44,6 @@ export const styles = StyleSheet.create({
     width: px(1),
     height: px(12),
     backgroundColor: COLOR_TEXT['disabled'],
-    marginHorizontal: px(8),
-    marginRight: px(16),
+    marginHorizontal: px(10),
   },
 });

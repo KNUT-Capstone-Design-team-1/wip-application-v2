@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   countText: {
-    color: COLOR.primary,
+    color: COLOR_TEXT.title,
     marginBottom: px(8),
     textAlign: 'center',
   },
@@ -42,7 +42,9 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG.btnPrimary,
   },
   deleteButton: {
-    backgroundColor: COLOR.error,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLOR.error,
   },
   disabledButton: {
     backgroundColor: COLOR_BG.btnDisabled,
@@ -54,7 +56,7 @@ export const styles = StyleSheet.create({
     color: COLOR_TEXT.white,
   },
   deleteText: {
-    color: COLOR_TEXT.white,
+    color: COLOR.error,
   },
   disabledText: {
     color: COLOR_TEXT.disabled,

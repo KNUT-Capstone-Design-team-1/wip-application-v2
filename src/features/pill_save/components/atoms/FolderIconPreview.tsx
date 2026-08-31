@@ -4,10 +4,17 @@ import { COLOR } from '@constants/color';
 import { Folder } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
 import { Image } from '@components/common/CustomImage';
+import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_save/styles/atoms/FolderIconPreview';
 
 // 폴더 아이콘 또는 폴더 내 알약 썸네일(최대 4개)을 보여주는 UI 컴포넌트
-export const FolderIconPreview = ({ images }: { images?: string[] }) => {
+export const FolderIconPreview = ({
+  images,
+  totalCount = 0,
+}: {
+  images?: string[];
+  totalCount?: number;
+}) => {
   if (!images || images.length === 0) {
     return (
       <View style={styles.emptyFolderWrapper}>
@@ -73,6 +80,11 @@ export const FolderIconPreview = ({ images }: { images?: string[] }) => {
             contentFit="cover"
           />
         ))
+      )}
+      {totalCount >= 5 && (
+        <View style={styles.ellipsisOverlay}>
+          <BaseText style={styles.ellipsisText}>...</BaseText>
+        </View>
       )}
     </View>
   );

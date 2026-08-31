@@ -22,7 +22,7 @@ export const FolderSelectModalHeader = ({
     </BaseText>
     {!hideAddButton && (
       <TouchableOpacity onPress={onAddFolder} style={styles.closeBtn}>
-        <Plus size={fontPx(22)} color={COLOR_TEXT['title']} />
+        <Plus size={fontPx(20)} color={COLOR_TEXT['title']} />
       </TouchableOpacity>
     )}
   </View>

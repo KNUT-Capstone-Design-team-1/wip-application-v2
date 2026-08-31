@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { styles } from '@features/pill_save/styles/PillSave';
 import PillSaveList from '@features/pill_save/components/organisms/PillSaveList';
 import { useLocalSearchParams } from 'expo-router';
@@ -30,6 +30,7 @@ const PillSaveFolderDetail = () => {
     handleCopy,
     handleSaveComplete,
     handleMultipleDelete,
+    handleBackgroundPress,
   } = usePillSaveFolderDetail(folderId);
 
   // 로딩 중일 때 조기 반환
@@ -38,54 +39,56 @@ const PillSaveFolderDetail = () => {
   }
 
   return (
-    <View style={styles.pillSaveRoot}>
-      <PillSaveCountHeader
-        count={pillSaveData.length}
-        isEditing={isEditing}
-        onToggleEdit={toggleEdit}
-        onSelectAll={handleSelectAll}
-        onMove={handleMove}
-        onCopy={handleCopy}
-        onDelete={handleMultipleDelete}
-        allSelected={allSelected}
-      />
-      <PillSaveList
-        pillSaveData={pillSaveData}
-        isEditing={isEditing}
-        selectedSeqs={selectedSeqs}
-        onItemSelect={handleItemSelect}
-        onLongPressItem={(seq) => {
-          if (!isEditing) {
-            toggleEdit();
-            handleItemSelect(seq);
-          }
-        }}
-      />
-
-      {isModalVisible && (
-        <FolderSelectModal
-          isVisible={isModalVisible}
-          onClose={() => setIsModalVisible(false)}
-          mode={modalMode}
-          sourceId={folderId}
-          items={selectedSeqs.map((seq) => {
-            const found = pillSaveData.find((p) => p.ITEM_SEQ === seq);
-            return { seq, name: found?.ITEM_NAME || '' };
-          })}
-          initialSelectedIds={[]}
-          onSaveComplete={handleSaveComplete}
-        />
-      )}
-
-      {isEditing && (
-        <PillSaveEditBottomBar
+    <Pressable style={{ flex: 1 }} onPress={handleBackgroundPress}>
+      <View style={styles.pillSaveRoot}>
+        <PillSaveCountHeader
+          count={pillSaveData.length}
+          isEditing={isEditing}
+          onToggleEdit={toggleEdit}
+          onSelectAll={handleSelectAll}
           onMove={handleMove}
           onCopy={handleCopy}
           onDelete={handleMultipleDelete}
-          selectedCount={selectedSeqs.length}
+          allSelected={allSelected}
         />
-      )}
-    </View>
+        <PillSaveList
+          pillSaveData={pillSaveData}
+          isEditing={isEditing}
+          selectedSeqs={selectedSeqs}
+          onItemSelect={handleItemSelect}
+          onLongPressItem={(seq) => {
+            if (!isEditing) {
+              toggleEdit();
+              handleItemSelect(seq);
+            }
+          }}
+        />
+
+        {isModalVisible && (
+          <FolderSelectModal
+            isVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            mode={modalMode}
+            sourceId={folderId}
+            items={selectedSeqs.map((seq) => {
+              const found = pillSaveData.find((p) => p.ITEM_SEQ === seq);
+              return { seq, name: found?.ITEM_NAME || '' };
+            })}
+            initialSelectedIds={[]}
+            onSaveComplete={handleSaveComplete}
+          />
+        )}
+
+        {isEditing && (
+          <PillSaveEditBottomBar
+            onMove={handleMove}
+            onCopy={handleCopy}
+            onDelete={handleMultipleDelete}
+            selectedCount={selectedSeqs.length}
+          />
+        )}
+      </View>
+    </Pressable>
   );
 };
 

@@ -5,15 +5,10 @@ import { bottomTabSize } from '@constants/size';
 export const styles = StyleSheet.create({
   pillSaveListWrapper: {
     flex: 1,
-    paddingHorizontal: px(8),
+    paddingHorizontal: px(12),
   },
   pillSaveListContent: {
-    paddingTop: px(8),
+    paddingTop: 0,
     paddingBottom: px(20) + bottomTabSize.height,
-  },
-  pillSaveColumnWrapper: {
-    justifyContent: 'flex-start',
-    gap: px(12),
-    marginBottom: px(12),
   },
 });

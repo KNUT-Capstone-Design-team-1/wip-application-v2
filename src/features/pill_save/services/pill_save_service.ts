@@ -67,7 +67,9 @@ const insertPillCombinations = async (
   db: SQLiteDatabase,
   combinations: { item: { seq: string; name: string }; targetId: number }[],
 ): Promise<void> => {
-  if (combinations.length === 0) return;
+  if (combinations.length === 0) {
+    return;
+  }
 
   const insertQuery = `INSERT INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
   for (const { item, targetId } of combinations) {
@@ -75,27 +77,27 @@ const insertPillCombinations = async (
   }
 };
 
-/**
- * 트랜잭션을 안전하게 실행하기 위한 헬퍼 함수
- */
 const runInTransaction = async (
   db: SQLiteDatabase,
   action: () => Promise<void>,
 ) => {
-  await db.runAsync('BEGIN TRANSACTION');
-
-  try {
-    await action();
-
-    await db.runAsync('COMMIT');
-  } catch (e: unknown) {
+  if (typeof db.withTransactionAsync === 'function') {
+    await db.withTransactionAsync(async () => {
+      await action();
+    });
+  } else {
+    await db.runAsync('BEGIN TRANSACTION');
     try {
-      await db.runAsync('ROLLBACK');
-    } catch (rollbackError) {
-      logServiceError('rollback transaction', rollbackError);
+      await action();
+      await db.runAsync('COMMIT');
+    } catch (e: unknown) {
+      try {
+        await db.runAsync('ROLLBACK');
+      } catch (rollbackError) {
+        logServiceError('rollback transaction', rollbackError);
+      }
+      throw e;
     }
-
-    throw e;
   }
 };
 
@@ -119,10 +121,15 @@ export const pillSaveService = {
       const db = await getDatabase();
 
       let orderClause = 'f.created_at ASC';
-      if (sortBy === 'createdAt_desc') orderClause = 'f.created_at DESC';
-      if (sortBy === 'name_asc') orderClause = 'f.name ASC';
-      if (sortBy === 'pillCount_desc')
+      if (sortBy === 'createdAt_desc') {
+        orderClause = 'f.created_at DESC';
+      }
+      if (sortBy === 'name_asc') {
+        orderClause = 'f.name ASC';
+      }
+      if (sortBy === 'pillCount_desc') {
         orderClause = 'pill_count DESC, f.created_at DESC';
+      }
 
       const selectFoldersQuery = `
         SELECT 
@@ -163,7 +170,9 @@ export const pillSaveService = {
    */
   async createFolder(name: string): Promise<number | null> {
     try {
-      if (!name.trim()) return null;
+      if (!name.trim()) {
+        return null;
+      }
 
       const db = await getDatabase();
       const insertQuery = `INSERT INTO saved_pill_folders (name) VALUES (?)`;
@@ -182,7 +191,9 @@ export const pillSaveService = {
    */
   async renameFolder(folderId: number, name: string): Promise<boolean> {
     try {
-      if (!name.trim()) return false;
+      if (!name.trim()) {
+        return false;
+      }
 
       const db = await getDatabase();
       const updateQuery = `UPDATE saved_pill_folders SET name = ? WHERE id = ?`;
@@ -221,7 +232,9 @@ export const pillSaveService = {
     folderId: number,
   ): Promise<boolean> {
     try {
-      if (!itemSeqs || itemSeqs.length === 0) return true;
+      if (!itemSeqs || itemSeqs.length === 0) {
+        return true;
+      }
 
       const db = await getDatabase();
       const placeholders = createPlaceholders(itemSeqs.length);
@@ -241,7 +254,9 @@ export const pillSaveService = {
    */
   async getPillSavedFolderIds(itemSeq: string): Promise<number[]> {
     try {
-      if (!itemSeq) return [];
+      if (!itemSeq) {
+        return [];
+      }
 
       const db = await getDatabase();
       const selectQuery = `SELECT folder_id FROM saved_pills WHERE item_seq = ?`;
@@ -266,7 +281,9 @@ export const pillSaveService = {
     folderIds: number[],
   ): Promise<void> {
     try {
-      if (!itemSeq || !itemName) return;
+      if (!itemSeq || !itemName) {
+        return;
+      }
 
       const db = await getDatabase();
 
@@ -274,7 +291,9 @@ export const pillSaveService = {
         const deleteQuery = `DELETE FROM saved_pills WHERE item_seq = ?`;
         await db.runAsync(deleteQuery, [itemSeq]);
 
-        if (folderIds.length === 0) return;
+        if (folderIds.length === 0) {
+          return;
+        }
 
         const insertQuery = `INSERT INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
         for (const folderId of folderIds) {
@@ -300,7 +319,9 @@ export const pillSaveService = {
     targetFolderIds: number[],
   ): Promise<void> {
     try {
-      if (items.length === 0 || targetFolderIds.length === 0) return;
+      if (items.length === 0 || targetFolderIds.length === 0) {
+        return;
+      }
 
       const db = await getDatabase();
       const itemSeqs = items.map((i) => i.seq);
@@ -317,11 +338,7 @@ export const pillSaveService = {
         )
         .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
 
-      const seqsToDelete = itemSeqs.filter((seq) =>
-        targetFolderIds.some(
-          (targetId) => !existingSet.has(`${targetId}_${seq}`),
-        ),
-      );
+      const seqsToDelete = itemSeqs;
 
       await runInTransaction(db, async () => {
         if (seqsToDelete.length > 0) {
@@ -346,7 +363,9 @@ export const pillSaveService = {
     targetFolderIds: number[],
   ): Promise<void> {
     try {
-      if (items.length === 0 || targetFolderIds.length === 0) return;
+      if (items.length === 0 || targetFolderIds.length === 0) {
+        return;
+      }
 
       const db = await getDatabase();
       const itemSeqs = items.map((i) => i.seq);
@@ -363,7 +382,9 @@ export const pillSaveService = {
         )
         .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
 
-      if (combinations.length === 0) return;
+      if (combinations.length === 0) {
+        return;
+      }
 
       await runInTransaction(db, async () => {
         await insertPillCombinations(db, combinations);
@@ -382,7 +403,9 @@ export const pillSaveService = {
     folderId: number,
   ): Promise<boolean> {
     try {
-      if (!itemSeq) return false;
+      if (!itemSeq) {
+        return false;
+      }
 
       const db = await getDatabase();
       const deleteQuery = `DELETE FROM saved_pills WHERE item_seq = ? AND folder_id = ?`;

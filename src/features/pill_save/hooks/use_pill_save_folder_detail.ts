@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { useToast } from '@hooks/use_toast';
+import { useCommonModalStore } from '@store/common_modal_store';
 
 // 특정 폴더 내부의 알약 목록 관리 및 다중 선택(이동/복사/삭제) 로직을 담당하는 커스텀 훅
 export const usePillSaveFolderDetail = (folderId: number) => {
@@ -48,6 +49,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
   const handleSelectAll = () => {
     if (allSelected) {
       setSelectedSeqs([]);
+      setIsEditing(false); // 전체 해제 시 편집 모드 종료
     } else {
       setSelectedSeqs(pillSaveData.map((item) => item.ITEM_SEQ));
     }
@@ -55,11 +57,18 @@ export const usePillSaveFolderDetail = (folderId: number) => {
 
   // 개별 알약 선택/해제 토글
   const handleItemSelect = (itemSeq: string) => {
-    setSelectedSeqs((prev) =>
-      prev.includes(itemSeq)
+    setSelectedSeqs((prev) => {
+      const isCurrentlySelected = prev.includes(itemSeq);
+      const next = isCurrentlySelected
         ? prev.filter((seq) => seq !== itemSeq)
-        : [...prev, itemSeq],
-    );
+        : [...prev, itemSeq];
+
+      if (isCurrentlySelected && next.length === 0) {
+        setIsEditing(false); // 모두 해제 시 편집 모드 종료
+      }
+
+      return next;
+    });
   };
 
   // 선택된 알약 다른 폴더로 이동 모드 진입
@@ -93,29 +102,46 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     loadData();
 
     showToast({
-      type: 'success',
+      type: 'default',
       message: modalMode === 'move' ? '이동되었습니다.' : '복사되었습니다.',
     });
   };
 
   // 선택된 알약들 일괄 삭제 처리
-  const handleMultipleDelete = async () => {
+  const handleMultipleDelete = () => {
     if (selectedSeqs.length === 0) {
       showToast({ type: 'error', message: '삭제할 알약을 선택해주세요.' });
       return;
     }
 
-    await pillSaveService.deleteMultiplePillsFromFolder(selectedSeqs, folderId);
+    useCommonModalStore.getState().showModal({
+      title: '알약 삭제',
+      message: '선택한 알약을 삭제 하시겠습니까?',
+      confirmStyle: 'destructive',
+      onConfirm: async () => {
+        await pillSaveService.deleteMultiplePillsFromFolder(
+          selectedSeqs,
+          folderId,
+        );
 
-    setPillSaveData((prev) =>
-      prev.filter((item) => !selectedSeqs.includes(item.ITEM_SEQ)),
-    );
+        setPillSaveData((prev) =>
+          prev.filter((item) => !selectedSeqs.includes(item.ITEM_SEQ)),
+        );
 
-    setSelectedSeqs([]);
-    setIsEditing(false);
+        setSelectedSeqs([]);
+        setIsEditing(false);
 
-    showToast({ type: 'success', message: '삭제되었습니다.' });
+        showToast({ type: 'default', message: '삭제되었습니다.' });
+      },
+    });
   };
+
+  // 배경 클릭 시 편집 모드 해제
+  const handleBackgroundPress = useCallback(() => {
+    if (isEditing) {
+      toggleEdit();
+    }
+  }, [isEditing, toggleEdit]);
 
   return {
     pillSaveData,
@@ -133,5 +159,6 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     handleCopy,
     handleSaveComplete,
     handleMultipleDelete,
+    handleBackgroundPress,
   };
 };

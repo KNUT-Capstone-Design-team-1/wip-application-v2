@@ -7,7 +7,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLOR_BG['surface'],
-    padding: px(16),
+    paddingLeft: 0,
+    paddingRight: px(16),
+    paddingVertical: px(12),
     borderRadius: px(16),
   },
   folderInfoContainer: {

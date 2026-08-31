@@ -106,14 +106,16 @@ export const usePillSaveFolders = () => {
 
     if (isAdding) {
       await pillSaveService.createFolder(trimmedName);
-      showToast({ type: 'success', message: '폴더가 추가되었습니다.' });
+      showToast({ type: 'default', message: '폴더가 추가되었습니다.' });
     } else if (isRenaming && targetId) {
       await pillSaveService.renameFolder(targetId, trimmedName);
-      showToast({ type: 'success', message: '폴더 이름이 변경되었습니다.' });
+      showToast({ type: 'default', message: '폴더 이름이 변경되었습니다.' });
     }
 
     setIsAdding(false);
     setIsRenaming(false);
+    setIsEditing(false);
+    setSelectedFolderIds([]);
     setFolderInputName('');
     loadFolders();
   }, [
@@ -176,7 +178,7 @@ export const usePillSaveFolders = () => {
         await Promise.all(
           selectedFolderIds.map((id) => pillSaveService.deleteFolder(id)),
         );
-        showToast({ type: 'success', message: '폴더가 삭제되었습니다.' });
+        showToast({ type: 'default', message: '폴더가 삭제되었습니다.' });
         setIsEditing(false);
         setSelectedFolderIds([]);
         loadFolders();
@@ -196,12 +198,29 @@ export const usePillSaveFolders = () => {
         return;
       }
 
-      setSelectedFolderIds((prev) =>
-        prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id],
-      );
+      setSelectedFolderIds((prev) => {
+        const isCurrentlySelected = prev.includes(id);
+        const next = isCurrentlySelected
+          ? prev.filter((fid) => fid !== id)
+          : [...prev, id];
+
+        if (isCurrentlySelected && next.length === 0) {
+          setIsEditing(false);
+        }
+
+        return next;
+      });
     },
     [folders, showToast],
   );
+
+  // 배경 클릭 시 편집 모드 해제
+  const handleBackgroundPress = useCallback(() => {
+    if (isEditing) {
+      setSelectedFolderIds([]);
+      setIsEditing(false);
+    }
+  }, [isEditing]);
 
   return {
     folders,
@@ -224,5 +243,6 @@ export const usePillSaveFolders = () => {
     toggleFolderSelection,
     handleOpenAddModal,
     handleCancelModal,
+    handleBackgroundPress,
   };
 };

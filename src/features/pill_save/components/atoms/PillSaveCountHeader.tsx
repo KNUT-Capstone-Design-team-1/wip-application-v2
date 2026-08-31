@@ -32,8 +32,10 @@ export const PillSaveCountHeader = ({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: px(16),
-      paddingHorizontal: px(20),
+      minHeight: px(24),
+      paddingTop: 0,
+      paddingBottom: px(12),
+      marginHorizontal: px(12),
       borderBottomWidth: 1,
       borderBottomColor: COLOR_LINE.border,
     }}

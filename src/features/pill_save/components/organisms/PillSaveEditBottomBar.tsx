@@ -8,7 +8,9 @@ import { IPillSaveEditBottomBarProps } from '@features/pill_save/types/pill_save
 
 // 액션 버튼 컴포넌트
 const ActionButton = memo(({ onPress, disabled, label, isDelete }: any) => {
-  if (!onPress) return null;
+  if (!onPress) {
+    return null;
+  }
 
   return (
     <TouchableOpacity
@@ -25,7 +27,7 @@ const ActionButton = memo(({ onPress, disabled, label, isDelete }: any) => {
     >
       <BaseText
         weight="bold"
-        size={14}
+        size={16}
         style={
           disabled
             ? styles.disabledText

@@ -8,8 +8,6 @@ export const styles = StyleSheet.create({
     height: px(82),
     borderWidth: px(1),
     borderColor: COLOR_LINE['border'],
-    borderTopLeftRadius: px(10),
-    borderTopRightRadius: px(10),
     marginBottom: px(4),
   },
 });

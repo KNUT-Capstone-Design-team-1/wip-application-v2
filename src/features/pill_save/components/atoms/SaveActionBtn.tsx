@@ -20,7 +20,7 @@ export const SaveActionBtn = ({
     {isSaving ? (
       <ActivityIndicator color={COLOR['white']} />
     ) : (
-      <BaseText size={16} weight="bold" style={styles.saveBtnText}>
+      <BaseText size={18} weight="bold" style={styles.saveBtnText}>
         저장하기
       </BaseText>
     )}

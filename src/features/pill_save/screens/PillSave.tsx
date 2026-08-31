@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { styles } from '@features/pill_save/styles/PillSave';
 
 import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
@@ -18,6 +18,7 @@ const PillSave = () => {
     isEditing,
     setIsEditing,
     selectedFolderIds,
+    setSelectedFolderIds,
     isAdding,
     isRenaming,
     folderInputName,
@@ -32,6 +33,7 @@ const PillSave = () => {
     toggleFolderSelection,
     handleOpenAddModal,
     handleCancelModal,
+    handleBackgroundPress,
   } = usePillSaveFolders();
 
   // 로딩 중일 때 조기 반환 (Early Return)
@@ -40,46 +42,48 @@ const PillSave = () => {
   }
 
   return (
-    <View style={styles.pillSaveRoot}>
-      <PillSaveHeader
-        isEditing={isEditing}
-        folderCount={folders.length}
-        onAddRequest={handleOpenAddModal}
-        onSortRequest={() => setIsSortModalVisible(true)}
-      />
-
-      <PillSaveFolderList
-        folders={folders}
-        isEditing={isEditing}
-        selectedFolderIds={selectedFolderIds}
-        setIsEditing={setIsEditing}
-        toggleFolderSelection={toggleFolderSelection}
-      />
-
-      <FolderSortModal
-        visible={isSortModalVisible}
-        onClose={() => setIsSortModalVisible(false)}
-        currentSort={sortOption}
-        onSortChange={handleSortChange}
-      />
-
-      <FolderEditModal
-        visible={isAdding || isRenaming}
-        isAdding={isAdding}
-        folderInputName={folderInputName}
-        setFolderInputName={setFolderInputName}
-        onCancel={handleCancelModal}
-        onConfirm={handleCreateOrRenameFolder}
-      />
-
-      {isEditing && (
-        <PillSaveEditBottomBar
-          onRename={handleRenameRequest}
-          onDelete={handleDeleteFolder}
-          selectedCount={selectedFolderIds.length}
+    <Pressable style={{ flex: 1 }} onPress={handleBackgroundPress}>
+      <View style={styles.pillSaveRoot}>
+        <PillSaveHeader
+          isEditing={isEditing}
+          folderCount={folders.length}
+          onAddRequest={handleOpenAddModal}
+          onSortRequest={() => setIsSortModalVisible(true)}
         />
-      )}
-    </View>
+
+        <PillSaveFolderList
+          folders={folders}
+          isEditing={isEditing}
+          selectedFolderIds={selectedFolderIds}
+          setIsEditing={setIsEditing}
+          toggleFolderSelection={toggleFolderSelection}
+        />
+
+        <FolderSortModal
+          visible={isSortModalVisible}
+          onClose={() => setIsSortModalVisible(false)}
+          currentSort={sortOption}
+          onSortChange={handleSortChange}
+        />
+
+        <FolderEditModal
+          visible={isAdding || isRenaming}
+          isAdding={isAdding}
+          folderInputName={folderInputName}
+          setFolderInputName={setFolderInputName}
+          onCancel={handleCancelModal}
+          onConfirm={handleCreateOrRenameFolder}
+        />
+
+        {isEditing && (
+          <PillSaveEditBottomBar
+            onRename={handleRenameRequest}
+            onDelete={handleDeleteFolder}
+            selectedCount={selectedFolderIds.length}
+          />
+        )}
+      </View>
+    </Pressable>
   );
 };
 

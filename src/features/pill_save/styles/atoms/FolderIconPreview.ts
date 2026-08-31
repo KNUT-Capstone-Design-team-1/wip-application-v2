@@ -48,4 +48,22 @@ export const styles = StyleSheet.create({
     height: '50%',
     flexDirection: 'row',
   },
+  ellipsisOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: '50%',
+    height: '50%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ellipsisText: {
+    color: '#FFF',
+    fontSize: px(14),
+    fontWeight: 'bold',
+    includeFontPadding: false,
+    lineHeight: px(14),
+    marginBottom: px(4),
+  },
 });

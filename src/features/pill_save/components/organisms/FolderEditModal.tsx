@@ -10,7 +10,6 @@ import { BaseText } from '@components/common/BaseText';
 import { styles as commonStyles } from '@components/common/styles/CommonModal';
 import { styles } from '@features/pill_save/styles/organisms/FolderEditModal';
 import { COLOR_TEXT } from '@constants/color';
-import { px } from '@utils/responsive';
 
 interface IFolderEditModalProps {
   visible: boolean;
@@ -46,18 +45,7 @@ export const FolderEditModal = ({
               </BaseText>
 
               <TextInput
-                style={[
-                  styles.input,
-                  {
-                    width: '100%',
-                    paddingHorizontal: 0,
-                    paddingVertical: px(12),
-                    color: COLOR_TEXT.title,
-                    fontSize: px(15),
-                    includeFontPadding: false,
-                    textAlignVertical: 'center',
-                  },
-                ]}
+                style={styles.input}
                 value={folderInputName}
                 onChangeText={setFolderInputName}
                 placeholder="폴더 이름 입력"

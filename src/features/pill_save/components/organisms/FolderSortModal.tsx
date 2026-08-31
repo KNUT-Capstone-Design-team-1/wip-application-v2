@@ -72,6 +72,7 @@ export const FolderSortModal = memo(
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     paddingVertical: px(16),
+                    paddingHorizontal: px(16),
                     borderBottomWidth: 1,
                     borderBottomColor: COLOR_LINE.border,
                   }}

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
@@ -8,12 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['surface'],
     paddingHorizontal: px(8),
   },
-  header: {
-    paddingBottom: px(12),
-    marginHorizontal: px(12),
-    borderBottomWidth: px(1),
-    borderBottomColor: COLOR_LINE['separator'],
-  },
+
   countText: {
     color: COLOR_TEXT['sub'],
   },

@@ -7,8 +7,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: px(12),
-    marginHorizontal: px(20),
+    paddingHorizontal: px(20),
+    paddingVertical: px(20),
     borderBottomWidth: 1,
     borderBottomColor: COLOR_LINE['border'],
   },
@@ -17,5 +17,6 @@ export const styles = StyleSheet.create({
   },
   closeBtn: {
     padding: px(4),
+    marginRight: -px(4),
   },
 });

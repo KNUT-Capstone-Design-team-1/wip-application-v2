@@ -31,10 +31,10 @@ export const PillSaveHeader = memo(
             style={{ flexDirection: 'row', alignItems: 'center', gap: px(16) }}
           >
             <TouchableOpacity onPress={onSortRequest}>
-              <ListFilter size={fontPx(24)} color={COLOR_TEXT.title} />
+              <ListFilter size={fontPx(20)} color={COLOR_TEXT.title} />
             </TouchableOpacity>
             <TouchableOpacity onPress={onAddRequest}>
-              <Plus size={fontPx(24)} color={COLOR_TEXT.title} />
+              <Plus size={fontPx(20)} color={COLOR_TEXT.title} />
             </TouchableOpacity>
           </View>
         )}

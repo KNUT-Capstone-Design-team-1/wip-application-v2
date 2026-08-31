@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['surface'],
     minHeight: px(190),
     paddingBottom: px(6),
+    overflow: 'hidden',
     shadowColor: COLOR['shadow'],
     shadowOffset: {
       width: 0,

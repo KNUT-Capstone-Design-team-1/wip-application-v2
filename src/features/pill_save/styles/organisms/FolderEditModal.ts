@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   overlay: {
@@ -20,9 +21,15 @@ export const styles = StyleSheet.create({
   input: {
     borderBottomWidth: 1,
     borderBottomColor: COLOR_TEXT.disabled,
-    paddingVertical: 8,
+    paddingVertical: px(12),
+    paddingHorizontal: 0,
     marginBottom: 20,
     color: COLOR_TEXT.title,
+    width: '100%',
+    fontSize: px(15),
+    fontFamily: 'Pretendard',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',

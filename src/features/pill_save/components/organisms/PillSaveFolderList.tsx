@@ -75,7 +75,7 @@ const PillSaveFolderList = ({
         style={{
           height: 1,
           backgroundColor: COLOR_LINE.border,
-          marginVertical: px(4),
+          marginVertical: px(0),
         }}
       />
     ),
@@ -86,7 +86,11 @@ const PillSaveFolderList = ({
     <FlashList
       data={folders}
       keyExtractor={(item) => item.id.toString()}
-      contentContainerStyle={{ padding: px(20), paddingBottom: px(100) }}
+      contentContainerStyle={{
+        paddingHorizontal: px(12),
+        paddingTop: 0,
+        paddingBottom: px(100),
+      }}
       renderItem={renderFolderItem}
       ItemSeparatorComponent={renderSeparator}
     />
