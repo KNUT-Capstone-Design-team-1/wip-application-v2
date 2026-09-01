@@ -56,7 +56,12 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['btnPrimary'],
   },
   destructiveButton: {
-    backgroundColor: COLOR['error'],
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLOR['error'],
+  },
+  destructiveButtonText: {
+    color: COLOR['error'],
   },
   cancelButtonText: {
     color: COLOR_TEXT['white'],

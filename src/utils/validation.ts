@@ -15,11 +15,16 @@ export const validateFolderName = (
     };
   }
 
-  const isValidName = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s\-_]+$/.test(trimmedName);
+  // 영문, 숫자, 한글, 공백 및 SQLite에서 문제되지 않는 일반적인 특수문자 허용 (따옴표, 세미콜론 등은 제외)
+  const isValidName =
+    /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s\-_()\[\]{}<>~!@#$%^&*+=,./?|]+$/.test(
+      trimmedName,
+    );
+
   if (!isValidName) {
     return {
       isValid: false,
-      message: '폴더 이름에 특수문자는 사용할 수 없습니다.',
+      message: '폴더 이름에 허용되지 않는 특수문자가 포함되어 있습니다.',
     };
   }
 

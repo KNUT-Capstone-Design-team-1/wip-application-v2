@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Modal, FlatList, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Modal,
+  FlatList,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '@features/pill_save/styles/organisms/FolderSelectModal';
 import { px } from '@utils/responsive';
@@ -44,64 +51,72 @@ const FolderSelectModal = (props: IFolderSelectModalProps) => {
       animationType="slide"
       onRequestClose={handleClose}
     >
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={handleClose}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.bottomSheet} onStartShouldSetResponder={() => true}>
-          <FolderSelectModalHeader
-            title={
-              props.mode === 'move'
-                ? '이동할 폴더 선택'
-                : props.mode === 'copy'
-                  ? '복사할 폴더 선택'
-                  : '보관함 선택'
-            }
-            onAddFolder={() => setIsAdding(true)}
-            hideAddButton={props.mode === 'move' || props.mode === 'copy'}
-          />
-
-          <View style={styles.contentContainer}>
-            <FlatList
-              data={folders}
-              keyExtractor={(item) => item.id.toString()}
-              style={styles.list}
-              contentContainerStyle={{ paddingBottom: px(16) }}
-              renderItem={({ item }) => (
-                <FolderSelectListItem
-                  item={item}
-                  isSelected={selectedIds.includes(item.id)}
-                  isCurrentLocation={
-                    (props.mode === 'move' || props.mode === 'copy') &&
-                    item.id === props.sourceId
-                  }
-                  onPress={() => toggleFolder(item.id)}
-                />
-              )}
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={handleClose}
+        >
+          <View
+            style={styles.bottomSheet}
+            onStartShouldSetResponder={() => true}
+          >
+            <FolderSelectModalHeader
+              title={
+                props.mode === 'move'
+                  ? '이동할 폴더 선택'
+                  : props.mode === 'copy'
+                    ? '복사할 폴더 선택'
+                    : '보관함 선택'
+              }
+              onAddFolder={() => setIsAdding(true)}
+              hideAddButton={props.mode === 'move' || props.mode === 'copy'}
             />
 
-            {props.mode !== 'move' && props.mode !== 'copy' && (
-              <AddFolderSection
-                isAdding={isAdding}
-                setIsAdding={setIsAdding}
-                newFolderName={newFolderName}
-                setNewFolderName={setNewFolderName}
-                handleCreateFolder={handleCreateFolder}
+            <View style={styles.contentContainer}>
+              <FlatList
+                data={folders}
+                keyExtractor={(item) => item.id.toString()}
+                style={styles.list}
+                contentContainerStyle={styles.listContent}
+                renderItem={({ item }) => (
+                  <FolderSelectListItem
+                    item={item}
+                    isSelected={selectedIds.includes(item.id)}
+                    isCurrentLocation={
+                      (props.mode === 'move' || props.mode === 'copy') &&
+                      item.id === props.sourceId
+                    }
+                    onPress={() => toggleFolder(item.id)}
+                  />
+                )}
               />
-            )}
 
-            <View
-              style={[
-                styles.footerContainer,
-                { paddingBottom: Math.max(insets.bottom, px(20)) },
-              ]}
-            >
-              <SaveActionBtn isSaving={isSaving} onPress={handleSave} />
+              {props.mode !== 'move' && props.mode !== 'copy' && (
+                <AddFolderSection
+                  isAdding={isAdding}
+                  setIsAdding={setIsAdding}
+                  newFolderName={newFolderName}
+                  setNewFolderName={setNewFolderName}
+                  handleCreateFolder={handleCreateFolder}
+                />
+              )}
+
+              <View
+                style={[
+                  styles.footerContainer,
+                  { paddingBottom: Math.max(insets.bottom, px(20)) },
+                ]}
+              >
+                <SaveActionBtn isSaving={isSaving} onPress={handleSave} />
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

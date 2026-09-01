@@ -102,6 +102,10 @@ export const useFolderSelectModal = ({
         return prev.filter((fid) => fid !== id);
       }
 
+      if (mode === 'move') {
+        return [id];
+      }
+
       const isMoveOrCopy = mode !== 'save';
       const validation = validateFolderSelectionLimit(
         prev.length,
@@ -141,6 +145,10 @@ export const useFolderSelectModal = ({
     await loadFolders();
 
     setSelectedIds((prev) => {
+      if (mode === 'move') {
+        return [newId];
+      }
+
       const isMoveOrCopy = mode !== 'save';
       const selectionValidation = validateFolderSelectionLimit(
         prev.length,

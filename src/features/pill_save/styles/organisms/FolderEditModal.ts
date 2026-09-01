@@ -42,4 +42,15 @@ export const styles = StyleSheet.create({
   confirmText: {
     color: COLOR_TEXT.title,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  containerOverride: {
+    position: 'relative',
+    flex: 1,
+    top: undefined,
+    bottom: undefined,
+    left: undefined,
+    right: undefined,
+  },
 });

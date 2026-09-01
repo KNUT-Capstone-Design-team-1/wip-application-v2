@@ -123,7 +123,12 @@ const CommonModal = () => {
               : styles.confirmButton,
             options.confirmButtonStyle,
           ]}
-          textStyle={[styles.confirmButtonText, options.confirmButtonTextStyle]}
+          textStyle={[
+            options.confirmStyle === 'destructive'
+              ? styles.destructiveButtonText
+              : styles.confirmButtonText,
+            options.confirmButtonTextStyle,
+          ]}
           text={options.confirmText}
           onPress={handleConfirm}
         />

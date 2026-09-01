@@ -26,4 +26,10 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
   },
+  listContent: {
+    paddingBottom: px(16),
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
 });

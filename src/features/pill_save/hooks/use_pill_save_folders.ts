@@ -23,7 +23,8 @@ export const usePillSaveFolders = () => {
   const [loading, setLoading] = useState(true);
 
   // 정렬 옵션 상태
-  const [sortOption, setSortOption] = useState<FolderSortOption>('name_asc');
+  const [sortOption, setSortOption] =
+    useState<FolderSortOption>('createdAt_desc');
   const [isSortModalVisible, setIsSortModalVisible] = useState(false);
 
   // 편집 모드 상태
