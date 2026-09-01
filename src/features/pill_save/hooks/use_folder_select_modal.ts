@@ -48,7 +48,10 @@ export const useFolderSelectModal = ({
     let data = await pillSaveService.getFolders();
 
     // 이동이나 복사 모드일 때 현재 폴더(sourceId)를 최상단에 고정
-    if ((mode === 'move' || mode === 'copy') && sourceId !== undefined) {
+    const isMoveOrCopyMode = mode === 'move' || mode === 'copy';
+    const hasSourceId = sourceId !== undefined;
+
+    if (isMoveOrCopyMode && hasSourceId) {
       const sourceFolder = data.find((f) => f.id === sourceId);
       if (sourceFolder) {
         data = [sourceFolder, ...data.filter((f) => f.id !== sourceId)];
@@ -91,7 +94,11 @@ export const useFolderSelectModal = ({
 
   // 폴더 선택/해제 토글
   const toggleFolder = (id: number) => {
-    if (isSaving || ((mode === 'move' || mode === 'copy') && id === sourceId)) {
+    const isMoveOrCopyMode = mode === 'move' || mode === 'copy';
+    const isSourceFolder = isMoveOrCopyMode && id === sourceId;
+    const shouldBlockToggle = isSaving || isSourceFolder;
+
+    if (shouldBlockToggle) {
       return;
     }
 
@@ -166,9 +173,59 @@ export const useFolderSelectModal = ({
     setNewFolderName('');
   };
 
+  // 폴더 저장/이동/복사 작업을 실행하고 결과를 반환하는 함수
+  const executeSaveOperation = async () => {
+    let alreadyExistsItems: { seq: string; name: string }[] = [];
+
+    const isMoveOperation = mode === 'move' && items && sourceId !== undefined;
+    const isCopyOperation = mode === 'copy' && items;
+    const isSaveOperation = mode === 'save' && itemSeq && itemName;
+
+    if (isMoveOperation) {
+      const result = await pillSaveService.movePillsToFolders(
+        items,
+        sourceId,
+        selectedIds,
+      );
+      alreadyExistsItems = result.alreadyExistsItems;
+    } else if (isCopyOperation) {
+      const result = await pillSaveService.copyPillsToFolders(
+        items,
+        selectedIds,
+      );
+      alreadyExistsItems = result.alreadyExistsItems;
+    } else if (isSaveOperation) {
+      await pillSaveService.savePillToFolders(itemSeq, itemName, selectedIds);
+    }
+
+    return alreadyExistsItems;
+  };
+
+  // 중복된 알약에 대한 토스트 메시지를 표시하는 함수
+  const showAlreadyExistsToast = (
+    alreadyExistsItems: { seq: string; name: string }[],
+  ) => {
+    if (alreadyExistsItems.length === 0) return;
+
+    const message =
+      alreadyExistsItems.length === 1
+        ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
+        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
+
+    setTimeout(() => {
+      showToast({
+        type: 'default',
+        message,
+      });
+    }, 300);
+  };
+
   // 선택된 폴더들에 알약 저장/이동/복사 처리
   const handleSave = async () => {
-    if (selectedIds.length === 0 && mode !== 'save') {
+    const isNoFolderSelectedForMoveOrCopy =
+      selectedIds.length === 0 && mode !== 'save';
+
+    if (isNoFolderSelectedForMoveOrCopy) {
       showToast({
         type: 'error',
         message:
@@ -199,17 +256,12 @@ export const useFolderSelectModal = ({
     setIsSaving(true);
 
     try {
-      if (mode === 'move' && items && sourceId !== undefined) {
-        await pillSaveService.movePillsToFolders(items, sourceId, selectedIds);
-      } else if (mode === 'copy' && items) {
-        await pillSaveService.copyPillsToFolders(items, selectedIds);
-      } else if (mode === 'save' && itemSeq && itemName) {
-        await pillSaveService.savePillToFolders(itemSeq, itemName, selectedIds);
-      }
+      const alreadyExistsItems = await executeSaveOperation();
 
       onSaveComplete(selectedIds);
-
       onClose();
+
+      showAlreadyExistsToast(alreadyExistsItems);
     } catch {
       showToast({
         type: 'error',

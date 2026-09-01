@@ -77,6 +77,43 @@ const insertPillCombinations = async (
   }
 };
 
+// 추가할 알약과 이미 존재하는 알약을 분리하는 헬퍼 함수
+const processPillCombinations = async (
+  db: SQLiteDatabase,
+  items: { seq: string; name: string }[],
+  targetFolderIds: number[],
+) => {
+  const itemSeqs = items.map((i) => i.seq);
+  const existingSet = await getExistingFolderPillSet(
+    db,
+    targetFolderIds,
+    itemSeqs,
+  );
+
+  const combinations = items
+    .flatMap((item) => targetFolderIds.map((targetId) => ({ item, targetId })))
+    .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
+
+  const existingCombinations = items
+    .flatMap((item) => targetFolderIds.map((targetId) => ({ item, targetId })))
+    .filter((c) => existingSet.has(`${c.targetId}_${c.item.seq}`));
+
+  const alreadyExistsItemsMap = new Map<
+    string,
+    { seq: string; name: string }
+  >();
+  existingCombinations.forEach((c) =>
+    alreadyExistsItemsMap.set(c.item.seq, c.item),
+  );
+
+  return {
+    itemSeqs,
+    combinations,
+    alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()),
+    alreadyExistsItemsMap,
+  };
+};
+
 const runInTransaction = async (
   db: SQLiteDatabase,
   action: () => Promise<void>,
@@ -317,28 +354,24 @@ export const pillSaveService = {
     items: { seq: string; name: string }[],
     sourceFolderId: number,
     targetFolderIds: number[],
-  ): Promise<void> {
+  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }> {
     try {
       if (items.length === 0 || targetFolderIds.length === 0) {
-        return;
+        return { alreadyExistsItems: [] };
       }
 
       const db = await getDatabase();
-      const itemSeqs = items.map((i) => i.seq);
-
-      const existingSet = await getExistingFolderPillSet(
-        db,
-        targetFolderIds,
+      const {
         itemSeqs,
+        combinations,
+        alreadyExistsItems,
+        alreadyExistsItemsMap,
+      } = await processPillCombinations(db, items, targetFolderIds);
+
+      const alreadyExistsSeqs = new Set(alreadyExistsItemsMap.keys());
+      const seqsToDelete = itemSeqs.filter(
+        (seq) => !alreadyExistsSeqs.has(seq),
       );
-
-      const combinations = items
-        .flatMap((item) =>
-          targetFolderIds.map((targetId) => ({ item, targetId })),
-        )
-        .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
-
-      const seqsToDelete = itemSeqs;
 
       await runInTransaction(db, async () => {
         if (seqsToDelete.length > 0) {
@@ -349,6 +382,8 @@ export const pillSaveService = {
 
         await insertPillCombinations(db, combinations);
       });
+
+      return { alreadyExistsItems };
     } catch (e) {
       logServiceError('move pills', e);
       throw e;
@@ -361,34 +396,23 @@ export const pillSaveService = {
   async copyPillsToFolders(
     items: { seq: string; name: string }[],
     targetFolderIds: number[],
-  ): Promise<void> {
+  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }> {
     try {
       if (items.length === 0 || targetFolderIds.length === 0) {
-        return;
+        return { alreadyExistsItems: [] };
       }
 
       const db = await getDatabase();
-      const itemSeqs = items.map((i) => i.seq);
+      const { combinations, alreadyExistsItems } =
+        await processPillCombinations(db, items, targetFolderIds);
 
-      const existingSet = await getExistingFolderPillSet(
-        db,
-        targetFolderIds,
-        itemSeqs,
-      );
-
-      const combinations = items
-        .flatMap((item) =>
-          targetFolderIds.map((targetId) => ({ item, targetId })),
-        )
-        .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
-
-      if (combinations.length === 0) {
-        return;
+      if (combinations.length > 0) {
+        await runInTransaction(db, async () => {
+          await insertPillCombinations(db, combinations);
+        });
       }
 
-      await runInTransaction(db, async () => {
-        await insertPillCombinations(db, combinations);
-      });
+      return { alreadyExistsItems };
     } catch (e) {
       logServiceError('copy pills', e);
       throw e;

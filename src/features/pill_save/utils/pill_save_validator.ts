@@ -27,11 +27,12 @@ export const validateFolderCreation = (
     };
   }
 
-  const isDuplicateName = folders.some(
-    (f) => f.name === trimmedName && f.id !== targetId,
-  );
-  if (isDuplicateName) {
-    return { isValid: false, errorMessage: '이미 존재하는 폴더 이름입니다.' };
+  for (const f of folders) {
+    const isDuplicateTarget = f.name === trimmedName && f.id !== targetId;
+
+    if (isDuplicateTarget) {
+      return { isValid: false, errorMessage: '이미 존재하는 폴더 이름입니다.' };
+    }
   }
 
   const nameValidation = baseValidateFolderName(trimmedName);
@@ -50,17 +51,18 @@ export const validatePillLimit = (
   selectedIds: number[],
   itemsToAddCount: number,
 ): { isValid: boolean; errorMessage: string } => {
-  const exceededFolder = folders.find(
-    (f) =>
-      selectedIds.includes(f.id) &&
-      f.pill_count + itemsToAddCount > MAX_PILL_COUNT_PER_FOLDER,
-  );
+  for (const f of folders) {
+    const isSelected = selectedIds.includes(f.id);
 
-  if (exceededFolder) {
-    return {
-      isValid: false,
-      errorMessage: `알약 보관함 폴더 내 알약 개수는 최대 ${MAX_PILL_COUNT_PER_FOLDER}개입니다. (${exceededFolder.name})`,
-    };
+    const willExceedLimit =
+      f.pill_count + itemsToAddCount > MAX_PILL_COUNT_PER_FOLDER;
+
+    if (isSelected && willExceedLimit) {
+      return {
+        isValid: false,
+        errorMessage: `알약 보관함 폴더 내 알약 개수는 최대 ${MAX_PILL_COUNT_PER_FOLDER}개입니다. (${f.name})`,
+      };
+    }
   }
 
   return { isValid: true, errorMessage: '' };
