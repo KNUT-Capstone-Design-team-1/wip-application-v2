@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import { ISavedPillFolder } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
-import { validateFolderName } from '@utils/validation';
-
+import {
+  validateFolderCreation,
+  validateFolderSelectionLimit,
+  validatePillLimit,
+} from '../utils/pill_save_validator';
 interface UseFolderSelectModalProps {
   isVisible: boolean;
   itemSeq?: string;
@@ -92,38 +95,40 @@ export const useFolderSelectModal = ({
       return;
     }
 
-    if (mode === 'move') {
-      setSelectedIds((prev) => (prev.includes(id) ? [] : [id]));
-    } else {
-      setSelectedIds((prev) =>
-        prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id],
+    setSelectedIds((prev) => {
+      const isAlreadySelected = prev.includes(id);
+
+      if (isAlreadySelected) {
+        return prev.filter((fid) => fid !== id);
+      }
+
+      const isMoveOrCopy = mode !== 'save';
+      const validation = validateFolderSelectionLimit(
+        prev.length,
+        isMoveOrCopy,
       );
-    }
+
+      if (!validation.isValid) {
+        showToast({ type: 'error', message: validation.errorMessage });
+        return prev;
+      }
+
+      return [...prev, id];
+    });
   };
 
   // 새 폴더 생성
   const handleCreateFolder = async () => {
     const trimmedName = newFolderName.trim();
 
-    if (!trimmedName || isSaving) {
+    if (isSaving) {
       return;
     }
 
-    const isDuplicateName = folders.some((f) => f.name === trimmedName);
-
-    if (isDuplicateName) {
-      showToast({ type: 'error', message: '이미 존재하는 폴더 이름입니다.' });
-      return;
-    }
-
-    const validation = validateFolderName(trimmedName);
+    const validation = validateFolderCreation(folders, trimmedName, true);
 
     if (!validation.isValid) {
-      showToast({
-        type: 'error',
-        message: validation.message,
-      });
-
+      showToast({ type: 'error', message: validation.errorMessage });
       return;
     }
 
@@ -135,7 +140,20 @@ export const useFolderSelectModal = ({
 
     await loadFolders();
 
-    setSelectedIds((prev) => [...prev, newId]);
+    setSelectedIds((prev) => {
+      const isMoveOrCopy = mode !== 'save';
+      const selectionValidation = validateFolderSelectionLimit(
+        prev.length,
+        isMoveOrCopy,
+      );
+
+      if (!selectionValidation.isValid) {
+        showToast({ type: 'error', message: selectionValidation.errorMessage });
+        return prev;
+      }
+
+      return [...prev, newId];
+    });
     setIsAdding(false);
     setNewFolderName('');
   };
@@ -151,6 +169,22 @@ export const useFolderSelectModal = ({
             : '복사할 폴더를 선택해주세요.',
       });
 
+      return;
+    }
+
+    // 알약 최대 개수 밸리데이션
+    const itemsToAddCount = items ? items.length : 1;
+    const pillLimitValidation = validatePillLimit(
+      folders,
+      selectedIds,
+      itemsToAddCount,
+    );
+
+    if (!pillLimitValidation.isValid) {
+      showToast({
+        type: 'error',
+        message: pillLimitValidation.errorMessage,
+      });
       return;
     }
 

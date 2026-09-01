@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import { ISavedPillFolder } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
-import { validateFolderName } from '@utils/validation';
+import { validateFolderCreation } from '../utils/pill_save_validator';
 import { useCommonModalStore } from '@store/common_modal_store';
 import { useFocusEffect, useNavigation } from 'expo-router';
 
@@ -87,20 +87,15 @@ export const usePillSaveFolders = () => {
     const trimmedName = folderInputName.trim();
     const targetId = selectedFolderIds[selectedFolderIds.length - 1];
 
-    // 중복 이름 검사
-    const isDuplicateName = folders.some(
-      (f) => f.name === trimmedName && f.id !== targetId,
+    const validation = validateFolderCreation(
+      folders,
+      trimmedName,
+      isAdding,
+      targetId,
     );
 
-    if (isDuplicateName) {
-      showToast({ type: 'error', message: '이미 존재하는 폴더 이름입니다.' });
-      return;
-    }
-
-    // 이름 유효성 검사
-    const validation = validateFolderName(trimmedName);
     if (!validation.isValid) {
-      showToast({ type: 'error', message: validation.message });
+      showToast({ type: 'error', message: validation.errorMessage });
       return;
     }
 
