@@ -100,11 +100,6 @@ export const usePillSaveFolderDetail = (folderId: number) => {
 
     setSelectedSeqs([]);
     loadData();
-
-    showToast({
-      type: 'default',
-      message: modalMode === 'move' ? '이동되었습니다.' : '복사되었습니다.',
-    });
   };
 
   // 선택된 알약들 일괄 삭제 처리

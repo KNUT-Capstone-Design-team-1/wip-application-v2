@@ -212,12 +212,10 @@ export const useFolderSelectModal = ({
         ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
         : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
 
-    setTimeout(() => {
-      showToast({
-        type: 'default',
-        message,
-      });
-    }, 300);
+    showToast({
+      type: 'default',
+      message,
+    });
   };
 
   // 선택된 폴더들에 알약 저장/이동/복사 처리
@@ -261,13 +259,21 @@ export const useFolderSelectModal = ({
       onSaveComplete(selectedIds);
       onClose();
 
-      showAlreadyExistsToast(alreadyExistsItems);
+      if (alreadyExistsItems.length > 0) {
+        showAlreadyExistsToast(alreadyExistsItems);
+      } else {
+        if (mode === 'move') {
+          showToast({ type: 'default', message: '이동되었습니다.' });
+        } else if (mode === 'copy') {
+          showToast({ type: 'default', message: '복사되었습니다.' });
+        }
+      }
     } catch {
       showToast({
         type: 'error',
         message: '알약 저장 중 오류가 발생했습니다.',
       });
-
+    } finally {
       setIsSaving(false);
     }
   };
