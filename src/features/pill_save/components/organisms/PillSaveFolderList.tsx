@@ -1,11 +1,10 @@
+import { styles } from '../../styles/organisms/PillSaveFolderList';
 import React, { useCallback, memo } from 'react';
 import { View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { px } from '@utils/responsive';
 import { PillSaveFolderItem } from '@features/pill_save/components/molecules/PillSaveFolderItem';
 import { IPillSaveFolderListProps } from '@features/pill_save/types/pill_save_type';
-import { COLOR_LINE } from '@constants/color';
 
 // 폴더 보관함 화면의 리스트 컴포넌트
 const PillSaveFolderList = ({
@@ -70,15 +69,7 @@ const PillSaveFolderList = ({
 
   // 리스트 아이템 사이 구분선(separator) 렌더링
   const renderSeparator = useCallback(
-    () => (
-      <View
-        style={{
-          height: 1,
-          backgroundColor: COLOR_LINE.border,
-          marginVertical: px(0),
-        }}
-      />
-    ),
+    () => <View style={styles.separator} />,
     [],
   );
 
@@ -86,11 +77,7 @@ const PillSaveFolderList = ({
     <FlashList
       data={folders}
       keyExtractor={(item) => item.id.toString()}
-      contentContainerStyle={{
-        paddingHorizontal: px(12),
-        paddingTop: 0,
-        paddingBottom: px(100),
-      }}
+      contentContainerStyle={styles.listContent}
       renderItem={renderFolderItem}
       ItemSeparatorComponent={renderSeparator}
     />

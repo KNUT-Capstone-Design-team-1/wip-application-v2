@@ -29,4 +29,11 @@ export const styles = StyleSheet.create({
   label: {
     color: COLOR_TEXT['disabled'],
   },
+  maskContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gradient: { flex: 1 },
 });

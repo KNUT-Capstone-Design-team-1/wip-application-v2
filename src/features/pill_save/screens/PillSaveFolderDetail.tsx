@@ -39,7 +39,7 @@ const PillSaveFolderDetail = () => {
   }
 
   return (
-    <Pressable style={{ flex: 1 }} onPress={handleBackgroundPress}>
+    <Pressable style={styles.container} onPress={handleBackgroundPress}>
       <View style={styles.pillSaveRoot}>
         <PillSaveCountHeader
           count={pillSaveData.length}

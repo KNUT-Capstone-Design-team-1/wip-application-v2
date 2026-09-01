@@ -24,10 +24,7 @@ const PillSaveContent = ({
       <PillImage uri={saveData.ITEM_IMAGE} />
 
       {isEditing && (
-        <SelectionRadioButton
-          isSelected={isSelected}
-          style={{ position: 'absolute', top: 4, right: 4 }}
-        />
+        <SelectionRadioButton isSelected={isSelected} style={styles.checkbox} />
       )}
 
       <PillInfo pill={saveData} />

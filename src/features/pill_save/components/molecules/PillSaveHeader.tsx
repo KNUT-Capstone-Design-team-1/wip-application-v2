@@ -27,9 +27,7 @@ export const PillSaveHeader = memo(
           전체 폴더 {folderCount}개
         </BaseText>
         {!isEditing && (
-          <View
-            style={{ flexDirection: 'row', alignItems: 'center', gap: px(16) }}
-          >
+          <View style={styles.iconContainer}>
             <TouchableOpacity onPress={onSortRequest}>
               <ListFilter size={fontPx(20)} color={COLOR_TEXT.title} />
             </TouchableOpacity>

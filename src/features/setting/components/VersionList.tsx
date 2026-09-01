@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import * as Application from 'expo-application';
-import { COLOR_TEXT, COLOR, COLOR_LINE } from '@constants/color';
-import { px } from '@utils/responsive';
+import { COLOR } from '@constants/color';
 import { BaseText } from '@components/common/BaseText';
 import { useDatabaseVersions } from '../hooks/useDatabaseVersions';
 import { VersionItem } from './VersionItem';
+import { styles } from '../styles/components/VersionList';
 
 // 앱 및 데이터베이스 버전 정보를 렌더링하는 컴포넌트
 export const VersionList = () => {
@@ -56,23 +56,3 @@ export const VersionList = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    paddingVertical: px(40),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyContainer: {
-    paddingVertical: px(20),
-    alignItems: 'center',
-  },
-  emptyText: {
-    color: COLOR_TEXT['disabled'],
-  },
-  separator: {
-    height: 1,
-    backgroundColor: COLOR_LINE['border'],
-    marginHorizontal: px(8),
-  },
-});

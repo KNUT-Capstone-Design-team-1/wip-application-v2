@@ -55,14 +55,7 @@ const PillIdentificationSearchForm = memo(
           );
         case 'other':
           return (
-            <View
-              key={key}
-              style={{
-                paddingBottom: px(16),
-                backgroundColor: COLOR['white'],
-                paddingHorizontal: px(20),
-              }}
-            >
+            <View key={key} style={styles.otherSection}>
               <IdentificationSection title={section.title}>
                 <MarkSection />
               </IdentificationSection>
@@ -74,7 +67,7 @@ const PillIdentificationSearchForm = memo(
     };
 
     return (
-      <View style={{ flex: 1, backgroundColor: COLOR_BG['base'] }}>
+      <View style={styles.container}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContentContainer}

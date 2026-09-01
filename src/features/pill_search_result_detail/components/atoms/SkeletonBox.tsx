@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import { Animated } from 'react-native';
+import { styles } from '../../styles/components/atoms/SkeletonBox';
 
 interface ISkeletonBoxProps {
   width?: number | string;
@@ -48,11 +49,5 @@ const SkeletonBox = ({
     />
   );
 };
-
-const styles = StyleSheet.create({
-  skeleton: {
-    backgroundColor: '#E0E0E0',
-  },
-});
 
 export default SkeletonBox;

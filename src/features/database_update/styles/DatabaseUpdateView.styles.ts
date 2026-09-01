@@ -74,4 +74,5 @@ export const styles = StyleSheet.create({
     color: COLOR_TEXT['white'],
     marginBottom: px(4),
   },
+  logoImage: { width: '38%' },
 });

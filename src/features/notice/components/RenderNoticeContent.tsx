@@ -2,7 +2,7 @@ import React from 'react';
 import { Image } from '@components/common/CustomImage';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { px } from '@utils/responsive';
+import { styles } from '../styles/RenderNoticeContent';
 
 // Base64 문자열 탐지용 정규식 (예: {data:image/png;base64,...})
 const base64Regex = /^data:image\/[a-zA-Z]+;base64,/;
@@ -13,7 +13,7 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
   const lines = contents.split(/\n|\\n/);
 
   return (
-    <View style={{ flexDirection: 'column', gap: px(8) }}>
+    <View style={styles.container}>
       {lines.map((line, index) => {
         const trimmed = line.trim();
 
@@ -33,12 +33,7 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
             <Image
               key={index}
               source={{ uri: imgSrc }}
-              style={{
-                width: px(200),
-                height: px(200),
-                borderRadius: px(8),
-                alignSelf: 'center',
-              }}
+              style={styles.image}
               contentFit="cover"
             />
           );
@@ -46,14 +41,7 @@ const RenderNoticeContent = ({ contents }: { contents: string }) => {
 
         // 일반 텍스트일 경우
         return (
-          <BaseText
-            key={index}
-            size={16}
-            weight="medium"
-            style={{
-              lineHeight: px(22),
-            }}
-          >
+          <BaseText key={index} size={16} weight="medium" style={styles.text}>
             {trimmed}
           </BaseText>
         );

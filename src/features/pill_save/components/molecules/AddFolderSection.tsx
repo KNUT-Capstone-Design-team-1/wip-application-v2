@@ -34,7 +34,7 @@ export const AddFolderSection = ({
           onPress={handleCreateFolder}
           style={styles.addFolderConfirmBtn}
         >
-          <BaseText size={14} weight="bold" style={{ color: COLOR['white'] }}>
+          <BaseText size={14} weight="bold" style={styles.buttonText}>
             추가
           </BaseText>
         </TouchableOpacity>

@@ -91,7 +91,7 @@ export const GlobalNativeAd = ({ banner = false }: GlobalNativeAdProps) => {
                   광고
                 </BaseText>
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={styles.headlineWrapper}>
                 <NativeAsset assetType={NativeAssetType.HEADLINE}>
                   <BaseText
                     size={14}

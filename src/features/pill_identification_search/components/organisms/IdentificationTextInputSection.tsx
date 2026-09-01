@@ -36,13 +36,7 @@ const IdentificationTextInputSection = memo(
     }
 
     return (
-      <View
-        style={{
-          marginBottom: px(2),
-          backgroundColor: COLOR['white'],
-          paddingHorizontal: px(20),
-        }}
-      >
+      <View style={styles.container}>
         <IdentificationSection
           title={section.title}
           direction="row"
@@ -121,7 +115,7 @@ const TextInputWrapper = ({
   const value = useSearchIdStore((state) => state[storeKey] as string);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.flex1}>
       <Input
         placeholder={placeholder}
         value={value}

@@ -86,4 +86,5 @@ export const styles = StyleSheet.create({
   callToActionText: {
     color: COLOR_TEXT['white'],
   },
+  headlineWrapper: { flex: 1 },
 });

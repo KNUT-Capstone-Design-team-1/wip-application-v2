@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { COLOR_TEXT } from '@constants/color';
-import { px } from '@utils/responsive';
+import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
+import { styles } from '../styles/components/VersionItem';
 
 interface VersionItemProps {
   label: string;
@@ -22,18 +21,3 @@ export const VersionItem = ({ label, value }: VersionItemProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  itemContainer: {
-    paddingVertical: px(16),
-    paddingLeft: px(8),
-    justifyContent: 'center',
-  },
-  label: {
-    color: COLOR_TEXT['title'],
-    marginBottom: px(4),
-  },
-  value: {
-    color: COLOR_TEXT['sub'],
-  },
-});

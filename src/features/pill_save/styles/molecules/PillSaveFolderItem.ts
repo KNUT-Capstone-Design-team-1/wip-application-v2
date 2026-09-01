@@ -30,4 +30,5 @@ export const styles = StyleSheet.create({
   folderCount: {
     color: COLOR_TEXT['sub'],
   },
+  iconContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });

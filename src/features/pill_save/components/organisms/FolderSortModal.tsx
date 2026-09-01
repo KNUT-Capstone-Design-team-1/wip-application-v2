@@ -1,8 +1,9 @@
+import { styles } from '../../styles/organisms/FolderSortModal';
 import React, { memo } from 'react';
 import { View, TouchableOpacity, Modal } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
-import { px, fontPx } from '@utils/responsive';
+import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 import { Check } from 'lucide-react-native';
 import { FolderSortOption } from '@features/pill_save/hooks/use_pill_save_folders';
 
@@ -30,35 +31,13 @@ export const FolderSortModal = memo(
         onRequestClose={onClose}
       >
         <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: COLOR_BG.overlay,
-            justifyContent: 'flex-end',
-          }}
+          style={styles.overlay}
           activeOpacity={1}
           onPress={onClose}
         >
-          <View
-            style={{
-              backgroundColor: COLOR_BG.surface,
-              borderTopLeftRadius: px(16),
-              borderTopRightRadius: px(16),
-              paddingHorizontal: px(16),
-              paddingBottom: px(32),
-            }}
-          >
-            <View
-              style={{
-                paddingVertical: px(20),
-                borderBottomWidth: 1,
-                borderBottomColor: COLOR_LINE.border,
-              }}
-            >
-              <BaseText
-                size={18}
-                weight="bold"
-                style={{ color: COLOR_TEXT.title }}
-              >
+          <View style={styles.modalContent}>
+            <View style={styles.header}>
+              <BaseText size={18} weight="bold" style={styles.headerTitle}>
                 정렬 기준
               </BaseText>
             </View>
@@ -67,23 +46,16 @@ export const FolderSortModal = memo(
               return (
                 <TouchableOpacity
                   key={option.value}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingVertical: px(16),
-                    paddingHorizontal: px(16),
-                    borderBottomWidth: 1,
-                    borderBottomColor: COLOR_LINE.border,
-                  }}
+                  style={styles.sortItem}
                   onPress={() => onSortChange(option.value)}
                 >
                   <BaseText
                     size={16}
                     weight={isSelected ? 'bold' : 'medium'}
-                    style={{
-                      color: isSelected ? COLOR.primary : COLOR_TEXT.body,
-                    }}
+                    style={[
+                      styles.sortItemText,
+                      isSelected && styles.activeText,
+                    ]}
                   >
                     {option.label}
                   </BaseText>

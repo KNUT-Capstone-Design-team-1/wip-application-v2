@@ -11,4 +11,5 @@ export const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: px(20) + bottomTabSize.height,
   },
+  emptyContainer: { flex: 1, padding: px(6) },
 });

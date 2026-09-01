@@ -44,7 +44,7 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
         <View style={styles.logoContainer}>
           <Image
             source={Character}
-            style={{ width: '38%' }}
+            style={styles.logoImage}
             contentFit={'contain'}
           />
         </View>

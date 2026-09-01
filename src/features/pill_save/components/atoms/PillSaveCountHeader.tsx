@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { COLOR_TEXT } from '@constants/color';
+import { styles as localStyles } from '../../styles/atoms/PillSaveCountHeader';
 import { styles } from '@features/pill_save/styles/PillSave';
 import { styles as headerStyles } from '@features/pill_save/styles/molecules/PillSaveHeader';
-import { px } from '@utils/responsive';
 
 interface Props {
   count: number;
@@ -33,24 +32,16 @@ export const PillSaveCountHeader = ({
       총 {count}개
     </BaseText>
 
-    <View style={{ flexDirection: 'row', gap: px(12) }}>
+    <View style={localStyles.container}>
       {isEditing ? (
         <TouchableOpacity onPress={onSelectAll}>
-          <BaseText
-            size={14}
-            weight="medium"
-            style={{ color: COLOR_TEXT.title }}
-          >
+          <BaseText size={14} weight="medium" style={localStyles.title}>
             {allSelected ? '전체해제' : '전체선택'}
           </BaseText>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={onToggleEdit}>
-          <BaseText
-            size={14}
-            weight="medium"
-            style={{ color: COLOR_TEXT.title }}
-          >
+          <BaseText size={14} weight="medium" style={localStyles.title}>
             편집
           </BaseText>
         </TouchableOpacity>

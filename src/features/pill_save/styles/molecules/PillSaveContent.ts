@@ -21,4 +21,5 @@ export const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
   },
+  checkbox: { position: 'absolute', top: 4, right: 4 },
 });

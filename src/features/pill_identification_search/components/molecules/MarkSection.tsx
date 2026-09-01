@@ -70,7 +70,7 @@ const MarkSection = () => {
               contentFit="contain"
             />
           </View>
-          <View style={{ justifyContent: 'center' }}>
+          <View style={styles.markTitleContainer}>
             <BaseText style={styles.markTitle} size={14} weight="bold">
               {selectedMarkTitle}
             </BaseText>

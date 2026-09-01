@@ -20,4 +20,7 @@ export const styles = StyleSheet.create({
   detailInfoContainer: {
     paddingBottom: px(20),
   },
+  iconPlaceholder: { width: 24, height: 24 }, // will be adjusted with fontPx if needed
+  emptyContainer: { padding: 40, alignItems: 'center' },
+  emptyText: { marginTop: 16, color: COLOR_TEXT['sub'] },
 });

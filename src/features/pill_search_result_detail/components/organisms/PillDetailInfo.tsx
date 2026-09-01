@@ -3,7 +3,6 @@ import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/PillDetailInfo';
 import { IPillDetailInfoProps } from '../../types/pill_detail_type';
-
 import PillBasicHeader from '../molecules/PillBasicHeader';
 import PillSpecsSection from '../molecules/PillSpecsSection';
 import PillSafetySection from '../molecules/PillSafetySection';
@@ -12,8 +11,6 @@ import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { GlobalNativeAd } from '@features/ads/components/GlobalNativeAd';
-
-// TODO: Native 광고 추가 필요
 
 const PillDetailInfo = ({
   data,
@@ -41,7 +38,7 @@ const PillDetailInfo = ({
         onPress={() => setMoreInfo((prev) => !prev)}
       >
         {/* 더보기 가운데 정렬용 */}
-        <View style={{ width: fontPx(24), height: fontPx(24) }} />
+        <View style={styles.iconPlaceholder} />
         <BaseText weight="semiBold" size={16} style={styles.infoMoreBtnText}>
           {moreInfo ? '접기' : '더보기'}
         </BaseText>
@@ -63,13 +60,9 @@ const PillDetailInfo = ({
       {/* 상세 정보 섹션 */}
       <View style={styles.detailInfoContainer}>
         {detailLoading ? (
-          <View style={{ padding: 40, alignItems: 'center' }}>
+          <View style={styles.emptyContainer}>
             <ActivityIndicator size="large" color={COLOR_TEXT['sub']} />
-            <BaseText
-              weight="medium"
-              size={14}
-              style={{ marginTop: 16, color: COLOR_TEXT['sub'] }}
-            >
+            <BaseText weight="medium" size={14} style={styles.emptyText}>
               상세 데이터를 불러오는 중입니다...
             </BaseText>
           </View>

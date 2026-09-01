@@ -59,4 +59,5 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
   },
+  image: { width: '100%', height: '100%' },
 });

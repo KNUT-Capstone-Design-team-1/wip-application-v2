@@ -18,4 +18,5 @@ export const styles = StyleSheet.create({
   countText: {
     color: COLOR_TEXT.sub,
   },
+  iconContainer: { flexDirection: 'row', alignItems: 'center', gap: px(16) },
 });

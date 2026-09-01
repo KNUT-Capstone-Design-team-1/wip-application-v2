@@ -25,4 +25,5 @@ export const styles = StyleSheet.create({
     paddingVertical: px(20),
     height: px(100),
   },
+  bottomSpacer: { height: px(100) },
 });

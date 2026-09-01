@@ -22,4 +22,5 @@ export const styles = StyleSheet.create({
     marginTop: px(12),
     color: COLOR_TEXT['sub'],
   },
+  container: { flex: 1 },
 });

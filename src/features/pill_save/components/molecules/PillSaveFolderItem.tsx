@@ -64,7 +64,7 @@ export const PillSaveFolderItem = memo(
           </BaseText>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={styles.iconContainer}>
           <RightAccessory
             isDefault={!!item.is_default}
             isEditing={isEditing}

@@ -45,4 +45,6 @@ export const styles = StyleSheet.create({
     right: px(2),
     top: px(2),
   },
+
+  markTitleContainer: { justifyContent: 'center' },
 });

@@ -5,7 +5,6 @@ import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
-import { fontPx } from '@utils/responsive';
 
 /**
  * 알약 썸네일 이미지 컴포넌트
@@ -15,7 +14,7 @@ const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
     {imageUri ? (
       <Image
         source={{ uri: imageUri }}
-        style={{ width: '100%', height: '100%' }}
+        style={styles.image}
         contentFit="cover"
       />
     ) : (

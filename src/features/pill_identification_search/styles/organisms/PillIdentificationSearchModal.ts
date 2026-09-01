@@ -3,6 +3,12 @@ import { px } from '@utils/responsive';
 import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: COLOR_BG['base'] },
+  otherSection: {
+    paddingBottom: px(16),
+    backgroundColor: COLOR['white'],
+    paddingHorizontal: px(20),
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: COLOR_BG['overlay'],

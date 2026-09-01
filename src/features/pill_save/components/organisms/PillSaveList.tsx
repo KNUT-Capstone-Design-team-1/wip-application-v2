@@ -49,11 +49,11 @@ const PillSaveList = ({
   const renderItem: ListRenderItem<IPillSaveData> = useCallback(
     ({ item }) => {
       if (item.ITEM_SEQ === 'EMPTY_ITEM') {
-        return <View style={{ flex: 1, padding: px(6) }} />;
+        return <View style={styles.emptyContainer} />;
       }
 
       return (
-        <View style={{ flex: 1, padding: px(6) }}>
+        <View style={styles.emptyContainer}>
           <PillSaveContent
             saveData={item}
             onPressDetail={() =>

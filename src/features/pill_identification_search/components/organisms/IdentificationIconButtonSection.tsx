@@ -8,8 +8,7 @@ import {
 } from '@features/pill_identification_search/types/search_id_types';
 import { useSearchIdStore } from '../../store/search_id_store';
 import { SECTION_KEY_TO_STORE_KEY } from '../../constants/pillIdentificationData';
-import { COLOR } from '@constants/color';
-import { px } from '@utils/responsive';
+import { styles } from '../../styles/organisms/IdentificationIconButtonSection';
 
 interface IIdentificationIconButtonSectionProps {
   sectionKey: string;
@@ -62,30 +61,17 @@ const IdentificationIconButtonSection = memo(
     }
 
     return (
-      <View
-        style={{
-          marginBottom: px(2),
-          backgroundColor: COLOR['white'],
-          paddingHorizontal: px(20),
-        }}
-      >
+      <View style={styles.container}>
         <IdentificationSection
           title={section.title}
           direction="column"
           selectedIndex={selectedIndexes}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'flex-start',
-              gap: 6,
-            }}
-          >
+          <View style={styles.grid}>
             {section.datas.map((data, index) => (
               <TouchableOpacity
                 key={index}
-                style={{ width: '23.5%', marginBottom: 4 }}
+                style={styles.buttonWrapper}
                 onPress={() => {
                   if (index === 0 && !selectedIndexes.includes(0)) {
                     radioButtonPressHandler('전체', sectionKey);

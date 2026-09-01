@@ -1,8 +1,9 @@
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePathname } from 'expo-router';
 import Header from './header/Header';
 import SubHeader from './header/SubHeader';
+import { styles } from './styles/Layout';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,15 +30,5 @@ const Layout = ({ children }: LayoutProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-  },
-});
 
 export default Layout;

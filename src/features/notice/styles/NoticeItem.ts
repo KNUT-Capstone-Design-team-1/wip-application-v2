@@ -26,4 +26,5 @@ export const styles = StyleSheet.create({
   badgeText: {
     color: COLOR_TEXT['white'],
   },
+  noticeInfoContainer: { flex: 1, marginRight: px(10) },
 });

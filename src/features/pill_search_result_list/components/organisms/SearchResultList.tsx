@@ -51,7 +51,7 @@ const ResultFlashList = ({
         <ActivityIndicator size="small" color="#007AFF" />
       </View>
     ) : (
-      <View style={{ height: px(100) }} />
+      <View style={styles.bottomSpacer} />
     );
   }, [isLoadingMore]);
 

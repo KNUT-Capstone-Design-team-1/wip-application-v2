@@ -1,3 +1,4 @@
+import { styles } from './styles/_layout';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -30,7 +31,7 @@ const RootLayout = () => {
   // 초기화 중이면 로딩 화면 표시
   if (isInitializing) {
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={styles.container}>
         <SafeAreaProvider>
           <StatusBar style="dark" />
           <DatabaseUpdateView
@@ -50,7 +51,7 @@ const RootLayout = () => {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <StatusBar style="dark" />
         <Layout>
@@ -61,7 +62,7 @@ const RootLayout = () => {
         <MainNoticeBottomSheet />
         <FullSizeLoading />
         <CommonModal />
-        <View style={{ zIndex: 999999 }}>
+        <View style={styles.toastContainer}>
           <Toast
             config={toastConfig}
             position="bottom"

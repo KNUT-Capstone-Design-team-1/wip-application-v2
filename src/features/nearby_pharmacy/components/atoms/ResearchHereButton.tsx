@@ -5,6 +5,7 @@ import { BaseText } from '@components/common/BaseText';
 import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { styles } from '../../styles/ResearchHereButton';
 
 interface IResearchHereButtonProps {
   loading: boolean;
@@ -49,7 +50,7 @@ const ResearchHereButton = ({ loading, onPress }: IResearchHereButtonProps) => {
       ) : (
         <RotateCw size={px(16)} color={COLOR['secondary']} strokeWidth={2.5} />
       )}
-      <BaseText weight="bold" size={13} style={{ color: COLOR['secondary'] }}>
+      <BaseText weight="bold" size={13} style={styles.text}>
         현재 지도에서 검색
       </BaseText>
     </Pressable>

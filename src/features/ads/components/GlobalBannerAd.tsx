@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { AD_UNITS } from '../constants/ad_units';
 import logger from '@utils/logger';
 import { ADS_KEYWORDS } from '../constants/keyword';
+import { styles } from '../styles/components/GlobalBannerAd';
 
 interface IGlobalBannerAdProps {
   size?: BannerAdSize | string;
@@ -38,11 +39,3 @@ export const GlobalBannerAd = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-});

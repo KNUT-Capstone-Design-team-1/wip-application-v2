@@ -17,7 +17,7 @@ const NoticeInfo = ({ notice }: { notice: INoticeData }) => {
   const isContentModified = isModified(notice.createDate, notice.updateDate);
 
   return (
-    <View style={{ flex: 1, marginRight: px(10) }}>
+    <View style={styles.noticeInfoContainer}>
       <BaseText
         size={14}
         weight="bold"
