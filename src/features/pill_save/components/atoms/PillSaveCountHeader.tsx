@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { COLOR_TEXT, COLOR_LINE } from '@constants/color';
+import { COLOR_TEXT } from '@constants/color';
 import { styles } from '@features/pill_save/styles/PillSave';
+import { styles as headerStyles } from '@features/pill_save/styles/molecules/PillSaveHeader';
 import { px } from '@utils/responsive';
 
 interface Props {
@@ -27,19 +28,7 @@ export const PillSaveCountHeader = ({
   onDelete,
   allSelected = false,
 }: Props) => (
-  <View
-    style={{
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      minHeight: px(24),
-      paddingTop: 0,
-      paddingBottom: px(12),
-      marginHorizontal: px(12),
-      borderBottomWidth: 1,
-      borderBottomColor: COLOR_LINE.border,
-    }}
-  >
+  <View style={headerStyles.header}>
     <BaseText size={14} weight="semiBold" style={styles.countText}>
       총 {count}개
     </BaseText>

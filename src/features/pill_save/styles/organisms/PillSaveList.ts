@@ -5,7 +5,7 @@ import { bottomTabSize } from '@constants/size';
 export const styles = StyleSheet.create({
   pillSaveListWrapper: {
     flex: 1,
-    paddingHorizontal: px(12),
+    paddingHorizontal: px(6),
   },
   pillSaveListContent: {
     paddingTop: 0,
