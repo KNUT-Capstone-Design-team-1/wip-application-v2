@@ -7,6 +7,7 @@ import { styles } from '@features/pill_search_result_detail/styles/PillSearchRes
 import { usePillDetailScreen } from '@features/pill_search_result_detail/hooks/use_pill_detail_screen';
 import FolderSelectModal from '@features/pill_save/components/organisms/FolderSelectModal';
 import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
+import { useCallback } from 'react';
 
 const PillSearchResultDetailScreen = () => {
   const {
@@ -21,6 +22,11 @@ const PillSearchResultDetailScreen = () => {
     handleSaveComplete,
     detailLoading,
   } = usePillDetailScreen();
+
+  // 특정 알약 상세에서 재고 문의 시 해당 알약 이름을 파라미터로 전달
+  const handleStockInquiry = useCallback(() => {
+    openStockInquiryModal(pillData?.ITEM_NAME);
+  }, [pillData?.ITEM_NAME]);
 
   if (loading) {
     return (
@@ -76,7 +82,7 @@ const PillSearchResultDetailScreen = () => {
             data={pillData}
             saveState={isSaved}
             onSaveToggle={openFolderModal}
-            onStockInquiry={openStockInquiryModal}
+            onStockInquiry={handleStockInquiry}
             detailLoading={detailLoading}
           />
 
