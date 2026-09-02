@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { INearbyPharmacies } from '@services/database/types';
 import { BaseText } from '@components/common/BaseText';
@@ -18,6 +18,8 @@ const PharmacyClusterListItem = ({
   distanceText,
   onPress,
 }: IPharmacyClusterListItemProps) => {
+  const hasDistance = Boolean(distanceText);
+
   return (
     <View
       style={[styles.clusterListItem, isLast && styles.clusterListItemLast]}
@@ -32,7 +34,7 @@ const PharmacyClusterListItem = ({
           >
             {pharmacy.name}
           </BaseText>
-          {!!distanceText && (
+          {hasDistance && (
             <BaseText
               weight="medium"
               size={12}
@@ -55,4 +57,4 @@ const PharmacyClusterListItem = ({
   );
 };
 
-export default PharmacyClusterListItem;
+export default memo(PharmacyClusterListItem);

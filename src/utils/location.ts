@@ -5,7 +5,10 @@ export const getDistance = (
   lat2: number,
   lon2: number,
 ): number => {
-  if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+  const isInvalidCoords =
+    isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2);
+
+  if (isInvalidCoords) {
     return Infinity;
   }
 
@@ -27,13 +30,23 @@ export const getDistance = (
   return R * c; // in metres
 };
 
-// 계산된 거리를 UI에 표시하기 위해 문자열(m 또는 km)로 포맷팅하는 함수
-export const getFormattedDistance = (distanceInMeters: number): string => {
-  if (distanceInMeters === Infinity) {
+// 계산된 거리를 UI에 표시하기 위해 문자열(m 또는 km)로 포맷팅하는 함수 (undefined/null 안전 지원)
+export const getFormattedDistance = (
+  distanceInMeters?: number | null,
+): string => {
+  const isInvalidDistance =
+    distanceInMeters === undefined ||
+    distanceInMeters === null ||
+    isNaN(distanceInMeters) ||
+    distanceInMeters === Infinity;
+
+  if (isInvalidDistance) {
     return '';
   }
 
-  if (distanceInMeters < 1000) {
+  const isUnderOneKm = distanceInMeters < 1000;
+
+  if (isUnderOneKm) {
     return `${Math.round(distanceInMeters)}m`;
   }
 

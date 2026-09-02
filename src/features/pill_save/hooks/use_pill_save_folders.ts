@@ -5,17 +5,17 @@ import { useToast } from '@hooks/use_toast';
 import { validateFolderCreation } from '../utils/pill_save_validator';
 import { useCommonModalStore } from '@store/common_modal_store';
 import { useFocusEffect, useNavigation } from 'expo-router';
+import {
+  FolderSortOption,
+  DEFAULT_FOLDER_SORT,
+} from '@features/pill_save/constants/pill_save_constant';
+
+export type { FolderSortOption };
 
 type FolderWithPillCount = ISavedPillFolder & {
   pill_count: number;
   preview_images?: string[];
 };
-
-export type FolderSortOption =
-  | 'createdAt_desc'
-  | 'createdAt_asc'
-  | 'name_asc'
-  | 'pillCount_desc';
 
 // 폴더 보관함 화면의 비즈니스 로직을 처리하는 커스텀 훅
 export const usePillSaveFolders = () => {
@@ -24,7 +24,7 @@ export const usePillSaveFolders = () => {
 
   // 정렬 옵션 상태
   const [sortOption, setSortOption] =
-    useState<FolderSortOption>('createdAt_desc');
+    useState<FolderSortOption>(DEFAULT_FOLDER_SORT);
   const [isSortModalVisible, setIsSortModalVisible] = useState(false);
 
   // 편집 모드 상태
@@ -95,7 +95,9 @@ export const usePillSaveFolders = () => {
       targetId,
     );
 
-    if (!validation.isValid) {
+    const isInvalid = !validation.isValid;
+
+    if (isInvalid) {
       showToast({ type: 'error', message: validation.errorMessage });
       return;
     }
@@ -103,9 +105,13 @@ export const usePillSaveFolders = () => {
     if (isAdding) {
       await pillSaveService.createFolder(trimmedName);
       showToast({ type: 'default', message: '폴더가 추가되었습니다.' });
-    } else if (isRenaming && targetId) {
-      await pillSaveService.renameFolder(targetId, trimmedName);
-      showToast({ type: 'default', message: '폴더 이름이 변경되었습니다.' });
+    } else {
+      const isTargetValid = isRenaming && Boolean(targetId);
+
+      if (isTargetValid && targetId) {
+        await pillSaveService.renameFolder(targetId, trimmedName);
+        showToast({ type: 'default', message: '폴더 이름이 변경되었습니다.' });
+      }
     }
 
     setIsAdding(false);
@@ -126,7 +132,9 @@ export const usePillSaveFolders = () => {
 
   // 폴더 이름 변경 요청 처리 (기본 폴더 차단 및 마지막 선택 항목)
   const handleRenameRequest = useCallback(() => {
-    if (selectedFolderIds.length === 0) {
+    const hasNoSelected = selectedFolderIds.length === 0;
+
+    if (hasNoSelected) {
       showToast({
         type: 'error',
         message: '이름을 변경할 폴더를 선택해주세요.',
@@ -136,8 +144,9 @@ export const usePillSaveFolders = () => {
 
     const targetId = selectedFolderIds[selectedFolderIds.length - 1];
     const targetFolder = folders.find((f) => f.id === targetId);
+    const isDefaultFolder = Boolean(targetFolder?.is_default);
 
-    if (targetFolder?.is_default) {
+    if (isDefaultFolder) {
       showToast({
         type: 'error',
         message: '기본 폴더는 이름을 변경할 수 없습니다.',
@@ -151,7 +160,9 @@ export const usePillSaveFolders = () => {
 
   // 폴더 삭제 처리 (기본 폴더 차단 및 모달 띄우기)
   const handleDeleteFolder = useCallback(async () => {
-    if (selectedFolderIds.length === 0) {
+    const hasNoSelected = selectedFolderIds.length === 0;
+
+    if (hasNoSelected) {
       showToast({ type: 'error', message: '삭제할 폴더를 선택해주세요.' });
       return;
     }
@@ -186,7 +197,9 @@ export const usePillSaveFolders = () => {
   const toggleFolderSelection = useCallback(
     (id: number) => {
       const targetFolder = folders.find((f) => f.id === id);
-      if (targetFolder?.is_default) {
+      const isDefaultFolder = Boolean(targetFolder?.is_default);
+
+      if (isDefaultFolder) {
         showToast({
           type: 'error',
           message: '기본 폴더는 선택할 수 없습니다.',
@@ -200,7 +213,9 @@ export const usePillSaveFolders = () => {
           ? prev.filter((fid) => fid !== id)
           : [...prev, id];
 
-        if (isCurrentlySelected && next.length === 0) {
+        const shouldExitEditing = isCurrentlySelected && next.length === 0;
+
+        if (shouldExitEditing) {
           setIsEditing(false);
         }
 

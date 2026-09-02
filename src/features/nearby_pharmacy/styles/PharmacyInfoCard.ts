@@ -2,11 +2,12 @@ import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
+// 약국 상세 정보 카드 스타일
 export const styles = StyleSheet.create({
   infoContainer: {
     marginHorizontal: px(20),
     marginBottom: px(22),
-    backgroundColor: COLOR_BG['surface'],
+    backgroundColor: COLOR_BG.surface,
     borderRadius: px(15),
     paddingVertical: px(12),
     paddingHorizontal: px(16),
@@ -14,7 +15,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 10,
-    shadowColor: COLOR['shadow'],
+    shadowColor: COLOR.shadow,
     shadowOffset: { width: 0, height: px(5) },
     shadowOpacity: 0.3,
     shadowRadius: 6.68,
@@ -29,20 +30,23 @@ export const styles = StyleSheet.create({
     marginBottom: px(5),
   },
   pharmacyName: {
-    color: COLOR_TEXT['title'],
+    color: COLOR_TEXT.title,
   },
   pharmacyPhone: {
-    color: COLOR_TEXT['subTitle'],
+    color: COLOR_TEXT.subTitle,
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
+  pharmacyPhoneDisabled: {
+    color: COLOR_TEXT.disabled,
+  },
   pharmacyAddress: {
-    color: COLOR_TEXT['body'],
+    color: COLOR_TEXT.body,
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
   pharmacyDistance: {
-    color: COLOR['primary'],
+    color: COLOR.primary,
     marginLeft: px(8),
   },
   closeButton: {

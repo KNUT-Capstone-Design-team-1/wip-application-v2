@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { X } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
@@ -24,11 +24,12 @@ const PharmacyClusterListHeader = ({
       <TouchableOpacity
         style={styles.clusterListCloseButton}
         onPress={onClosePress}
+        activeOpacity={0.7}
       >
-        <X size={fontPx(14)} color={COLOR_TEXT['sub']} strokeWidth={4} />
+        <X size={fontPx(14)} color={COLOR_TEXT.sub} strokeWidth={4} />
       </TouchableOpacity>
     </View>
   );
 };
 
-export default PharmacyClusterListHeader;
+export default memo(PharmacyClusterListHeader);

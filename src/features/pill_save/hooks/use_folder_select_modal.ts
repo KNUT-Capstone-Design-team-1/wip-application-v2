@@ -7,6 +7,7 @@ import {
   validateFolderSelectionLimit,
   validatePillLimit,
 } from '../utils/pill_save_validator';
+
 interface UseFolderSelectModalProps {
   isVisible: boolean;
   itemSeq?: string;
@@ -19,7 +20,7 @@ interface UseFolderSelectModalProps {
   onClose: () => void;
 }
 
-// 알약 보관 폴더 선택 모달의 비즈니스 로직(선택, 생성, 저장 등)을 담당하는 커스텀 훅
+// 알약 보관 폴더 선택 모달의 비즈니스 로직 커스텀 훅
 export const useFolderSelectModal = ({
   isVisible,
   itemSeq,
@@ -53,6 +54,7 @@ export const useFolderSelectModal = ({
 
     if (isMoveOrCopyMode && hasSourceId) {
       const sourceFolder = data.find((f) => f.id === sourceId);
+
       if (sourceFolder) {
         data = [sourceFolder, ...data.filter((f) => f.id !== sourceId)];
       }
@@ -63,14 +65,20 @@ export const useFolderSelectModal = ({
 
   // 모달 열릴 때 초기 상태 및 폴더 세팅
   useEffect(() => {
-    if (!isVisible) {
+    const isModalClosed = !isVisible;
+
+    if (isModalClosed) {
       return;
     }
 
     loadFolders();
 
-    if (initialSelectedIds.length === 0) {
-      if (mode === 'save') {
+    const hasNoInitialIds = initialSelectedIds.length === 0;
+
+    if (hasNoInitialIds) {
+      const isSaveMode = mode === 'save';
+
+      if (isSaveMode) {
         pillSaveService.getFolders().then((data) => {
           const defaultFolder = data.find((f) => f.is_default);
 
@@ -90,7 +98,7 @@ export const useFolderSelectModal = ({
     setIsAdding(false);
     setNewFolderName('');
     setIsSaving(false);
-  }, [isVisible, initialSelectedIds, loadFolders]);
+  }, [isVisible, initialSelectedIds, loadFolders, mode]);
 
   // 폴더 선택/해제 토글
   const toggleFolder = (id: number) => {
@@ -109,7 +117,9 @@ export const useFolderSelectModal = ({
         return prev.filter((fid) => fid !== id);
       }
 
-      if (mode === 'move') {
+      const isMoveMode = mode === 'move';
+
+      if (isMoveMode) {
         return [id];
       }
 
@@ -119,7 +129,9 @@ export const useFolderSelectModal = ({
         isMoveOrCopy,
       );
 
-      if (!validation.isValid) {
+      const isInvalid = !validation.isValid;
+
+      if (isInvalid) {
         showToast({ type: 'error', message: validation.errorMessage });
         return prev;
       }
@@ -137,22 +149,26 @@ export const useFolderSelectModal = ({
     }
 
     const validation = validateFolderCreation(folders, trimmedName, true);
+    const isInvalid = !validation.isValid;
 
-    if (!validation.isValid) {
+    if (isInvalid) {
       showToast({ type: 'error', message: validation.errorMessage });
       return;
     }
 
     const newId = await pillSaveService.createFolder(trimmedName);
+    const isCreationFailed = !newId;
 
-    if (!newId) {
+    if (isCreationFailed) {
       return;
     }
 
     await loadFolders();
 
     setSelectedIds((prev) => {
-      if (mode === 'move') {
+      const isMoveMode = mode === 'move';
+
+      if (isMoveMode) {
         return [newId];
       }
 
@@ -162,13 +178,16 @@ export const useFolderSelectModal = ({
         isMoveOrCopy,
       );
 
-      if (!selectionValidation.isValid) {
+      const isSelectionInvalid = !selectionValidation.isValid;
+
+      if (isSelectionInvalid) {
         showToast({ type: 'error', message: selectionValidation.errorMessage });
         return prev;
       }
 
       return [...prev, newId];
     });
+
     setIsAdding(false);
     setNewFolderName('');
   };
@@ -205,12 +224,16 @@ export const useFolderSelectModal = ({
   const showAlreadyExistsToast = (
     alreadyExistsItems: { seq: string; name: string }[],
   ) => {
-    if (alreadyExistsItems.length === 0) return;
+    const hasNoDuplicate = alreadyExistsItems.length === 0;
 
-    const message =
-      alreadyExistsItems.length === 1
-        ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
-        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
+    if (hasNoDuplicate) {
+      return;
+    }
+
+    const isOnlyOne = alreadyExistsItems.length === 1;
+    const message = isOnlyOne
+      ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
+      : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
 
     showToast({
       type: 'default',
@@ -243,7 +266,9 @@ export const useFolderSelectModal = ({
       itemsToAddCount,
     );
 
-    if (!pillLimitValidation.isValid) {
+    const isLimitExceeded = !pillLimitValidation.isValid;
+
+    if (isLimitExceeded) {
       showToast({
         type: 'error',
         message: pillLimitValidation.errorMessage,
@@ -259,12 +284,17 @@ export const useFolderSelectModal = ({
       onSaveComplete(selectedIds);
       onClose();
 
-      if (alreadyExistsItems.length > 0) {
+      const hasDuplicate = alreadyExistsItems.length > 0;
+
+      if (hasDuplicate) {
         showAlreadyExistsToast(alreadyExistsItems);
       } else {
-        if (mode === 'move') {
+        const isMoveMode = mode === 'move';
+        const isCopyMode = mode === 'copy';
+
+        if (isMoveMode) {
           showToast({ type: 'default', message: '이동되었습니다.' });
-        } else if (mode === 'copy') {
+        } else if (isCopyMode) {
           showToast({ type: 'default', message: '복사되었습니다.' });
         }
       }

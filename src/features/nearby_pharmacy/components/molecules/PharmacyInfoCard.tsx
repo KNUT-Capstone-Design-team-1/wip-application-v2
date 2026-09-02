@@ -20,18 +20,23 @@ const PharmacyInfoCard = ({
 }: IPharmacyInfoCardProps) => {
   const { callPharmacy } = usePharmacyCall();
 
-  const distanceText =
-    pharmacy.distance !== undefined
-      ? getFormattedDistance(pharmacy.distance)
-      : '';
+  const hasDistance = typeof pharmacy.distance === 'number';
+  const distanceText = hasDistance
+    ? getFormattedDistance(pharmacy.distance as number)
+    : '';
 
   const handlePhonePress = () => {
-    if (onStockInquiryPress) {
+    const isStockInquiry = Boolean(onStockInquiryPress);
+
+    if (isStockInquiry && onStockInquiryPress) {
       onStockInquiryPress(pharmacy.telephone);
     } else {
       callPharmacy(pharmacy.telephone);
     }
   };
+
+  const hasTelephone = Boolean(pharmacy.telephone);
+  const showStockInquiryBtn = Boolean(onStockInquiryPress) && hasTelephone;
 
   return (
     <View style={styles.infoContainer}>
@@ -58,14 +63,12 @@ const PharmacyInfoCard = ({
         <PharmacyInfoRow
           text={pharmacy.telephone || '전화번호 없음'}
           onPress={handlePhonePress}
-          disabled={!pharmacy.telephone}
+          disabled={!hasTelephone}
           weight="medium"
           size={14}
           textStyle={[
             styles.pharmacyPhone,
-            !pharmacy.telephone && {
-              color: COLOR_TEXT['disabled'],
-            },
+            !hasTelephone && styles.pharmacyPhoneDisabled,
           ]}
         />
 
@@ -78,14 +81,18 @@ const PharmacyInfoCard = ({
           textStyle={styles.pharmacyAddress}
         />
 
-        {onStockInquiryPress && !!pharmacy.telephone && (
+        {showStockInquiryBtn && (
           <StockInquiryCallButton
-            onPress={() => onStockInquiryPress(pharmacy.telephone)}
+            onPress={() => onStockInquiryPress?.(pharmacy.telephone)}
           />
         )}
       </View>
-      <TouchableOpacity style={styles.closeButton} onPress={onClosePress}>
-        <X size={fontPx(16)} color={COLOR_TEXT['sub']} strokeWidth={4} />
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={onClosePress}
+        activeOpacity={0.7}
+      >
+        <X size={fontPx(16)} color={COLOR_TEXT.sub} strokeWidth={4} />
       </TouchableOpacity>
     </View>
   );

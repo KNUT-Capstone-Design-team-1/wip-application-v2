@@ -1,10 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { useToast } from '@hooks/use_toast';
 import { useCommonModalStore } from '@store/common_modal_store';
 
-// 특정 폴더 내부의 알약 목록 관리 및 다중 선택(이동/복사/삭제) 로직을 담당하는 커스텀 훅
+// 특정 폴더 내부의 알약 목록 관리 및 다중 선택(이동/복사/삭제) 로직 커스텀 훅
 export const usePillSaveFolderDetail = (folderId: number) => {
   const [pillSaveData, setPillSaveData] = useState<IPillSaveData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,14 +19,14 @@ export const usePillSaveFolderDetail = (folderId: number) => {
 
   // 알약 목록 불러오기
   const loadData = useCallback(async () => {
-    if (isNaN(folderId)) {
+    const isInvalidFolderId = isNaN(folderId);
+
+    if (isInvalidFolderId) {
       return;
     }
 
     setLoading(true);
-
     const data = await pillSaveService.getPillsByFolder(folderId);
-
     setPillSaveData(data);
     setLoading(false);
   }, [folderId]);
@@ -37,74 +37,84 @@ export const usePillSaveFolderDetail = (folderId: number) => {
   }, [loadData]);
 
   // 편집 모드 켜기/끄기 토글
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
+  const toggleEdit = useCallback(() => {
+    setIsEditing((prev) => !prev);
     setSelectedSeqs([]);
-  };
+  }, []);
 
-  const allSelected =
-    pillSaveData.length > 0 && selectedSeqs.length === pillSaveData.length;
+  // 전체 선택 여부 계산
+  const allSelected = useMemo(() => {
+    const hasData = pillSaveData.length > 0;
+    return hasData && selectedSeqs.length === pillSaveData.length;
+  }, [pillSaveData.length, selectedSeqs.length]);
 
   // 전체 선택 / 전체 해제
-  const handleSelectAll = () => {
+  const handleSelectAll = useCallback(() => {
     if (allSelected) {
       setSelectedSeqs([]);
-      setIsEditing(false); // 전체 해제 시 편집 모드 종료
+      setIsEditing(false);
     } else {
       setSelectedSeqs(pillSaveData.map((item) => item.ITEM_SEQ));
     }
-  };
+  }, [allSelected, pillSaveData]);
 
   // 개별 알약 선택/해제 토글
-  const handleItemSelect = (itemSeq: string) => {
+  const handleItemSelect = useCallback((itemSeq: string) => {
     setSelectedSeqs((prev) => {
       const isCurrentlySelected = prev.includes(itemSeq);
       const next = isCurrentlySelected
         ? prev.filter((seq) => seq !== itemSeq)
         : [...prev, itemSeq];
 
-      if (isCurrentlySelected && next.length === 0) {
-        setIsEditing(false); // 모두 해제 시 편집 모드 종료
+      const shouldExitEditing = isCurrentlySelected && next.length === 0;
+
+      if (shouldExitEditing) {
+        setIsEditing(false);
       }
 
       return next;
     });
-  };
+  }, []);
 
   // 선택된 알약 다른 폴더로 이동 모드 진입
-  const handleMove = () => {
-    if (selectedSeqs.length === 0) {
+  const handleMove = useCallback(() => {
+    const hasNoSelected = selectedSeqs.length === 0;
+
+    if (hasNoSelected) {
       showToast({ type: 'error', message: '이동할 알약을 선택해주세요.' });
       return;
     }
 
     setModalMode('move');
     setIsModalVisible(true);
-  };
+  }, [selectedSeqs.length, showToast]);
 
   // 선택된 알약 다른 폴더로 복사 모드 진입
-  const handleCopy = () => {
-    if (selectedSeqs.length === 0) {
+  const handleCopy = useCallback(() => {
+    const hasNoSelected = selectedSeqs.length === 0;
+
+    if (hasNoSelected) {
       showToast({ type: 'error', message: '복사할 알약을 선택해주세요.' });
       return;
     }
 
     setModalMode('copy');
     setIsModalVisible(true);
-  };
+  }, [selectedSeqs.length, showToast]);
 
   // 이동/복사 모달 완료 후 처리
-  const handleSaveComplete = () => {
+  const handleSaveComplete = useCallback(() => {
     setIsModalVisible(false);
     setIsEditing(false);
-
     setSelectedSeqs([]);
     loadData();
-  };
+  }, [loadData]);
 
   // 선택된 알약들 일괄 삭제 처리
-  const handleMultipleDelete = () => {
-    if (selectedSeqs.length === 0) {
+  const handleMultipleDelete = useCallback(() => {
+    const hasNoSelected = selectedSeqs.length === 0;
+
+    if (hasNoSelected) {
       showToast({ type: 'error', message: '삭제할 알약을 선택해주세요.' });
       return;
     }
@@ -125,11 +135,10 @@ export const usePillSaveFolderDetail = (folderId: number) => {
 
         setSelectedSeqs([]);
         setIsEditing(false);
-
         showToast({ type: 'default', message: '삭제되었습니다.' });
       },
     });
-  };
+  }, [selectedSeqs, folderId, showToast]);
 
   // 배경 클릭 시 편집 모드 해제
   const handleBackgroundPress = useCallback(() => {

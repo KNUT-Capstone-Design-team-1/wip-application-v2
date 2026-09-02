@@ -27,7 +27,6 @@ const PillSave = () => {
     isEditing,
     setIsEditing,
     selectedFolderIds,
-    setSelectedFolderIds,
     isAdding,
     isRenaming,
     folderInputName,

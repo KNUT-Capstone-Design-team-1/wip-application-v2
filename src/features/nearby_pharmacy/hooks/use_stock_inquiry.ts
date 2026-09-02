@@ -33,13 +33,18 @@ export const useStockInquiry = () => {
   // 약국 선택 시 원래 화면 복귀 후 전화 앱 실행
   const handleStockInquiryCall = useCallback(
     (telephone: string) => {
-      if (callingRef.current) return;
+      const isAlreadyCalling = callingRef.current;
+
+      if (isAlreadyCalling) {
+        return;
+      }
+
       callingRef.current = true;
 
       // 원래 화면으로 복귀
       router.back();
 
-      // 애니메이션 후 전화 앱 실행
+      // 화면 전환 후 전화 앱 실행
       setTimeout(() => {
         callPharmacy(telephone);
         callingRef.current = false;

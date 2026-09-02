@@ -20,9 +20,7 @@ export type TPharmacyClusterItem =
   | PointFeature<IPharmacyPointProps>
   | ClusterFeature<AnyProps>;
 
-/**
- * region + pharmacies 기반 supercluster 인덱스와 현재 화면에 표시할 클러스터/포인트를 반환.
- */
+// 약국 좌표 목록을 바탕으로 지도 영역별 클러스터링을 연산하는 커스텀 훅
 export const usePharmacyClusters = (
   pharmacies: INearbyPharmacies[],
   region: Region | null,
@@ -35,10 +33,13 @@ export const usePharmacyClusters = (
     });
 
     const points: PointFeature<IPharmacyPointProps>[] = [];
+
     for (const p of pharmacies) {
       const lat = parseFloat(p.Y);
       const lng = parseFloat(p.X);
-      if (isNaN(lat) || isNaN(lng)) {
+      const isInvalidCoords = isNaN(lat) || isNaN(lng);
+
+      if (isInvalidCoords) {
         continue;
       }
 
@@ -54,7 +55,9 @@ export const usePharmacyClusters = (
   }, [pharmacies]);
 
   const clusters = useMemo<TPharmacyClusterItem[]>(() => {
-    if (!region) {
+    const hasNoRegion = !region;
+
+    if (hasNoRegion || !region) {
       return [];
     }
 
@@ -72,9 +75,7 @@ export const usePharmacyClusters = (
     return supercluster.getClusters(bbox, zoom) as TPharmacyClusterItem[];
   }, [supercluster, region]);
 
-  /**
-   * 클러스터에 속한 모든 leaf point 의 pharmacyId 반환
-   */
+  // 클러스터에 속한 모든 하위 약국 ID 반환
   const getClusterPharmacyIds = (clusterId: number): string[] => {
     const leaves = supercluster.getLeaves(
       clusterId,
