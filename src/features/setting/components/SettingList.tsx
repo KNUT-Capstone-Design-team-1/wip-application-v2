@@ -1,6 +1,5 @@
-import { View } from 'react-native';
 import React, { useCallback } from 'react';
-import { SEARCH_LIST } from '@features/setting/constants/setting_list';
+import { View } from 'react-native';
 import { ISettingListType } from '@features/setting/types/setting_type';
 import { styles } from '@features/setting/styles/SettingList';
 import { useSetting } from '@features/setting/hooks/use_setting';
@@ -10,11 +9,10 @@ import { bottomTabSize } from '@constants/size';
 import { px } from '@utils/responsive';
 import { GlobalNativeAd } from '@features/ads/components/GlobalNativeAd';
 
-// TODO: Native 광고로 교체 필요
-
+// 설정 항목 리스트 컴포넌트
 const SettingList = () => {
   const insets = useSafeAreaInsets();
-  const { handleSettingClick } = useSetting();
+  const { settingList, handleSettingClick } = useSetting();
 
   const onPressItem = useCallback(
     (item: ISettingListType) => {
@@ -31,7 +29,7 @@ const SettingList = () => {
       ]}
     >
       <View>
-        {SEARCH_LIST.map((list: ISettingListType) => (
+        {settingList.map((list: ISettingListType) => (
           <SettingItem
             key={list.id + list.title}
             item={list}

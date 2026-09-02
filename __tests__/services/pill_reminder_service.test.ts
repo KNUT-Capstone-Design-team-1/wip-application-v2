@@ -73,6 +73,10 @@ const mockDb = {
 
       return Promise.resolve({ changes: 1 });
     }
+    if (sql.trim() === 'DELETE FROM pill_reminders') {
+      remindersDb.length = 0;
+      return Promise.resolve({ changes: 1 });
+    }
     if (sql.includes('UPDATE pill_reminders SET is_enabled = ?')) {
       const r = remindersDb.find((r) => r.id === params[1]);
 
@@ -243,7 +247,7 @@ describe('PillReminderService CRUD 테스트', () => {
     expect(updated?.time).toBe('09:00');
   });
 
-  test('복용 알림 삭제', async () => {
+  test('복용 알림 단일 삭제', async () => {
     const createdIds = await pillReminderService.createReminders({
       folder_id: 1,
       times: ['08:00'],
@@ -252,6 +256,21 @@ describe('PillReminderService CRUD 테스트', () => {
     });
 
     const success = await pillReminderService.deleteReminder(createdIds[0]);
+    expect(success).toBe(true);
+    expect(remindersDb).toHaveLength(0);
+  });
+
+  test('모든 복용 알림 전체 삭제', async () => {
+    await pillReminderService.createReminders({
+      folder_id: 1,
+      times: ['08:00', '13:00', '19:00'],
+      days: [1, 2, 3, 4, 5],
+      items: [{ item_seq: '199303108', item_name: '타이레놀', dosage: 1 }],
+    });
+
+    expect(remindersDb).toHaveLength(3);
+
+    const success = await pillReminderService.deleteAllReminders();
     expect(success).toBe(true);
     expect(remindersDb).toHaveLength(0);
   });

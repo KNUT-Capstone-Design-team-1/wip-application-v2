@@ -3,7 +3,7 @@ import { ISettingListType } from '@features/setting/types/setting_type';
 export const SEARCH_LIST: ISettingListType[] = [
   {
     id: 'NONE',
-    title: `앱 정보`,
+    title: '앱 정보',
     value: '',
     path: 'app-info',
   },
@@ -22,6 +22,12 @@ export const SEARCH_LIST: ISettingListType[] = [
   {
     id: 'CLEAR_RECENT_VIEWED',
     title: '기록 삭제',
+    value: '',
+    path: '',
+  },
+  {
+    id: 'CLEAR_ALL_REMINDERS',
+    title: '모든 복용 알림 삭제',
     value: '',
     path: '',
   },

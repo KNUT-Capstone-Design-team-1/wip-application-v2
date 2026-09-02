@@ -24,7 +24,7 @@ export const pillReminderDeleteService = {
     }
   },
 
-  // 복용 알림 삭제
+  // 복용 알림 단일 삭제
   async deleteReminder(id: number): Promise<boolean> {
     try {
       const db = await getDatabase();
@@ -36,6 +36,22 @@ export const pillReminderDeleteService = {
       return true;
     } catch (e) {
       logger.error(`[PILL-REMINDER-DELETE-SERVICE] Failed to delete: ${e}`);
+      return false;
+    }
+  },
+
+  // 모든 복용 알림 전체 삭제 (해제)
+  async deleteAllReminders(): Promise<boolean> {
+    try {
+      const db = await getDatabase();
+      await db.runAsync(`DELETE FROM pill_reminders`);
+
+      // 시스템 로컬 푸시 알림 스케줄 동기화 (모두 취소)
+      pillReminderNotificationService.rescheduleAllNotifications();
+
+      return true;
+    } catch (e) {
+      logger.error(`[PILL-REMINDER-DELETE-SERVICE] Failed to delete all: ${e}`);
       return false;
     }
   },

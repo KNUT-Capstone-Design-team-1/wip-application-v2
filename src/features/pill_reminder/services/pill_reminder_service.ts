@@ -44,6 +44,8 @@ export const pillReminderService = {
 
   deleteReminder: (id: number) =>
     pillReminderMutationService.deleteReminder(id),
+
+  deleteAllReminders: () => pillReminderMutationService.deleteAllReminders(),
 };
 
 export { pillReminderQueryService, pillReminderMutationService };

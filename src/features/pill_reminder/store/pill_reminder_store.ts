@@ -9,6 +9,7 @@ interface IPillReminderStore {
   fetchReminders: () => Promise<void>;
   fetchRemindedItemSeqs: (folderId?: number) => Promise<void>;
   deleteReminder: (id: number) => Promise<boolean>;
+  deleteAllReminders: () => Promise<boolean>;
   toggleReminder: (id: number, isEnabled: boolean) => Promise<boolean>;
 }
 
@@ -44,6 +45,19 @@ export const usePillReminderStore = create<IPillReminderStore>((set, get) => ({
   deleteReminder: async (id: number) => {
     try {
       const success = await pillReminderService.deleteReminder(id);
+      if (success) {
+        await get().fetchReminders();
+      }
+      return success;
+    } catch {
+      return false;
+    }
+  },
+
+  // 모든 복용 알림 전체 삭제 (해제)
+  deleteAllReminders: async () => {
+    try {
+      const success = await pillReminderService.deleteAllReminders();
       if (success) {
         await get().fetchReminders();
       }
