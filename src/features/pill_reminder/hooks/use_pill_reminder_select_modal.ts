@@ -11,7 +11,11 @@ export type { IPillSelectOption };
 interface IUsePillReminderSelectModalProps {
   visible: boolean;
   selectedItemSeqs: string[];
-  onConfirm: (selectedSeqs: string[], folderName?: string) => void;
+  onConfirm: (
+    selectedSeqs: string[],
+    folderId?: number,
+    folderName?: string,
+  ) => void;
   onClose: () => void;
 }
 
@@ -59,12 +63,16 @@ export const usePillReminderSelectModal = ({
     onShowConflictToast: handleShowConflictToast,
   });
 
-  // 선택 완료 핸들러
+  // 선택 완료 핸들러 (사용자가 선택한 폴더 ID와 폴더명을 명확히 전달)
   const handleConfirm = () => {
     const targetFolderId = activeSelectedFolderId || selectedFolderId;
     const targetFolder = folders.find((f) => f.id === targetFolderId);
 
-    onConfirm(tempSelectedSeqs, targetFolder?.name);
+    onConfirm(
+      tempSelectedSeqs,
+      targetFolderId || undefined,
+      targetFolder?.name,
+    );
     onClose();
   };
 

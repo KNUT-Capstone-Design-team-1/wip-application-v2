@@ -147,30 +147,25 @@ export const usePillReminderSettingForm = ({
     initialize();
   }, [reminderId, initialItemSeqs, isEditMode]);
 
-  // 알약 선택 모달 확인 처리 (선택된 폴더명 및 folderId 함께 저장)
+  // 알약 선택 모달 확인 처리 (선택된 folderId 및 folderName 직접 동기화)
   const handleConfirmPillSelection = async (
     selectedSeqs: string[],
+    folderId?: number,
     folderName?: string,
   ) => {
-    const hasFolderName = Boolean(folderName);
+    if (folderId) {
+      setSelectedFolderId(folderId);
+    }
 
-    if (hasFolderName && folderName) {
+    if (folderName) {
       setSelectedFolderName(folderName);
     }
 
     const existingMap = new Map(selectedPills.map((p) => [p.item_seq, p]));
     const pillsInfo = await pillReminderService.getPillsBySeqs(selectedSeqs);
 
-    // 첫 번째 알약 기준 folderId 갱신
-    if (selectedSeqs.length > 0) {
-      const firstSeq = selectedSeqs[0];
-      const folderInfo =
-        await pillReminderService.getFolderInfoByItemSeq(firstSeq);
-      if (folderInfo) {
-        setSelectedFolderId(folderInfo.id);
-        setSelectedFolderName(folderInfo.name);
-      }
-    }
+    const targetFolderName =
+      folderName || selectedFolderName || '알 수 없는 폴더';
 
     const newSelectedPills = pillsInfo.map((p) => {
       const existing = existingMap.get(p.item_seq);
@@ -182,7 +177,7 @@ export const usePillReminderSettingForm = ({
         item_image: p.item_image,
         class_name: p.class_name,
         entp_name: p.entp_name,
-        folder_name: folderName || existing?.folder_name || selectedFolderName,
+        folder_name: targetFolderName,
       };
     });
 
@@ -374,7 +369,7 @@ export const usePillReminderSettingForm = ({
           });
         }
       } else {
-        // 생성 모드: 선택된 모든 시간에 대해 개별 알림 생성
+        // 생성 모드: 선택된 모든 시간에 대해 개별 알림 생성 (사용자가 선택한 folder_id 적용)
         const ids = await pillReminderService.createReminders({
           folder_id: selectedFolderId,
           title,

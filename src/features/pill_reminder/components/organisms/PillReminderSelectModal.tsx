@@ -23,7 +23,11 @@ interface IPillReminderSelectModalProps {
   visible: boolean;
   onClose: () => void;
   selectedItemSeqs: string[];
-  onConfirm: (selectedSeqs: string[], folderName?: string) => void;
+  onConfirm: (
+    selectedSeqs: string[],
+    folderId?: number,
+    folderName?: string,
+  ) => void;
 }
 
 // 알약 다중 선택 바텀시트 모달 메인 컴포넌트
