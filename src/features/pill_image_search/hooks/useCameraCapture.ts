@@ -2,8 +2,9 @@ import logger from '@utils/logger';
 import { useState, useCallback, useRef } from 'react';
 import { Camera } from 'react-native-vision-camera';
 import { ImageManipulator } from 'expo-image-manipulator';
-import { Image, Alert } from 'react-native';
+import { Image } from 'react-native';
 import { targetImageSize } from '@constants/size';
+import { useToast } from '@hooks/use_toast';
 
 // 이미지의 실제 해상도(EXIF 적용)를 가져오는 비동기 함수
 const getImageSize = (
@@ -72,20 +73,11 @@ export const useCameraCapture = ({
   onCapture,
   onComplete,
 }: UseCameraCaptureProps) => {
-  const [showCamera, setShowCamera] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const cameraRef = useRef<Camera>(null);
 
-  // 카메라 모달 열기
-  const openCamera = useCallback(() => {
-    setShowCamera(true);
-  }, []);
-
-  // 카메라 모달 닫기
-  const closeCamera = useCallback(() => {
-    setShowCamera(false);
-  }, []);
+  const { showToast } = useToast();
 
   // 실제 디바이스 카메라 사진 촬영 및 EXIF 기준 최적화(자르기, 크기 조정) 진행
   const capturePhoto = useCallback(async () => {
@@ -115,17 +107,14 @@ export const useCameraCapture = ({
     } catch (e: any) {
       logger.error(`Failed to capture photo. ${e.stack || e}`);
 
-      Alert.alert('오류', '사진 촬영에 실패했습니다.');
+      showToast({ type: 'error', message: '사진 촬영에 실패했습니다.' });
     } finally {
       setIsProcessing(false);
     }
   }, [onCapture, onComplete, isProcessing]);
 
   return {
-    showCamera,
     cameraRef,
-    openCamera,
-    closeCamera,
     capturePhoto,
     isProcessing,
   };

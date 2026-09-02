@@ -13,6 +13,8 @@ import { px } from '@utils/responsive';
 import { initAdMob } from '@features/ads/utils/config';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import { View } from 'react-native';
+import CameraGuideModal from '@features/pill_image_search/components/organisms/CameraGuideModal';
+import ImageSelectBottomSheet from '@features/pill_image_search/components/organisms/ImageSelectBottomSheet';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -52,6 +54,8 @@ const RootLayout = () => {
       <View style={{ zIndex: 999999 }}>
         <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
       </View>
+      <CameraGuideModal />
+      <ImageSelectBottomSheet />
     </SafeAreaProvider>
   );
 };

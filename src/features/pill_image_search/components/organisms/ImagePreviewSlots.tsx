@@ -6,18 +6,27 @@ import { CircleQuestionMark, Plus, X } from 'lucide-react-native';
 import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { useCameraGuideModalStore } from '@features/pill_image_search/store/camera_guide_store';
+import { usePillImageStore } from '../../store/pill_image_store';
+import { usePillImageActions } from '../../hooks/usePillImageActions';
 
 interface ImagePreviewSlotsProps {
-  frontImage: string | null;
-  backImage: string | null;
-  onRemove: (side: 'front' | 'back') => void;
+  frontImage?: string | null;
+  backImage?: string | null;
+  onRemove?: (side: 'front' | 'back') => void;
 }
 
 const ImagePreviewSlots = ({
-  frontImage,
-  backImage,
-  onRemove,
-}: ImagePreviewSlotsProps) => {
+  frontImage: propsFront,
+  backImage: propsBack,
+  onRemove: propsOnRemove,
+}: ImagePreviewSlotsProps = {}) => {
+  const pillImages = usePillImageStore((state) => state.pillImages);
+  const { handleImageRemove, handleImageOnLoad } = usePillImageActions();
+
+  const frontImage = propsFront !== undefined ? propsFront : pillImages.front;
+  const backImage = propsBack !== undefined ? propsBack : pillImages.back;
+  const onRemove = propsOnRemove ?? handleImageRemove;
+
   const setIsGuideModalVisible = useCameraGuideModalStore(
     (state) => state.setIsGuideModalVisible,
   );
@@ -45,7 +54,13 @@ const ImagePreviewSlots = ({
           </BaseText>
           {frontImage ? (
             <View style={styles.imageContainer}>
-              <Image source={{ uri: frontImage }} style={styles.image} />
+              <Image
+                source={{ uri: frontImage }}
+                style={styles.image}
+                cachePolicy={'memory'}
+                onLoadStart={() => handleImageOnLoad('front', false)}
+                onLoadEnd={() => handleImageOnLoad('front', true)}
+              />
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => onRemove('front')}
@@ -75,6 +90,8 @@ const ImagePreviewSlots = ({
                 source={{ uri: backImage }}
                 style={styles.image}
                 cachePolicy={'memory'}
+                onLoadStart={() => handleImageOnLoad('back', false)}
+                onLoadEnd={() => handleImageOnLoad('back', true)}
               />
               <TouchableOpacity
                 style={styles.removeButton}

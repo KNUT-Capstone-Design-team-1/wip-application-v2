@@ -1,50 +1,31 @@
 import React from 'react';
 import { View } from 'react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
-import ImageSearchButtons from '../components/organisms/ImageSearchButtons';
-import { usePillImageSelection } from '../hooks/usePillImageSelection';
+import ImageLoadButtons from '../components/organisms/ImageLoadButtons';
 import { styles } from '../styles/PillImageSearch';
-import CameraGuideModal from '../components/organisms/CameraGuideModal';
-import { useCameraGuideModalStore } from '../store/camera_guide_store';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ImageSearchInfo from '../components/organisms/ImageSearchInfo';
+import ImageSearchButton from '../components/organisms/ImageSearchButton';
 
 // TODO: 검색 중 취소 로직 필요 (사용자의 뒤로가기, 외부에서 종료)
 
 const PillImageSearch = () => {
-  const {
-    pillImages,
-    isSearching,
-    isBothImagesSelected,
-    handleImageSelect,
-    handleMultipleImageSelect,
-    handleImageRemove,
-    handleSearch,
-  } = usePillImageSelection();
-
-  const { isGuideModalVisible, setIsGuideModalVisible } =
-    useCameraGuideModalStore();
-
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <ImageSearchContent
-          frontImage={pillImages.front}
-          backImage={pillImages.back}
-          onRemove={handleImageRemove}
-        />
+    <View style={[styles.container, { marginBottom: insets.bottom }]}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-start',
+        }}
+      >
+        <ImageSearchContent />
         <View style={styles.hr} />
-        <ImageSearchButtons
-          visible={false}
-          onImageSelect={handleImageSelect}
-          onMultipleImageSelect={handleMultipleImageSelect}
-          pillImages={pillImages}
-          onApply={handleSearch}
-          showApplyButton={isBothImagesSelected}
-        />
+        <ImageLoadButtons />
       </View>
-      <CameraGuideModal
-        visible={isGuideModalVisible}
-        onClose={() => setIsGuideModalVisible(false)}
-      />
+      <ImageSearchInfo />
+      {/* 검색하기 버튼 */}
+      <ImageSearchButton />
     </View>
   );
 };

@@ -7,31 +7,26 @@ import { useCameraConfig } from '@features/pill_image_search/hooks/useCameraConf
 import { CameraPermissionAlert } from '../molecules/CameraPermissionAlert';
 import { CameraHeader } from '../molecules/CameraHeader';
 import { CameraCaptureButton } from '../molecules/CameraCaptureButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { usePillImageActions } from '@features/pill_image_search/hooks/usePillImageActions';
 
 interface CameraScreenProps {
   visible: boolean;
   onClose: () => void;
-  onCapture: (imageUri: string) => void;
-  frontImage: string | null;
-  backImage: string | null;
-  mode: 'camera' | 'album';
 }
 
 // 카메라 촬영 화면의 메인 컨테이너 컴포넌트
-const CameraScreen = ({
-  visible,
-  onClose,
-  onCapture,
-  frontImage,
-  backImage,
-}: CameraScreenProps) => {
+const CameraScreen = ({ visible, onClose }: CameraScreenProps) => {
+  const insets = useSafeAreaInsets();
   // 카메라 기기 설정 및 권한 훅
   const { device, format, hasPermission, requestPermission, getGuideWidth } =
     useCameraConfig();
 
+  const { handleCameraCapture } = usePillImageActions();
+
   // 사진 촬영 로직 훅
   const { cameraRef, capturePhoto, isProcessing } = useCameraCapture({
-    onCapture,
+    onCapture: handleCameraCapture,
   });
 
   // 권한 안내 모달 표시 상태
@@ -74,13 +69,11 @@ const CameraScreen = ({
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View style={styles.container}>
+      <View
+        style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}
+      >
         {/* 헤더 및 이미지 슬롯 영역 */}
-        <CameraHeader
-          onClose={onClose}
-          frontImage={frontImage}
-          backImage={backImage}
-        />
+        <CameraHeader onClose={onClose} />
 
         {/* 중앙 카메라 뷰파인더 및 가이드라인 영역 */}
         <View style={styles.guideOverlay}>
@@ -107,6 +100,7 @@ const CameraScreen = ({
         {/* 하단 셔터 버튼 영역 */}
         <CameraCaptureButton
           onCapture={capturePhoto}
+          onClose={onClose}
           isProcessing={isProcessing}
         />
       </View>

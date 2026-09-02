@@ -4,11 +4,9 @@ import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   imageSearchButtonsWrapper: {
-    display: 'flex',
     gap: px(14),
   },
   button: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -20,21 +18,22 @@ export const styles = StyleSheet.create({
   text: {
     color: COLOR_TEXT['white'],
   },
-  searchButton: {
-    marginTop: px(20),
-    width: '100%',
-    height: px(54),
-    borderRadius: px(27),
+  explorerButtonWrapper: {
+    paddingHorizontal: px(8),
+    marginTop: px(8),
+    alignItems: 'flex-end',
     justifyContent: 'center',
+    gap: px(4),
+  },
+  explorerInfoText: {
+    color: COLOR_TEXT['label'],
+  },
+  explorerButton: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  searchButtonText: {
-    color: COLOR_TEXT['white'],
-  },
-  hr: {
-    width: '100%',
-    height: px(1),
-    backgroundColor: COLOR_LINE['separator'],
-    marginVertical: px(30),
+  explorerButtonText: {
+    color: COLOR_TEXT['body'],
   },
 });

@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG, COLOR_TEXT, COLOR_LINE } from '@constants/color';
 import { px } from '@utils/responsive';
+import { headerSize } from '@constants/size';
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,12 +11,13 @@ export const styles = StyleSheet.create({
   },
   topOverlay: {
     paddingHorizontal: px(20),
+    paddingTop: headerSize.minHeight,
     paddingBottom: px(20),
     zIndex: 1,
   },
   closeButton: {
     position: 'absolute',
-    right: px(12),
+    right: 0,
     width: px(36),
     height: px(36),
     justifyContent: 'center',
@@ -29,10 +31,17 @@ export const styles = StyleSheet.create({
   },
   slotsWrapper: {
     flexDirection: 'row',
-    gap: px(12),
+    gap: px(16),
+    alignItems: 'flex-end',
   },
   slot: {
     flex: 1,
+    aspectRatio: 1,
+    borderRadius: px(8),
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderWidth: px(2),
+    borderColor: 'transparent',
   },
   label: {
     color: COLOR_TEXT['white'],
@@ -41,18 +50,19 @@ export const styles = StyleSheet.create({
   },
   slotImage: {
     width: '100%',
-    aspectRatio: 1,
-    borderRadius: px(8),
+    height: '100%',
   },
   emptySlot: {
-    aspectRatio: 1,
-    borderRadius: px(8),
-    borderWidth: px(2),
-    borderStyle: 'dashed',
-    borderColor: COLOR_LINE['border'],
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    width: '100%',
+    height: '100%',
+    // backgroundColor: 'rgba(255, 255, 255, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  slotSelectedBorder: {
+    // borderWidth: px(2),
+    // borderStyle: 'solid',
+    borderColor: COLOR['guide'],
   },
   guideOverlay: {
     flex: 1,
@@ -96,7 +106,15 @@ export const styles = StyleSheet.create({
   bottomOverlay: {
     paddingTop: px(20),
     alignItems: 'center',
+    justifyContent: 'center',
     zIndex: 1,
+    flexDirection: 'row',
+  },
+  bottomOverlayWrapper: {
+    width: '100%',
+    height: px(80),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   captureButton: {
     width: px(80),
@@ -127,7 +145,7 @@ export const styles = StyleSheet.create({
     paddingBottom: px(20),
     alignItems: 'center',
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: COLOR['shadow'],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -164,5 +182,14 @@ export const styles = StyleSheet.create({
   },
   alertConfirmText: {
     color: COLOR['white'],
+  },
+  bottomCompleteButton: {
+    position: 'absolute',
+    right: px(16),
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  bottomCompleteButtonText: {
+    color: 'white',
   },
 });
