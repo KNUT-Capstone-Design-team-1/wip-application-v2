@@ -42,9 +42,6 @@ export default {
         NSLocationWhenInUseUsageDescription:
           '$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다',
 
-        NSRemindersUsageDescription:
-          '$(PRODUCT_NAME)에서 설정한 시간에 알약 복용 알림을 등록하기 위해 권한이 필요합니다',
-
         NSUserNotificationsUsageDescription:
           '$(PRODUCT_NAME)에서 설정한 시간에 알약 복용 푸시 알림을 받기 위해 알림 권한이 필요합니다',
 

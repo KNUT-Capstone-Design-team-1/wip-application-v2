@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { IPillReminderItem } from '@features/pill_reminder/types/pill_reminder_type';
 import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
+import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 import Toast from 'react-native-toast-message';
 import { router } from 'expo-router';
 
@@ -46,6 +47,9 @@ export const usePillReminderSettingForm = ({
       setLoading(true);
 
       try {
+        // 알림 권한 확인 및 요청
+        await pillReminderNotificationService.initPermissions();
+
         // 수정 모드일 때 기존 알림 데이터 세팅
         if (isEditMode && reminderId) {
           const reminder = await pillReminderService.getReminderById(
@@ -56,10 +60,15 @@ export const usePillReminderSettingForm = ({
 
           if (hasReminder && reminder) {
             setTitle(reminder.title || '');
+
             setMemo(reminder.memo || '');
+
             setTimes([reminder.time]);
+
             setDays(reminder.days);
+
             setSelectedFolderId(reminder.folder_id);
+
             setSelectedPills(
               reminder.items.map((item) => ({
                 item_seq: item.item_seq,
@@ -78,6 +87,7 @@ export const usePillReminderSettingForm = ({
             if (hasFirstSeq && firstSeq) {
               const folderInfo =
                 await pillReminderService.getFolderInfoByItemSeq(firstSeq);
+
               const hasFolderInfo = Boolean(folderInfo);
 
               if (hasFolderInfo && folderInfo) {

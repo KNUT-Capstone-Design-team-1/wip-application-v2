@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { usePillReminderStore } from '@features/pill_reminder/store/pill_reminder_store';
 import { useCommonModalStore } from '@store/common_modal_store';
+import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 import { router, useFocusEffect } from 'expo-router';
 import Toast from 'react-native-toast-message';
 
@@ -20,9 +21,10 @@ export const usePillReminderList = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  // 화면 진입 시 알림 목록 갱신
+  // 화면 진입 시 알림 권한 확인/요청 및 알림 목록 갱신
   useFocusEffect(
     useCallback(() => {
+      pillReminderNotificationService.initPermissions();
       fetchReminders();
     }, [fetchReminders]),
   );
@@ -44,7 +46,7 @@ export const usePillReminderList = () => {
     });
   }, []);
 
-  // 개별 알림 선택/해제 토글 핸들러
+  // 개별 알림 선택/해제 토글 핸들러 (모두 해제 시 편집 모드 자동 종료)
   const toggleSelect = useCallback((id: number) => {
     setSelectedIds((prev) => {
       const isAlreadySelected = prev.includes(id);
