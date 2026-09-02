@@ -14,9 +14,9 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLOR_LINE.border,
   },
-
   countText: {
     color: COLOR_TEXT.sub,
   },
   iconContainer: { flexDirection: 'row', alignItems: 'center', gap: px(16) },
+  title: { color: COLOR_TEXT.sub },
 });

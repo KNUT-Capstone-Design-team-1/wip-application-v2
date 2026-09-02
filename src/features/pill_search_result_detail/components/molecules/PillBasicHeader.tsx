@@ -59,7 +59,11 @@ const PillBasicHeader = ({
       />
       <View style={styles.actionButtons}>
         {onStockInquiry && (
-          <StockInquiryIconButton onPress={onStockInquiry} size={20} />
+          <StockInquiryIconButton
+            onPress={onStockInquiry}
+            size={20}
+            color="#32D2FF"
+          />
         )}
         <TouchableOpacity style={styles.saveButton} onPress={onSaveToggle}>
           <Bookmark

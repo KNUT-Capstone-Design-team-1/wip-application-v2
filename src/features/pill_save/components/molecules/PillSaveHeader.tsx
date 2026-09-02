@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { Plus, ListFilter } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
-import { fontPx, px } from '@utils/responsive';
+import { fontPx } from '@utils/responsive';
 import { styles } from '@features/pill_save/styles/molecules/PillSaveHeader';
 
 interface IPillSaveHeaderProps {
@@ -29,10 +29,10 @@ export const PillSaveHeader = memo(
         {!isEditing && (
           <View style={styles.iconContainer}>
             <TouchableOpacity onPress={onSortRequest}>
-              <ListFilter size={fontPx(20)} color={COLOR_TEXT.title} />
+              <ListFilter size={fontPx(20)} color={COLOR_TEXT.sub} />
             </TouchableOpacity>
             <TouchableOpacity onPress={onAddRequest}>
-              <Plus size={fontPx(20)} color={COLOR_TEXT.title} />
+              <Plus size={fontPx(20)} color={COLOR_TEXT.sub} />
             </TouchableOpacity>
           </View>
         )}
