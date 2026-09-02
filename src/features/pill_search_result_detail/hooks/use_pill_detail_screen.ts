@@ -58,14 +58,21 @@ export const usePillDetailScreen = () => {
         ITEM_SEQ: itemSeq,
         ITEM_NAME: itemName,
       } as TRecentViewedPill);
-
-      setTitle(itemName);
     }
+  }, [itemSeq, itemName, setRecentViewedPills]);
 
-    return () => {
-      resetTitle();
-    };
-  }, [itemSeq, itemName, resetTitle, setRecentViewedPills, setTitle]);
+  // 포커스 시 헤더 타이틀 복원
+  useFocusEffect(
+    useCallback(() => {
+      if (itemName) {
+        setTitle(itemName);
+      }
+
+      return () => {
+        resetTitle();
+      };
+    }, [itemName, resetTitle, setTitle]),
+  );
 
   useEffect(() => {
     const initData = async () => {

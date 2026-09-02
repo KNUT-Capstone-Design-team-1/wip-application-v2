@@ -1,19 +1,21 @@
 import PillSaveFolderDetail from '@features/pill_save/screens/PillSaveFolderDetail';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 
 export default function FolderDetailRoute() {
   const { name } = useLocalSearchParams();
   const folderName = Array.isArray(name) ? name[0] : name;
   const { setTitle, resetTitle } = useHeaderTitleStore();
 
-  useEffect(() => {
-    if (folderName) {
-      setTitle(folderName);
-    }
-    return () => resetTitle();
-  }, [folderName]);
+  useFocusEffect(
+    useCallback(() => {
+      if (folderName) {
+        setTitle(folderName);
+      }
+      return () => resetTitle();
+    }, [folderName, resetTitle, setTitle]),
+  );
 
   return (
     <>

@@ -9,16 +9,13 @@ import {
 } from '@features/nearby_pharmacy/constants/stock_inquiry';
 
 // 재고 문의 안내 공통 모달 팝업 실행
-export const openStockInquiryModal = (pillName?: string) => {
+export const openStockInquiryModal = () => {
   useCommonModalStore.getState().showModal({
     ...STOCK_INQUIRY_MODAL,
     onConfirm: () => {
       router.push({
         pathname: STOCK_INQUIRY_ROUTE,
-        params: {
-          stockInquiry: 'true',
-          ...(pillName ? { pillName } : {}),
-        },
+        params: { stockInquiry: 'true' },
       });
     },
   });
