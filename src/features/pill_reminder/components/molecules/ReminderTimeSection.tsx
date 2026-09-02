@@ -8,12 +8,18 @@ interface IReminderTimeSectionProps {
   times: string[];
   isEditMode: boolean;
   onOpenTimePicker: () => void;
+  onEditTime: (time: string) => void;
   onRemoveTime: (time: string) => void;
 }
 
 // 복용 시간 설정 섹션 컴포넌트
 export const ReminderTimeSection = memo(
-  ({ times, onOpenTimePicker, onRemoveTime }: IReminderTimeSectionProps) => {
+  ({
+    times,
+    onOpenTimePicker,
+    onEditTime,
+    onRemoveTime,
+  }: IReminderTimeSectionProps) => {
     return (
       <View style={styles.sectionCard}>
         <View style={styles.sectionHeader}>
@@ -27,6 +33,7 @@ export const ReminderTimeSection = memo(
             <TimeChip
               key={time}
               time={time}
+              onPress={() => onEditTime(time)}
               onRemove={() => onRemoveTime(time)}
             />
           ))}

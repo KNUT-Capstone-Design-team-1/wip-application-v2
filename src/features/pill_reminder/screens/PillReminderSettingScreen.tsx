@@ -31,19 +31,22 @@ export const PillReminderSettingScreen = () => {
     isFormValid,
     isPillSelectModalVisible,
     isTimePickerVisible,
+    editingTime,
     setIsPillSelectModalVisible,
     setIsTimePickerVisible,
     setDays,
     handleConfirmPillSelection,
     handleRemovePill,
     handleDosageChange,
-    handleAddTime,
+    handleOpenTimePicker,
+    handleConfirmTimePicker,
     handleRemoveTime,
     handleSave,
   } = usePillReminderSettingForm({ reminderId, initialItemSeqs });
 
   // 로딩 상태 Early Return
   const isFormLoading = loading;
+
   if (isFormLoading) {
     return (
       <View style={styles.container}>
@@ -69,11 +72,12 @@ export const PillReminderSettingScreen = () => {
           onRemovePill={handleRemovePill}
         />
 
-        {/* 섹션 2: 복용 시간 설정 */}
+        {/* 섹션 2: 복용 시간 설정 (클릭 시 수정, + 클릭 시 추가) */}
         <ReminderTimeSection
           times={times}
           isEditMode={isEditMode}
-          onOpenTimePicker={() => setIsTimePickerVisible(true)}
+          onOpenTimePicker={() => handleOpenTimePicker()}
+          onEditTime={(time) => handleOpenTimePicker(time)}
           onRemoveTime={handleRemoveTime}
         />
 
@@ -110,11 +114,14 @@ export const PillReminderSettingScreen = () => {
         onConfirm={handleConfirmPillSelection}
       />
 
-      {/* 복용 시간 선택 모달 */}
+      {/* 복용 시간 선택 및 수정 모달 */}
       <TimePickerModal
         visible={isTimePickerVisible}
-        onClose={() => setIsTimePickerVisible(false)}
-        onConfirm={handleAddTime}
+        onClose={() => {
+          setIsTimePickerVisible(false);
+        }}
+        onConfirm={handleConfirmTimePicker}
+        initialTime={editingTime || undefined}
       />
     </View>
   );

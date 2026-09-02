@@ -33,6 +33,7 @@ export const usePillReminderSettingForm = ({
   const [isPillSelectModalVisible, setIsPillSelectModalVisible] =
     useState(false);
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
+  const [editingTime, setEditingTime] = useState<string | null>(null);
 
   // 초기 폼 데이터 로드
   useEffect(() => {
@@ -169,9 +170,53 @@ export const usePillReminderSettingForm = ({
     );
   };
 
-  // 복용 시간 추가 핸들러
-  const handleAddTime = (newTime: string) => {
-    const isAlreadyAdded = times.includes(newTime);
+  // 복용 시간 추가 또는 수정 모달 열기 핸들러
+  const handleOpenTimePicker = (timeToEdit?: string) => {
+    const isEdit = Boolean(timeToEdit);
+
+    if (isEdit && timeToEdit) {
+      setEditingTime(timeToEdit);
+    } else {
+      setEditingTime(null);
+    }
+
+    setIsTimePickerVisible(true);
+  };
+
+  // 복용 시간 선택 모달 확인 핸들러 (추가 및 수정 공통)
+  const handleConfirmTimePicker = (selectedTime: string) => {
+    const isEditing = editingTime !== null;
+
+    if (isEditing && editingTime) {
+      const isUnchanged = selectedTime === editingTime;
+
+      if (isUnchanged) {
+        setIsTimePickerVisible(false);
+        setEditingTime(null);
+        return;
+      }
+
+      const isAlreadyAdded = times.includes(selectedTime);
+
+      if (isAlreadyAdded) {
+        Toast.show({
+          type: 'info',
+          text1: '이미 추가된 시간입니다.',
+        });
+        return;
+      }
+
+      setTimes((prev) =>
+        prev.map((t) => (t === editingTime ? selectedTime : t)).sort(),
+      );
+
+      setIsTimePickerVisible(false);
+      setEditingTime(null);
+      return;
+    }
+
+    // 추가 모드
+    const isAlreadyAdded = times.includes(selectedTime);
 
     if (isAlreadyAdded) {
       Toast.show({
@@ -181,7 +226,9 @@ export const usePillReminderSettingForm = ({
       return;
     }
 
-    setTimes((prev) => [...prev, newTime].sort());
+    setTimes((prev) => [...prev, selectedTime].sort());
+    setIsTimePickerVisible(false);
+    setEditingTime(null);
   };
 
   // 복용 시간 삭제 핸들러 (0개까지 삭제 허용)
@@ -296,13 +343,15 @@ export const usePillReminderSettingForm = ({
     isFormValid,
     isPillSelectModalVisible,
     isTimePickerVisible,
+    editingTime,
     setIsPillSelectModalVisible,
     setIsTimePickerVisible,
     setDays,
     handleConfirmPillSelection,
     handleRemovePill,
     handleDosageChange,
-    handleAddTime,
+    handleOpenTimePicker,
+    handleConfirmTimePicker,
     handleRemoveTime,
     handleSave,
   };
