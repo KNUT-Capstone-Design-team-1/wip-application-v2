@@ -1,3 +1,12 @@
+import {
+  DayOfWeek,
+  DAY_NAMES,
+  DAY_FULL_NAMES,
+} from '@features/pill_reminder/constants/reminder_day_constant';
+
+export type { DayOfWeek };
+export { DAY_NAMES, DAY_FULL_NAMES };
+
 export interface IPillReminderItem {
   id?: number;
   reminder_id?: number;
@@ -54,25 +63,3 @@ export interface IPillReminderUpdateForm {
     entp_name?: string;
   }[];
 }
-
-export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
-export const DAY_NAMES: Record<number, string> = {
-  0: '일',
-  1: '월',
-  2: '화',
-  3: '수',
-  4: '목',
-  5: '금',
-  6: '토',
-};
-
-export const DAY_FULL_NAMES: Record<number, string> = {
-  0: '일요일',
-  1: '월요일',
-  2: '화요일',
-  3: '수요일',
-  4: '목요일',
-  5: '금요일',
-  6: '토요일',
-};

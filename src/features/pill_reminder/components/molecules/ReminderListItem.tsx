@@ -13,14 +13,21 @@ export { formatReminderDays };
 
 interface IReminderListItemProps {
   reminder: IPillReminder;
+  isEditing?: boolean;
+  isSelected?: boolean;
   onPress: () => void;
   onToggle: (isEnabled: boolean) => void;
-  onDelete: () => void;
 }
 
-// 복용 알림 목록의 개별 알림 카드 컴포넌트 (모듈화된 atom 컴포넌트 조합)
+// 복용 알림 목록의 개별 알림 카드 컴포넌트
 export const ReminderListItem = memo(
-  ({ reminder, onPress, onToggle, onDelete }: IReminderListItemProps) => {
+  ({
+    reminder,
+    isEditing = false,
+    isSelected = false,
+    onPress,
+    onToggle,
+  }: IReminderListItemProps) => {
     const daysText = formatReminderDays(reminder.days);
 
     // 알약 요약 문구 생성 (2개 이상 시 'xx 외 n개')
@@ -47,7 +54,7 @@ export const ReminderListItem = memo(
         {/* 알림 이름 표시 */}
         <ReminderCardTitle title={reminder.title} />
 
-        {/* 시간, 요일 및 조작 버튼 */}
+        {/* 시간, 요일 및 조작 버튼 (일반: 토글 스위치, 편집: 체크 버튼) */}
         <View style={styles.topRow}>
           <ReminderTimeHeader
             time={reminder.time}
@@ -56,8 +63,9 @@ export const ReminderListItem = memo(
           />
           <ReminderActionButtons
             isEnabled={reminder.is_enabled}
+            isEditing={isEditing}
+            isSelected={isSelected}
             onToggle={onToggle}
-            onDelete={onDelete}
           />
         </View>
 

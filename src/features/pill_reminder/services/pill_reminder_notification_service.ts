@@ -3,6 +3,16 @@ import * as Notifications from 'expo-notifications';
 import dayjs from 'dayjs';
 import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
 import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
+import {
+  NOTIFICATION_CHANNEL_ID,
+  NOTIFICATION_CHANNEL_NAME,
+  NOTIFICATION_LIGHT_COLOR,
+  DEFAULT_NOTIFICATION_TITLE,
+  ALARM_VIBRATION_PATTERN,
+  CHANNEL_VIBRATION_PATTERN,
+  NOTIFICATION_WATCHER_INTERVAL_MS,
+  NOTIFICATION_TOAST_VISIBILITY_MS,
+} from '@features/pill_reminder/constants/reminder_notification_constant';
 import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
 
@@ -39,13 +49,16 @@ class PillReminderNotificationService {
       const isAndroid = Platform.OS === 'android';
 
       if (isAndroid) {
-        await Notifications.setNotificationChannelAsync('pill-reminder', {
-          name: '복용 알림',
-          importance: Notifications.AndroidImportance.HIGH,
-          vibrationPattern: [0, 500, 200, 500],
-          lightColor: '#2cb7de',
-          sound: 'default',
-        });
+        await Notifications.setNotificationChannelAsync(
+          NOTIFICATION_CHANNEL_ID,
+          {
+            name: NOTIFICATION_CHANNEL_NAME,
+            importance: Notifications.AndroidImportance.HIGH,
+            vibrationPattern: CHANNEL_VIBRATION_PATTERN,
+            lightColor: NOTIFICATION_LIGHT_COLOR,
+            sound: 'default',
+          },
+        );
       }
 
       return finalStatus === 'granted';
@@ -85,7 +98,7 @@ class PillReminderNotificationService {
           ? `${pillBody}\n메모: ${reminder.memo}`
           : pillBody;
 
-        const reminderTitle = reminder.title || '복용 알림';
+        const reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
 
         // 각 요일별 주간 반복 알림 스케줄 등록
         for (const day of reminder.days) {
@@ -104,7 +117,7 @@ class PillReminderNotificationService {
               weekday: expoWeekday,
               hour,
               minute,
-              channelId: 'pill-reminder',
+              channelId: NOTIFICATION_CHANNEL_ID,
             },
           });
         }
@@ -116,11 +129,10 @@ class PillReminderNotificationService {
     }
   }
 
-  // 진동 트리거 (0.5초 진동 - 0.2초 휴식 - 0.5초 진동)
+  // 진동 트리거
   private triggerAlarmVibration() {
     try {
-      const pattern = [0, 500, 200, 500, 200, 500];
-      Vibration.vibrate(pattern, false);
+      Vibration.vibrate(ALARM_VIBRATION_PATTERN, false);
     } catch (e) {
       logger.error(`[NOTIFICATION-SERVICE] Failed to vibrate: ${e}`);
     }
@@ -172,13 +184,13 @@ class PillReminderNotificationService {
         }
 
         const formattedTime = formatReminderTime(reminder.time);
-        const reminderTitle = reminder.title || '복용 알림';
+        const reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
 
         Toast.show({
           type: 'default',
           text1: `🔔 [${reminderTitle}] ${formattedTime} - ${pillNames}`,
           text2: reminder.memo ? `📝 ${reminder.memo}` : undefined,
-          visibilityTime: 5000,
+          visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
         });
       }
     } catch (e) {
@@ -197,10 +209,10 @@ class PillReminderNotificationService {
       clearInterval(this.timer);
     }
 
-    // 15초 주기로 인앱 체크
+    // 주기적인 인앱 체크
     this.timer = setInterval(() => {
       this.checkAndTriggerCurrentReminders();
-    }, 15000);
+    }, NOTIFICATION_WATCHER_INTERVAL_MS);
   }
 
   // 알림 감시 중지

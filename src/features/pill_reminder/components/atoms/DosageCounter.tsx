@@ -4,6 +4,10 @@ import { BaseText } from '@components/common/BaseText';
 import { Plus, Minus } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import {
+  MIN_DOSAGE,
+  MAX_DOSAGE,
+} from '@features/pill_reminder/constants/reminder_validation_constant';
 import { styles } from '@features/pill_reminder/styles/atoms/DosageCounter';
 
 interface IDosageCounterProps {
@@ -15,7 +19,12 @@ interface IDosageCounterProps {
 
 // 복용량 증감 조절 컴포넌트
 export const DosageCounter = memo(
-  ({ value, onChange, min = 1, max = 20 }: IDosageCounterProps) => {
+  ({
+    value,
+    onChange,
+    min = MIN_DOSAGE,
+    max = MAX_DOSAGE,
+  }: IDosageCounterProps) => {
     // 수량 감소 핸들러
     const handleMinus = () => {
       if (value <= min) {

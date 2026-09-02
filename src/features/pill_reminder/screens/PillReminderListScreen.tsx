@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { usePillReminderList } from '@features/pill_reminder/hooks/use_pill_reminder_list';
+import { ReminderListHeader } from '@features/pill_reminder/components/molecules/ReminderListHeader';
 import { ReminderListItem } from '@features/pill_reminder/components/molecules/ReminderListItem';
 import { ReminderListEmptyView } from '@features/pill_reminder/components/molecules/ReminderListEmptyView';
 import { ReminderListFooter } from '@features/pill_reminder/components/molecules/ReminderListFooter';
+import { ReminderEditBottomBar } from '@features/pill_reminder/components/molecules/ReminderEditBottomBar';
 import { COLOR } from '@constants/color';
 import { styles } from '@features/pill_reminder/styles/screens/PillReminderList';
 
@@ -13,9 +15,15 @@ export const PillReminderListScreen = () => {
     reminders,
     isInitialLoading,
     isListEmpty,
+    isEditing,
+    selectedIds,
+    allSelected,
+    handleToggleEdit,
+    toggleSelect,
+    toggleSelectAll,
+    handleMultipleDelete,
     handleCreateReminder,
     handleEditReminder,
-    handleDeleteReminder,
     handleToggle,
   } = usePillReminderList();
 
@@ -37,27 +45,52 @@ export const PillReminderListScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* 상단 카운트 및 편집/전체선택 헤더 (알약 보관함 스타일) */}
+      <ReminderListHeader
+        count={reminders.length}
+        isEditing={isEditing}
+        allSelected={allSelected}
+        onToggleEdit={handleToggleEdit}
+        onSelectAll={toggleSelectAll}
+      />
+
       {/* 알림 카드 목록 스크롤 뷰 */}
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {reminders.map((reminder) => (
-          <ReminderListItem
-            key={reminder.id}
-            reminder={reminder}
-            onPress={() => handleEditReminder(reminder.id)}
-            onToggle={(newVal) => handleToggle(reminder.id, !newVal)}
-            onDelete={() =>
-              handleDeleteReminder(reminder.id, reminder.time, reminder.days)
-            }
-          />
-        ))}
+        {reminders.map((reminder) => {
+          const isSelected = selectedIds.includes(reminder.id);
+
+          return (
+            <ReminderListItem
+              key={reminder.id}
+              reminder={reminder}
+              isEditing={isEditing}
+              isSelected={isSelected}
+              onPress={() => {
+                if (isEditing) {
+                  toggleSelect(reminder.id);
+                } else {
+                  handleEditReminder(reminder.id);
+                }
+              }}
+              onToggle={(newVal) => handleToggle(reminder.id, !newVal)}
+            />
+          );
+        })}
       </ScrollView>
 
-      {/* 하단 고정 추가 버튼 푸터 */}
-      <ReminderListFooter onCreateReminder={handleCreateReminder} />
+      {/* 하단 고정 바 (편집 모드: 선택 삭제 바 / 일반 모드: 추가 버튼 푸터) */}
+      {isEditing ? (
+        <ReminderEditBottomBar
+          selectedCount={selectedIds.length}
+          onDelete={handleMultipleDelete}
+        />
+      ) : (
+        <ReminderListFooter onCreateReminder={handleCreateReminder} />
+      )}
     </View>
   );
 };

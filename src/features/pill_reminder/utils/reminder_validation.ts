@@ -1,10 +1,10 @@
-// 복용 알림 입력값 유효성 검사 및 SQLite 안전 문자열 정제 유틸리티
+import {
+  MAX_REMINDER_TITLE_LENGTH,
+  MAX_REMINDER_MEMO_LENGTH,
+  CONTROL_CHAR_REGEX,
+} from '@features/pill_reminder/constants/reminder_validation_constant';
 
-// 제어 문자 및 널 바이트 등 위험 특수문자 제거 정규식 (개행/탭 제외)
-
-const CONTROL_CHAR_REGEX = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
-
-// 문자열 정제 (최대 글자수 및 위험 특수문자 제거)
+// 문자열 정제 (최대 글자수 및 제어 문자 제거)
 export const sanitizeReminderText = (
   text: string,
   maxLength: number,
@@ -20,10 +20,10 @@ export const sanitizeReminderText = (
 
 // 복용 알림 이름 정제 (최대 50자)
 export const sanitizeReminderTitle = (title: string): string => {
-  return sanitizeReminderText(title, 50);
+  return sanitizeReminderText(title, MAX_REMINDER_TITLE_LENGTH);
 };
 
 // 복용 알림 메모 정제 (최대 255자)
 export const sanitizeReminderMemo = (memo: string): string => {
-  return sanitizeReminderText(memo, 255);
+  return sanitizeReminderText(memo, MAX_REMINDER_MEMO_LENGTH);
 };

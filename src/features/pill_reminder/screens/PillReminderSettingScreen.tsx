@@ -2,15 +2,14 @@ import React from 'react';
 import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { usePillReminderSettingForm } from '@features/pill_reminder/hooks/use_pill_reminder_setting_form';
-import { SelectedPillSection } from '@features/pill_reminder/components/molecules/SelectedPillSection';
 import { ReminderNameMemoSection } from '@features/pill_reminder/components/molecules/ReminderNameMemoSection';
+import { SelectedPillSection } from '@features/pill_reminder/components/molecules/SelectedPillSection';
 import { ReminderTimeSection } from '@features/pill_reminder/components/molecules/ReminderTimeSection';
-import { DaySelector } from '@features/pill_reminder/components/atoms/DaySelector';
+import { ReminderDaySection } from '@features/pill_reminder/components/molecules/ReminderDaySection';
 import { ReminderDosageSection } from '@features/pill_reminder/components/molecules/ReminderDosageSection';
 import { ReminderSaveFooter } from '@features/pill_reminder/components/molecules/ReminderSaveFooter';
 import { PillReminderSelectModal } from '@features/pill_reminder/components/organisms/PillReminderSelectModal';
 import { TimePickerModal } from '@features/pill_reminder/components/molecules/TimePickerModal';
-import { BaseText } from '@components/common/BaseText';
 import { COLOR } from '@constants/color';
 import { styles } from '@features/pill_reminder/styles/screens/PillReminderSetting';
 
@@ -94,14 +93,7 @@ export const PillReminderSettingScreen = () => {
         />
 
         {/* 섹션 4: 복용 요일 선택 */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.sectionHeader}>
-            <BaseText size={20} weight="bold" style={styles.sectionTitle}>
-              복용 요일 선택
-            </BaseText>
-          </View>
-          <DaySelector selectedDays={days} onChange={setDays} />
-        </View>
+        <ReminderDaySection selectedDays={days} onChange={setDays} />
 
         {/* 섹션 5: 1회 복용량 설정 */}
         <ReminderDosageSection
