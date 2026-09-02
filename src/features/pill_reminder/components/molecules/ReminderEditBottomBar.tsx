@@ -24,19 +24,21 @@ export const ReminderEditBottomBar = memo(
           {selectedCount}개 선택됨
         </BaseText>
 
-        <TouchableOpacity
-          style={[styles.deleteButton, isDisabled && styles.disabledButton]}
-          onPress={onDelete}
-          disabled={isDisabled}
-          activeOpacity={0.7}
-        >
-          <BaseText
-            weight="bold"
-            style={isDisabled ? styles.disabledText : styles.deleteText}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={[styles.deleteButton, isDisabled && styles.disabledButton]}
+            onPress={onDelete}
+            disabled={isDisabled}
+            activeOpacity={0.7}
           >
-            삭제
-          </BaseText>
-        </TouchableOpacity>
+            <BaseText
+              weight="bold"
+              style={isDisabled ? styles.disabledText : styles.deleteText}
+            >
+              삭제
+            </BaseText>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   },

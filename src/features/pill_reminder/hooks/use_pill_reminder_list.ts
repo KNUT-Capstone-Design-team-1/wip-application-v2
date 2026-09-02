@@ -48,12 +48,15 @@ export const usePillReminderList = () => {
   const toggleSelect = useCallback((id: number) => {
     setSelectedIds((prev) => {
       const isAlreadySelected = prev.includes(id);
+      const next = isAlreadySelected
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
 
-      if (isAlreadySelected) {
-        return prev.filter((item) => item !== id);
+      if (isAlreadySelected && next.length === 0) {
+        setIsEditing(false);
       }
 
-      return [...prev, id];
+      return next;
     });
   }, []);
 
@@ -76,6 +79,14 @@ export const usePillReminderList = () => {
 
     setSelectedIds(reminders.map((r) => r.id));
   }, [allSelected, reminders]);
+
+  // 배경 빈 화면 터치 시 선택 해제 및 편집 모드 종료
+  const handleBackgroundPress = useCallback(() => {
+    if (isEditing) {
+      setSelectedIds([]);
+      setIsEditing(false);
+    }
+  }, [isEditing]);
 
   // 선택된 복용 알림 다중 삭제 확인 모달
   const handleMultipleDelete = useCallback(() => {
@@ -151,6 +162,7 @@ export const usePillReminderList = () => {
     handleToggleEdit,
     toggleSelect,
     toggleSelectAll,
+    handleBackgroundPress,
     handleMultipleDelete,
     handleCreateReminder,
     handleEditReminder,

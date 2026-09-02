@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { usePillReminderList } from '@features/pill_reminder/hooks/use_pill_reminder_list';
 import { ReminderListHeader } from '@features/pill_reminder/components/molecules/ReminderListHeader';
 import { ReminderListItem } from '@features/pill_reminder/components/molecules/ReminderListItem';
@@ -21,6 +21,7 @@ export const PillReminderListScreen = () => {
     handleToggleEdit,
     toggleSelect,
     toggleSelectAll,
+    handleBackgroundPress,
     handleMultipleDelete,
     handleCreateReminder,
     handleEditReminder,
@@ -44,8 +45,8 @@ export const PillReminderListScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      {/* 상단 카운트 및 편집/전체선택 헤더 (알약 보관함 스타일) */}
+    <Pressable style={styles.container} onPress={handleBackgroundPress}>
+      {/* 상단 카운트 및 편집/전체선택 헤더 */}
       <ReminderListHeader
         count={reminders.length}
         isEditing={isEditing}
@@ -60,29 +61,31 @@ export const PillReminderListScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {reminders.map((reminder) => {
-          const isSelected = selectedIds.includes(reminder.id);
+        <Pressable onPress={handleBackgroundPress}>
+          {reminders.map((reminder) => {
+            const isSelected = selectedIds.includes(reminder.id);
 
-          return (
-            <ReminderListItem
-              key={reminder.id}
-              reminder={reminder}
-              isEditing={isEditing}
-              isSelected={isSelected}
-              onPress={() => {
-                if (isEditing) {
-                  toggleSelect(reminder.id);
-                } else {
-                  handleEditReminder(reminder.id);
-                }
-              }}
-              onToggle={(newVal) => handleToggle(reminder.id, !newVal)}
-            />
-          );
-        })}
+            return (
+              <ReminderListItem
+                key={reminder.id}
+                reminder={reminder}
+                isEditing={isEditing}
+                isSelected={isSelected}
+                onPress={() => {
+                  if (isEditing) {
+                    toggleSelect(reminder.id);
+                  } else {
+                    handleEditReminder(reminder.id);
+                  }
+                }}
+                onToggle={(newVal) => handleToggle(reminder.id, !newVal)}
+              />
+            );
+          })}
+        </Pressable>
       </ScrollView>
 
-      {/* 하단 고정 바 (편집 모드: 선택 삭제 바 / 일반 모드: 추가 버튼 푸터) */}
+      {/* 하단 고정 바 (편집 모드: 큰 삭제 버튼 바 / 일반 모드: 추가 버튼 푸터) */}
       {isEditing ? (
         <ReminderEditBottomBar
           selectedCount={selectedIds.length}
@@ -91,6 +94,6 @@ export const PillReminderListScreen = () => {
       ) : (
         <ReminderListFooter onCreateReminder={handleCreateReminder} />
       )}
-    </View>
+    </Pressable>
   );
 };

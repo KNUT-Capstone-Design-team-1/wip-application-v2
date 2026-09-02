@@ -14,7 +14,7 @@ interface IReminderListHeaderProps {
   onSelectAll: () => void;
 }
 
-// 복용 알림 목록 헤더 컴포넌트 (알약 보관함과 동일한 UX)
+// 복용 알림 목록 헤더 컴포넌트
 export const ReminderListHeader = memo(
   ({
     count,
@@ -30,18 +30,11 @@ export const ReminderListHeader = memo(
         </BaseText>
 
         {isEditing ? (
-          <View style={styles.actionRow}>
-            <TouchableOpacity onPress={onSelectAll} activeOpacity={0.7}>
-              <BaseText size={14} weight="medium" style={styles.actionText}>
-                {allSelected ? '전체해제' : '전체선택'}
-              </BaseText>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onToggleEdit} activeOpacity={0.7}>
-              <BaseText size={14} weight="bold" style={styles.actionText}>
-                완료
-              </BaseText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={onSelectAll} activeOpacity={0.7}>
+            <BaseText size={14} weight="medium" style={styles.actionText}>
+              {allSelected ? '전체해제' : '전체선택'}
+            </BaseText>
+          </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={onToggleEdit} activeOpacity={0.7}>
             <SquarePen size={fontPx(20)} color={COLOR_TEXT.sub} />

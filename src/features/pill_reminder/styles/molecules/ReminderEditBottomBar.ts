@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { fontPx, px } from '@utils/responsive';
 
-// 복용 알림 편집 모드 하단 바 스타일 (알약 보관함 바텀 바 디자인과 일치)
+// 복용 알림 편집 모드 하단 바 스타일
 export const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -14,25 +14,29 @@ export const styles = StyleSheet.create({
     borderTopColor: COLOR_LINE.border,
     paddingHorizontal: px(20),
     paddingTop: px(12),
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    elevation: 10,
     shadowColor: COLOR.shadow,
     shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 4,
   },
   countText: {
     color: COLOR_TEXT.title,
+    marginBottom: px(8),
+    textAlign: 'center',
+  },
+  buttonRow: {
+    width: '100%',
   },
   deleteButton: {
+    width: '100%',
+    paddingVertical: px(14),
+    borderRadius: px(8),
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: COLOR.error,
-    paddingHorizontal: px(20),
-    paddingVertical: px(10),
-    borderRadius: px(8),
   },
   disabledButton: {
     backgroundColor: COLOR_BG.base,
@@ -41,10 +45,10 @@ export const styles = StyleSheet.create({
   },
   deleteText: {
     color: COLOR.error,
-    fontSize: fontPx(14),
+    fontSize: fontPx(16),
   },
   disabledText: {
-    color: COLOR_TEXT.sub,
-    fontSize: fontPx(14),
+    color: COLOR_TEXT.disabled,
+    fontSize: fontPx(16),
   },
 });
