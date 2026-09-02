@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { IPillSelectOption } from '@features/pill_reminder/hooks/use_pill_reminder_modal_folder_data';
 
 interface IUsePillReminderModalSelectionProps {
@@ -21,12 +21,14 @@ export const usePillReminderModalSelection = ({
     number | null
   >(null);
   const [tempSelectedSeqs, setTempSelectedSeqs] = useState<string[]>([]);
+  const prevVisibleRef = useRef<boolean>(false);
 
-  // 모달 열릴 때 초기 선택 알약 목록 동기화
+  // 모달이 열릴 때(visible: false -> true)만 초기 선택 알약 목록 동기화
   useEffect(() => {
-    const isModalClosed = !visible;
+    const isJustOpened = visible && !prevVisibleRef.current;
+    prevVisibleRef.current = visible;
 
-    if (isModalClosed) {
+    if (!isJustOpened) {
       return;
     }
 

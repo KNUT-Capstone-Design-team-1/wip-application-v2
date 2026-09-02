@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { IFolderTabOption } from '@features/pill_reminder/components/atoms/FolderSelectTabs';
 import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
 
@@ -26,11 +26,16 @@ export const usePillReminderModalFolderData = ({
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
   const [folderPills, setFolderPills] = useState<IPillSelectOption[]>([]);
 
-  // 모달 오픈 시 전체 폴더 목록 조회 및 기본 폴더 초기화
-  useEffect(() => {
-    const isModalClosed = !visible;
+  const prevVisibleRef = useRef<boolean>(false);
+  const onInitialFolderDetectedRef = useRef(onInitialFolderDetected);
+  onInitialFolderDetectedRef.current = onInitialFolderDetected;
 
-    if (isModalClosed) {
+  // 모달이 열릴 때(visible: false -> true)만 폴더 목록 조회 및 기본 탭 설정
+  useEffect(() => {
+    const isJustOpened = visible && !prevVisibleRef.current;
+    prevVisibleRef.current = visible;
+
+    if (!isJustOpened) {
       return;
     }
 
@@ -57,7 +62,7 @@ export const usePillReminderModalFolderData = ({
 
           if (matchedFolder) {
             setSelectedFolderId(matchedFolder.id);
-            onInitialFolderDetected(matchedFolder.id);
+            onInitialFolderDetectedRef.current(matchedFolder.id);
             return;
           }
         }
@@ -68,9 +73,9 @@ export const usePillReminderModalFolderData = ({
         setSelectedFolderId(defaultFolder.id);
 
         if (hasInitialPills) {
-          onInitialFolderDetected(defaultFolder.id);
+          onInitialFolderDetectedRef.current(defaultFolder.id);
         } else {
-          onInitialFolderDetected(null);
+          onInitialFolderDetectedRef.current(null);
         }
       } catch {
         // ignore
@@ -78,7 +83,7 @@ export const usePillReminderModalFolderData = ({
     };
 
     loadInitialFolders();
-  }, [visible, selectedItemSeqs, onInitialFolderDetected]);
+  }, [visible, selectedItemSeqs]);
 
   // 특정 폴더 알약 목록 조회
   const loadPillsForFolder = useCallback(async (folderId: number) => {
