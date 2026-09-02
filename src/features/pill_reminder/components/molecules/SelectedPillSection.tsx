@@ -25,11 +25,11 @@ export const SelectedPillSection = memo(
     onRemovePill,
   }: ISelectedPillSectionProps) => {
     return (
-      <View style={styles.sectionCard}>
+      <View style={styles.sectionContainer}>
         <SelectedPillHeader
           count={selectedPills.length}
           folderName={folderName}
-          onOpenSelectModal={onOpenSelectModal}
+          onPressFolder={onOpenSelectModal}
         />
 
         {selectedPills.length === 0 ? (
@@ -53,6 +53,7 @@ export const SelectedPillSection = memo(
               <SelectedPillItem
                 key={pill.item_seq}
                 pill={pill}
+                onPress={onOpenSelectModal}
                 onRemove={onRemovePill}
               />
             ))}

@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: px(6),
+    gap: px(8),
   },
   sectionTitle: {
     color: COLOR_TEXT.title,
@@ -27,15 +27,6 @@ export const styles = StyleSheet.create({
     borderColor: COLOR_LINE.border,
   },
   folderBadgeText: {
-    color: COLOR_TEXT.subTitle,
-  },
-  editBtn: {
-    padding: px(6),
-    borderRadius: px(6),
-    backgroundColor: COLOR_BG.base,
-    borderWidth: 1,
-    borderColor: COLOR_LINE.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+    color: COLOR_TEXT.sub,
   },
 });

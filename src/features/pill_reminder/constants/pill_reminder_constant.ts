@@ -3,6 +3,15 @@ import {
   DAY_FULL_NAMES,
 } from '@features/pill_reminder/types/pill_reminder_type';
 
+// 오전 / 오후 구분 목록
+export const PERIODS = ['오전', '오후'] as const;
+export type TPeriod = '오전' | '오후';
+
+// 12시간제 피커 시간 목록 ('01' ~ '12')
+export const HOURS_12 = Array.from({ length: 12 }, (_, i) =>
+  (i + 1).toString().padStart(2, '0'),
+);
+
 // 24시간 피커 시간 목록 ('00' ~ '23')
 export const HOURS = Array.from({ length: 24 }, (_, i) =>
   i.toString().padStart(2, '0'),
@@ -21,6 +30,7 @@ export const WEEKENDS = [0, 6];
 
 // 기본 시간 상수
 export const DEFAULT_REMINDER_TIME = '08:00';
+export const DEFAULT_PERIOD: TPeriod = '오전';
 export const DEFAULT_HOUR = '08';
 export const DEFAULT_MINUTE = '00';
 

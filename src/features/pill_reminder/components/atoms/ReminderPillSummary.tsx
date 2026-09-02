@@ -11,7 +11,7 @@ interface IReminderPillSummaryProps {
   isEnabled: boolean;
 }
 
-// 알림 카드 하단 알약 요약 텍스트 및 화살표 컴포넌트
+// 알림 카드 하단 알약 요약 텍스트 및 화살표 컴포넌트 (1줄 말줄임 처리)
 export const ReminderPillSummary = memo(
   ({ pillsText, isEnabled }: IReminderPillSummaryProps) => {
     return (
@@ -20,7 +20,8 @@ export const ReminderPillSummary = memo(
           size={14}
           weight="medium"
           style={isEnabled ? styles.pillsText : styles.disabledText}
-          numberOfLines={2}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {pillsText || '등록된 알약 없음'}
         </BaseText>

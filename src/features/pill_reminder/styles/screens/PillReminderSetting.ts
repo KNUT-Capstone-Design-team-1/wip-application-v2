@@ -1,18 +1,19 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 // 복용 알림 설정 화면 전체 레이아웃 스타일
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR_BG.base,
+    backgroundColor: COLOR_BG.surface,
     alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLOR_BG.surface,
   },
   scrollContainer: {
     flex: 1,
@@ -21,16 +22,12 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: px(20),
-    paddingTop: px(16),
-    paddingBottom: px(24),
-    gap: px(16),
+    paddingTop: 0,
+    paddingBottom: px(32),
+    gap: px(28),
   },
-  sectionCard: {
-    backgroundColor: COLOR_BG.surface,
-    borderRadius: px(14),
-    padding: px(16),
-    borderWidth: 1,
-    borderColor: COLOR_LINE.border,
+  sectionContainer: {
+    width: '100%',
   },
   sectionHeader: {
     flexDirection: 'row',

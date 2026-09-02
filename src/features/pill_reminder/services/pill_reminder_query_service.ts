@@ -275,6 +275,37 @@ export const pillReminderQueryService = {
     }
   },
 
+  // 특정 알약이 속한 보관함 폴더 정보 조회 (ID 및 폴더명)
+  async getFolderInfoByItemSeq(
+    itemSeq: string,
+  ): Promise<{ id: number; name: string } | null> {
+    try {
+      const db = await getDatabase();
+
+      const row = await db.getFirstAsync<{ id: number; name: string }>(
+        `
+        SELECT f.id, f.name
+        FROM saved_pills s
+        INNER JOIN saved_pill_folders f ON s.folder_id = f.id
+        WHERE s.item_seq = ?
+        LIMIT 1
+      `,
+        [itemSeq],
+      );
+
+      return row || null;
+    } catch (e) {
+      logQueryError('get folder info by itemSeq', e);
+      return null;
+    }
+  },
+
+  // 특정 알약이 속한 보관함 폴더명 조회
+  async getFolderNameByItemSeq(itemSeq: string): Promise<string | null> {
+    const info = await this.getFolderInfoByItemSeq(itemSeq);
+    return info?.name || null;
+  },
+
   // 전체 보관함 폴더 목록 조회 (알약 선택 모달 탭 바용)
   async getFolders(): Promise<
     { id: number; name: string; is_default: number }[]
@@ -341,10 +372,24 @@ export const pillReminderQueryService = {
     }
   },
 
-  // 복용 알림에 등록된 모든 item_seq 목록 조회 (보관함 화면에서 알림 등록 여부 뱃지용)
-  async getRemindedItemSeqs(): Promise<string[]> {
+  // 복용 알림에 등록된 item_seq 목록 조회 (folderId 지정 시 해당 폴더의 알림만 정확히 필터링)
+  async getRemindedItemSeqs(folderId?: number): Promise<string[]> {
     try {
       const db = await getDatabase();
+
+      if (folderId) {
+        const rows = await db.getAllAsync<{ item_seq: string }>(
+          `
+          SELECT DISTINCT pri.item_seq 
+          FROM pill_reminder_items pri
+          INNER JOIN pill_reminders pr ON pri.reminder_id = pr.id
+          WHERE pr.folder_id = ?
+        `,
+          [folderId],
+        );
+        return rows.map((r) => r.item_seq);
+      }
+
       const rows = await db.getAllAsync<{ item_seq: string }>(
         `SELECT DISTINCT item_seq FROM pill_reminder_items`,
       );

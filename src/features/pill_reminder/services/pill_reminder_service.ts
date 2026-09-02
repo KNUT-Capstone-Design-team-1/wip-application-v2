@@ -9,23 +9,39 @@ import {
 export const pillReminderService = {
   // 조회 (Read)
   getReminders: () => pillReminderQueryService.getReminders(),
+
   getRemindersByItemSeq: (itemSeq: string) =>
     pillReminderQueryService.getRemindersByItemSeq(itemSeq),
+
   getReminderById: (id: number) => pillReminderQueryService.getReminderById(id),
-  getRemindedItemSeqs: () => pillReminderQueryService.getRemindedItemSeqs(),
+
+  getRemindedItemSeqs: (folderId?: number) =>
+    pillReminderQueryService.getRemindedItemSeqs(folderId),
+
   getPillsBySeqs: (itemSeqs: string[]) =>
     pillReminderQueryService.getPillsBySeqs(itemSeqs),
+
+  getFolderInfoByItemSeq: (itemSeq: string) =>
+    pillReminderQueryService.getFolderInfoByItemSeq(itemSeq),
+
+  getFolderNameByItemSeq: (itemSeq: string) =>
+    pillReminderQueryService.getFolderNameByItemSeq(itemSeq),
+
   getFolders: () => pillReminderQueryService.getFolders(),
+
   getPillsByFolder: (folderId: number) =>
     pillReminderQueryService.getPillsByFolder(folderId),
 
   // 변경 (Write)
   createReminders: (form: IPillReminderCreateForm) =>
     pillReminderMutationService.createReminders(form),
+
   updateReminder: (form: IPillReminderUpdateForm) =>
     pillReminderMutationService.updateReminder(form),
+
   toggleReminder: (id: number, isEnabled: boolean) =>
     pillReminderMutationService.toggleReminder(id, isEnabled),
+
   deleteReminder: (id: number) =>
     pillReminderMutationService.deleteReminder(id),
 };

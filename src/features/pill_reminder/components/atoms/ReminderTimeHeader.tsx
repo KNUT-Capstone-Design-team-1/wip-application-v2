@@ -4,6 +4,7 @@ import { BaseText } from '@components/common/BaseText';
 import { Bell } from 'lucide-react-native';
 import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
 import { styles } from '@features/pill_reminder/styles/atoms/ReminderTimeHeader';
 
 interface IReminderTimeHeaderProps {
@@ -12,9 +13,11 @@ interface IReminderTimeHeaderProps {
   isEnabled: boolean;
 }
 
-// 알림 카드 상단 시간 및 요일 뱃지 컴포넌트
+// 알림 카드 상단 시간 및 요일 뱃지 컴포넌트 (오전/오후 표시)
 export const ReminderTimeHeader = memo(
   ({ time, daysText, isEnabled }: IReminderTimeHeaderProps) => {
+    const formattedTime = formatReminderTime(time);
+
     return (
       <View style={styles.container}>
         <Bell
@@ -27,7 +30,7 @@ export const ReminderTimeHeader = memo(
           weight="bold"
           style={isEnabled ? styles.timeText : styles.disabledText}
         >
-          {time}
+          {formattedTime}
         </BaseText>
         <View style={styles.dayBadge}>
           <BaseText

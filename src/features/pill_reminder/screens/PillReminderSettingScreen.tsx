@@ -3,6 +3,7 @@ import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { usePillReminderSettingForm } from '@features/pill_reminder/hooks/use_pill_reminder_setting_form';
 import { SelectedPillSection } from '@features/pill_reminder/components/molecules/SelectedPillSection';
+import { ReminderNameMemoSection } from '@features/pill_reminder/components/molecules/ReminderNameMemoSection';
 import { ReminderTimeSection } from '@features/pill_reminder/components/molecules/ReminderTimeSection';
 import { DaySelector } from '@features/pill_reminder/components/atoms/DaySelector';
 import { ReminderDosageSection } from '@features/pill_reminder/components/molecules/ReminderDosageSection';
@@ -21,6 +22,8 @@ export const PillReminderSettingScreen = () => {
   }>();
 
   const {
+    title,
+    memo,
     times,
     days,
     selectedPills,
@@ -32,6 +35,8 @@ export const PillReminderSettingScreen = () => {
     isPillSelectModalVisible,
     isTimePickerVisible,
     editingTime,
+    setTitle,
+    setMemo,
     setIsPillSelectModalVisible,
     setIsTimePickerVisible,
     setDays,
@@ -64,7 +69,15 @@ export const PillReminderSettingScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 섹션 1: 선택한 알약 목록 (폴더명 표시) */}
+        {/* 섹션 1: 알림 이름 및 메모 */}
+        <ReminderNameMemoSection
+          title={title}
+          onChangeTitle={setTitle}
+          memo={memo}
+          onChangeMemo={setMemo}
+        />
+
+        {/* 섹션 2: 선택한 알약 목록 (폴더명 표시) */}
         <SelectedPillSection
           selectedPills={selectedPills}
           folderName={selectedFolderName}
@@ -72,26 +85,25 @@ export const PillReminderSettingScreen = () => {
           onRemovePill={handleRemovePill}
         />
 
-        {/* 섹션 2: 복용 시간 설정 (클릭 시 수정, + 클릭 시 추가) */}
+        {/* 섹션 3: 복용 시간 설정 (클릭 시 수정, + 클릭 시 추가) */}
         <ReminderTimeSection
           times={times}
-          isEditMode={isEditMode}
           onOpenTimePicker={() => handleOpenTimePicker()}
           onEditTime={(time) => handleOpenTimePicker(time)}
           onRemoveTime={handleRemoveTime}
         />
 
-        {/* 섹션 3: 복용 요일 선택 */}
-        <View style={styles.sectionCard}>
+        {/* 섹션 4: 복용 요일 선택 */}
+        <View style={styles.sectionContainer}>
           <View style={styles.sectionHeader}>
-            <BaseText size={16} weight="bold" style={styles.sectionTitle}>
+            <BaseText size={20} weight="bold" style={styles.sectionTitle}>
               복용 요일 선택
             </BaseText>
           </View>
           <DaySelector selectedDays={days} onChange={setDays} />
         </View>
 
-        {/* 섹션 4: 1회 복용량 설정 */}
+        {/* 섹션 5: 1회 복용량 설정 */}
         <ReminderDosageSection
           selectedPills={selectedPills}
           onDosageChange={handleDosageChange}

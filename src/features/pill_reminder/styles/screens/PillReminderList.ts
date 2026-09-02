@@ -6,13 +6,14 @@ import { px } from '@utils/responsive';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR_BG.base,
+    backgroundColor: COLOR_BG.surface,
     alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLOR_BG.surface,
   },
   scrollContainer: {
     flex: 1,
@@ -21,7 +22,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: px(20),
-    paddingTop: px(16),
+    paddingTop: 0,
     paddingBottom: px(20),
   },
 });

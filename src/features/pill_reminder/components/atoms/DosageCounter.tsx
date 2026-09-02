@@ -50,7 +50,7 @@ export const DosageCounter = memo(
         </TouchableOpacity>
 
         <View style={styles.valueContainer}>
-          <BaseText size={14} weight="bold" style={styles.valueText}>
+          <BaseText size={15} weight="bold" style={styles.valueText}>
             {value}정
           </BaseText>
         </View>

@@ -103,15 +103,19 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
  * 알약 복용 알림 테이블 초기화
  */
 export const initPillReminderTables = async (db: SQLiteDatabase) => {
-  // 복용 알림 일정 테이블
+  // 복용 알림 일정 테이블 (folder_id, title, memo 포함 및 폴더 삭제 시 CASCADE)
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS pill_reminders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      folder_id INTEGER NOT NULL DEFAULT 1,
+      title TEXT NOT NULL DEFAULT '',
+      memo TEXT NOT NULL DEFAULT '',
       time TEXT NOT NULL,
       days TEXT NOT NULL,
       is_enabled INTEGER NOT NULL DEFAULT 1,
       created_at DATETIME DEFAULT (datetime('now', 'localtime')),
-      updated_at DATETIME DEFAULT (datetime('now', 'localtime'))
+      updated_at DATETIME DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY (folder_id) REFERENCES saved_pill_folders(id) ON DELETE CASCADE
     )
   `);
 
@@ -131,10 +135,28 @@ export const initPillReminderTables = async (db: SQLiteDatabase) => {
 
   // 인덱스 생성
   await db.execAsync(`
+    CREATE INDEX IF NOT EXISTS idx_pill_reminders_folder_id ON pill_reminders(folder_id);
+  `);
+  await db.execAsync(`
     CREATE INDEX IF NOT EXISTS idx_pill_reminder_items_item_seq ON pill_reminder_items(item_seq);
   `);
   await db.execAsync(`
     CREATE INDEX IF NOT EXISTS idx_pill_reminder_items_reminder_id ON pill_reminder_items(reminder_id);
+  `);
+
+  // 보관함에서 알약(saved_pills) 삭제 시 해당 폴더의 복용 알림 항목도 CASCADE 삭제 및 빈 알림 정리 트리거
+  await db.execAsync(`
+    CREATE TRIGGER IF NOT EXISTS trigger_delete_saved_pill_cascade_reminder
+    AFTER DELETE ON saved_pills
+    BEGIN
+      DELETE FROM pill_reminder_items 
+      WHERE item_seq = OLD.item_seq 
+        AND reminder_id IN (SELECT id FROM pill_reminders WHERE folder_id = OLD.folder_id);
+
+      DELETE FROM pill_reminders 
+      WHERE folder_id = OLD.folder_id 
+        AND id NOT IN (SELECT DISTINCT reminder_id FROM pill_reminder_items);
+    END;
   `);
 };
 
@@ -150,10 +172,9 @@ export const initDatabase = async () => {
     await initSavedPillTables(db);
     await initPillReminderTables(db);
 
-    return true;
-  } catch (e) {
-    logger.error(`Failed to initialize database: ${e.stack || e}`);
-
-    return false;
+    logger.info('Database initialized successfully');
+  } catch (error) {
+    logger.error(`Database initialization failed: ${error}`);
+    throw error;
   }
 };

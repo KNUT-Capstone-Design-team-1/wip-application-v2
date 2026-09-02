@@ -1,4 +1,4 @@
-import React, { memo, useRef, useEffect, useCallback } from 'react';
+import React, { memo, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   FlatList,
@@ -41,7 +41,7 @@ const PickerItemRow = memo(
         activeOpacity={0.7}
       >
         <BaseText
-          size={16}
+          size={isSelected ? 18 : 15}
           weight={isSelected ? 'bold' : 'medium'}
           style={isSelected ? styles.pickerTextSelected : styles.pickerText}
         >
@@ -55,7 +55,7 @@ const PickerItemRow = memo(
 
 PickerItemRow.displayName = 'PickerItemRow';
 
-// 시간/분 스크롤 피커 컬럼 컴포넌트
+// 시간/분 스크롤 피커 컬럼 컴포넌트 (정밀 1:1 칸 스냅 일치)
 export const TimePickerColumn = memo(
   ({ label, data, unit, selectedValue, onSelect }: ITimePickerColumnProps) => {
     const listRef = useRef<FlatList<string>>(null);
@@ -64,13 +64,23 @@ export const TimePickerColumn = memo(
     const targetIndex = data.indexOf(selectedValue);
     const safeIndex = targetIndex >= 0 ? targetIndex : 0;
 
-    // 선택값이 외부에서 변경되었을 때(예: 직접 입력 또는 초기 마운트) 중앙으로 스크롤 이동
+    // 각 아이템별 절대 스냅 오프셋 배열 생성
+    const snapOffsets = useMemo(
+      () => data.map((_, i) => i * ITEM_HEIGHT),
+      [data],
+    );
+
+    // 선택값이 외부에서 변경되었을 때(직접 입력, 모달 초기 오픈 등) 정확한 오프셋으로 이동
     useEffect(() => {
-      if (isUserScrollingRef.current) {
+      const isUserScrolling = isUserScrollingRef.current;
+
+      if (isUserScrolling) {
         return;
       }
 
-      if (targetIndex >= 0) {
+      const isValidIndex = targetIndex >= 0;
+
+      if (isValidIndex) {
         const timer = setTimeout(() => {
           listRef.current?.scrollToOffset({
             offset: targetIndex * ITEM_HEIGHT,
@@ -91,16 +101,26 @@ export const TimePickerColumn = memo(
       [],
     );
 
-    // 스크롤이 끝났을 때 중앙 위치의 아이템을 선택값으로 반영
-    const handleScrollEnd = useCallback(
-      (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // 스크롤 멈춤 시 가장 가까운 인덱스 계산 및 정확한 중앙 칸 배치
+    const syncScrollIndex = useCallback(
+      (offsetY: number) => {
         isUserScrollingRef.current = false;
-        const offsetY = e.nativeEvent.contentOffset.y;
         const index = Math.round(offsetY / ITEM_HEIGHT);
         const clampedIndex = Math.max(0, Math.min(index, data.length - 1));
         const selected = data[clampedIndex];
-        if (selected && selected !== selectedValue) {
-          onSelect(selected);
+
+        const hasSelected = Boolean(selected);
+
+        if (hasSelected && selected) {
+          if (selected !== selectedValue) {
+            onSelect(selected);
+          }
+
+          // 선택 칸과 100% 일치하도록 보정
+          listRef.current?.scrollToOffset({
+            offset: clampedIndex * ITEM_HEIGHT,
+            animated: true,
+          });
         }
       },
       [data, selectedValue, onSelect],
@@ -110,6 +130,25 @@ export const TimePickerColumn = memo(
       isUserScrollingRef.current = true;
     }, []);
 
+    const handleScrollEnd = useCallback(
+      (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        syncScrollIndex(e.nativeEvent.contentOffset.y);
+      },
+      [syncScrollIndex],
+    );
+
+    const handleItemPress = useCallback(
+      (item: string, index: number) => {
+        isUserScrollingRef.current = false;
+        onSelect(item);
+        listRef.current?.scrollToOffset({
+          offset: index * ITEM_HEIGHT,
+          animated: true,
+        });
+      },
+      [onSelect],
+    );
+
     const renderItem: ListRenderItem<string> = useCallback(
       ({ item, index }) => {
         const isSelected = item === selectedValue;
@@ -118,17 +157,11 @@ export const TimePickerColumn = memo(
             item={item}
             unit={unit}
             isSelected={isSelected}
-            onPress={() => {
-              onSelect(item);
-              listRef.current?.scrollToOffset({
-                offset: index * ITEM_HEIGHT,
-                animated: true,
-              });
-            }}
+            onPress={() => handleItemPress(item, index)}
           />
         );
       },
-      [selectedValue, unit, onSelect],
+      [selectedValue, unit, handleItemPress],
     );
 
     const keyExtractor = useCallback((item: string) => item, []);
@@ -140,8 +173,8 @@ export const TimePickerColumn = memo(
         </BaseText>
 
         <View style={styles.pickerWrapper}>
-          {/* 중앙 선택 영역 인디케이터 */}
-          <View style={styles.selectionIndicator} />
+          {/* 중앙 선택 영역 인디케이터 (숫자와 100% 동일 높이 및 위치) */}
+          <View style={styles.selectionIndicator} pointerEvents="none" />
 
           <FlatList
             ref={listRef}
@@ -152,17 +185,21 @@ export const TimePickerColumn = memo(
             initialScrollIndex={safeIndex}
             onScrollBeginDrag={handleScrollBegin}
             onMomentumScrollBegin={handleScrollBegin}
-            onMomentumScrollEnd={handleScrollEnd}
             onScrollEndDrag={handleScrollEnd}
-            snapToInterval={ITEM_HEIGHT}
+            onMomentumScrollEnd={handleScrollEnd}
+            snapToOffsets={snapOffsets}
+            snapToAlignment="start"
+            disableIntervalMomentum={true}
             decelerationRate="fast"
+            bounces={false}
+            overScrollMode="never"
             style={styles.listContainer}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
-            initialNumToRender={20}
-            maxToRenderPerBatch={15}
-            windowSize={7}
-            removeClippedSubviews={true}
+            initialNumToRender={24}
+            maxToRenderPerBatch={24}
+            windowSize={11}
+            removeClippedSubviews={false}
           />
         </View>
       </View>

@@ -25,8 +25,8 @@ const PillSaveFolderDetail = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchRemindedItemSeqs();
-    }, [fetchRemindedItemSeqs]),
+      fetchRemindedItemSeqs(folderId);
+    }, [fetchRemindedItemSeqs, folderId]),
   );
 
   const {

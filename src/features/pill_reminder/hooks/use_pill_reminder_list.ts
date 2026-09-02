@@ -3,7 +3,10 @@ import { usePillReminderStore } from '@features/pill_reminder/store/pill_reminde
 import { useCommonModalStore } from '@store/common_modal_store';
 import { router, useFocusEffect } from 'expo-router';
 import Toast from 'react-native-toast-message';
-import { formatReminderDays } from '@features/pill_reminder/utils/reminder_format';
+import {
+  formatReminderDays,
+  formatReminderTime,
+} from '@features/pill_reminder/utils/reminder_format';
 
 // 복용 알림 목록 화면의 상태 및 액션을 관리하는 커스텀 훅
 export const usePillReminderList = () => {
@@ -41,13 +44,14 @@ export const usePillReminderList = () => {
     });
   };
 
-  // 알림 삭제 확인 모달
+  // 알림 삭제 확인 모달 (오전/오후 포맷 적용)
   const handleDeleteReminder = (id: number, time: string, days: number[]) => {
     const daysStr = formatReminderDays(days);
+    const timeStr = formatReminderTime(time);
 
     showModal({
       title: '알림 삭제',
-      message: `${daysStr} ${time} 복용 알림을\n삭제하시겠습니까?`,
+      message: `${daysStr} ${timeStr} 복용 알림을\n삭제하시겠습니까?`,
       confirmText: '삭제',
       confirmStyle: 'destructive',
       cancelText: '취소',

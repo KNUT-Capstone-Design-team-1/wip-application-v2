@@ -42,6 +42,14 @@ export default {
         NSLocationWhenInUseUsageDescription:
           '$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다',
 
+        NSRemindersUsageDescription:
+          '$(PRODUCT_NAME)에서 설정한 시간에 알약 복용 알림을 등록하기 위해 권한이 필요합니다',
+
+        NSUserNotificationsUsageDescription:
+          '$(PRODUCT_NAME)에서 설정한 시간에 알약 복용 푸시 알림을 받기 위해 알림 권한이 필요합니다',
+
+        UIBackgroundModes: ['remote-notification'],
+
         LSApplicationQueriesSchemes: ['mailto'],
 
         ITSAppUsesNonExemptEncryption: false,
@@ -74,9 +82,7 @@ export default {
 
       adaptiveIcon: {
         foregroundImage: './assets/icons/android-adaptive-icon.png',
-
         monochromeImage: './assets/icons/android-adaptive-icon.png',
-
         backgroundColor: '#ffffff',
       },
 
@@ -88,6 +94,11 @@ export default {
         'android.permission.CAMERA',
         'android.permission.ACCESS_COARSE_LOCATION',
         'android.permission.ACCESS_FINE_LOCATION',
+        'android.permission.POST_NOTIFICATIONS',
+        'android.permission.VIBRATE',
+        'android.permission.RECEIVE_BOOT_COMPLETED',
+        'android.permission.SCHEDULE_EXACT_ALARM',
+        'android.permission.USE_EXACT_ALARM',
         'com.google.android.gms.permission.AD_ID',
       ],
 
@@ -99,6 +110,14 @@ export default {
     },
 
     plugins: [
+      [
+        'expo-notifications',
+        {
+          icon: './assets/icons/android-adaptive-icon.png',
+          color: '#2cb7de',
+        },
+      ],
+
       [
         'expo-splash-screen',
         {

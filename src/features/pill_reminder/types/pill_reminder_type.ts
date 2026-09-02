@@ -11,6 +11,9 @@ export interface IPillReminderItem {
 
 export interface IPillReminder {
   id: number;
+  folder_id: number;
+  title: string;
+  memo: string;
   time: string; // 'HH:mm' format (e.g. '08:00')
   days: number[]; // 0: Sun, 1: Mon, 2: Tue, 3: Wed, 4: Thu, 5: Fri, 6: Sat
   is_enabled: boolean;
@@ -20,6 +23,9 @@ export interface IPillReminder {
 }
 
 export interface IPillReminderCreateForm {
+  folder_id?: number;
+  title?: string;
+  memo?: string;
   times: string[]; // ['08:00', '13:00', '20:00']
   days: number[]; // [0, 1, 2, 3, 4, 5, 6]
   items: {
@@ -34,6 +40,9 @@ export interface IPillReminderCreateForm {
 
 export interface IPillReminderUpdateForm {
   id: number;
+  folder_id?: number;
+  title?: string;
+  memo?: string;
   time: string;
   days: number[];
   items: {

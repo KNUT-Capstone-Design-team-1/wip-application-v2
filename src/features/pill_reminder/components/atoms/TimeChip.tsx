@@ -2,8 +2,9 @@ import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { X, Plus } from 'lucide-react-native';
-import { COLOR_TEXT } from '@constants/color';
+import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
 import { styles } from '@features/pill_reminder/styles/atoms/TimeChip';
 
 interface ITimeChipProps {
@@ -17,7 +18,7 @@ interface ITimeChipProps {
 // 복용 시간 태그 및 추가 칩 컴포넌트
 export const TimeChip = memo(
   ({ time, onPress, onRemove, isAddButton, onPressAdd }: ITimeChipProps) => {
-    // 추가 버튼일 경우 + 아이콘만 심플하게 렌더링
+    // 추가 버튼일 경우 요일 버튼 스타일과 일치하는 + 버튼 렌더링
     if (isAddButton) {
       return (
         <TouchableOpacity
@@ -25,12 +26,13 @@ export const TimeChip = memo(
           onPress={onPressAdd}
           activeOpacity={0.7}
         >
-          <Plus size={fontPx(18)} color={COLOR_TEXT.subTitle} />
+          <Plus size={fontPx(18)} color={COLOR_TEXT.sub} />
         </TouchableOpacity>
       );
     }
 
     const hasOnPress = Boolean(onPress);
+    const formattedTime = formatReminderTime(time);
 
     return (
       <TouchableOpacity
@@ -39,8 +41,8 @@ export const TimeChip = memo(
         disabled={!hasOnPress}
         activeOpacity={0.7}
       >
-        <BaseText size={15} weight="bold" style={styles.timeText}>
-          {time}
+        <BaseText size={16} weight="bold" style={styles.timeText}>
+          {formattedTime}
         </BaseText>
 
         {onRemove && (
@@ -52,7 +54,7 @@ export const TimeChip = memo(
             }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <X size={fontPx(14)} color={COLOR_TEXT.sub} />
+            <X size={fontPx(15)} color={COLOR.white} />
           </TouchableOpacity>
         )}
       </TouchableOpacity>

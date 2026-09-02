@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
-// 알약 선택 목록의 개별 항목 스타일 (알약 보관함 컨벤션 일치)
+// 알약 선택 목록의 개별 항목 스타일
 export const styles = StyleSheet.create({
   pillItem: {
     flexDirection: 'row',
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: COLOR_LINE.border,
   },
   pillItemSelected: {
-    backgroundColor: COLOR_BG.base,
+    backgroundColor: COLOR_BG.surface,
   },
   leftContainer: {
     flexDirection: 'row',

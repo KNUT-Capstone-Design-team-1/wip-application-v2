@@ -7,12 +7,13 @@ export const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: px(10),
+    gap: px(12),
+    marginTop: px(4),
   },
   cancelBtn: {
     flex: 1,
-    height: px(48),
-    borderRadius: px(10),
+    height: px(50),
+    borderRadius: px(12),
     backgroundColor: COLOR_BG.btnGray,
     alignItems: 'center',
     justifyContent: 'center',
@@ -22,8 +23,8 @@ export const styles = StyleSheet.create({
   },
   confirmBtn: {
     flex: 1,
-    height: px(48),
-    borderRadius: px(10),
+    height: px(50),
+    borderRadius: px(12),
     backgroundColor: COLOR.primary,
     alignItems: 'center',
     justifyContent: 'center',

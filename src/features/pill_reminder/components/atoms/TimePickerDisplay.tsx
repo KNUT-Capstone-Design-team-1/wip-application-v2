@@ -15,45 +15,53 @@ export const TimePickerDisplay = memo(
   ({ hour, minute, onHourChange, onMinuteChange }: ITimePickerDisplayProps) => {
     const minuteInputRef = useRef<TextInput>(null);
 
-    // 시간 입력 핸들러 (00~23)
+    // 12시간제 시간 입력 핸들러 (01~12)
     const handleHourTextChange = (text: string) => {
       const clean = text.replace(/[^0-9]/g, '');
+
       if (!clean) {
         onHourChange('');
         return;
       }
 
       const num = parseInt(clean, 10);
-      if (num > 23) {
-        onHourChange('23');
+
+      if (num > 12) {
+        onHourChange('12');
         minuteInputRef.current?.focus();
         return;
       }
 
       onHourChange(clean);
-      if (clean.length >= 2) {
+
+      if (clean.length >= 2 || num >= 2) {
         minuteInputRef.current?.focus();
       }
     };
 
-    // 시간 포커스 해제 시 2자리 포맷팅
+    // 시간 포커스 해제 시 2자리 포맷팅 (01~12)
     const handleHourBlur = () => {
-      if (!hour) {
-        onHourChange('00');
+      if (!hour || hour === '0' || hour === '00') {
+        onHourChange('12');
         return;
       }
-      onHourChange(hour.padStart(2, '0'));
+
+      const num = parseInt(hour, 10);
+      const clamped = Math.max(1, Math.min(num, 12));
+      onHourChange(clamped.toString().padStart(2, '0'));
     };
 
     // 분 입력 핸들러 (00~59)
     const handleMinuteTextChange = (text: string) => {
       const clean = text.replace(/[^0-9]/g, '');
+
       if (!clean) {
         onMinuteChange('');
         return;
       }
 
       const num = parseInt(clean, 10);
+
       if (num > 59) {
         onMinuteChange('59');
         return;
@@ -68,45 +76,40 @@ export const TimePickerDisplay = memo(
         onMinuteChange('00');
         return;
       }
+
       onMinuteChange(minute.padStart(2, '0'));
     };
 
     return (
-      <View>
-        <View style={styles.container}>
-          {/* 시 입력 박스 */}
-          <View style={styles.timeBox}>
-            <TextInput
-              value={hour}
-              onChangeText={handleHourTextChange}
-              onBlur={handleHourBlur}
-              keyboardType="number-pad"
-              maxLength={2}
-              selectTextOnFocus
-              style={styles.timeInput}
-            />
-          </View>
-
-          <BaseText style={styles.colonText}>:</BaseText>
-
-          {/* 분 입력 박스 */}
-          <View style={styles.timeBox}>
-            <TextInput
-              ref={minuteInputRef}
-              value={minute}
-              onChangeText={handleMinuteTextChange}
-              onBlur={handleMinuteBlur}
-              keyboardType="number-pad"
-              maxLength={2}
-              selectTextOnFocus
-              style={styles.timeInput}
-            />
-          </View>
+      <View style={styles.container}>
+        {/* 시 입력 박스 */}
+        <View style={styles.timeBox}>
+          <TextInput
+            value={hour}
+            onChangeText={handleHourTextChange}
+            onBlur={handleHourBlur}
+            keyboardType="number-pad"
+            maxLength={2}
+            selectTextOnFocus
+            style={styles.timeInput}
+          />
         </View>
 
-        <BaseText size={11} weight="medium" style={styles.hintText}>
-          숫자를 터치하여 직접 입력하거나 아래 목록에서 선택하세요
-        </BaseText>
+        <BaseText style={styles.colonText}>:</BaseText>
+
+        {/* 분 입력 박스 */}
+        <View style={styles.timeBox}>
+          <TextInput
+            ref={minuteInputRef}
+            value={minute}
+            onChangeText={handleMinuteTextChange}
+            onBlur={handleMinuteBlur}
+            keyboardType="number-pad"
+            maxLength={2}
+            selectTextOnFocus
+            style={styles.timeInput}
+          />
+        </View>
       </View>
     );
   },

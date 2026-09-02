@@ -26,11 +26,7 @@ const executeInitialSetup = async (
     isUpdating: false,
   });
 
-  const initDatabaseSuccess = await initDatabase();
-
-  if (!initDatabaseSuccess) {
-    throw new Error('Database initialization failed');
-  }
+  await initDatabase();
 };
 
 // 사용자에게 업데이트 확인 모달 띄우기 (확인: true, 취소: false 반환)

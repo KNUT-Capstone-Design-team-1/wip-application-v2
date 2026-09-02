@@ -7,7 +7,7 @@ interface IPillReminderStore {
   remindedItemSeqs: string[];
   isLoading: boolean;
   fetchReminders: () => Promise<void>;
-  fetchRemindedItemSeqs: () => Promise<void>;
+  fetchRemindedItemSeqs: (folderId?: number) => Promise<void>;
   deleteReminder: (id: number) => Promise<boolean>;
   toggleReminder: (id: number, isEnabled: boolean) => Promise<boolean>;
 }
@@ -30,10 +30,10 @@ export const usePillReminderStore = create<IPillReminderStore>((set, get) => ({
     }
   },
 
-  // 알림 설정된 알약 ID 목록만 조회
-  fetchRemindedItemSeqs: async () => {
+  // 알림 설정된 알약 ID 목록만 조회 (폴더 ID 지정 시 해당 폴더의 알림만 조회)
+  fetchRemindedItemSeqs: async (folderId?: number) => {
     try {
-      const seqs = await pillReminderService.getRemindedItemSeqs();
+      const seqs = await pillReminderService.getRemindedItemSeqs(folderId);
       set({ remindedItemSeqs: seqs });
     } catch {
       // ignore

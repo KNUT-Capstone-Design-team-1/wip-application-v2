@@ -11,11 +11,18 @@ import { TimePickerModalFooter } from '@features/pill_reminder/components/molecu
 import { TimePickerDisplay } from '@features/pill_reminder/components/atoms/TimePickerDisplay';
 import { TimePickerColumn } from '@features/pill_reminder/components/atoms/TimePickerColumn';
 import {
-  HOURS,
+  PERIODS,
+  HOURS_12,
   MINUTES,
+  DEFAULT_PERIOD,
   DEFAULT_HOUR,
   DEFAULT_MINUTE,
+  TPeriod,
 } from '@features/pill_reminder/constants/pill_reminder_constant';
+import {
+  parse24To12,
+  format12To24,
+} from '@features/pill_reminder/utils/reminder_format';
 import { styles } from '@features/pill_reminder/styles/molecules/TimePickerModal';
 
 interface ITimePickerModalProps {
@@ -25,17 +32,18 @@ interface ITimePickerModalProps {
   initialTime?: string;
 }
 
-// 복용 시간 선택 모달 메인 컴포넌트
+// 복용 시간 선택 모달 메인 컴포넌트 (오전/오후 12시간제 지원)
 export const TimePickerModal = ({
   visible,
   onClose,
   onConfirm,
   initialTime = '08:00',
 }: ITimePickerModalProps) => {
+  const [selectedPeriod, setSelectedPeriod] = useState<TPeriod>(DEFAULT_PERIOD);
   const [selectedHour, setSelectedHour] = useState(DEFAULT_HOUR);
   const [selectedMinute, setSelectedMinute] = useState(DEFAULT_MINUTE);
 
-  // 모달 열릴 때 초기 시간 설정
+  // 모달 열릴 때 초기 시간 설정 (24시간제 ➔ 12시간제 변환)
   useEffect(() => {
     const shouldSkipInit = !visible || !initialTime;
 
@@ -43,25 +51,19 @@ export const TimePickerModal = ({
       return;
     }
 
-    const [h, m] = initialTime.split(':');
-
-    const hasHour = Boolean(h);
-    if (hasHour) {
-      setSelectedHour(h.padStart(2, '0'));
-    }
-
-    const hasMinute = Boolean(m);
-    if (hasMinute) {
-      setSelectedMinute(m.padStart(2, '0'));
-    }
+    const { period, hour, minute } = parse24To12(initialTime);
+    setSelectedPeriod(period);
+    setSelectedHour(hour);
+    setSelectedMinute(minute);
   }, [visible, initialTime]);
 
-  // 시간 확정 핸들러
+  // 시간 확정 핸들러 (12시간제 ➔ 24시간제 변환 후 상위 전달)
   const handleConfirm = () => {
     const finalHour = (selectedHour || DEFAULT_HOUR).padStart(2, '0');
     const finalMinute = (selectedMinute || DEFAULT_MINUTE).padStart(2, '0');
+    const time24 = format12To24(selectedPeriod, finalHour, finalMinute);
 
-    onConfirm(`${finalHour}:${finalMinute}`);
+    onConfirm(time24);
     onClose();
   };
 
@@ -96,7 +98,7 @@ export const TimePickerModal = ({
             {/* 상단 헤더 */}
             <TimePickerModalHeader onClose={onClose} />
 
-            {/* 시간/분 직접 숫자 입력 및 디스플레이 영역 */}
+            {/* 시간/분 직접 숫자 입력 디스플레이 영역 */}
             <TimePickerDisplay
               hour={selectedHour}
               minute={selectedMinute}
@@ -104,12 +106,22 @@ export const TimePickerModal = ({
               onMinuteChange={setSelectedMinute}
             />
 
-            {/* 시간/분 스크롤 피커 컬럼 (위상 일치 및 고성능 스냅) */}
+            {/* 오전/오후, 시, 분 3개 스크롤 피커 컬럼 (1:1 스냅 일치) */}
             <View style={styles.pickersContainer}>
+              <TimePickerColumn
+                label="구분"
+                unit=""
+                data={PERIODS as unknown as string[]}
+                selectedValue={selectedPeriod}
+                onSelect={(val) => setSelectedPeriod(val as TPeriod)}
+              />
+
+              <View style={styles.columnSeparator} />
+
               <TimePickerColumn
                 label="시"
                 unit="시"
-                data={HOURS as unknown as string[]}
+                data={HOURS_12}
                 selectedValue={selectedHour.padStart(2, '0')}
                 onSelect={setSelectedHour}
               />
@@ -119,7 +131,7 @@ export const TimePickerModal = ({
               <TimePickerColumn
                 label="분"
                 unit="분"
-                data={MINUTES as unknown as string[]}
+                data={MINUTES}
                 selectedValue={selectedMinute.padStart(2, '0')}
                 onSelect={setSelectedMinute}
               />

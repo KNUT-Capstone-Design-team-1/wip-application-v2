@@ -20,10 +20,15 @@ export const usePillReminderSettingForm = ({
 }: IUsePillReminderSettingFormProps) => {
   const isEditMode = Boolean(reminderId);
 
-  // 폼 상태 (초기 생성 시 시간 및 요일 기본값은 빈 배열)
+  // 폼 상태
+  const [title, setTitle] = useState<string>('');
+  const [memo, setMemo] = useState<string>('');
   const [times, setTimes] = useState<string[]>([]);
   const [days, setDays] = useState<number[]>([]);
   const [selectedPills, setSelectedPills] = useState<ISelectedPillItem[]>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<number | undefined>(
+    undefined,
+  );
   const [selectedFolderName, setSelectedFolderName] = useState<string>('');
 
   const [loading, setLoading] = useState(false);
@@ -35,7 +40,7 @@ export const usePillReminderSettingForm = ({
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
   const [editingTime, setEditingTime] = useState<string | null>(null);
 
-  // 초기 폼 데이터 로드
+  // 초기 폼 데이터 로드 (이름, 메모, 폴더 정보 자동 조회 포함)
   useEffect(() => {
     const initialize = async () => {
       setLoading(true);
@@ -50,8 +55,11 @@ export const usePillReminderSettingForm = ({
           const hasReminder = Boolean(reminder);
 
           if (hasReminder && reminder) {
+            setTitle(reminder.title || '');
+            setMemo(reminder.memo || '');
             setTimes([reminder.time]);
             setDays(reminder.days);
+            setSelectedFolderId(reminder.folder_id);
             setSelectedPills(
               reminder.items.map((item) => ({
                 item_seq: item.item_seq,
@@ -62,6 +70,21 @@ export const usePillReminderSettingForm = ({
                 entp_name: item.entp_name,
               })),
             );
+
+            // 첫 번째 알약이 속한 폴더명 조회 및 세팅
+            const firstSeq = reminder.items[0]?.item_seq;
+            const hasFirstSeq = Boolean(firstSeq);
+
+            if (hasFirstSeq && firstSeq) {
+              const folderInfo =
+                await pillReminderService.getFolderInfoByItemSeq(firstSeq);
+              const hasFolderInfo = Boolean(folderInfo);
+
+              if (hasFolderInfo && folderInfo) {
+                setSelectedFolderId(folderInfo.id);
+                setSelectedFolderName(folderInfo.name);
+              }
+            }
           }
 
           return;
@@ -95,6 +118,21 @@ export const usePillReminderSettingForm = ({
               entp_name: p.entp_name,
             })),
           );
+
+          // 초기 알약이 속한 폴더 정보 조회 및 세팅
+          const firstSeq = seqs[0];
+          const hasFirstSeq = Boolean(firstSeq);
+
+          if (hasFirstSeq && firstSeq) {
+            const folderInfo =
+              await pillReminderService.getFolderInfoByItemSeq(firstSeq);
+            const hasFolderInfo = Boolean(folderInfo);
+
+            if (hasFolderInfo && folderInfo) {
+              setSelectedFolderId(folderInfo.id);
+              setSelectedFolderName(folderInfo.name);
+            }
+          }
         }
       } catch {
         Toast.show({
@@ -109,7 +147,7 @@ export const usePillReminderSettingForm = ({
     initialize();
   }, [reminderId, initialItemSeqs, isEditMode]);
 
-  // 알약 선택 모달 확인 처리 (선택된 폴더명 함께 저장)
+  // 알약 선택 모달 확인 처리 (선택된 폴더명 및 folderId 함께 저장)
   const handleConfirmPillSelection = async (
     selectedSeqs: string[],
     folderName?: string,
@@ -122,6 +160,17 @@ export const usePillReminderSettingForm = ({
 
     const existingMap = new Map(selectedPills.map((p) => [p.item_seq, p]));
     const pillsInfo = await pillReminderService.getPillsBySeqs(selectedSeqs);
+
+    // 첫 번째 알약 기준 folderId 갱신
+    if (selectedSeqs.length > 0) {
+      const firstSeq = selectedSeqs[0];
+      const folderInfo =
+        await pillReminderService.getFolderInfoByItemSeq(firstSeq);
+      if (folderInfo) {
+        setSelectedFolderId(folderInfo.id);
+        setSelectedFolderName(folderInfo.name);
+      }
+    }
 
     const newSelectedPills = pillsInfo.map((p) => {
       const existing = existingMap.get(p.item_seq);
@@ -149,6 +198,7 @@ export const usePillReminderSettingForm = ({
 
       if (isEmptyPills) {
         setSelectedFolderName('');
+        setSelectedFolderId(undefined);
       }
 
       return next;
@@ -200,27 +250,31 @@ export const usePillReminderSettingForm = ({
 
       if (isAlreadyAdded) {
         Toast.show({
-          type: 'info',
+          type: 'default',
           text1: '이미 추가된 시간입니다.',
         });
         return;
       }
 
-      setTimes((prev) =>
-        prev.map((t) => (t === editingTime ? selectedTime : t)).sort(),
-      );
+      // 수정: 기존 시간 교체 후 시간순 정렬
+      setTimes((prev) => {
+        const replaced = prev.map((t) =>
+          t === editingTime ? selectedTime : t,
+        );
+        return [...replaced].sort();
+      });
 
       setIsTimePickerVisible(false);
       setEditingTime(null);
       return;
     }
 
-    // 추가 모드
+    // 신규 추가: 중복 체크 후 추가 및 시간순 정렬
     const isAlreadyAdded = times.includes(selectedTime);
 
     if (isAlreadyAdded) {
       Toast.show({
-        type: 'info',
+        type: 'default',
         text1: '이미 추가된 시간입니다.',
       });
       return;
@@ -228,42 +282,60 @@ export const usePillReminderSettingForm = ({
 
     setTimes((prev) => [...prev, selectedTime].sort());
     setIsTimePickerVisible(false);
-    setEditingTime(null);
   };
 
-  // 복용 시간 삭제 핸들러 (0개까지 삭제 허용)
+  // 복용 시간 삭제 핸들러
   const handleRemoveTime = (timeToRemove: string) => {
+    const isOnlyOneTime = times.length <= 1;
+
+    if (isOnlyOneTime) {
+      Toast.show({
+        type: 'default',
+        text1: '복용 시간은 최소 1개 이상 등록해야 합니다.',
+      });
+      return;
+    }
+
     setTimes((prev) => prev.filter((t) => t !== timeToRemove));
   };
 
-  // 저장 처리 및 유효성 검사
+  // 유효성 검사: 알약 1개 이상 + 시간 1개 이상 + 요일 1개 이상
+  const isFormValid = useMemo(() => {
+    const hasPills = selectedPills.length > 0;
+    const hasTimes = times.length > 0;
+    const hasDays = days.length > 0;
+
+    return hasPills && hasTimes && hasDays;
+  }, [selectedPills.length, times.length, days.length]);
+
+  // 저장 (생성 / 수정) 핸들러
   const handleSave = async () => {
-    const isNoPillsSelected = selectedPills.length === 0;
+    const hasNoPills = selectedPills.length === 0;
 
-    if (isNoPillsSelected) {
+    if (hasNoPills) {
       Toast.show({
-        type: 'error',
-        text1: '복용할 알약을 선택해 주세요.',
+        type: 'default',
+        text1: '복용할 알약을 1개 이상 선택해주세요.',
       });
       return;
     }
 
-    const isNoTimesConfigured = times.length === 0;
+    const hasNoTimes = times.length === 0;
 
-    if (isNoTimesConfigured) {
+    if (hasNoTimes) {
       Toast.show({
-        type: 'error',
-        text1: '복용 시간을 1개 이상 설정해 주세요.',
+        type: 'default',
+        text1: '복용 시간을 1개 이상 추가해주세요.',
       });
       return;
     }
 
-    const isNoDaysSelected = days.length === 0;
+    const hasNoDays = days.length === 0;
 
-    if (isNoDaysSelected) {
+    if (hasNoDays) {
       Toast.show({
-        type: 'error',
-        text1: '복용 요일을 1개 이상 선택해 주세요.',
+        type: 'default',
+        text1: '복용 요일을 1개 이상 선택해주세요.',
       });
       return;
     }
@@ -272,67 +344,78 @@ export const usePillReminderSettingForm = ({
 
     try {
       if (isEditMode && reminderId) {
-        await pillReminderService.updateReminder({
+        // 수정 모드
+        const success = await pillReminderService.updateReminder({
           id: parseInt(reminderId, 10),
-          time: times[0],
+          folder_id: selectedFolderId,
+          title,
+          memo,
+          time: times[0] || '08:00',
           days,
           items: selectedPills.map((p) => ({
             item_seq: p.item_seq,
             item_name: p.item_name,
-            dosage: p.dosage || 1,
-            item_image: p.item_image,
-            class_name: p.class_name,
-            entp_name: p.entp_name,
+            dosage: p.dosage,
           })),
         });
 
-        Toast.show({
-          type: 'success',
-          text1: '복용 알림이 수정되었습니다.',
-        });
+        const isUpdated = Boolean(success);
+
+        if (isUpdated) {
+          Toast.show({
+            type: 'success',
+            text1: '복용 알림이 수정되었습니다.',
+          });
+          router.back();
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: '복용 알림 수정에 실패했습니다.',
+          });
+        }
       } else {
-        await pillReminderService.createReminders({
+        // 생성 모드: 선택된 모든 시간에 대해 개별 알림 생성
+        const ids = await pillReminderService.createReminders({
+          folder_id: selectedFolderId,
+          title,
+          memo,
           times,
           days,
           items: selectedPills.map((p) => ({
             item_seq: p.item_seq,
             item_name: p.item_name,
-            dosage: p.dosage || 1,
-            item_image: p.item_image,
-            class_name: p.class_name,
-            entp_name: p.entp_name,
+            dosage: p.dosage,
           })),
         });
 
-        Toast.show({
-          type: 'success',
-          text1: '복용 알림이 설정되었습니다.',
-        });
-      }
+        const isCreated = ids.length > 0;
 
-      router.back();
+        if (isCreated) {
+          Toast.show({
+            type: 'success',
+            text1: `${ids.length}개의 복용 알림이 설정되었습니다.`,
+          });
+          router.back();
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: '복용 알림 등록에 실패했습니다.',
+          });
+        }
+      }
     } catch {
       Toast.show({
         type: 'error',
-        text1: isEditMode
-          ? '알림 수정에 실패했습니다.'
-          : '알림 설정에 실패했습니다.',
+        text1: '복용 알림 저장 중 오류가 발생했습니다.',
       });
     } finally {
       setSaving(false);
     }
   };
 
-  // 폼 저장 가능 여부
-  const isFormValid = useMemo(() => {
-    const hasPills = selectedPills.length > 0;
-    const hasTimes = times.length > 0;
-    const hasDays = days.length > 0;
-
-    return hasPills && hasTimes && hasDays;
-  }, [selectedPills, times, days]);
-
   return {
+    title,
+    memo,
     times,
     days,
     selectedPills,
@@ -344,6 +427,8 @@ export const usePillReminderSettingForm = ({
     isPillSelectModalVisible,
     isTimePickerVisible,
     editingTime,
+    setTitle,
+    setMemo,
     setIsPillSelectModalVisible,
     setIsTimePickerVisible,
     setDays,

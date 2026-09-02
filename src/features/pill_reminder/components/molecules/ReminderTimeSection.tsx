@@ -6,13 +6,12 @@ import { styles } from '@features/pill_reminder/styles/molecules/ReminderTimeSec
 
 interface IReminderTimeSectionProps {
   times: string[];
-  isEditMode: boolean;
   onOpenTimePicker: () => void;
   onEditTime: (time: string) => void;
   onRemoveTime: (time: string) => void;
 }
 
-// 복용 시간 설정 섹션 컴포넌트
+// 복용 시간 목록 설정 섹션 컴포넌트
 export const ReminderTimeSection = memo(
   ({
     times,
@@ -21,24 +20,25 @@ export const ReminderTimeSection = memo(
     onRemoveTime,
   }: IReminderTimeSectionProps) => {
     return (
-      <View style={styles.sectionCard}>
+      <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
-          <BaseText size={16} weight="bold" style={styles.sectionTitle}>
-            복용 시간
+          <BaseText size={20} weight="bold" style={styles.sectionTitle}>
+            복용 시간 {times.length > 0 && `(${times.length}회)`}
           </BaseText>
         </View>
 
         <View style={styles.timesContainer}>
-          {times.map((time) => (
+          {times.map((t) => (
             <TimeChip
-              key={time}
-              time={time}
-              onPress={() => onEditTime(time)}
-              onRemove={() => onRemoveTime(time)}
+              key={t}
+              time={t}
+              onPress={() => onEditTime(t)}
+              onRemove={times.length > 1 ? () => onRemoveTime(t) : undefined}
             />
           ))}
 
-          <TimeChip time="" isAddButton onPressAdd={onOpenTimePicker} />
+          {/* 복용 시간 추가 + 버튼 항상 노출 */}
+          <TimeChip time="" isAddButton={true} onPressAdd={onOpenTimePicker} />
         </View>
       </View>
     );

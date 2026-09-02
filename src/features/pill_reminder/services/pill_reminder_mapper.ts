@@ -5,6 +5,9 @@ import {
 
 export interface IDbReminderRow {
   id: number;
+  folder_id?: number;
+  title?: string;
+  memo?: string;
   time: string;
   days: string;
   is_enabled: number;
@@ -53,6 +56,9 @@ export const mapDbReminderToModel = (
 
   return {
     id: row.id,
+    folder_id: row.folder_id || 1,
+    title: row.title || '',
+    memo: row.memo || '',
     time: row.time,
     days: daysArray,
     is_enabled: row.is_enabled === 1,

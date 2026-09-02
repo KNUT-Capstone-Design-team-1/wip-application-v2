@@ -24,6 +24,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: px(10),
+    marginBottom: px(8),
   },
 });

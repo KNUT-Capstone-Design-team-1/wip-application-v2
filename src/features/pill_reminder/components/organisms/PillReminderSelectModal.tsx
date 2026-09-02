@@ -38,6 +38,7 @@ export const PillReminderSelectModal = ({
     selectedFolderId,
     folderPills,
     tempSelectedSeqs,
+    displayedSelectedSeqs,
     isAllSelected,
     toastMessage,
     isToastVisible,
@@ -107,10 +108,10 @@ export const PillReminderSelectModal = ({
               onSelectFolder={handleSelectFolder}
             />
 
-            {/* 단일 알약 목록 스크롤 영역 */}
+            {/* 단일 알약 목록 스크롤 영역 (활성 폴더 기준 체크 표시) */}
             <PillReminderSelectList
               folderPills={folderPills}
-              tempSelectedSeqs={tempSelectedSeqs}
+              tempSelectedSeqs={displayedSelectedSeqs}
               onToggleSelect={toggleSelect}
             />
 
