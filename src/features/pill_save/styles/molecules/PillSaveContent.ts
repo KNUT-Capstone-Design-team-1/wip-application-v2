@@ -22,4 +22,17 @@ export const styles = StyleSheet.create({
     elevation: 2,
   },
   checkbox: { position: 'absolute', top: 4, right: 4 },
+  reminderBadge: {
+    position: 'absolute',
+    top: px(6),
+    right: px(6),
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    borderRadius: px(14),
+    padding: px(5),
+    shadowColor: COLOR['shadow'],
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 3,
+  },
 });

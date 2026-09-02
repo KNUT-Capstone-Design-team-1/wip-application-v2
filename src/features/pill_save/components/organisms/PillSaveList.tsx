@@ -28,6 +28,8 @@ const PillSaveList = ({
   selectedSeqs,
   onItemSelect,
   onLongPressItem,
+  remindedItemSeqs,
+  onPressReminder,
 }: IPillSaveListProps) => {
   /**
    * 상세 페이지로 이동
@@ -52,6 +54,8 @@ const PillSaveList = ({
         return <View style={styles.emptyContainer} />;
       }
 
+      const hasReminder = remindedItemSeqs?.includes(item.ITEM_SEQ);
+
       return (
         <View style={styles.emptyContainer}>
           <PillSaveContent
@@ -66,6 +70,10 @@ const PillSaveList = ({
             isEditing={isEditing}
             isSelected={selectedSeqs?.includes(item.ITEM_SEQ)}
             onSelect={() => onItemSelect?.(item.ITEM_SEQ)}
+            hasReminder={hasReminder}
+            onPressReminder={() =>
+              onPressReminder?.(item.ITEM_SEQ, item.ITEM_NAME)
+            }
           />
         </View>
       );
@@ -77,6 +85,8 @@ const PillSaveList = ({
       selectedSeqs,
       onItemSelect,
       onLongPressItem,
+      remindedItemSeqs,
+      onPressReminder,
     ],
   );
 

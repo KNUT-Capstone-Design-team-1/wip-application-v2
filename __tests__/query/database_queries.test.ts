@@ -10,6 +10,10 @@ import {
   PsychotropicsQuery,
 } from '../../src/services/database/queries';
 
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+);
+
 let lastExecutedSql = '';
 let lastExecutedParams: any[] = [];
 

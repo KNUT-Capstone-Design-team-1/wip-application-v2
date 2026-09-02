@@ -66,21 +66,27 @@ export const PillSaveEditBottomBar = memo(
           </BaseText>
         )}
         <View style={styles.buttonRow}>
-          {selectedCount === 1 && (
+          {selectedCount === 1 && onRename && (
             <ActionButton
               onPress={onRename}
               disabled={isDisabled}
               label="이름 변경"
             />
           )}
-          <ActionButton onPress={onMove} disabled={isDisabled} label="이동" />
-          <ActionButton onPress={onCopy} disabled={isDisabled} label="복사" />
-          <ActionButton
-            onPress={onDelete}
-            disabled={isDisabled}
-            label="삭제"
-            isDelete
-          />
+          {onMove && (
+            <ActionButton onPress={onMove} disabled={isDisabled} label="이동" />
+          )}
+          {onCopy && (
+            <ActionButton onPress={onCopy} disabled={isDisabled} label="복사" />
+          )}
+          {onDelete && (
+            <ActionButton
+              onPress={onDelete}
+              disabled={isDisabled}
+              label="삭제"
+              isDelete
+            />
+          )}
         </View>
       </View>
     );

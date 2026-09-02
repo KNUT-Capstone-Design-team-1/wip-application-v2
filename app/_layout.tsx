@@ -1,3 +1,5 @@
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
 import { styles } from './styles/_layout';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,8 +17,8 @@ import { px } from '@utils/responsive';
 import { initAdMob } from '@features/ads/utils/config';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import CommonModal from '@components/common/CommonModal';
-import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -27,6 +29,15 @@ initAdMob();
  */
 const RootLayout = () => {
   const { isInitializing, updateProgress } = useAppInitializer();
+
+  useEffect(() => {
+    if (!isInitializing) {
+      pillReminderNotificationService.startWatcher();
+      return () => {
+        pillReminderNotificationService.stopWatcher();
+      };
+    }
+  }, [isInitializing]);
 
   // 초기화 중이면 로딩 화면 표시
   if (isInitializing) {

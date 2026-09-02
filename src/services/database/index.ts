@@ -100,6 +100,45 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
 };
 
 /**
+ * 알약 복용 알림 테이블 초기화
+ */
+export const initPillReminderTables = async (db: SQLiteDatabase) => {
+  // 복용 알림 일정 테이블
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS pill_reminders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      time TEXT NOT NULL,
+      days TEXT NOT NULL,
+      is_enabled INTEGER NOT NULL DEFAULT 1,
+      created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+      updated_at DATETIME DEFAULT (datetime('now', 'localtime'))
+    )
+  `);
+
+  // 복용 알림에 포함된 알약 매핑 테이블
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS pill_reminder_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      reminder_id INTEGER NOT NULL,
+      item_seq TEXT NOT NULL,
+      item_name TEXT NOT NULL,
+      dosage INTEGER NOT NULL DEFAULT 1,
+      created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+      UNIQUE(reminder_id, item_seq),
+      FOREIGN KEY (reminder_id) REFERENCES pill_reminders(id) ON DELETE CASCADE
+    )
+  `);
+
+  // 인덱스 생성
+  await db.execAsync(`
+    CREATE INDEX IF NOT EXISTS idx_pill_reminder_items_item_seq ON pill_reminder_items(item_seq);
+  `);
+  await db.execAsync(`
+    CREATE INDEX IF NOT EXISTS idx_pill_reminder_items_reminder_id ON pill_reminder_items(reminder_id);
+  `);
+};
+
+/**
  * 데이터베이스 초기화 (필수 테이블 초기화)
  * - 비필수 테이블들은 서버리스 API를 통해 스키마를 관리
  */
@@ -109,6 +148,7 @@ export const initDatabase = async () => {
 
     await initConfigTable(db);
     await initSavedPillTables(db);
+    await initPillReminderTables(db);
 
     return true;
   } catch (e) {

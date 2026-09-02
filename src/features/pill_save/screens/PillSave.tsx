@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Pressable } from 'react-native';
 import { styles } from '@features/pill_save/styles/PillSave';
-
+import { useFocusEffect } from 'expo-router';
+import { usePillReminderStore } from '@features/pill_reminder/store/pill_reminder_store';
 import { PillSaveLoadingView } from '@features/pill_save/components/atoms/PillSaveLoadingView';
 import { PillSaveHeader } from '@features/pill_save/components/molecules/PillSaveHeader';
 import { FolderEditModal } from '@features/pill_save/components/organisms/FolderEditModal';
@@ -12,6 +13,14 @@ import { usePillSaveFolders } from '@features/pill_save/hooks/use_pill_save_fold
 
 // 알약 보관함(폴더 목록) 메인 화면 컴포넌트
 const PillSave = () => {
+  const { fetchRemindedItemSeqs } = usePillReminderStore();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchRemindedItemSeqs();
+    }, [fetchRemindedItemSeqs]),
+  );
+
   const {
     folders,
     loading,

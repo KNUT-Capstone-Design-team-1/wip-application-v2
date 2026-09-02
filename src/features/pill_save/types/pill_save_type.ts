@@ -20,6 +20,8 @@ export interface IPillSaveListProps {
   isEditing?: boolean;
   selectedSeqs?: string[];
   onItemSelect?: (itemSeq: string) => void;
+  remindedItemSeqs?: string[];
+  onPressReminder?: (itemSeq: string, itemName: string) => void;
 }
 
 // 개별 알약 보관함 아이템 컴포넌트의 프롭스 인터페이스
@@ -31,6 +33,8 @@ export interface IPillSaveContentProps {
   isEditing?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
+  hasReminder?: boolean;
+  onPressReminder?: () => void;
 }
 
 // 알약 보관함 폴더 리스트 프롭스 인터페이스
@@ -44,6 +48,7 @@ export interface IPillSaveFolderListProps {
   setIsEditing: (val: boolean) => void;
   toggleFolderSelection: (id: number) => void;
 }
+
 // 편집 모드일 때 하단에 나타나는 메뉴 바의 프롭스 인터페이스
 export interface IPillSaveEditBottomBarProps {
   onRename?: () => void;
@@ -52,6 +57,7 @@ export interface IPillSaveEditBottomBarProps {
   onCopy?: () => void;
   selectedCount?: number;
 }
+
 // 폴더 리스트 아이템 프롭스 인터페이스
 export interface IPillSaveFolderItemProps {
   item: ISavedPillFolder & { pill_count: number; preview_images?: string[] };
@@ -60,6 +66,7 @@ export interface IPillSaveFolderItemProps {
   isEditing?: boolean;
   isSelected?: boolean;
 }
+
 // 폴더 선택 모달 프롭스 인터페이스
 export interface IFolderSelectModalProps {
   isVisible: boolean;
