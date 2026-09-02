@@ -5,6 +5,7 @@ import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_ph
 import { usePharmacyClusters } from '@features/nearby_pharmacy/hooks/use_pharmacy_clusters';
 import { useClusterSelection } from '@features/nearby_pharmacy/hooks/use_cluster_selection';
 import { useResearchPharmacy } from '@features/nearby_pharmacy/hooks/use_research_pharmacy';
+import { useStockInquiry } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
@@ -14,10 +15,7 @@ import PharmacyLocateButton from '@features/nearby_pharmacy/components/atoms/Pha
 import PharmacyMap from '@features/nearby_pharmacy/components/organisms/PharmacyMap';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-/**
- * 주변 약국 지도 화면
- * 약국 데이터를 가져오고, 지도를 표시하며, 마커/클러스터 클릭 이벤트를 관리
- */
+// 주변 약국 지도 화면
 const NearbyPharmacyScreen = () => {
   // 약국 데이터 및 위치 관련 전역 훅
   const {
@@ -38,6 +36,9 @@ const NearbyPharmacyScreen = () => {
     fetchPharmacies,
     lastFetchedCenter,
   } = useNearbyPharmacy();
+
+  // 재고 문의 모드 훅
+  const { isStockInquiryMode, handleStockInquiryCall } = useStockInquiry();
 
   // 안전 영역(노치 등) 여백 값
   const insets = useSafeAreaInsets();
@@ -110,6 +111,9 @@ const NearbyPharmacyScreen = () => {
               pharmacy={selectedPharmacy}
               onCopyPress={handleCopy}
               onClosePress={handleCloseInfoCard}
+              onStockInquiryPress={
+                isStockInquiryMode ? handleStockInquiryCall : undefined
+              }
             />
           )
         )}

@@ -5,17 +5,20 @@ import { styles } from '../../styles/molecules/PillBasicHeader';
 import { Bookmark } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
 import { LinearGradient } from 'expo-linear-gradient';
+import StockInquiryIconButton from '@features/nearby_pharmacy/components/atoms/StockInquiryIconButton';
 
 interface IPillBasicHeaderProps {
   itemName: string;
   saveState: boolean;
   onSaveToggle: () => void;
+  onStockInquiry?: () => void;
 }
 
 const PillBasicHeader = ({
   itemName,
   saveState,
   onSaveToggle,
+  onStockInquiry,
 }: IPillBasicHeaderProps) => {
   const itemNames = itemName.split(/(?=\()/, 2);
 
@@ -54,14 +57,19 @@ const PillBasicHeader = ({
         style={styles.gradiant}
         pointerEvents="none"
       />
-      <TouchableOpacity style={styles.saveButton} onPress={onSaveToggle}>
-        <Bookmark
-          size={fontPx(24)}
-          fill={saveState ? '#32D2FF' : 'none'}
-          stroke={'#32D2FF'}
-          strokeWidth={2}
-        />
-      </TouchableOpacity>
+      <View style={styles.actionButtons}>
+        {onStockInquiry && (
+          <StockInquiryIconButton onPress={onStockInquiry} size={20} />
+        )}
+        <TouchableOpacity style={styles.saveButton} onPress={onSaveToggle}>
+          <Bookmark
+            size={fontPx(24)}
+            fill={saveState ? '#32D2FF' : 'none'}
+            stroke={'#32D2FF'}
+            strokeWidth={2}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

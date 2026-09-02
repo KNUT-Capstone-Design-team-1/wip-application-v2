@@ -16,6 +16,7 @@ const PillDetailInfo = ({
   data,
   saveState,
   onSaveToggle,
+  onStockInquiry,
   detailLoading,
 }: IPillDetailInfoProps) => {
   const [moreInfo, setMoreInfo] = useState(false);
@@ -27,6 +28,7 @@ const PillDetailInfo = ({
         itemName={data.ITEM_NAME}
         saveState={saveState}
         onSaveToggle={onSaveToggle}
+        onStockInquiry={onStockInquiry}
       />
 
       {/* 기본 및 상세 제원 정보 */}

@@ -4,5 +4,6 @@ import { COLOR_TEXT } from '@constants/color';
 
 export const styles = StyleSheet.create({
   container: { flexDirection: 'row', gap: px(12) },
+  actionGroup: { flexDirection: 'row', alignItems: 'center', gap: px(12) },
   title: { color: COLOR_TEXT.title },
 });

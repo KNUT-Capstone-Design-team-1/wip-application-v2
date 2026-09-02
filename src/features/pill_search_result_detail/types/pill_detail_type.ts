@@ -56,6 +56,7 @@ export interface IPillDetailInfoProps {
   data: IPillDetail;
   saveState: boolean;
   onSaveToggle: () => void;
+  onStockInquiry?: () => void;
   detailLoading?: boolean;
 }
 

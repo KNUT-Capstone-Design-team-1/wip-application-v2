@@ -6,6 +6,7 @@ import PillDetailSkeleton from '@features/pill_search_result_detail/components/o
 import { styles } from '@features/pill_search_result_detail/styles/PillSearchResultDetailScreen';
 import { usePillDetailScreen } from '@features/pill_search_result_detail/hooks/use_pill_detail_screen';
 import FolderSelectModal from '@features/pill_save/components/organisms/FolderSelectModal';
+import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
 
 const PillSearchResultDetailScreen = () => {
   const {
@@ -75,6 +76,7 @@ const PillSearchResultDetailScreen = () => {
             data={pillData}
             saveState={isSaved}
             onSaveToggle={openFolderModal}
+            onStockInquiry={openStockInquiryModal}
             detailLoading={detailLoading}
           />
 

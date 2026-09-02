@@ -24,6 +24,7 @@ export interface IPharmacyInfoCardProps {
   pharmacy: INearbyPharmacies;
   onCopyPress: (text: string) => void;
   onClosePress: () => void;
+  onStockInquiryPress?: (telephone: string) => void;
 }
 
 export interface IPharmacyClusterListProps {

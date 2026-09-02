@@ -23,5 +23,10 @@ export const styles = StyleSheet.create({
     width: '30%',
     height: '100%',
   },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(8),
+  },
   saveButton: {},
 });

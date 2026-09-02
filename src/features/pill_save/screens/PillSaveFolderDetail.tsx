@@ -8,6 +8,7 @@ import { PillSaveCountHeader } from '@features/pill_save/components/atoms/PillSa
 import FolderSelectModal from '@features/pill_save/components/organisms/FolderSelectModal';
 import { PillSaveEditBottomBar } from '@features/pill_save/components/organisms/PillSaveEditBottomBar';
 import { usePillSaveFolderDetail } from '@features/pill_save/hooks/use_pill_save_folder_detail';
+import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
 
 // 특정 알약 보관함(폴더) 내부의 알약 목록을 보여주는 상세 화면 컴포넌트
 const PillSaveFolderDetail = () => {
@@ -46,10 +47,8 @@ const PillSaveFolderDetail = () => {
           isEditing={isEditing}
           onToggleEdit={toggleEdit}
           onSelectAll={handleSelectAll}
-          onMove={handleMove}
-          onCopy={handleCopy}
-          onDelete={handleMultipleDelete}
           allSelected={allSelected}
+          onStockInquiry={openStockInquiryModal}
         />
         <PillSaveList
           pillSaveData={pillSaveData}
