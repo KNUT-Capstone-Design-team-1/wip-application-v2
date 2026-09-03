@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useSearchIdStore } from '../store/search_id_store';
 import { useMarkStore } from '../store/mark_store';
 import { identificationSearchService } from '../services/identification_search_service';
-import { getToggledArrayValue } from '../services/identification_search_param_builder';
+import { getToggledArrayValue } from '../services/identification_filter_toggle_service';
 import { router, usePathname } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
 import logger from '@utils/logger';
