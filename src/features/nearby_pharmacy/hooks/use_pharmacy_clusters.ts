@@ -12,19 +12,22 @@ import {
   CLUSTER_RADIUS_PX,
 } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
 
+// 클러스터 포인트 프로퍼티 인터페이스
 export interface IPharmacyPointProps extends AnyProps {
   pharmacyId: string;
 }
 
+// 클러스터 아이템 타입
 export type TPharmacyClusterItem =
   | PointFeature<IPharmacyPointProps>
   | ClusterFeature<AnyProps>;
 
-// 약국 좌표 목록을 바탕으로 지도 영역별 클러스터링을 연산하는 커스텀 훅
+// 약국 좌표 목록을 바탕으로 지도 영역별 클러스터링을 연산하는 커스텀 훅 (Presentation Layer)
 export const usePharmacyClusters = (
   pharmacies: INearbyPharmacies[],
   region: Region | null,
 ) => {
+  // Supercluster 인덱스 생성 및 약국 좌표 로드
   const supercluster = useMemo(() => {
     const index = new Supercluster<IPharmacyPointProps>({
       radius: CLUSTER_RADIUS_PX,
@@ -54,6 +57,7 @@ export const usePharmacyClusters = (
     return index;
   }, [pharmacies]);
 
+  // 현재 지도 뷰포트 내 클러스터 목록 계산
   const clusters = useMemo<TPharmacyClusterItem[]>(() => {
     const hasNoRegion = !region;
 

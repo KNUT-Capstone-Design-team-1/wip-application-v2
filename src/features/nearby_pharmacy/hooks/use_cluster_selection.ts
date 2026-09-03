@@ -1,7 +1,9 @@
 import { RefObject, useCallback, useMemo } from 'react';
 import MapView, { Region } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
+import { nearbyPharmacyService } from '@features/nearby_pharmacy/services/nearby_pharmacy_service';
 
+// 클러스터 선택 훅 매개변수 인터페이스
 interface IUseClusterSelectionParams {
   pharmacies: INearbyPharmacies[];
   mapRef: RefObject<MapView | null>;
@@ -10,10 +12,7 @@ interface IUseClusterSelectionParams {
   openClusterList: (list: INearbyPharmacies[]) => void;
 }
 
-/**
- * 클러스터 마커 탭 시 지도 카메라를 클러스터 내 약국들에 맞추고
- * 하단 목록을 열어주는 로직.
- */
+// 클러스터 마커 선택 및 지도 포커스/목록 표시 커스텀 훅 (Presentation Layer)
 export const useClusterSelection = ({
   pharmacies,
   mapRef,
@@ -21,6 +20,7 @@ export const useClusterSelection = ({
   getClusterPharmacyIds,
   openClusterList,
 }: IUseClusterSelectionParams) => {
+  // 약국 ID 기반 빠른 조회를 위한 Map 생성
   const pharmaciesById = useMemo(() => {
     const map = new Map<string, INearbyPharmacies>();
     for (const p of pharmacies) {
@@ -29,6 +29,7 @@ export const useClusterSelection = ({
     return map;
   }, [pharmacies]);
 
+  // 클러스터 마커 클릭 핸들러
   const handleClusterPress = useCallback(
     (clusterId: number) => {
       const ids = getClusterPharmacyIds(clusterId);
@@ -40,22 +41,9 @@ export const useClusterSelection = ({
         return;
       }
 
-      const coordinates = list
-        .map((p) => ({
-          latitude: parseFloat(p.Y),
-          longitude: parseFloat(p.X),
-        }))
-        .filter((c) => !isNaN(c.latitude) && !isNaN(c.longitude));
+      const center = nearbyPharmacyService.calculateCenterCoordinate(list);
 
-      if (coordinates.length > 0) {
-        const centerLat =
-          coordinates.reduce((sum, c) => sum + c.latitude, 0) /
-          coordinates.length;
-
-        const centerLng =
-          coordinates.reduce((sum, c) => sum + c.longitude, 0) /
-          coordinates.length;
-
+      if (center) {
         // 현재 줌에서 2배 확대 (델타 절반), 최대 확대 제한
         const newLatDelta = Math.max(region.latitudeDelta / 2, 0.002);
         const newLngDelta = Math.max(region.longitudeDelta / 2, 0.002);
@@ -65,8 +53,8 @@ export const useClusterSelection = ({
 
         mapRef.current?.animateToRegion(
           {
-            latitude: centerLat - latOffset,
-            longitude: centerLng,
+            latitude: center.latitude - latOffset,
+            longitude: center.longitude,
             latitudeDelta: newLatDelta,
             longitudeDelta: newLngDelta,
           },

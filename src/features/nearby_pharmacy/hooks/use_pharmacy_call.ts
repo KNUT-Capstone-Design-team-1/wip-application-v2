@@ -1,25 +1,23 @@
 import { useCallback } from 'react';
-import { Linking } from 'react-native';
 import { useToast } from '@hooks/use_toast';
-import logger from '@utils/logger';
+import { pharmacyActionService } from '@features/nearby_pharmacy/services/pharmacy_action_service';
 
-// 약국 전화 걸기 기능을 제공하는 커스텀 훅
+// 약국 전화 걸기 기능을 제공하는 커스텀 훅 (Presentation Layer)
 export const usePharmacyCall = () => {
   const { showToast } = useToast();
 
+  // 지정된 전화번호로 전화 걸기 핸들러
   const callPharmacy = useCallback(
     async (telephone: string) => {
-      const digits = telephone.replace(/[^0-9+*#]/g, '');
+      const digits = pharmacyActionService.formatPhoneNumber(telephone);
       const hasNoDigits = !digits;
 
       if (hasNoDigits) {
         return;
       }
 
-      try {
-        await Linking.openURL(`tel:${digits}`);
-      } catch (e) {
-        logger.error(`Failed to open dialer. ${e}`);
+      const isSuccess = await pharmacyActionService.callPharmacy(telephone);
+      if (!isSuccess) {
         showToast({ type: 'error', message: '전화 앱을 열 수 없습니다.' });
       }
     },

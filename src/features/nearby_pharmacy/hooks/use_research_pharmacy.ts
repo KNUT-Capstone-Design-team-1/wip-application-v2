@@ -1,41 +1,19 @@
 import { useMemo, useCallback } from 'react';
 import { Region } from 'react-native-maps';
-import {
-  KM_PER_LAT_DEGREE,
-  KM_PER_LON_DEGREE,
-  RESEARCH_DISPLACEMENT_RATIO,
-  RESEARCH_MAX_DISPLACEMENT_KM,
-} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
+import { nearbyPharmacyService } from '@features/nearby_pharmacy/services/nearby_pharmacy_service';
 
-// 지도의 이동 거리를 계산하여 '이 위치에서 재검색' 버튼 노출 여부를 제어하는 커스텀 훅
+// 지도의 이동 거리를 계산하여 '이 위치에서 재검색' 버튼 노출 여부를 제어하는 커스텀 훅 (Presentation Layer)
 export const useResearchPharmacy = (
   region: Region | null,
   lastFetchedCenter: { lat: number; lng: number } | null,
   fetchPharmacies: (coords: { x: number; y: number }) => void,
 ) => {
+  // 현재 뷰포트 이동량 기준 재검색 노출 여부 계산
   const shouldResearch = useMemo(() => {
-    const isMissingCenterOrRegion = !lastFetchedCenter || !region;
-
-    if (isMissingCenterOrRegion) {
-      return false;
-    }
-
-    const displacementKm = Math.max(
-      Math.abs(region.latitude - lastFetchedCenter.lat) * KM_PER_LAT_DEGREE,
-      Math.abs(region.longitude - lastFetchedCenter.lng) * KM_PER_LON_DEGREE,
-    );
-
-    const visibleHeightKm = region.latitudeDelta * KM_PER_LAT_DEGREE;
-
-    const thresholdKm = Math.min(
-      visibleHeightKm * RESEARCH_DISPLACEMENT_RATIO,
-      RESEARCH_MAX_DISPLACEMENT_KM,
-    );
-
-    return displacementKm > thresholdKm;
+    return nearbyPharmacyService.checkShouldResearch(region, lastFetchedCenter);
   }, [region, lastFetchedCenter]);
 
-  // 현재 지도 중심 위치 기준 재검색 실행
+  // 현재 지도 중심 위치 기준 재검색 실행 핸들러
   const handleResearchHere = useCallback(() => {
     const hasRegion = Boolean(region);
 
