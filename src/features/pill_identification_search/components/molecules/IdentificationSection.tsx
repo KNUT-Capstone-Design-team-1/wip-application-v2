@@ -1,15 +1,10 @@
+import React from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import React, { ReactNode } from 'react';
+import { IIdentificationSectionProps } from '@features/pill_identification_search/types';
 import { styles } from '../../styles/molecules/IdentificationSection';
 
-interface IIdentificationSectionProps {
-  children: ReactNode;
-  title: string;
-  direction?: 'row' | 'column';
-  selectedIndex?: number[];
-}
-
+// 식별 검색 섹션 래퍼 컴포넌트 (Molecule)
 const IdentificationSection = ({
   children,
   title,

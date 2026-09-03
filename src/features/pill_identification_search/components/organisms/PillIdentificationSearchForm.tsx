@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from 'react';
 import { View, ScrollView } from 'react-native';
-import { IIdentificationSection } from '@features/pill_identification_search/types/search_id_types';
+import { IIdentificationSection } from '@features/pill_identification_search/types';
 import { pillIdentificationData } from '@features/pill_identification_search/constants/pillIdentificationData';
 import { useSelectedSearchId } from '@features/pill_identification_search/hooks/useSelectedSearchId';
 import IdentificationSection from '@features/pill_identification_search/components/molecules/IdentificationSection';
@@ -9,13 +9,12 @@ import IdentificationTextInputSection from '@features/pill_identification_search
 import IdentificationIconButtonSection from '@features/pill_identification_search/components/organisms/IdentificationIconButtonSection';
 import IdentificationSearchActions from '@features/pill_identification_search/components/organisms/IdentificationSearchActions';
 import { styles } from '@features/pill_identification_search/styles/organisms/PillIdentificationSearchModal';
-import { COLOR, COLOR_BG } from '@constants/color';
-import { px } from '@utils/responsive';
 
 interface IPillIdentificationSearchFormProps {
   onSearchComplete?: () => void;
 }
 
+// 알약 식별 검색 폼 전체 화면 컴포넌트
 const PillIdentificationSearchForm = memo(
   ({ onSearchComplete }: IPillIdentificationSearchFormProps) => {
     const {
@@ -25,6 +24,7 @@ const PillIdentificationSearchForm = memo(
       resetButtonClickHandler,
     } = useSelectedSearchId();
 
+    // 검색 실행 핸들러
     const handleSearch = useCallback(async () => {
       if (onSearchComplete) {
         onSearchComplete();

@@ -1,18 +1,11 @@
 import React from 'react';
-import { DimensionValue } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import TouchableScale from 'react-native-touchable-scale';
 import { COLOR } from '@constants/color';
+import { IButtonProps } from '@features/pill_identification_search/types';
 import { styles } from '../../styles/atoms/Button';
 
-interface IButtonProps {
-  background?: string;
-  color?: string;
-  width?: DimensionValue;
-  label: string;
-  pressHandler: () => void;
-}
-
+// 식별 검색 공용 버튼 컴포넌트 (Atom)
 const Button = ({
   background = COLOR['primary'],
   color = '#fff',

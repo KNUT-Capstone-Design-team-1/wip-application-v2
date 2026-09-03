@@ -5,7 +5,7 @@ import IdentificationSection from '../molecules/IdentificationSection';
 import {
   IIdentificationSection,
   ISearchIdStore,
-} from '@features/pill_identification_search/types/search_id_types';
+} from '@features/pill_identification_search/types';
 import { useSearchIdStore } from '../../store/search_id_store';
 import { SECTION_KEY_TO_STORE_KEY } from '../../constants/pillIdentificationData';
 import { styles } from '../../styles/organisms/IdentificationIconButtonSection';
@@ -16,6 +16,7 @@ interface IIdentificationIconButtonSectionProps {
   radioButtonPressHandler: (value: string, key: string) => void;
 }
 
+// 식별 검색 아이콘 버튼 (모양/색상/제형/분할선) 섹션 컴포넌트
 const IdentificationIconButtonSection = memo(
   ({
     sectionKey,
@@ -31,6 +32,7 @@ const IdentificationIconButtonSection = memo(
       storeKey ? state[storeKey] : null,
     );
 
+    // 선택된 인덱스 목록 계산
     const selectedIndexes = useMemo(() => {
       if (!section.datas) {
         return [0];

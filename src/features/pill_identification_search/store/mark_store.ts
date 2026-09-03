@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import { MarkData } from '../types/mark_types';
+import { MarkData } from '../types/identification_mark_type';
 import { useSearchIdStore } from './search_id_store';
 
-interface IMarkStore {
+// 마크 스토어 인터페이스
+export interface IMarkStore {
   selectedMarkCode: string;
   selectedMarkBase64: string;
   selectedMarkTitle: string;
@@ -10,10 +11,10 @@ interface IMarkStore {
   setSelectedMarkTitle: (title: string) => void;
   setSelectedMarkBase64: (img: string) => void;
   resetSelectedMark: () => void;
-  // 하위 호환성을 위해 유지
   resetSelectedMarkBase64: () => void;
 }
 
+// 식별 마크 선택 상태 관리 Zustand 스토어 (Presentation State)
 export const useMarkStore = create<IMarkStore>((set) => ({
   selectedMarkCode: '',
   selectedMarkBase64: '',
@@ -27,15 +28,24 @@ export const useMarkStore = create<IMarkStore>((set) => ({
       selectedMarkBase64: mark.base64,
     });
 
-    // search_id_store에도 마크 코드 설정
+    // search_id_store에도 마크 코드 동기화 설정
     useSearchIdStore.getState().setMarkCodeFront(mark.code);
     useSearchIdStore.getState().setMarkCodeBack(mark.code);
   },
 
-  setSelectedMarkTitle: (title: string) => set({ selectedMarkTitle: title }),
-  setSelectedMarkBase64: (img: string) => set({ selectedMarkBase64: img }),
+  // 마크 타이틀 설정
+  setSelectedMarkTitle: (title: string) =>
+    set({
+      selectedMarkTitle: title,
+    }),
 
-  // 전체 마크 정보 리셋
+  // 마크 이미지 설정
+  setSelectedMarkBase64: (img: string) =>
+    set({
+      selectedMarkBase64: img,
+    }),
+
+  // 전체 마크 정보 초기화
   resetSelectedMark: () => {
     set({
       selectedMarkCode: '',
@@ -43,7 +53,6 @@ export const useMarkStore = create<IMarkStore>((set) => ({
       selectedMarkTitle: '',
     });
 
-    // search_id_store의 마크 코드도 리셋
     useSearchIdStore.getState().setMarkCodeFront('');
     useSearchIdStore.getState().setMarkCodeBack('');
   },
@@ -56,7 +65,6 @@ export const useMarkStore = create<IMarkStore>((set) => ({
       selectedMarkTitle: '',
     });
 
-    // search_id_store의 마크 코드도 리셋
     useSearchIdStore.getState().setMarkCodeFront('');
     useSearchIdStore.getState().setMarkCodeBack('');
   },

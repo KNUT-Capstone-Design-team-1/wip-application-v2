@@ -1,24 +1,17 @@
-import React, { memo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
+import React, { memo, useCallback } from 'react';
+import { View } from 'react-native';
 import { useSearchIdStore } from '../../store/search_id_store';
-import { COLOR } from '@constants/color';
-import { Input } from '../atoms/Input';
 import IdentificationSection from '../molecules/IdentificationSection';
+import IdentificationTextInputItem from '../molecules/IdentificationTextInputItem';
+import ExactMatchCheckbox from '../molecules/ExactMatchCheckbox';
 import {
-  IIdentificationSection,
+  IIdentificationTextInputSectionProps,
   ISearchIdStore,
-} from '@features/pill_identification_search/types/search_id_types';
+} from '@features/pill_identification_search/types';
 import { SECTION_KEY_TO_TEXT_STORE_KEYS } from '../../constants/pillIdentificationData';
 import { styles } from '../../styles/organisms/IdentificationTextInputSection';
-import { px } from '@utils/responsive';
 
-interface IIdentificationTextInputSectionProps {
-  sectionKey: string;
-  section: IIdentificationSection;
-  searchIdInputChangeHandler: (text: string, key: string) => void;
-}
-
+// 식별 검색 텍스트 입력 영역 컴포넌트 (Organism)
 const IdentificationTextInputSection = memo(
   ({
     sectionKey,
@@ -27,6 +20,11 @@ const IdentificationTextInputSection = memo(
   }: IIdentificationTextInputSectionProps) => {
     const isExactMatch = useSearchIdStore((state) => state.isExactMatch);
     const setIsExactMatch = useSearchIdStore((state) => state.setIsExactMatch);
+
+    // 완전 일치 체크박스 토글 핸들러
+    const handleToggleExactMatch = useCallback(() => {
+      setIsExactMatch(!isExactMatch);
+    }, [isExactMatch, setIsExactMatch]);
 
     // 현재 섹션의 스토어 키들 가져오기
     const storeKeys = SECTION_KEY_TO_TEXT_STORE_KEYS[sectionKey] || [];
@@ -47,7 +45,7 @@ const IdentificationTextInputSection = memo(
               {section.datas.map((data, index) => {
                 const storeKey = storeKeys[index] as keyof ISearchIdStore;
                 return (
-                  <TextInputWrapper
+                  <IdentificationTextInputItem
                     key={index}
                     placeholder={data.placeholder || ''}
                     storeKey={storeKey}
@@ -57,39 +55,12 @@ const IdentificationTextInputSection = memo(
                 );
               })}
             </View>
+
             {sectionKey === 'sideLabelText' && (
-              <TouchableOpacity
-                style={styles.textInputLabelCheckbox}
-                onPress={() => setIsExactMatch(!isExactMatch)}
-              >
-                <View
-                  style={[
-                    styles.textInputLabelCheckboxWrapper,
-                    {
-                      backgroundColor: isExactMatch
-                        ? COLOR['primary']
-                        : 'transparent',
-                    },
-                  ]}
-                >
-                  {isExactMatch && (
-                    <BaseText
-                      style={styles.textInputLabelCheckboxText}
-                      size={12}
-                      weight="bold"
-                    >
-                      ✓
-                    </BaseText>
-                  )}
-                </View>
-                <BaseText
-                  style={styles.textInputLabelText}
-                  size={14}
-                  weight="regular"
-                >
-                  식별문자 일치 (정확히 일치하는 문자만 검색)
-                </BaseText>
-              </TouchableOpacity>
+              <ExactMatchCheckbox
+                isExactMatch={isExactMatch}
+                onToggle={handleToggleExactMatch}
+              />
             )}
           </View>
         </IdentificationSection>
@@ -99,36 +70,5 @@ const IdentificationTextInputSection = memo(
 );
 
 IdentificationTextInputSection.displayName = 'IdentificationTextInputSection';
-
-// 개별 Input 필드를 위한 래퍼 (구독 최적화)
-const TextInputWrapper = ({
-  placeholder,
-  storeKey,
-  inputKey,
-  searchIdInputChangeHandler,
-}: {
-  placeholder: string;
-  storeKey: keyof ISearchIdStore;
-  inputKey: string;
-  searchIdInputChangeHandler: (text: string, key: string) => void;
-}) => {
-  const value = useSearchIdStore((state) => state[storeKey] as string);
-
-  return (
-    <View style={styles.flex1}>
-      <Input
-        placeholder={placeholder}
-        value={value}
-        width="100%"
-        height={40}
-        inputChangeHandler={(text) => {
-          if (inputKey) {
-            searchIdInputChangeHandler(text, inputKey);
-          }
-        }}
-      />
-    </View>
-  );
-};
 
 export default IdentificationTextInputSection;

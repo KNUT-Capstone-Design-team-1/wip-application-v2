@@ -1,19 +1,13 @@
-import { View, TextInput, DimensionValue } from 'react-native';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput } from 'react-native';
 import { COLOR, COLOR_TEXT } from '@constants/color';
+import { IInputProps } from '@features/pill_identification_search/types';
 import { styles } from '../../styles/atoms/Input';
 
-interface IInputProps {
-  placeholder?: string;
-  value: string;
-  width: DimensionValue;
-  height: DimensionValue;
-  inputChangeHandler: (text: string) => void;
-}
-
+// 식별 검색 텍스트 인풋 컴포넌트 (Atom)
 export const Input = ({
   placeholder = '',
-  value: initialValue,
+  value: initialValue = '',
   width,
   height,
   inputChangeHandler,
@@ -21,17 +15,18 @@ export const Input = ({
   const [isFocused, setIsFocused] = useState(false);
   const [localValue, setLocalValue] = useState(initialValue);
 
-  // 외부(store)에서 값이 바뀌면 로컬 상태와 동기화 (예: 초기화 시)
+  // 외부(store)에서 값이 바뀌면 로컬 상태와 동기화
   useEffect(() => {
     setLocalValue(initialValue);
   }, [initialValue]);
 
+  // 포커스 아웃 핸들러
   const handleBlur = () => {
     setIsFocused(false);
   };
 
+  // 엔터 입력 완료 핸들러
   const handleSubmit = () => {
-    // 키보드 엔터를 눌렀을 때도 업데이트 (이미 onChangeText에서 하고 있지만 명시적 유지)
     inputChangeHandler(localValue);
   };
 

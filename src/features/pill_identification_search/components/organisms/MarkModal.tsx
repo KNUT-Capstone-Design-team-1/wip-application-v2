@@ -1,30 +1,16 @@
-import React, { useEffect } from 'react';
-import {
-  View,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  Keyboard,
-  ActivityIndicator,
-} from 'react-native';
-import { COLOR, COLOR_TEXT } from '@constants/color';
+import React, { useEffect, useCallback } from 'react';
+import { View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SearchInput from '../molecules/SearchInput';
-import { BaseText } from '@components/common/BaseText';
-import MarkList from '../molecules/MarkList';
 import Pagination from '../molecules/Pagination';
+import MarkModalHeader from '../molecules/MarkModalHeader';
+import MarkModalContent from '../molecules/MarkModalContent';
 import { styles } from '../../styles/organisms/MarkModal';
-import { IMarkModalProps } from '@features/pill_identification_search/types/mark_types';
-import { X } from 'lucide-react-native';
-import { px, fontPx } from '@utils/responsive';
+import {
+  IMarkModalProps,
+  MarkData,
+} from '@features/pill_identification_search/types';
 
-/*
-TODO: Error 용도
-- 없는 마크: 검색 input 하단에 error color로 표시
-- 서버 문제: toast 처리
-TODO: 마크 표시 형식 및 마크 크기 변경 필요
-- Modal 방식으로 인해 한 페이지에 표시할 수 있는 마크의 갯수가 제한됨
-- BottomSheet 방식이나 다른 방식으로 페이지 전체에 표시하고, 마크 item의 크기를 개선 필요
-*/
-
+// 식별 마크 검색 및 선택 모달 컴포넌트 (Organism)
 const MarkModal = ({
   onClose,
   searchText,
@@ -41,19 +27,23 @@ const MarkModal = ({
   handlePageChange,
   handleGroupChange,
 }: IMarkModalProps) => {
-  // 모달이 열릴 때 초기 데이터 대량 로드
+  // 모달이 열릴 때 초기 데이터 로드
   useEffect(() => {
-    // 데이터가 없을 때만 로드 (이미 검색한 결과가 있으면 유지)
-    if (markDataList.length === 0 && !loading) {
+    const hasNoMarks = markDataList.length === 0;
+
+    if (hasNoMarks && !loading) {
       loadInitialMarks('');
     }
-  }, []);
+  }, [loadInitialMarks, loading, markDataList.length]);
 
-  // 마크 선택 시 Modal 닫기
-  const handleSelect = (mark: any) => {
-    handleMarkSelect(mark);
-    onClose();
-  };
+  // 마크 선택 시 모달 닫기
+  const handleSelect = useCallback(
+    (mark: MarkData) => {
+      handleMarkSelect(mark);
+      onClose();
+    },
+    [handleMarkSelect, onClose],
+  );
 
   return (
     <TouchableWithoutFeedback
@@ -65,30 +55,15 @@ const MarkModal = ({
       <View style={styles.overlay}>
         <TouchableWithoutFeedback
           onPress={(e) => {
-            e.stopPropagation && e.stopPropagation();
+            const hasStop = Boolean(e.stopPropagation);
+            if (hasStop) {
+              e.stopPropagation();
+            }
           }}
         >
           <View style={styles.modalBox}>
-            {/* 상단 손잡이 (그랩바) */}
-            <View style={styles.grabber} />
-            {/* 닫기 버튼 */}
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.closeButton}
-              hitSlop={{
-                top: px(10),
-                bottom: px(10),
-                left: px(10),
-                right: px(10),
-              }}
-            >
-              <X size={fontPx(24)} color={COLOR_TEXT['sub']} strokeWidth={3} />
-            </TouchableOpacity>
-
-            {/* 타이틀 */}
-            <BaseText style={styles.title} size={18} weight="bold">
-              마크 검색
-            </BaseText>
+            {/* 상단 헤더 (그랩바, 닫기버튼, 타이틀) */}
+            <MarkModalHeader onClose={onClose} />
 
             {/* 검색 입력 */}
             <View style={styles.searchWrapper}>
@@ -101,34 +76,13 @@ const MarkModal = ({
               />
             </View>
 
-            {/* 에러 메시지 */}
-            {error && (
-              <View style={styles.errorContainer}>
-                <BaseText style={styles.errorText} size={13} weight="bold">
-                  {error}
-                </BaseText>
-              </View>
-            )}
-
-            {/* 마크 리스트 */}
-            <View style={styles.markListContainer}>
-              {loading ? (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color={COLOR['primary']} />
-                  <BaseText style={styles.loadingText} size={16} weight="bold">
-                    검색 중...
-                  </BaseText>
-                </View>
-              ) : markDataList.length === 0 && !error ? (
-                <View style={styles.emptyState}>
-                  <BaseText style={styles.emptyText} size={16} weight="bold">
-                    검색어를 입력하여 마크를 검색해주세요
-                  </BaseText>
-                </View>
-              ) : (
-                <MarkList data={markDataList} onSelect={handleSelect} />
-              )}
-            </View>
+            {/* 마크 리스트 / 로딩 / 에러 / 빈화면 */}
+            <MarkModalContent
+              loading={loading}
+              error={error}
+              markDataList={markDataList}
+              onSelect={handleSelect}
+            />
 
             {/* 페이지네이션 */}
             {!loading && markDataList.length > 0 && totalPages > 1 && (

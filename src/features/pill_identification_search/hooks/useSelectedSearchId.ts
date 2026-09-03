@@ -1,23 +1,13 @@
 import { useCallback } from 'react';
 import { useSearchIdStore } from '../store/search_id_store';
 import { useMarkStore } from '../store/mark_store';
-import {
-  getPillDataCount,
-  getPillDatas,
-} from '@services/database/queries/pill_data';
-import { TPillDataSearchParam } from '@services/database/types';
+import { identificationSearchService } from '../services/identification_search_service';
+import { getToggledArrayValue } from '../services/identification_search_param_builder';
 import { router, usePathname } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
-import { SEARCH_ALL_LABEL } from '../constants/identificationSearch';
 import logger from '@utils/logger';
-import { ISearchPillData } from '../types/search_id_types';
-import { useAppTrackStore } from '@store/app_track_store';
 
-/**
- * 식별 검색 Hook
- * - 초기 검색 (식별 검색)
- * - 식별 검색 상태 관리
- */
+// 식별 검색 상태 및 검색 실행 로직을 관리하는 커스텀 훅 (Presentation Layer)
 export const useSelectedSearchId = () => {
   const pathname = usePathname();
 
@@ -30,7 +20,7 @@ export const useSelectedSearchId = () => {
     setTotalDataCount,
   } = useSearchResultListStore();
 
-  // 개별 액션들만 가져와서 핸들러들이 스토어 전체 변경에 반응하지 않도록 함
+  // 개별 액션들만 가져와서 불필요한 리렌더링 방지
   const setSideLabelFrontText = useSearchIdStore(
     (state) => state.setSideLabelFrontText,
   );
@@ -69,7 +59,7 @@ export const useSelectedSearchId = () => {
 
   const isExactMatch = useSearchIdStore((state) => state.isExactMatch);
 
-  // 현재 값들을 가져오기 위한 셀렉터들 (핸들러 내부에서 최신 값을 참조하기 위함)
+  // 현재 값들을 가져오기 위한 셀렉터들
   const manufacturerName = useSearchIdStore((state) => state.manufacturerName);
 
   const dividerLineData = useSearchIdStore((state) => state.dividerLineData);
@@ -78,9 +68,7 @@ export const useSelectedSearchId = () => {
 
   const colors = useSearchIdStore((state) => state.colors);
 
-  /**
-   * 텍스트 입력 핸들러
-   */
+  // 텍스트 입력 변경 핸들러
   const searchIdInputChangeHandler = useCallback(
     (text: string, key: string) => {
       switch (key) {
@@ -114,9 +102,7 @@ export const useSelectedSearchId = () => {
     ],
   );
 
-  /**
-   * 라디오/체크박스 버튼 핸들러
-   */
+  // 라디오/체크박스 토글 선택 핸들러
   const radioButtonPressHandler = useCallback(
     (value: string, key: string) => {
       let currentValue: string[] | null = null;
@@ -163,45 +149,51 @@ export const useSelectedSearchId = () => {
     ],
   );
 
-  /**
-   * 검색 실행 로직
-   */
+  // 식별 검색 실행 핸들러
   const searchPillDatas = useCallback(async () => {
     try {
       const rawParam = getSelectedSearchId();
-      const searchParam = buildSearchParam(rawParam);
 
       setIsLoading(true);
-      if (pathname !== '/pill-search-result-list') {
+
+      const isNotInResultScreen = pathname !== '/pill-search-result-list';
+
+      if (isNotInResultScreen) {
         router.push('/pill-search-result-list');
       }
 
-      const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
-      const totalDataCount = await getPillDataCount(searchParam);
+      const { results, totalCount, searchParam } =
+        await identificationSearchService.searchPills(rawParam, {
+          page: 1,
+          limit: 30,
+        });
 
       setSearchParam(searchParam);
-      setTotalDataCount(totalDataCount);
+      setTotalDataCount(totalCount);
       setSearchResultData(results);
 
-      useAppTrackStore
-        .getState()
-        .increaseCoreActionCount('identification_search');
+      identificationSearchService.recordSearchAction();
 
       return results;
     } catch (e) {
       logger.error(
-        `[PILL-IDENTIFICATION-SEARCH-HOOK] Failed to search pill datas: ${e.stack || e}`,
+        `[PILL-IDENTIFICATION-SEARCH-HOOK] Failed to search pill datas: ${e}`,
       );
 
       setIsLoading(false);
 
       return [];
     }
-  }, [getSelectedSearchId, setIsLoading, setSearchParam, setSearchResultData]);
+  }, [
+    getSelectedSearchId,
+    pathname,
+    setIsLoading,
+    setSearchParam,
+    setSearchResultData,
+    setTotalDataCount,
+  ]);
 
-  /**
-   * 초기화 버튼 핸들러
-   */
+  // 검색 조건 전체 초기화 핸들러
   const resetButtonClickHandler = useCallback(() => {
     resetSelectedSearchId();
     resetSelectedMark();
@@ -215,118 +207,4 @@ export const useSelectedSearchId = () => {
     setIsExactMatch,
     isExactMatch,
   };
-};
-
-// 배열 토글 로직
-const getToggledArrayValue = (
-  currentArray: string[] | null,
-  value: string,
-): string[] | null => {
-  if (value === SEARCH_ALL_LABEL) {
-    return null;
-  }
-
-  const list = currentArray ?? [];
-  const filtered = list.filter((item) => item !== SEARCH_ALL_LABEL);
-
-  const nextList = filtered.includes(value)
-    ? filtered.filter((item) => item !== value)
-    : [...filtered, value];
-
-  if (nextList.length === 0) {
-    return null;
-  }
-
-  return nextList;
-};
-
-// 검색 파라미터 빌드 로직
-const buildSearchParam = (
-  raw: ISearchPillData,
-): Partial<TPillDataSearchParam> => {
-  const filtered: Partial<TPillDataSearchParam> = {};
-
-  // 식별 문자 처리 (앞면)
-  const frontTrimmed = raw.PRINT_FRONT?.trim();
-
-  if (frontTrimmed && raw.isExactMatch) {
-    filtered.PRINT_FRONT_EXACTLY = frontTrimmed;
-  }
-
-  if (frontTrimmed && !raw.isExactMatch) {
-    filtered.PRINT_FRONT = frontTrimmed;
-  }
-
-  // 식별 문자 처리 (뒷면)
-  const backTrimmed = raw.PRINT_BACK?.trim();
-
-  if (backTrimmed && raw.isExactMatch) {
-    filtered.PRINT_BACK_EXACTLY = backTrimmed;
-  }
-
-  if (backTrimmed && !raw.isExactMatch) {
-    filtered.PRINT_BACK = backTrimmed;
-  }
-
-  // 문자열 필드 처리
-  if (raw.ITEM_NAME?.trim()) {
-    filtered.ITEM_NAME = raw.ITEM_NAME.trim();
-  }
-
-  if (raw.ENTP_NAME?.trim()) {
-    filtered.ENTP_NAME = raw.ENTP_NAME.trim();
-  }
-
-  if (raw.MARK_CODE_FRONT?.trim()) {
-    filtered.MARK_CODE_FRONT = raw.MARK_CODE_FRONT.trim();
-  }
-
-  if (raw.MARK_CODE_BACK?.trim()) {
-    filtered.MARK_CODE_BACK = raw.MARK_CODE_BACK.trim();
-  }
-
-  // 배열 필드 처리
-  const processArray = (arr: string[] | null): string[] | undefined => {
-    if (!arr) {
-      return undefined;
-    }
-
-    const valid = arr.filter(
-      (item) => item !== SEARCH_ALL_LABEL && item.trim(),
-    );
-
-    return valid.length > 0 ? valid : undefined;
-  };
-
-  const drugShape = processArray(raw.DRUG_SHAPE);
-  if (drugShape) {
-    filtered.DRUG_SHAPE = drugShape;
-  }
-
-  const colorClass1 = processArray(raw.COLOR_CLASS1);
-  if (colorClass1) {
-    filtered.COLOR_CLASS1 = colorClass1;
-  }
-
-  const colorClass2 = processArray(raw.COLOR_CLASS2);
-  if (colorClass2) {
-    filtered.COLOR_CLASS2 = colorClass2;
-  }
-
-  const lineFront = processArray(raw.LINE_FRONT);
-  if (lineFront) {
-    filtered.LINE_FRONT = lineFront;
-  }
-
-  const lineBack = processArray(raw.LINE_BACK);
-  if (lineBack) {
-    filtered.LINE_BACK = lineBack;
-  }
-
-  const formCode = processArray(raw.FORM_CODE);
-  if (formCode) {
-    filtered.FORM_CODE = formCode;
-  }
-
-  return filtered;
 };

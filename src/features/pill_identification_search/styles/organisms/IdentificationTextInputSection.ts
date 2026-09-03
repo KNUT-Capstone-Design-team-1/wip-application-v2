@@ -1,7 +1,8 @@
-import { COLOR, COLOR_TEXT } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px, fontPx } from '@utils/responsive';
+import { px } from '@utils/responsive';
 
+// 식별 검색 텍스트 인풋 섹션 래퍼 스타일
 export const styles = StyleSheet.create({
   container: {
     marginBottom: px(2),
@@ -18,37 +19,4 @@ export const styles = StyleSheet.create({
     gap: px(10),
     width: '100%',
   },
-  textInputLabelCheckbox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: px(5),
-  },
-  textInputLabelCheckboxWrapper: {
-    width: px(18),
-    height: px(18),
-    borderRadius: px(4),
-    borderWidth: 1.5,
-    borderColor: COLOR['primary'],
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: px(8),
-  },
-  textInputLabelCheckboxText: {
-    color: COLOR['white'],
-  },
-  textInputLabelText: {
-    color: COLOR_TEXT['label'],
-    paddingVertical: px(0),
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    lineHeight: fontPx(18),
-    transform: [{ translateY: px(-1.5) }],
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    gap: px(8),
-    alignItems: 'center',
-    marginBottom: px(8),
-  },
-  flex1: { flex: 1 },
 });

@@ -3,11 +3,13 @@ import {
   SECTION_KEY_TO_STORE_KEY,
   SECTION_KEY_TO_TEXT_STORE_KEYS,
 } from '../constants/pillIdentificationData';
-import { ISearchIdStore } from '../types/search_id_types';
+import { ISearchIdStore } from '../types';
 
+// 식별 검색 폼의 인덱스 및 입력값 조회를 돕는 헬퍼 커스텀 훅
 export const useSearchIdForm = () => {
   const storeValues = useSearchIdStore();
 
+  // 특정 섹션에서 스토어에 저장된 값과 매칭되는 인덱스 목록 계산
   const getSelectedIndexesFromStore = (
     sectionKey: string,
     datas: any[],
@@ -44,9 +46,13 @@ export const useSearchIdForm = () => {
     return indexes.length > 0 ? indexes : [0];
   };
 
+  // 텍스트 인풋 값 조회
   const getTextInputValue = (sectionKey: string, dataIndex: number): string => {
     const storeKeys = SECTION_KEY_TO_TEXT_STORE_KEYS[sectionKey];
-    if (!storeKeys || !storeKeys[dataIndex]) return '';
+
+    if (!storeKeys || !storeKeys[dataIndex]) {
+      return '';
+    }
 
     const storeKey = storeKeys[dataIndex] as keyof ISearchIdStore;
     const value = storeValues[storeKey];
