@@ -5,7 +5,7 @@ import {
 import {
   IDbReminderRow,
   IDbReminderItemRow,
-} from '@features/pill_reminder/services/pill_reminder_mapper';
+} from '@features/pill_reminder/types/pill_reminder_data_type';
 
 // 복용 알림 데이터 저장소 리포지토리 인터페이스
 export interface IPillReminderRepository {

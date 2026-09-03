@@ -33,7 +33,9 @@ const mockDb = {
     await callback();
   }),
   runAsync: jest.fn((sql: string, params: any[] = []) => {
-    if (sql.includes('INSERT INTO pill_reminders')) {
+    const s = sql.replace(/\s+/g, ' ').trim();
+
+    if (s.includes('INSERT INTO pill_reminders')) {
       const id = nextReminderId++;
       remindersDb.push({
         id,
@@ -49,8 +51,8 @@ const mockDb = {
       return Promise.resolve({ lastInsertRowId: id, changes: 1 });
     }
     if (
-      sql.includes('INSERT INTO pill_reminder_items') ||
-      sql.includes('INSERT OR REPLACE INTO pill_reminder_items')
+      s.includes('INSERT INTO pill_reminder_items') ||
+      s.includes('INSERT OR REPLACE INTO pill_reminder_items')
     ) {
       const id = nextItemId++;
 
@@ -64,7 +66,7 @@ const mockDb = {
 
       return Promise.resolve({ lastInsertRowId: id, changes: 1 });
     }
-    if (sql.includes('DELETE FROM pill_reminders WHERE id = ?')) {
+    if (s.includes('DELETE FROM pill_reminders WHERE id = ?')) {
       const idx = remindersDb.findIndex((r) => r.id === params[0]);
 
       if (idx !== -1) {
@@ -73,11 +75,11 @@ const mockDb = {
 
       return Promise.resolve({ changes: 1 });
     }
-    if (sql.trim() === 'DELETE FROM pill_reminders') {
+    if (s === 'DELETE FROM pill_reminders') {
       remindersDb.length = 0;
       return Promise.resolve({ changes: 1 });
     }
-    if (sql.includes('UPDATE pill_reminders SET is_enabled = ?')) {
+    if (s.includes('UPDATE pill_reminders SET is_enabled = ?')) {
       const r = remindersDb.find((r) => r.id === params[1]);
 
       if (r) {
@@ -86,7 +88,7 @@ const mockDb = {
 
       return Promise.resolve({ changes: 1 });
     }
-    if (sql.includes('UPDATE pill_reminders SET folder_id = ?')) {
+    if (s.includes('UPDATE pill_reminders SET folder_id = ?')) {
       const r = remindersDb.find((r) => r.id === params[5]);
       if (r) {
         r.folder_id = params[0];
@@ -97,7 +99,7 @@ const mockDb = {
       }
       return Promise.resolve({ changes: 1 });
     }
-    if (sql.includes('DELETE FROM pill_reminder_items WHERE reminder_id = ?')) {
+    if (s.includes('DELETE FROM pill_reminder_items WHERE reminder_id = ?')) {
       for (let i = reminderItemsDb.length - 1; i >= 0; i--) {
         if (reminderItemsDb[i].reminder_id === params[0]) {
           reminderItemsDb.splice(i, 1);
@@ -108,11 +110,13 @@ const mockDb = {
     return Promise.resolve({ changes: 1, lastInsertRowId: 1 });
   }),
   getAllAsync: jest.fn((sql: string, params: any[] = []) => {
-    if (sql.includes('SELECT * FROM pill_reminders')) {
+    const s = sql.replace(/\s+/g, ' ').trim();
+
+    if (s.includes('SELECT * FROM pill_reminders')) {
       return Promise.resolve(remindersDb);
     }
-    if (sql.includes('FROM pill_reminder_items pri')) {
-      if (sql.includes('WHERE pr.folder_id = ?')) {
+    if (s.includes('FROM pill_reminder_items pri')) {
+      if (s.includes('WHERE pr.folder_id = ?')) {
         const folderId = params[0];
         const targetReminderIds = remindersDb
           .filter((r) => r.folder_id === folderId)
@@ -138,22 +142,24 @@ const mockDb = {
         })),
       );
     }
-    if (sql.includes('SELECT DISTINCT item_seq FROM pill_reminder_items')) {
+    if (s.includes('SELECT DISTINCT item_seq FROM pill_reminder_items')) {
       const distinctSeqs = Array.from(
         new Set(reminderItemsDb.map((i) => i.item_seq)),
       );
-      return Promise.resolve(distinctSeqs.map((s) => ({ item_seq: s })));
+      return Promise.resolve(distinctSeqs.map((seq) => ({ item_seq: seq })));
     }
     return Promise.resolve([]);
   }),
   getFirstAsync: jest.fn((sql: string, params: any[] = []) => {
-    if (sql.includes('SELECT COUNT(*) as count FROM pill_reminders')) {
+    const s = sql.replace(/\s+/g, ' ').trim();
+
+    if (s.includes('SELECT COUNT(*) as count FROM pill_reminders')) {
       return Promise.resolve({ count: remindersDb.length });
     }
-    if (sql.includes('SELECT folder_id FROM saved_pills')) {
+    if (s.includes('SELECT folder_id FROM saved_pills')) {
       return Promise.resolve({ folder_id: 1 });
     }
-    if (sql.includes('SELECT * FROM pill_reminders WHERE id = ?')) {
+    if (s.includes('SELECT * FROM pill_reminders WHERE id = ?')) {
       const found = remindersDb.find((r) => r.id === params[0]);
       return Promise.resolve(found || null);
     }

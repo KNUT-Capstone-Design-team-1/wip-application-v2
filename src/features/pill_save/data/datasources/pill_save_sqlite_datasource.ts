@@ -1,6 +1,6 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from '@services/database/sqlite';
-import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
+import { IPillSaveData } from '@features/pill_save/types/pill_save_item_type';
 import { ISavedPillFolder } from '@services/database/types';
 import logger from '@utils/logger';
 
@@ -24,6 +24,7 @@ const runInTransaction = async (
     });
   } else {
     await db.runAsync('BEGIN TRANSACTION');
+
     try {
       await action();
       await db.runAsync('COMMIT');
@@ -33,6 +34,7 @@ const runInTransaction = async (
       } catch (rollbackError) {
         logDataSourceError('rollback transaction', rollbackError);
       }
+
       throw e;
     }
   }
@@ -43,6 +45,7 @@ export interface IPillSaveDataSource {
   getFolders(
     orderBySql: string,
   ): Promise<(ISavedPillFolder & { pill_count: number })[]>;
+
   getFolderPreviewImages(folderId: number): Promise<string[]>;
 
   createFolder(name: string): Promise<number | null>;
@@ -119,6 +122,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         selectImagesQuery,
         [folderId],
       );
+
       return images.map((img) => img.ITEM_IMAGE).filter(Boolean);
     } catch (e) {
       logDataSourceError('get folder preview images', e);
@@ -150,6 +154,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const updateQuery = `UPDATE saved_pill_folders SET name = ? WHERE id = ?`;
 
       await db.runAsync(updateQuery, [name, folderId]);
+
       return true;
     } catch (e) {
       logDataSourceError('rename folder', e);
@@ -165,6 +170,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const deleteQuery = `DELETE FROM saved_pill_folders WHERE id = ? AND is_default = 0`;
 
       await db.runAsync(deleteQuery, [folderId]);
+
       return true;
     } catch (e) {
       logDataSourceError('delete folder', e);
@@ -183,12 +189,14 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       }
 
       const db = await getDatabase();
-
       const placeholders = createPlaceholders(itemSeqs.length);
 
-      const query = `DELETE FROM saved_pills WHERE folder_id = ? AND item_seq IN (${placeholders})`;
+      const deletePillsQuery = `
+        DELETE FROM saved_pills 
+        WHERE folder_id = ? AND item_seq IN (${placeholders})
+      `;
 
-      await db.runAsync(query, [folderId, ...itemSeqs]);
+      await db.runAsync(deletePillsQuery, [folderId, ...itemSeqs]);
 
       return true;
     } catch (e) {
@@ -202,11 +210,16 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
     try {
       const db = await getDatabase();
 
-      const selectQuery = `SELECT folder_id FROM saved_pills WHERE item_seq = ?`;
+      const selectSavedFoldersQuery = `
+        SELECT folder_id 
+        FROM saved_pills 
+        WHERE item_seq = ?
+      `;
 
-      const rows = await db.getAllAsync<{ folder_id: number }>(selectQuery, [
-        itemSeq,
-      ]);
+      const rows = await db.getAllAsync<{ folder_id: number }>(
+        selectSavedFoldersQuery,
+        [itemSeq],
+      );
 
       return rows.map((r) => r.folder_id);
     } catch (e) {
@@ -233,7 +246,10 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
           return;
         }
 
-        const insertQuery = `INSERT INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
+        const insertQuery = `
+          INSERT INTO saved_pills (folder_id, item_seq, item_name) 
+          VALUES (?, ?, ?)
+        `;
 
         for (const folderId of folderIds) {
           await db.runAsync(insertQuery, [folderId, itemSeq, itemName]);
@@ -262,13 +278,17 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const targetPlaceholders = createPlaceholders(targetFolderIds.length);
       const itemPlaceholders = createPlaceholders(itemSeqs.length);
 
+      const selectExistingPillsQuery = `
+        SELECT folder_id, item_seq 
+        FROM saved_pills 
+        WHERE folder_id IN (${targetPlaceholders}) 
+          AND item_seq IN (${itemPlaceholders})
+      `;
+
       const existingRows = await db.getAllAsync<{
         folder_id: number;
         item_seq: string;
-      }>(
-        `SELECT folder_id, item_seq FROM saved_pills WHERE folder_id IN (${targetPlaceholders}) AND item_seq IN (${itemPlaceholders})`,
-        [...targetFolderIds, ...itemSeqs],
-      );
+      }>(selectExistingPillsQuery, [...targetFolderIds, ...itemSeqs]);
 
       const existingSet = new Set(
         existingRows.map((r) => `${r.folder_id}_${r.item_seq}`),
@@ -290,6 +310,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         string,
         { seq: string; name: string }
       >();
+
       existingCombinations.forEach((c) =>
         alreadyExistsItemsMap.set(c.item.seq, c.item),
       );
@@ -304,21 +325,36 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         if (seqsToDelete.length > 0) {
           const deletePlaceholders = createPlaceholders(seqsToDelete.length);
 
-          const deleteQuery = `DELETE FROM saved_pills WHERE folder_id = ? AND item_seq IN (${deletePlaceholders})`;
+          const deleteFromSourceQuery = `
+            DELETE FROM saved_pills 
+            WHERE folder_id = ? AND item_seq IN (${deletePlaceholders})
+          `;
 
-          await db.runAsync(deleteQuery, [sourceFolderId, ...seqsToDelete]);
+          await db.runAsync(deleteFromSourceQuery, [
+            sourceFolderId,
+            ...seqsToDelete,
+          ]);
         }
 
         if (combinations.length > 0) {
-          const insertQuery = `INSERT INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
+          const insertToTargetQuery = `
+            INSERT INTO saved_pills (folder_id, item_seq, item_name) 
+            VALUES (?, ?, ?)
+          `;
 
           for (const { item, targetId } of combinations) {
-            await db.runAsync(insertQuery, [targetId, item.seq, item.name]);
+            await db.runAsync(insertToTargetQuery, [
+              targetId,
+              item.seq,
+              item.name,
+            ]);
           }
         }
       });
 
-      return { alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()) };
+      return {
+        alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()),
+      };
     } catch (e) {
       logDataSourceError('move pills', e);
       throw e;
@@ -341,13 +377,17 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const targetPlaceholders = createPlaceholders(targetFolderIds.length);
       const itemPlaceholders = createPlaceholders(itemSeqs.length);
 
+      const selectExistingPillsQuery = `
+        SELECT folder_id, item_seq 
+        FROM saved_pills 
+        WHERE folder_id IN (${targetPlaceholders}) 
+          AND item_seq IN (${itemPlaceholders})
+      `;
+
       const existingRows = await db.getAllAsync<{
         folder_id: number;
         item_seq: string;
-      }>(
-        `SELECT folder_id, item_seq FROM saved_pills WHERE folder_id IN (${targetPlaceholders}) AND item_seq IN (${itemPlaceholders})`,
-        [...targetFolderIds, ...itemSeqs],
-      );
+      }>(selectExistingPillsQuery, [...targetFolderIds, ...itemSeqs]);
 
       const existingSet = new Set(
         existingRows.map((r) => `${r.folder_id}_${r.item_seq}`),
@@ -369,21 +409,31 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         string,
         { seq: string; name: string }
       >();
+
       existingCombinations.forEach((c) =>
         alreadyExistsItemsMap.set(c.item.seq, c.item),
       );
 
       if (combinations.length > 0) {
         await runInTransaction(db, async () => {
-          const insertQuery = `INSERT INTO saved_pills (folder_id, item_seq, item_name) VALUES (?, ?, ?)`;
+          const insertPillsQuery = `
+            INSERT INTO saved_pills (folder_id, item_seq, item_name) 
+            VALUES (?, ?, ?)
+          `;
 
           for (const { item, targetId } of combinations) {
-            await db.runAsync(insertQuery, [targetId, item.seq, item.name]);
+            await db.runAsync(insertPillsQuery, [
+              targetId,
+              item.seq,
+              item.name,
+            ]);
           }
         });
       }
 
-      return { alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()) };
+      return {
+        alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()),
+      };
     } catch (e) {
       logDataSourceError('copy pills', e);
       throw e;
@@ -398,9 +448,13 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
     try {
       const db = await getDatabase();
 
-      const deleteQuery = `DELETE FROM saved_pills WHERE item_seq = ? AND folder_id = ?`;
+      const deletePillQuery = `
+        DELETE FROM saved_pills 
+        WHERE item_seq = ? AND folder_id = ?
+      `;
 
-      await db.runAsync(deleteQuery, [itemSeq, folderId]);
+      await db.runAsync(deletePillQuery, [itemSeq, folderId]);
+
       return true;
     } catch (e) {
       logDataSourceError('delete pill from folder', e);

@@ -1,13 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { IPillReminderItem } from '@features/pill_reminder/types/pill_reminder_type';
+import { ISelectedPillItem } from '@features/pill_reminder/types';
 import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 import Toast from 'react-native-toast-message';
 import { router } from 'expo-router';
 
-export interface ISelectedPillItem extends IPillReminderItem {
-  folder_name?: string;
-}
+export type { ISelectedPillItem };
 
 interface IUsePillReminderSettingFormProps {
   reminderId?: string;

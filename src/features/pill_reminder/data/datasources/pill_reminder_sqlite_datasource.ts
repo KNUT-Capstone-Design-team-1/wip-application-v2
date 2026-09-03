@@ -2,7 +2,7 @@ import { getDatabase } from '@services/database/sqlite';
 import {
   IDbReminderRow,
   IDbReminderItemRow,
-} from '@features/pill_reminder/services/pill_reminder_mapper';
+} from '@features/pill_reminder/types/pill_reminder_data_type';
 import logger from '@utils/logger';
 
 // 복용 알림 데이터소스 에러 로깅 헬퍼 함수
@@ -102,9 +102,13 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      return await db.getAllAsync<IDbReminderRow>(
-        `SELECT * FROM pill_reminders ORDER BY time ASC, id ASC`,
-      );
+      const selectAllRemindersQuery = `
+        SELECT * 
+        FROM pill_reminders 
+        ORDER BY time ASC, id ASC
+      `;
+
+      return await db.getAllAsync<IDbReminderRow>(selectAllRemindersQuery);
     } catch (e) {
       logSqliteError('getAllReminders', e);
       return [];
@@ -116,16 +120,17 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      return await db.getAllAsync<IDbReminderRow>(
-        `
+      const selectByItemSeqQuery = `
         SELECT DISTINCT pr.*
         FROM pill_reminders pr
         INNER JOIN pill_reminder_items pri ON pr.id = pri.reminder_id
         WHERE pri.item_seq = ?
         ORDER BY pr.time ASC, pr.id ASC
-      `,
-        [itemSeq],
-      );
+      `;
+
+      return await db.getAllAsync<IDbReminderRow>(selectByItemSeqQuery, [
+        itemSeq,
+      ]);
     } catch (e) {
       logSqliteError('getRemindersByItemSeq', e);
       return [];
@@ -137,10 +142,13 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      return await db.getFirstAsync<IDbReminderRow>(
-        `SELECT * FROM pill_reminders WHERE id = ?`,
-        [id],
-      );
+      const selectByIdQuery = `
+        SELECT * 
+        FROM pill_reminders 
+        WHERE id = ?
+      `;
+
+      return await db.getFirstAsync<IDbReminderRow>(selectByIdQuery, [id]);
     } catch (e) {
       logSqliteError('getReminderById', e);
       return null;
@@ -157,11 +165,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
       }
 
       const db = await getDatabase();
-
       const placeholders = reminderIds.map(() => '?').join(',');
 
-      return await db.getAllAsync<IDbReminderItemRow>(
-        `
+      const selectItemsByReminderIdsQuery = `
         SELECT 
           pri.id,
           pri.reminder_id,
@@ -175,7 +181,10 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         LEFT JOIN pill_data pd ON pri.item_seq = pd.ITEM_SEQ
         WHERE pri.reminder_id IN (${placeholders})
         ORDER BY pri.id ASC
-      `,
+      `;
+
+      return await db.getAllAsync<IDbReminderItemRow>(
+        selectItemsByReminderIdsQuery,
         reminderIds,
       );
     } catch (e) {
@@ -191,8 +200,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      return await db.getAllAsync<IDbReminderItemRow>(
-        `
+      const selectItemsByReminderIdQuery = `
         SELECT 
           pri.id,
           pri.reminder_id,
@@ -206,7 +214,10 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         LEFT JOIN pill_data pd ON pri.item_seq = pd.ITEM_SEQ
         WHERE pri.reminder_id = ?
         ORDER BY pri.id ASC
-      `,
+      `;
+
+      return await db.getAllAsync<IDbReminderItemRow>(
+        selectItemsByReminderIdQuery,
         [reminderId],
       );
     } catch (e) {
@@ -223,17 +234,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
       }
 
       const db = await getDatabase();
-
       const placeholders = itemSeqs.map(() => '?').join(',');
 
-      return await db.getAllAsync<{
-        ITEM_SEQ: string;
-        ITEM_NAME: string;
-        ITEM_IMAGE?: string;
-        CLASS_NAME?: string;
-        ENTP_NAME?: string;
-      }>(
-        `
+      const selectPillDataQuery = `
         SELECT 
           ITEM_SEQ,
           ITEM_NAME,
@@ -242,9 +245,15 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
           COALESCE(ENTP_NAME, '') as ENTP_NAME
         FROM pill_data
         WHERE ITEM_SEQ IN (${placeholders})
-      `,
-        itemSeqs,
-      );
+      `;
+
+      return await db.getAllAsync<{
+        ITEM_SEQ: string;
+        ITEM_NAME: string;
+        ITEM_IMAGE?: string;
+        CLASS_NAME?: string;
+        ENTP_NAME?: string;
+      }>(selectPillDataQuery, itemSeqs);
     } catch (e) {
       logSqliteError('getPillDataBySeqs', e);
       return [];
@@ -259,20 +268,18 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
       }
 
       const db = await getDatabase();
-
       const placeholders = itemSeqs.map(() => '?').join(',');
+
+      const selectSavedPillsQuery = `
+        SELECT DISTINCT item_seq, item_name 
+        FROM saved_pills 
+        WHERE item_seq IN (${placeholders})
+      `;
 
       return await db.getAllAsync<{
         item_seq: string;
         item_name: string;
-      }>(
-        `
-        SELECT DISTINCT item_seq, item_name 
-        FROM saved_pills 
-        WHERE item_seq IN (${placeholders})
-      `,
-        itemSeqs,
-      );
+      }>(selectSavedPillsQuery, itemSeqs);
     } catch (e) {
       logSqliteError('getSavedPillsBySeqs', e);
       return [];
@@ -286,14 +293,16 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      return await db.getFirstAsync<{ id: number; name: string }>(
-        `
+      const selectFolderInfoQuery = `
         SELECT f.id, f.name
         FROM saved_pills s
         INNER JOIN saved_pill_folders f ON s.folder_id = f.id
         WHERE s.item_seq = ?
         LIMIT 1
-      `,
+      `;
+
+      return await db.getFirstAsync<{ id: number; name: string }>(
+        selectFolderInfoQuery,
         [itemSeq],
       );
     } catch (e) {
@@ -307,8 +316,15 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
+      const selectSavedPillFolderIdQuery = `
+        SELECT folder_id 
+        FROM saved_pills 
+        WHERE item_seq = ? 
+        LIMIT 1
+      `;
+
       const savedPill = await db.getFirstAsync<{ folder_id: number }>(
-        `SELECT folder_id FROM saved_pills WHERE item_seq = ? LIMIT 1`,
+        selectSavedPillFolderIdQuery,
         [itemSeq],
       );
 
@@ -324,8 +340,13 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
+      const selectReminderCountQuery = `
+        SELECT COUNT(*) as count 
+        FROM pill_reminders
+      `;
+
       const existingCountRow = await db.getFirstAsync<{ count: number }>(
-        `SELECT COUNT(*) as count FROM pill_reminders`,
+        selectReminderCountQuery,
       );
 
       return existingCountRow?.count || 0;
@@ -342,11 +363,17 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
+      const selectFoldersQuery = `
+        SELECT id, name, is_default 
+        FROM saved_pill_folders 
+        ORDER BY id ASC
+      `;
+
       return await db.getAllAsync<{
         id: number;
         name: string;
         is_default: number;
-      }>(`SELECT id, name, is_default FROM saved_pill_folders ORDER BY id ASC`);
+      }>(selectFoldersQuery);
     } catch (e) {
       logSqliteError('getFolders', e);
       return [];
@@ -358,14 +385,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      return await db.getAllAsync<{
-        item_seq: string;
-        item_name: string;
-        ITEM_IMAGE?: string;
-        CLASS_NAME?: string;
-        ENTP_NAME?: string;
-      }>(
-        `
+      const selectPillsByFolderQuery = `
         SELECT 
           s.item_seq,
           COALESCE(p.ITEM_NAME, s.item_name) as item_name,
@@ -376,12 +396,17 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         LEFT JOIN pill_data p ON s.item_seq = p.ITEM_SEQ
         WHERE s.folder_id = ?
         ORDER BY s.idx DESC
-      `,
-        [folderId],
-      );
+      `;
+
+      return await db.getAllAsync<{
+        item_seq: string;
+        item_name: string;
+        ITEM_IMAGE?: string;
+        CLASS_NAME?: string;
+        ENTP_NAME?: string;
+      }>(selectPillsByFolderQuery, [folderId]);
     } catch (e) {
       logSqliteError('getPillsByFolder', e);
-
       return [];
     }
   },
@@ -392,21 +417,28 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
       const db = await getDatabase();
 
       if (folderId) {
-        const rows = await db.getAllAsync<{ item_seq: string }>(
-          `
+        const selectRemindedByFolderQuery = `
           SELECT DISTINCT pri.item_seq 
           FROM pill_reminder_items pri
           INNER JOIN pill_reminders pr ON pri.reminder_id = pr.id
           WHERE pr.folder_id = ?
-        `,
+        `;
+
+        const rows = await db.getAllAsync<{ item_seq: string }>(
+          selectRemindedByFolderQuery,
           [folderId],
         );
 
         return rows.map((r) => r.item_seq);
       }
 
+      const selectAllRemindedSeqsQuery = `
+        SELECT DISTINCT item_seq 
+        FROM pill_reminder_items
+      `;
+
       const rows = await db.getAllAsync<{ item_seq: string }>(
-        `SELECT DISTINCT item_seq FROM pill_reminder_items`,
+        selectAllRemindedSeqsQuery,
       );
 
       return rows.map((r) => r.item_seq);
@@ -428,25 +460,38 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     }[],
   ): Promise<number[]> {
     const db = await getDatabase();
-
     const createdIds: number[] = [];
+
+    const insertReminderQuery = `
+      INSERT INTO pill_reminders (folder_id, title, memo, time, days, is_enabled) 
+      VALUES (?, ?, ?, ?, ?, 1)
+    `;
+
+    const insertItemQuery = `
+      INSERT OR REPLACE INTO pill_reminder_items (reminder_id, item_seq, item_name, dosage) 
+      VALUES (?, ?, ?, ?)
+    `;
 
     await db.withTransactionAsync(async () => {
       for (const r of reminders) {
-        const result = await db.runAsync(
-          `INSERT INTO pill_reminders (folder_id, title, memo, time, days, is_enabled) VALUES (?, ?, ?, ?, ?, 1)`,
-          [r.folderId, r.title, r.memo, r.time, r.daysStr],
-        );
+        const result = await db.runAsync(insertReminderQuery, [
+          r.folderId,
+          r.title,
+          r.memo,
+          r.time,
+          r.daysStr,
+        ]);
 
         const reminderId = result.lastInsertRowId;
-
         createdIds.push(reminderId);
 
         for (const item of r.items) {
-          await db.runAsync(
-            `INSERT OR REPLACE INTO pill_reminder_items (reminder_id, item_seq, item_name, dosage) VALUES (?, ?, ?, ?)`,
-            [reminderId, item.item_seq, item.item_name, item.dosage || 1],
-          );
+          await db.runAsync(insertItemQuery, [
+            reminderId,
+            item.item_seq,
+            item.item_name,
+            item.dosage || 1,
+          ]);
         }
       }
     });
@@ -466,29 +511,57 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
   ): Promise<void> {
     const db = await getDatabase();
 
+    const updateWithFolderQuery = `
+      UPDATE pill_reminders 
+      SET folder_id = ?, title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') 
+      WHERE id = ?
+    `;
+
+    const updateWithoutFolderQuery = `
+      UPDATE pill_reminders 
+      SET title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') 
+      WHERE id = ?
+    `;
+
+    const deleteItemsQuery = `
+      DELETE FROM pill_reminder_items 
+      WHERE reminder_id = ?
+    `;
+
+    const insertItemQuery = `
+      INSERT INTO pill_reminder_items (reminder_id, item_seq, item_name, dosage) 
+      VALUES (?, ?, ?, ?)
+    `;
+
     await db.withTransactionAsync(async () => {
       if (targetFolderId) {
-        await db.runAsync(
-          `UPDATE pill_reminders SET folder_id = ?, title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') WHERE id = ?`,
-          [targetFolderId, title, memo, time, daysStr, id],
-        );
+        await db.runAsync(updateWithFolderQuery, [
+          targetFolderId,
+          title,
+          memo,
+          time,
+          daysStr,
+          id,
+        ]);
       } else {
-        await db.runAsync(
-          `UPDATE pill_reminders SET title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') WHERE id = ?`,
-          [title, memo, time, daysStr, id],
-        );
+        await db.runAsync(updateWithoutFolderQuery, [
+          title,
+          memo,
+          time,
+          daysStr,
+          id,
+        ]);
       }
 
-      await db.runAsync(
-        `DELETE FROM pill_reminder_items WHERE reminder_id = ?`,
-        [id],
-      );
+      await db.runAsync(deleteItemsQuery, [id]);
 
       for (const item of items) {
-        await db.runAsync(
-          `INSERT INTO pill_reminder_items (reminder_id, item_seq, item_name, dosage) VALUES (?, ?, ?, ?)`,
-          [id, item.item_seq, item.item_name, item.dosage || 1],
-        );
+        await db.runAsync(insertItemQuery, [
+          id,
+          item.item_seq,
+          item.item_name,
+          item.dosage || 1,
+        ]);
       }
     });
   },
@@ -498,10 +571,13 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      await db.runAsync(
-        `UPDATE pill_reminders SET is_enabled = ?, updated_at = datetime('now', 'localtime') WHERE id = ?`,
-        [isEnabled ? 1 : 0, id],
-      );
+      const toggleQuery = `
+        UPDATE pill_reminders 
+        SET is_enabled = ?, updated_at = datetime('now', 'localtime') 
+        WHERE id = ?
+      `;
+
+      await db.runAsync(toggleQuery, [isEnabled ? 1 : 0, id]);
 
       return true;
     } catch (e) {
@@ -515,7 +591,12 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      await db.runAsync(`DELETE FROM pill_reminders WHERE id = ?`, [id]);
+      const deleteQuery = `
+        DELETE FROM pill_reminders 
+        WHERE id = ?
+      `;
+
+      await db.runAsync(deleteQuery, [id]);
 
       return true;
     } catch (e) {
@@ -529,7 +610,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     try {
       const db = await getDatabase();
 
-      await db.runAsync(`DELETE FROM pill_reminders`);
+      const deleteAllQuery = `DELETE FROM pill_reminders`;
+
+      await db.runAsync(deleteAllQuery);
 
       return true;
     } catch (e) {
