@@ -3,11 +3,12 @@ import {
   IPillReminderItem,
 } from '@features/pill_reminder/types/pill_reminder_type';
 
+// DB pill_reminders 테이블 행 인터페이스
 export interface IDbReminderRow {
   id: number;
-  folder_id?: number;
-  title?: string;
-  memo?: string;
+  folder_id: number;
+  title: string;
+  memo: string;
   time: string;
   days: string;
   is_enabled: number;
@@ -15,6 +16,7 @@ export interface IDbReminderRow {
   updated_at: string;
 }
 
+// DB pill_reminder_items 테이블 및 JOIN 결과 행 인터페이스
 export interface IDbReminderItemRow {
   id: number;
   reminder_id: number;
@@ -26,39 +28,23 @@ export interface IDbReminderItemRow {
   ENTP_NAME?: string;
 }
 
-// DB Raw 아이템을 IPillReminderItem 모델로 변환
-export const mapDbItemToReminderItem = (
-  item: IDbReminderItemRow,
-): IPillReminderItem => {
-  return {
-    id: item.id,
-    reminder_id: item.reminder_id,
-    item_seq: item.item_seq,
-    item_name: item.item_name,
-    dosage: item.dosage,
-    item_image: item.ITEM_IMAGE || '',
-    class_name: item.CLASS_NAME || '',
-    entp_name: item.ENTP_NAME || '',
-  };
-};
-
-// DB Raw 알림 + 아이템 목록을 IPillReminder 모델로 변환
+// DB 복용 알림 행을 도메인 IPillReminder 모델로 변환하는 매퍼 함수
 export const mapDbReminderToModel = (
   row: IDbReminderRow,
   items: IPillReminderItem[] = [],
 ): IPillReminder => {
-  const daysArray: number[] = row.days
+  const daysArray = row.days
     ? row.days
         .split(',')
         .map((d) => parseInt(d.trim(), 10))
-        .filter((d) => !isNaN(d))
+        .filter((n) => !isNaN(n))
     : [];
 
   return {
     id: row.id,
-    folder_id: row.folder_id || 1,
-    title: row.title || '',
-    memo: row.memo || '',
+    folder_id: row.folder_id,
+    title: row.title,
+    memo: row.memo,
     time: row.time,
     days: daysArray,
     is_enabled: row.is_enabled === 1,
@@ -67,3 +53,17 @@ export const mapDbReminderToModel = (
     items,
   };
 };
+
+// DB 알약 항목 행을 도메인 IPillReminderItem 모델로 변환하는 매퍼 함수
+export const mapDbItemToReminderItem = (
+  item: IDbReminderItemRow,
+): IPillReminderItem => ({
+  id: item.id,
+  reminder_id: item.reminder_id,
+  item_seq: item.item_seq,
+  item_name: item.item_name,
+  dosage: item.dosage,
+  item_image: item.ITEM_IMAGE || '',
+  class_name: item.CLASS_NAME || '',
+  entp_name: item.ENTP_NAME || '',
+});

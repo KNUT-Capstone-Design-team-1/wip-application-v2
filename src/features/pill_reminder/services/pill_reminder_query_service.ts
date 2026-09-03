@@ -1,34 +1,34 @@
-import { getDatabase } from '@services/database/sqlite';
+import {
+  IPillReminderRepository,
+  pillReminderRepository,
+} from '@features/pill_reminder/data/repositories/pill_reminder_repository';
 import {
   IPillReminder,
   IPillReminderItem,
 } from '@features/pill_reminder/types/pill_reminder_type';
 import {
-  IDbReminderRow,
-  IDbReminderItemRow,
   mapDbItemToReminderItem,
   mapDbReminderToModel,
 } from '@features/pill_reminder/services/pill_reminder_mapper';
 import logger from '@utils/logger';
 
-// 쿼리 에러 로깅 헬퍼
+// 쿼리 에러 로깅 헬퍼 함수
 const logQueryError = (operation: string, error: unknown) => {
   logger.error(
     `[PILL-REMINDER-QUERY-SERVICE] Failed to ${operation}: ${error}`,
   );
 };
 
-// 복용 알림 조회 전용 서비스
-export const pillReminderQueryService = {
-  // 모든 복용 알림 목록 조회
+// 복용 알림 조회 전용 비즈니스 서비스
+export class PillReminderQueryService {
+  constructor(
+    private readonly repository: IPillReminderRepository = pillReminderRepository,
+  ) {}
+
+  // 모든 복용 알림 목록 조회 유스케이스
   async getReminders(): Promise<IPillReminder[]> {
     try {
-      const db = await getDatabase();
-
-      const reminders = await db.getAllAsync<IDbReminderRow>(
-        `SELECT * FROM pill_reminders ORDER BY time ASC, id ASC`,
-      );
-
+      const reminders = await this.repository.getAllReminders();
       const hasNoReminders = !reminders || reminders.length === 0;
 
       if (hasNoReminders) {
@@ -36,26 +36,8 @@ export const pillReminderQueryService = {
       }
 
       const reminderIds = reminders.map((r) => r.id);
-      const placeholders = reminderIds.map(() => '?').join(',');
-
-      const items = await db.getAllAsync<IDbReminderItemRow>(
-        `
-        SELECT 
-          pri.id,
-          pri.reminder_id,
-          pri.item_seq,
-          pri.item_name,
-          pri.dosage,
-          COALESCE(pd.ITEM_IMAGE, '') as ITEM_IMAGE,
-          COALESCE(pd.CLASS_NAME, '') as CLASS_NAME,
-          COALESCE(pd.ENTP_NAME, '') as ENTP_NAME
-        FROM pill_reminder_items pri
-        LEFT JOIN pill_data pd ON pri.item_seq = pd.ITEM_SEQ
-        WHERE pri.reminder_id IN (${placeholders})
-        ORDER BY pri.id ASC
-      `,
-        reminderIds,
-      );
+      const items =
+        await this.repository.getReminderItemsByReminderIds(reminderIds);
 
       const itemsByReminderId = new Map<number, IPillReminderItem[]>();
 
@@ -72,24 +54,12 @@ export const pillReminderQueryService = {
       logQueryError('get reminders', e);
       return [];
     }
-  },
+  }
 
-  // 특정 알약(item_seq)이 포함된 복용 알림 목록 조회
+  // 특정 알약(item_seq)이 포함된 복용 알림 목록 조회 유스케이스
   async getRemindersByItemSeq(itemSeq: string): Promise<IPillReminder[]> {
     try {
-      const db = await getDatabase();
-
-      const reminders = await db.getAllAsync<IDbReminderRow>(
-        `
-        SELECT DISTINCT pr.*
-        FROM pill_reminders pr
-        INNER JOIN pill_reminder_items pri ON pr.id = pri.reminder_id
-        WHERE pri.item_seq = ?
-        ORDER BY pr.time ASC, pr.id ASC
-      `,
-        [itemSeq],
-      );
-
+      const reminders = await this.repository.getRemindersByItemSeq(itemSeq);
       const hasNoReminders = !reminders || reminders.length === 0;
 
       if (hasNoReminders) {
@@ -97,26 +67,8 @@ export const pillReminderQueryService = {
       }
 
       const reminderIds = reminders.map((r) => r.id);
-      const placeholders = reminderIds.map(() => '?').join(',');
-
-      const items = await db.getAllAsync<IDbReminderItemRow>(
-        `
-        SELECT 
-          pri.id,
-          pri.reminder_id,
-          pri.item_seq,
-          pri.item_name,
-          pri.dosage,
-          COALESCE(pd.ITEM_IMAGE, '') as ITEM_IMAGE,
-          COALESCE(pd.CLASS_NAME, '') as CLASS_NAME,
-          COALESCE(pd.ENTP_NAME, '') as ENTP_NAME
-        FROM pill_reminder_items pri
-        LEFT JOIN pill_data pd ON pri.item_seq = pd.ITEM_SEQ
-        WHERE pri.reminder_id IN (${placeholders})
-        ORDER BY pri.id ASC
-      `,
-        reminderIds,
-      );
+      const items =
+        await this.repository.getReminderItemsByReminderIds(reminderIds);
 
       const itemsByReminderId = new Map<number, IPillReminderItem[]>();
 
@@ -133,52 +85,29 @@ export const pillReminderQueryService = {
       logQueryError('get reminders by itemSeq', e);
       return [];
     }
-  },
+  }
 
-  // 특정 알림 ID로 상세 조회
+  // 특정 알림 ID로 상세 조회 유스케이스
   async getReminderById(id: number): Promise<IPillReminder | null> {
     try {
-      const db = await getDatabase();
-
-      const reminder = await db.getFirstAsync<IDbReminderRow>(
-        `SELECT * FROM pill_reminders WHERE id = ?`,
-        [id],
-      );
-
+      const reminder = await this.repository.getReminderById(id);
       const isNotFound = !reminder;
 
       if (isNotFound) {
         return null;
       }
 
-      const items = await db.getAllAsync<IDbReminderItemRow>(
-        `
-        SELECT 
-          pri.id,
-          pri.reminder_id,
-          pri.item_seq,
-          pri.item_name,
-          pri.dosage,
-          COALESCE(pd.ITEM_IMAGE, '') as ITEM_IMAGE,
-          COALESCE(pd.CLASS_NAME, '') as CLASS_NAME,
-          COALESCE(pd.ENTP_NAME, '') as ENTP_NAME
-        FROM pill_reminder_items pri
-        LEFT JOIN pill_data pd ON pri.item_seq = pd.ITEM_SEQ
-        WHERE pri.reminder_id = ?
-        ORDER BY pri.id ASC
-      `,
-        [id],
-      );
-
+      const items = await this.repository.getReminderItemsByReminderId(id);
       const mappedItems = items.map(mapDbItemToReminderItem);
+
       return mapDbReminderToModel(reminder, mappedItems);
     } catch (e) {
       logQueryError('get reminder by id', e);
       return null;
     }
-  },
+  }
 
-  // 특정 알약들의 상세 정보 조회
+  // 특정 알약들의 상세 정보 조회 유스케이스
   async getPillsBySeqs(itemSeqs: string[]): Promise<
     {
       item_seq: string;
@@ -195,29 +124,7 @@ export const pillReminderQueryService = {
         return [];
       }
 
-      const db = await getDatabase();
-      const placeholders = itemSeqs.map(() => '?').join(',');
-
-      const rows = await db.getAllAsync<{
-        ITEM_SEQ: string;
-        ITEM_NAME: string;
-        ITEM_IMAGE?: string;
-        CLASS_NAME?: string;
-        ENTP_NAME?: string;
-      }>(
-        `
-        SELECT 
-          ITEM_SEQ,
-          ITEM_NAME,
-          COALESCE(ITEM_IMAGE, '') as ITEM_IMAGE,
-          COALESCE(CLASS_NAME, '') as CLASS_NAME,
-          COALESCE(ENTP_NAME, '') as ENTP_NAME
-        FROM pill_data
-        WHERE ITEM_SEQ IN (${placeholders})
-      `,
-        itemSeqs,
-      );
-
+      const rows = await this.repository.getPillDataBySeqs(itemSeqs);
       const map = new Map(rows.map((r) => [r.ITEM_SEQ, r]));
 
       const missingSeqs = itemSeqs.filter((seq) => !map.has(seq));
@@ -229,18 +136,7 @@ export const pillReminderQueryService = {
       const hasMissingSeqs = missingSeqs.length > 0;
 
       if (hasMissingSeqs) {
-        const missingPlaceholders = missingSeqs.map(() => '?').join(',');
-        missingRows = await db.getAllAsync<{
-          item_seq: string;
-          item_name: string;
-        }>(
-          `
-          SELECT DISTINCT item_seq, item_name 
-          FROM saved_pills 
-          WHERE item_seq IN (${missingPlaceholders})
-        `,
-          missingSeqs,
-        );
+        missingRows = await this.repository.getSavedPillsBySeqs(missingSeqs);
       }
 
       const missingMap = new Map(missingRows.map((r) => [r.item_seq, r]));
@@ -273,59 +169,39 @@ export const pillReminderQueryService = {
       logQueryError('get pills by seqs', e);
       return [];
     }
-  },
+  }
 
-  // 특정 알약이 속한 보관함 폴더 정보 조회 (ID 및 폴더명)
+  // 특정 알약이 속한 보관함 폴더 정보 조회 유스케이스
   async getFolderInfoByItemSeq(
     itemSeq: string,
   ): Promise<{ id: number; name: string } | null> {
     try {
-      const db = await getDatabase();
-
-      const row = await db.getFirstAsync<{ id: number; name: string }>(
-        `
-        SELECT f.id, f.name
-        FROM saved_pills s
-        INNER JOIN saved_pill_folders f ON s.folder_id = f.id
-        WHERE s.item_seq = ?
-        LIMIT 1
-      `,
-        [itemSeq],
-      );
-
-      return row || null;
+      return await this.repository.getFolderInfoByItemSeq(itemSeq);
     } catch (e) {
       logQueryError('get folder info by itemSeq', e);
       return null;
     }
-  },
+  }
 
-  // 특정 알약이 속한 보관함 폴더명 조회
+  // 특정 알약이 속한 보관함 폴더명 조회 유스케이스
   async getFolderNameByItemSeq(itemSeq: string): Promise<string | null> {
     const info = await this.getFolderInfoByItemSeq(itemSeq);
     return info?.name || null;
-  },
+  }
 
-  // 전체 보관함 폴더 목록 조회 (알약 선택 모달 탭 바용)
+  // 전체 보관함 폴더 목록 조회 유스케이스
   async getFolders(): Promise<
     { id: number; name: string; is_default: number }[]
   > {
     try {
-      const db = await getDatabase();
-      const rows = await db.getAllAsync<{
-        id: number;
-        name: string;
-        is_default: number;
-      }>(`SELECT id, name, is_default FROM saved_pill_folders ORDER BY id ASC`);
-
-      return rows;
+      return await this.repository.getFolders();
     } catch (e) {
       logQueryError('get folders', e);
       return [];
     }
-  },
+  }
 
-  // 특정 폴더에 속한 알약 목록 조회
+  // 특정 폴더에 속한 알약 목록 조회 유스케이스
   async getPillsByFolder(folderId: number): Promise<
     {
       item_seq: string;
@@ -336,28 +212,7 @@ export const pillReminderQueryService = {
     }[]
   > {
     try {
-      const db = await getDatabase();
-      const rows = await db.getAllAsync<{
-        item_seq: string;
-        item_name: string;
-        ITEM_IMAGE?: string;
-        CLASS_NAME?: string;
-        ENTP_NAME?: string;
-      }>(
-        `
-        SELECT 
-          s.item_seq,
-          COALESCE(p.ITEM_NAME, s.item_name) as item_name,
-          COALESCE(p.ITEM_IMAGE, '') as ITEM_IMAGE,
-          COALESCE(p.CLASS_NAME, '') as CLASS_NAME,
-          COALESCE(p.ENTP_NAME, '') as ENTP_NAME
-        FROM saved_pills s
-        LEFT JOIN pill_data p ON s.item_seq = p.ITEM_SEQ
-        WHERE s.folder_id = ?
-        ORDER BY s.idx DESC
-      `,
-        [folderId],
-      );
+      const rows = await this.repository.getPillsByFolder(folderId);
 
       return rows.map((r) => ({
         item_seq: r.item_seq,
@@ -370,34 +225,18 @@ export const pillReminderQueryService = {
       logQueryError('get pills by folder', e);
       return [];
     }
-  },
+  }
 
-  // 복용 알림에 등록된 item_seq 목록 조회 (folderId 지정 시 해당 폴더의 알림만 정확히 필터링)
+  // 복용 알림에 등록된 item_seq 목록 조회 유스케이스
   async getRemindedItemSeqs(folderId?: number): Promise<string[]> {
     try {
-      const db = await getDatabase();
-
-      if (folderId) {
-        const rows = await db.getAllAsync<{ item_seq: string }>(
-          `
-          SELECT DISTINCT pri.item_seq 
-          FROM pill_reminder_items pri
-          INNER JOIN pill_reminders pr ON pri.reminder_id = pr.id
-          WHERE pr.folder_id = ?
-        `,
-          [folderId],
-        );
-        return rows.map((r) => r.item_seq);
-      }
-
-      const rows = await db.getAllAsync<{ item_seq: string }>(
-        `SELECT DISTINCT item_seq FROM pill_reminder_items`,
-      );
-
-      return rows.map((r) => r.item_seq);
+      return await this.repository.getRemindedItemSeqs(folderId);
     } catch (e) {
       logQueryError('get reminded item seqs', e);
       return [];
     }
-  },
-};
+  }
+}
+
+// 복용 알림 조회 서비스 싱글톤 인스턴스
+export const pillReminderQueryService = new PillReminderQueryService();

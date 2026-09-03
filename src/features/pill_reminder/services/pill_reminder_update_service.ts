@@ -1,4 +1,7 @@
-import { getDatabase } from '@services/database/sqlite';
+import {
+  IPillReminderRepository,
+  pillReminderRepository,
+} from '@features/pill_reminder/data/repositories/pill_reminder_repository';
 import { IPillReminderUpdateForm } from '@features/pill_reminder/types/pill_reminder_type';
 import {
   sanitizeReminderTitle,
@@ -7,8 +10,13 @@ import {
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 import logger from '@utils/logger';
 
-// 복용 알림 수정 서비스
-export const pillReminderUpdateService = {
+// 복용 알림 수정 비즈니스 서비스
+export class PillReminderUpdateService {
+  constructor(
+    private readonly repository: IPillReminderRepository = pillReminderRepository,
+  ) {}
+
+  // 복용 알림 수정 유스케이스
   async updateReminder(form: IPillReminderUpdateForm): Promise<boolean> {
     try {
       const {
@@ -28,7 +36,6 @@ export const pillReminderUpdateService = {
         return false;
       }
 
-      const db = await getDatabase();
       const daysStr = days.sort((a, b) => a - b).join(',');
 
       // folder_id 결정
@@ -36,13 +43,11 @@ export const pillReminderUpdateService = {
 
       if (!targetFolderId && items.length > 0) {
         const firstSeq = items[0].item_seq;
-        const savedPill = await db.getFirstAsync<{ folder_id: number }>(
-          `SELECT folder_id FROM saved_pills WHERE item_seq = ? LIMIT 1`,
-          [firstSeq],
-        );
+        const savedFolderId =
+          await this.repository.getSavedPillFolderIdByItemSeq(firstSeq);
 
-        if (savedPill?.folder_id) {
-          targetFolderId = savedPill.folder_id;
+        if (savedFolderId) {
+          targetFolderId = savedFolderId;
         }
       }
 
@@ -53,31 +58,19 @@ export const pillReminderUpdateService = {
       );
       const cleanMemo = sanitizeReminderMemo(memo);
 
-      await db.withTransactionAsync(async () => {
-        if (targetFolderId) {
-          await db.runAsync(
-            `UPDATE pill_reminders SET folder_id = ?, title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') WHERE id = ?`,
-            [targetFolderId, finalTitle, cleanMemo, time, daysStr, id],
-          );
-        } else {
-          await db.runAsync(
-            `UPDATE pill_reminders SET title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') WHERE id = ?`,
-            [finalTitle, cleanMemo, time, daysStr, id],
-          );
-        }
-
-        await db.runAsync(
-          `DELETE FROM pill_reminder_items WHERE reminder_id = ?`,
-          [id],
-        );
-
-        for (const item of items) {
-          await db.runAsync(
-            `INSERT INTO pill_reminder_items (reminder_id, item_seq, item_name, dosage) VALUES (?, ?, ?, ?)`,
-            [id, item.item_seq, item.item_name, item.dosage || 1],
-          );
-        }
-      });
+      await this.repository.updateReminderWithItems(
+        id,
+        targetFolderId,
+        finalTitle,
+        cleanMemo,
+        time,
+        daysStr,
+        items.map((item) => ({
+          item_seq: item.item_seq,
+          item_name: item.item_name,
+          dosage: item.dosage || 1,
+        })),
+      );
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
       pillReminderNotificationService.rescheduleAllNotifications();
@@ -87,5 +80,8 @@ export const pillReminderUpdateService = {
       logger.error(`[PILL-REMINDER-UPDATE-SERVICE] Failed to update: ${e}`);
       throw e;
     }
-  },
-};
+  }
+}
+
+// 복용 알림 수정 서비스 싱글톤 인스턴스
+export const pillReminderUpdateService = new PillReminderUpdateService();

@@ -1,65 +1,42 @@
-import { Platform, Vibration } from 'react-native';
-import * as Notifications from 'expo-notifications';
 import dayjs from 'dayjs';
+import {
+  IPillReminderNotificationRepository,
+  pillReminderNotificationRepository,
+} from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
 import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
 import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
 import {
-  NOTIFICATION_CHANNEL_ID,
-  NOTIFICATION_CHANNEL_NAME,
-  NOTIFICATION_LIGHT_COLOR,
   DEFAULT_NOTIFICATION_TITLE,
-  ALARM_VIBRATION_PATTERN,
-  CHANNEL_VIBRATION_PATTERN,
   NOTIFICATION_WATCHER_INTERVAL_MS,
   NOTIFICATION_TOAST_VISIBILITY_MS,
 } from '@features/pill_reminder/constants/reminder_notification_constant';
 import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
 
-// 포그라운드 알림 수신 동작 기본 설정
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
-// 복용 알림 로컬 푸시(OS 스케줄러) 및 인앱 알림 통합 서비스
-class PillReminderNotificationService {
+// 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
+export class PillReminderNotificationService {
   private timer: NodeJS.Timeout | null = null;
   private lastTriggeredMinute = '';
 
-  // 시스템 알림 채널 및 권한 초기화
+  constructor(
+    private readonly notificationRepository: IPillReminderNotificationRepository = pillReminderNotificationRepository,
+  ) {}
+
+  // 시스템 알림 채널 및 권한 초기화 유스케이스
   public async initPermissions() {
     try {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
+      const existingStatus = await this.notificationRepository.getPermissions();
+      let finalStatus = existingStatus.status;
 
-      const isNotGranted = existingStatus !== 'granted';
+      const isNotGranted = existingStatus.status !== 'granted';
 
       if (isNotGranted) {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+        const statusResponse =
+          await this.notificationRepository.requestPermissions();
+        finalStatus = statusResponse.status;
       }
 
-      const isAndroid = Platform.OS === 'android';
-
-      if (isAndroid) {
-        await Notifications.setNotificationChannelAsync(
-          NOTIFICATION_CHANNEL_ID,
-          {
-            name: NOTIFICATION_CHANNEL_NAME,
-            importance: Notifications.AndroidImportance.HIGH,
-            vibrationPattern: CHANNEL_VIBRATION_PATTERN,
-            lightColor: NOTIFICATION_LIGHT_COLOR,
-            sound: 'default',
-          },
-        );
-      }
+      await this.notificationRepository.setNotificationChannel();
 
       return finalStatus === 'granted';
     } catch (e) {
@@ -68,11 +45,11 @@ class PillReminderNotificationService {
     }
   }
 
-  // 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 (앱 종료 시에도 작동)
+  // 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
   public async rescheduleAllNotifications() {
     try {
       // 기존 스케줄된 모든 로컬 알림 취소
-      await Notifications.cancelAllScheduledNotificationsAsync();
+      await this.notificationRepository.cancelAllScheduledNotifications();
 
       const reminders = await pillReminderService.getReminders();
       const activeReminders = reminders.filter((r) => r.is_enabled);
@@ -105,20 +82,13 @@ class PillReminderNotificationService {
           // JS day(0: 일, 1: 월... 6: 토) -> Expo weekday(1: 일, 2: 월... 7: 토)
           const expoWeekday = day === 0 ? 1 : day + 1;
 
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title: `🔔 [${reminderTitle}]`,
-              body: finalBody,
-              sound: 'default',
-              data: { reminderId: reminder.id },
-            },
-            trigger: {
-              type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-              weekday: expoWeekday,
-              hour,
-              minute,
-              channelId: NOTIFICATION_CHANNEL_ID,
-            },
+          await this.notificationRepository.scheduleWeeklyNotification({
+            title: `🔔 [${reminderTitle}]`,
+            body: finalBody,
+            weekday: expoWeekday,
+            hour,
+            minute,
+            data: { reminderId: reminder.id },
           });
         }
       }
@@ -129,16 +99,7 @@ class PillReminderNotificationService {
     }
   }
 
-  // 진동 트리거
-  private triggerAlarmVibration() {
-    try {
-      Vibration.vibrate(ALARM_VIBRATION_PATTERN, false);
-    } catch (e) {
-      logger.error(`[NOTIFICATION-SERVICE] Failed to vibrate: ${e}`);
-    }
-  }
-
-  // 포그라운드 시 현재 시각과 일치하는 복용 알림 체크 및 즉시 인앱 알림 발송
+  // 포그라운드 시 현재 시각과 일치하는 복용 알림 체크 및 즉시 인앱 알림 발송 유스케이스
   public async checkAndTriggerCurrentReminders() {
     try {
       const now = dayjs();
@@ -169,7 +130,7 @@ class PillReminderNotificationService {
       }
 
       this.lastTriggeredMinute = currentMinute;
-      this.triggerAlarmVibration();
+      this.notificationRepository.triggerVibration();
 
       for (const reminder of activeReminders) {
         const itemCount = reminder.items.length;
@@ -226,5 +187,6 @@ class PillReminderNotificationService {
   }
 }
 
+// 복용 알림 노티피케이션 서비스 싱글톤 인스턴스
 export const pillReminderNotificationService =
   new PillReminderNotificationService();
