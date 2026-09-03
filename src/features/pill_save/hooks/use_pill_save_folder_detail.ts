@@ -4,7 +4,7 @@ import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { useToast } from '@hooks/use_toast';
 import { useCommonModalStore } from '@store/common_modal_store';
 
-// 특정 폴더 내부의 알약 목록 관리 및 다중 선택(이동/복사/삭제) 로직 커스텀 훅
+// 특정 폴더 내부의 알약 목록 관리 및 다중 선택(이동/복사/삭제) 로직 커스텀 훅 (Presentation Layer)
 export const usePillSaveFolderDetail = (folderId: number) => {
   const [pillSaveData, setPillSaveData] = useState<IPillSaveData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
 
   const { showToast } = useToast();
 
-  // 알약 목록 불러오기
+  // 폴더 내 알약 목록 불러오기
   const loadData = useCallback(async () => {
     const isInvalidFolderId = isNaN(folderId);
 
@@ -48,7 +48,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     return hasData && selectedSeqs.length === pillSaveData.length;
   }, [pillSaveData.length, selectedSeqs.length]);
 
-  // 전체 선택 / 전체 해제
+  // 전체 선택 / 전체 해제 핸들러
   const handleSelectAll = useCallback(() => {
     if (allSelected) {
       setSelectedSeqs([]);
@@ -58,7 +58,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     }
   }, [allSelected, pillSaveData]);
 
-  // 개별 알약 선택/해제 토글
+  // 개별 알약 선택/해제 토글 핸들러
   const handleItemSelect = useCallback((itemSeq: string) => {
     setSelectedSeqs((prev) => {
       const isCurrentlySelected = prev.includes(itemSeq);
@@ -76,7 +76,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     });
   }, []);
 
-  // 선택된 알약 다른 폴더로 이동 모드 진입
+  // 선택된 알약 다른 폴더로 이동 모드 진입 핸들러
   const handleMove = useCallback(() => {
     const hasNoSelected = selectedSeqs.length === 0;
 
@@ -89,7 +89,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     setIsModalVisible(true);
   }, [selectedSeqs.length, showToast]);
 
-  // 선택된 알약 다른 폴더로 복사 모드 진입
+  // 선택된 알약 다른 폴더로 복사 모드 진입 핸들러
   const handleCopy = useCallback(() => {
     const hasNoSelected = selectedSeqs.length === 0;
 
@@ -102,7 +102,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     setIsModalVisible(true);
   }, [selectedSeqs.length, showToast]);
 
-  // 이동/복사 모달 완료 후 처리
+  // 이동/복사 모달 완료 후 처리 핸들러
   const handleSaveComplete = useCallback(() => {
     setIsModalVisible(false);
     setIsEditing(false);
@@ -110,7 +110,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     loadData();
   }, [loadData]);
 
-  // 선택된 알약들 일괄 삭제 처리
+  // 선택된 알약들 일괄 삭제 처리 핸들러
   const handleMultipleDelete = useCallback(() => {
     const hasNoSelected = selectedSeqs.length === 0;
 
@@ -123,6 +123,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
       title: '알약 삭제',
       message: '선택한 알약을 삭제 하시겠습니까?',
       confirmStyle: 'destructive',
+      // 삭제 확인 시 일괄 삭제 실행
       onConfirm: async () => {
         await pillSaveService.deleteMultiplePillsFromFolder(
           selectedSeqs,
@@ -140,7 +141,7 @@ export const usePillSaveFolderDetail = (folderId: number) => {
     });
   }, [selectedSeqs, folderId, showToast]);
 
-  // 배경 클릭 시 편집 모드 해제
+  // 배경 클릭 시 편집 모드 해제 핸들러
   const handleBackgroundPress = useCallback(() => {
     if (isEditing) {
       toggleEdit();

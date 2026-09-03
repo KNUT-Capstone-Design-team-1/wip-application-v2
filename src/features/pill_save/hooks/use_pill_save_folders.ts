@@ -17,7 +17,7 @@ type FolderWithPillCount = ISavedPillFolder & {
   preview_images?: string[];
 };
 
-// 폴더 보관함 화면의 비즈니스 로직을 처리하는 커스텀 훅
+// 폴더 보관함 화면의 UI 상태 및 비즈니스 작업을 제어하는 커스텀 훅 (Presentation Layer)
 export const usePillSaveFolders = () => {
   const [folders, setFolders] = useState<FolderWithPillCount[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +47,7 @@ export const usePillSaveFolders = () => {
     setLoading(false);
   }, [sortOption]);
 
+  // 화면 포커스 시 폴더 목록 조회 및 편집 모드 초기화
   useFocusEffect(
     useCallback(() => {
       loadFolders();
@@ -55,13 +56,13 @@ export const usePillSaveFolders = () => {
     }, [loadFolders]),
   );
 
-  // 정렬 옵션 변경
+  // 정렬 옵션 변경 핸들러
   const handleSortChange = useCallback((option: FolderSortOption) => {
     setSortOption(option);
     setIsSortModalVisible(false);
   }, []);
 
-  // 편집 모드일 때 바텀 탭바 가리기
+  // 편집 모드 여부에 따른 탭바 표시/숨김 처리
   useFocusEffect(
     useCallback(() => {
       navigation.setOptions({
@@ -70,20 +71,20 @@ export const usePillSaveFolders = () => {
     }, [isEditing, navigation]),
   );
 
-  // 폴더 추가 모달 열기
+  // 폴더 추가 모달 열기 핸들러
   const handleOpenAddModal = useCallback(() => {
     setIsAdding(true);
     setFolderInputName('');
   }, []);
 
-  // 모달 닫기
+  // 폴더 모달 닫기 핸들러
   const handleCancelModal = useCallback(() => {
     setIsAdding(false);
     setIsRenaming(false);
     setFolderInputName('');
   }, []);
 
-  // 폴더 생성 또는 이름 변경 처리
+  // 폴더 생성 또는 이름 변경 처리 핸들러
   const handleCreateOrRenameFolder = useCallback(async () => {
     const trimmedName = folderInputName.trim();
     const targetId = selectedFolderIds[selectedFolderIds.length - 1];
@@ -130,7 +131,7 @@ export const usePillSaveFolders = () => {
     showToast,
   ]);
 
-  // 폴더 이름 변경 요청 처리 (기본 폴더 차단 및 마지막 선택 항목)
+  // 폴더 이름 변경 요청 처리 핸들러 (기본 폴더 차단 및 마지막 선택 항목)
   const handleRenameRequest = useCallback(() => {
     const hasNoSelected = selectedFolderIds.length === 0;
 
@@ -158,7 +159,7 @@ export const usePillSaveFolders = () => {
     setFolderInputName(targetFolder?.name || '');
   }, [selectedFolderIds, folders, showToast]);
 
-  // 폴더 삭제 처리 (기본 폴더 차단 및 모달 띄우기)
+  // 폴더 삭제 처리 핸들러 (기본 폴더 차단 및 확인 모달 띄우기)
   const handleDeleteFolder = useCallback(async () => {
     const hasNoSelected = selectedFolderIds.length === 0;
 
@@ -181,6 +182,7 @@ export const usePillSaveFolders = () => {
       title: '폴더 삭제',
       message: '선택한 폴더를 정말 삭제하시겠습니까?',
       confirmStyle: 'destructive',
+      // 삭제 확인 시 일괄 삭제 실행
       onConfirm: async () => {
         await Promise.all(
           selectedFolderIds.map((id) => pillSaveService.deleteFolder(id)),
@@ -193,7 +195,7 @@ export const usePillSaveFolders = () => {
     });
   }, [selectedFolderIds, folders, showToast, loadFolders]);
 
-  // 개별 폴더 선택 토글 (기본 폴더는 제외)
+  // 개별 폴더 선택 토글 핸들러 (기본 폴더는 제외)
   const toggleFolderSelection = useCallback(
     (id: number) => {
       const targetFolder = folders.find((f) => f.id === id);
@@ -225,7 +227,7 @@ export const usePillSaveFolders = () => {
     [folders, showToast],
   );
 
-  // 배경 클릭 시 편집 모드 해제
+  // 배경 클릭 시 편집 모드 해제 핸들러
   const handleBackgroundPress = useCallback(() => {
     if (isEditing) {
       setSelectedFolderIds([]);

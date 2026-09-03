@@ -20,7 +20,7 @@ interface UseFolderSelectModalProps {
   onClose: () => void;
 }
 
-// 알약 보관 폴더 선택 모달의 비즈니스 로직 커스텀 훅
+// 알약 보관 폴더 선택 모달의 비즈니스 로직 커스텀 훅 (Presentation Layer)
 export const useFolderSelectModal = ({
   isVisible,
   itemSeq,
@@ -100,7 +100,7 @@ export const useFolderSelectModal = ({
     setIsSaving(false);
   }, [isVisible, initialSelectedIds, loadFolders, mode]);
 
-  // 폴더 선택/해제 토글
+  // 개별 폴더 선택/해제 토글 핸들러
   const toggleFolder = (id: number) => {
     const isMoveOrCopyMode = mode === 'move' || mode === 'copy';
     const isSourceFolder = isMoveOrCopyMode && id === sourceId;
@@ -140,7 +140,7 @@ export const useFolderSelectModal = ({
     });
   };
 
-  // 새 폴더 생성
+  // 새 폴더 생성 핸들러
   const handleCreateFolder = async () => {
     const trimmedName = newFolderName.trim();
 
@@ -192,7 +192,7 @@ export const useFolderSelectModal = ({
     setNewFolderName('');
   };
 
-  // 폴더 저장/이동/복사 작업을 실행하고 결과를 반환하는 함수
+  // 폴더 저장/이동/복사 작업을 실행하고 결과를 반환하는 헬퍼 함수
   const executeSaveOperation = async () => {
     let alreadyExistsItems: { seq: string; name: string }[] = [];
 
@@ -220,7 +220,7 @@ export const useFolderSelectModal = ({
     return alreadyExistsItems;
   };
 
-  // 중복된 알약에 대한 토스트 메시지를 표시하는 함수
+  // 중복된 알약에 대한 토스트 메시지를 표시하는 헬퍼 함수
   const showAlreadyExistsToast = (
     alreadyExistsItems: { seq: string; name: string }[],
   ) => {
@@ -241,7 +241,7 @@ export const useFolderSelectModal = ({
     });
   };
 
-  // 선택된 폴더들에 알약 저장/이동/복사 처리
+  // 선택된 폴더들에 알약 저장/이동/복사 처리 핸들러
   const handleSave = async () => {
     const isNoFolderSelectedForMoveOrCopy =
       selectedIds.length === 0 && mode !== 'save';

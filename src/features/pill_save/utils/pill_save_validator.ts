@@ -5,9 +5,7 @@ export const MAX_FOLDER_COUNT = 100;
 export const MAX_PILL_COUNT_PER_FOLDER = 1000;
 export const MAX_FOLDER_SELECTION = 20;
 
-/**
- * 폴더 생성 및 이름 변경 유효성 검사
- */
+// 폴더 생성 및 이름 변경 유효성 검사 함수
 export const validateFolderCreation = (
   folders: ISavedPillFolder[],
   folderName: string,
@@ -43,9 +41,7 @@ export const validateFolderCreation = (
   return { isValid: true, errorMessage: '' };
 };
 
-/**
- * 알약 개수 초과 유효성 검사
- */
+// 폴더별 알약 최대 개수 초과 유효성 검사 함수
 export const validatePillLimit = (
   folders: (ISavedPillFolder & { pill_count: number })[],
   selectedIds: number[],
@@ -68,9 +64,7 @@ export const validatePillLimit = (
   return { isValid: true, errorMessage: '' };
 };
 
-/**
- * 폴더 다중 선택 제한 유효성 검사
- */
+// 폴더 다중 선택 개수 제한 유효성 검사 함수
 export const validateFolderSelectionLimit = (
   currentSelectionCount: number,
   isMoveOrCopy: boolean,
