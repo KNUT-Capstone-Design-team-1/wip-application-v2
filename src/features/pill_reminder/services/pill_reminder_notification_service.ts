@@ -3,7 +3,10 @@ import {
   IPillReminderNotificationRepository,
   pillReminderNotificationRepository,
 } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
-import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
+import {
+  PillReminderQueryService,
+  pillReminderQueryService,
+} from '@features/pill_reminder/services/pill_reminder_query_service';
 import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
 import {
   DEFAULT_NOTIFICATION_TITLE,
@@ -20,6 +23,7 @@ export class PillReminderNotificationService {
 
   constructor(
     private readonly notificationRepository: IPillReminderNotificationRepository = pillReminderNotificationRepository,
+    private readonly queryService: PillReminderQueryService = pillReminderQueryService,
   ) {}
 
   // 시스템 알림 채널 및 권한 초기화 유스케이스
@@ -51,7 +55,8 @@ export class PillReminderNotificationService {
       // 기존 스케줄된 모든 로컬 알림 취소
       await this.notificationRepository.cancelAllScheduledNotifications();
 
-      const reminders = await pillReminderService.getReminders();
+      const reminders = await this.queryService.getReminders();
+
       const activeReminders = reminders.filter((r) => r.is_enabled);
 
       for (const reminder of activeReminders) {
@@ -115,7 +120,7 @@ export class PillReminderNotificationService {
       const currentTime = now.format('HH:mm');
       const currentDayNumber = now.day();
 
-      const reminders = await pillReminderService.getReminders();
+      const reminders = await this.queryService.getReminders();
       const activeReminders = reminders.filter(
         (r) =>
           r.is_enabled &&
