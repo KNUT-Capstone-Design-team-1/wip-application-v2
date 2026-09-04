@@ -36,10 +36,9 @@ export const useSetting = () => {
       onConfirm: async () => {
         try {
           resetRecentViewed();
-          useCommonModalStore.getState().showModal({
-            title: '알림',
-            message: '최근 조회한 알약이 삭제되었습니다.',
-            hideCancel: true,
+          Toast.show({
+            type: 'success',
+            text1: '최근 조회한 알약이 삭제되었습니다.',
           });
         } catch (e) {
           logger.error(`Failed to clear recent search: ${e.stack || e}`);
