@@ -7,7 +7,6 @@ import { usePillSearchResultList } from '@features/pill_search_result_list/hooks
 import { ISearchResultData } from '@features/pill_search_result_list/types/pill_search_result_list';
 import NotItem from '@components/common/NotItem';
 import { IPillData } from '@services/database/types';
-import { px } from '@utils/responsive';
 
 /**
  * 검색 결과가 없을 때 표시할 컴포넌트

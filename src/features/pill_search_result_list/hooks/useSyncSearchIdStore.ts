@@ -6,7 +6,9 @@ export const useSyncSearchIdStore = () => {
   const { searchParam } = useSearchResultListStore();
 
   const syncToSearchIdStore = useCallback(() => {
-    if (!searchParam) return;
+    if (!searchParam) {
+      return;
+    }
 
     const store = useSearchIdStore.getState();
 
@@ -29,8 +31,12 @@ export const useSyncSearchIdStore = () => {
     }
 
     // 이름, 제조사 등
-    if (searchParam.ITEM_NAME) store.setProductNameText(searchParam.ITEM_NAME);
-    if (searchParam.ENTP_NAME) store.setCompanyName(searchParam.ENTP_NAME);
+    if (searchParam.ITEM_NAME) {
+      store.setProductNameText(searchParam.ITEM_NAME);
+    }
+    if (searchParam.ENTP_NAME) {
+      store.setCompanyName(searchParam.ENTP_NAME);
+    }
 
     // 배열 조건들
     if (searchParam.FORM_CODE && searchParam.FORM_CODE.length > 0) {
@@ -43,7 +49,9 @@ export const useSyncSearchIdStore = () => {
         ...(searchParam.LINE_BACK || []),
       ]),
     );
-    if (lines.length > 0) store.setDividerLineData(lines);
+    if (lines.length > 0) {
+      store.setDividerLineData(lines);
+    }
 
     if (searchParam.DRUG_SHAPE && searchParam.DRUG_SHAPE.length > 0) {
       store.setShape(searchParam.DRUG_SHAPE);
@@ -56,13 +64,17 @@ export const useSyncSearchIdStore = () => {
         ...(searchParam.COLOR_CLASS2 || []),
       ]),
     );
-    if (colors.length > 0) store.setColors(colors);
+    if (colors.length > 0) {
+      store.setColors(colors);
+    }
 
     // 마크
-    if (searchParam.MARK_CODE_FRONT)
+    if (searchParam.MARK_CODE_FRONT) {
       store.setMarkCodeFront(searchParam.MARK_CODE_FRONT);
-    if (searchParam.MARK_CODE_BACK)
+    }
+    if (searchParam.MARK_CODE_BACK) {
       store.setMarkCodeBack(searchParam.MARK_CODE_BACK);
+    }
   }, [searchParam]);
 
   return { syncToSearchIdStore };

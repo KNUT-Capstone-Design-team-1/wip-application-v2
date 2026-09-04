@@ -1,12 +1,9 @@
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import {
-  getPillDataCount,
-  getPillDatas,
-} from '@services/database/queries/pill_data';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { IPillData, TPillDataSearchParam } from '@services/database/types';
 import logger from '@utils/logger';
+import { pillSearchResultListService } from '../services/pill_search_result_list_service';
 
 /**
  * 알약 검색(InputText) Hook
@@ -54,13 +51,17 @@ export const usePillSearchResultList = () => {
 
       setSearchParam(searchParam);
 
-      const results = await getPillDatas(searchParam, { page: 1, limit: 30 });
-      const totalDataCount = await getPillDataCount(searchParam);
+      const results = await pillSearchResultListService.getPills(searchParam, {
+        page: 1,
+        limit: 30,
+      });
+      const totalDataCount =
+        await pillSearchResultListService.countPills(searchParam);
 
       setSearchResultData(results);
       setTotalDataCount(totalDataCount);
     },
-    [setSearchParam, setSearchResultData],
+    [setSearchParam, setSearchResultData, setTotalDataCount],
   );
 
   /**
@@ -105,13 +106,17 @@ export const usePillSearchResultList = () => {
 
       setSearchParam(restParams);
 
-      const results = await getPillDatas(restParams, { page: 1, limit: 30 });
-      const totalDataCount = await getPillDataCount(restParams);
+      const results = await pillSearchResultListService.getPills(restParams, {
+        page: 1,
+        limit: 30,
+      });
+      const totalDataCount =
+        await pillSearchResultListService.countPills(restParams);
 
       setSearchResultData(results);
       setTotalDataCount(totalDataCount);
     },
-    [setSearchParam, setSearchResultData, setIsLoading],
+    [setSearchParam, setSearchResultData, setTotalDataCount, setIsLoading],
   );
 
   /**
@@ -159,10 +164,13 @@ export const usePillSearchResultList = () => {
       console.log(`Page ${nextPage} loading...`);
 
       // 데이터베이스 조회
-      const newResults = await getPillDatas(searchParam, {
-        page: nextPage,
-        limit: 30,
-      });
+      const newResults = await pillSearchResultListService.getPills(
+        searchParam,
+        {
+          page: nextPage,
+          limit: 30,
+        },
+      );
 
       console.log(`${newResults.length} loaded for page ${nextPage}`);
 

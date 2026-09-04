@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
-import { getMarkImages } from '@services/database/queries/mark_images';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import logger from '@utils/logger';
+import { pillSearchResultListService } from '../services/pill_search_result_list_service';
 
 export const useFetchMarkImages = () => {
   const { searchParam, setMarkImages } = useSearchResultListStore();
@@ -18,7 +18,12 @@ export const useFetchMarkImages = () => {
 
       try {
         const results = await Promise.all(
-          marks.map((code) => getMarkImages({ code }, { page: 1, limit: 1 })),
+          marks.map((code) =>
+            pillSearchResultListService.getMarkImages(
+              { code },
+              { page: 1, limit: 1 },
+            ),
+          ),
         );
 
         const images = results
