@@ -16,6 +16,7 @@ import { FolderSelectListItem } from '@features/pill_save/components/molecules/F
 import { AddFolderSection } from '@features/pill_save/components/molecules/AddFolderSection';
 import { SaveActionBtn } from '@features/pill_save/components/atoms/SaveActionBtn';
 import { useFolderSelectModal } from '@features/pill_save/hooks/use_folder_select_modal';
+import { BaseText } from '@components/common/BaseText';
 
 import { IFolderSelectModalProps } from '@features/pill_save/types/pill_save_type';
 
@@ -77,6 +78,20 @@ const FolderSelectModal = (props: IFolderSelectModalProps) => {
             />
 
             <View style={styles.contentContainer}>
+              {props.mode === 'move' && (
+                <View style={styles.moveWarningContainer}>
+                  <BaseText
+                    size={13}
+                    weight="medium"
+                    style={styles.moveWarningText}
+                  >
+                    이동하면 기존 폴더에서 알약이 삭제되며, 해당 알약이 포함된
+                    복용 알림에서도 제거됩니다. 알약이 모두 삭제되면 복용 알림도
+                    삭제됩니다.
+                  </BaseText>
+                </View>
+              )}
+
               <FlatList
                 data={folders}
                 keyExtractor={(item) => item.id.toString()}

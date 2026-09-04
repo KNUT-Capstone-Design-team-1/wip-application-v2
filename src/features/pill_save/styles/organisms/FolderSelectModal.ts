@@ -17,6 +17,17 @@ export const styles = StyleSheet.create({
   contentContainer: {
     flex: 1, // 남은 공간 모두 차지
   },
+  moveWarningContainer: {
+    marginHorizontal: px(20),
+    marginTop: px(12),
+    padding: px(12),
+    borderRadius: px(8),
+    backgroundColor: '#FFF7ED',
+  },
+  moveWarningText: {
+    color: '#C2410C',
+    lineHeight: px(19),
+  },
   list: {
     flex: 1, // 스크롤 가능 영역 확장
   },
