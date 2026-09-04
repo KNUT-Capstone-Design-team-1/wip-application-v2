@@ -125,10 +125,18 @@ export const usePillSaveFolderDetail = (folderId: number) => {
       confirmStyle: 'destructive',
       // 삭제 확인 시 일괄 삭제 실행
       onConfirm: async () => {
-        await pillSaveService.deleteMultiplePillsFromFolder(
+        const isDeleted = await pillSaveService.deleteMultiplePillsFromFolder(
           selectedSeqs,
           folderId,
         );
+
+        if (!isDeleted) {
+          showToast({
+            type: 'error',
+            message: '알약 삭제에 실패했습니다.',
+          });
+          return;
+        }
 
         setPillSaveData((prev) =>
           prev.filter((item) => !selectedSeqs.includes(item.ITEM_SEQ)),

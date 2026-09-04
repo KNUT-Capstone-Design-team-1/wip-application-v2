@@ -51,6 +51,14 @@ export class PillReminderUpdateService {
         }
       }
 
+      if (!targetFolderId) {
+        const defaultFolder = (await this.repository.getFolders()).find(
+          (folder) => folder.is_default === 1,
+        );
+
+        targetFolderId = defaultFolder?.id;
+      }
+
       const trimmedTitle = title.trim();
       const hasUserTitle = trimmedTitle.length > 0;
       const finalTitle = sanitizeReminderTitle(

@@ -184,9 +184,18 @@ export const usePillSaveFolders = () => {
       confirmStyle: 'destructive',
       // 삭제 확인 시 일괄 삭제 실행
       onConfirm: async () => {
-        await Promise.all(
+        const deletionResults = await Promise.all(
           selectedFolderIds.map((id) => pillSaveService.deleteFolder(id)),
         );
+
+        if (deletionResults.some((isDeleted) => !isDeleted)) {
+          showToast({
+            type: 'error',
+            message: '폴더 삭제에 실패했습니다.',
+          });
+          return;
+        }
+
         showToast({ type: 'default', message: '폴더가 삭제되었습니다.' });
         setIsEditing(false);
         setSelectedFolderIds([]);

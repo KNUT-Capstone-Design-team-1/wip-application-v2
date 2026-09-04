@@ -1,7 +1,6 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from '@services/database/sqlite';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_item_type';
-import { ISavedPillFolder } from '@services/database/types';
 import {
   IPillSaveOperationItem,
   IPillSaveOperationResult,
@@ -175,9 +174,9 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
 
       const updateQuery = `UPDATE saved_pill_folders SET name = ? WHERE id = ?`;
 
-      await db.runAsync(updateQuery, [name, folderId]);
+      const result = await db.runAsync(updateQuery, [name, folderId]);
 
-      return true;
+      return result.changes > 0;
     } catch (e) {
       logDataSourceError('rename folder', e);
       return false;
@@ -191,9 +190,9 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
 
       const deleteQuery = `DELETE FROM saved_pill_folders WHERE id = ? AND is_default = 0`;
 
-      await db.runAsync(deleteQuery, [folderId]);
+      const result = await db.runAsync(deleteQuery, [folderId]);
 
-      return true;
+      return result.changes > 0;
     } catch (e) {
       logDataSourceError('delete folder', e);
       return false;
@@ -218,9 +217,12 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         WHERE folder_id = ? AND item_seq IN (${placeholders})
       `;
 
-      await db.runAsync(deletePillsQuery, [folderId, ...itemSeqs]);
+      const result = await db.runAsync(deletePillsQuery, [
+        folderId,
+        ...itemSeqs,
+      ]);
 
-      return true;
+      return result.changes > 0;
     } catch (e) {
       logDataSourceError('delete multiple pills', e);
       return false;
@@ -334,11 +336,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         alreadyExistsItemsMap.set(c.item.seq, c.item),
       );
 
-      const alreadyExistsSeqs = new Set(alreadyExistsItemsMap.keys());
-
-      const seqsToDelete = itemSeqs.filter(
-        (seq) => !alreadyExistsSeqs.has(seq),
-      );
+      const seqsToDelete = itemSeqs;
 
       await runInTransaction(db, async () => {
         if (seqsToDelete.length > 0) {
@@ -469,9 +467,9 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         WHERE item_seq = ? AND folder_id = ?
       `;
 
-      await db.runAsync(deletePillQuery, [itemSeq, folderId]);
+      const result = await db.runAsync(deletePillQuery, [itemSeq, folderId]);
 
-      return true;
+      return result.changes > 0;
     } catch (e) {
       logDataSourceError('delete pill from folder', e);
       return false;

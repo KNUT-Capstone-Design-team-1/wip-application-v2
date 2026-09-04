@@ -37,8 +37,8 @@ export class PillReminderCreateService {
 
       const daysStr = days.sort((a, b) => a - b).join(',');
 
-      // folder_id 결정 (명시되지 않았으면 첫 번째 알약이 속한 folder_id 조회)
-      let targetFolderId = explicitFolderId || 1;
+      // folder_id 결정 (명시되지 않았으면 첫 번째 알약이 속한 폴더 또는 기본 폴더 사용)
+      let targetFolderId = explicitFolderId;
 
       if (!explicitFolderId && items.length > 0) {
         const firstSeq = items[0].item_seq;
@@ -48,6 +48,18 @@ export class PillReminderCreateService {
         if (savedFolderId) {
           targetFolderId = savedFolderId;
         }
+      }
+
+      if (!targetFolderId) {
+        const defaultFolder = (await this.repository.getFolders()).find(
+          (folder) => folder.is_default === 1,
+        );
+
+        targetFolderId = defaultFolder?.id;
+      }
+
+      if (!targetFolderId) {
+        return [];
       }
 
       // 기존 알림 수 조회하여 기본 이름 카운트 계산

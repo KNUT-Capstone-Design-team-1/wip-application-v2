@@ -280,7 +280,21 @@ export const useFolderSelectModal = ({
     setIsSaving(true);
 
     try {
+      const savedFolderIds =
+        mode === 'save' && itemSeq
+          ? await pillSaveService.getPillSavedFolderIds(itemSeq)
+          : [];
+
       const alreadyExistsItems = await executeSaveOperation();
+
+      if (
+        mode === 'save' &&
+        itemSeq &&
+        itemName &&
+        selectedIds.some((folderId) => savedFolderIds.includes(folderId))
+      ) {
+        alreadyExistsItems.push({ seq: itemSeq, name: itemName });
+      }
 
       onSaveComplete(selectedIds);
       onClose();

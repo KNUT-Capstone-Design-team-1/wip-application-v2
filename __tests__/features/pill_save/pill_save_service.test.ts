@@ -64,7 +64,7 @@ describe('PillSaveService 단위 테스트', () => {
     it('정렬 옵션에 따라 올바른 order clause로 폴더를 조회하고 프리뷰 이미지를 매핑해야 한다', async () => {
       const folders = await service.getFolders('name_asc');
 
-      expect(mockRepository.getFolders).toHaveBeenCalledWith('f.name ASC');
+      expect(mockRepository.getFolders).toHaveBeenCalledWith('name_asc');
       expect(mockRepository.getFolderPreviewImages).toHaveBeenCalledWith(1);
       // pill_count가 0인 폴더 2는 프리뷰 이미지를 조회하지 않고 빈 배열이어야 함
       expect(mockRepository.getFolderPreviewImages).not.toHaveBeenCalledWith(2);
@@ -74,16 +74,12 @@ describe('PillSaveService 단위 테스트', () => {
 
     it('createdAt_desc 정렬 옵션을 올바르게 처리해야 한다', async () => {
       await service.getFolders('createdAt_desc');
-      expect(mockRepository.getFolders).toHaveBeenCalledWith(
-        'f.created_at DESC',
-      );
+      expect(mockRepository.getFolders).toHaveBeenCalledWith('createdAt_desc');
     });
 
     it('pillCount_desc 정렬 옵션을 올바르게 처리해야 한다', async () => {
       await service.getFolders('pillCount_desc');
-      expect(mockRepository.getFolders).toHaveBeenCalledWith(
-        'pill_count DESC, f.created_at DESC',
-      );
+      expect(mockRepository.getFolders).toHaveBeenCalledWith('pillCount_desc');
     });
   });
 
