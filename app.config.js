@@ -26,6 +26,10 @@ export default {
       bundleIdentifier: 'com.mbm.whatispill',
       buildNumber: BUILD,
 
+      entitlements: {
+        'aps-environment': 'production',
+      },
+
       icon: {
         light: './assets/icons/ios-icon-light.png',
         dark: './assets/icons/ios-icon-dark.png',
