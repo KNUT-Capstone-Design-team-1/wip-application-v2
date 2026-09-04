@@ -1,8 +1,11 @@
 // 식별 검색 파라미터 빌더
-export * from './identification_search_param_builder';
+export {
+  buildSearchParam,
+  getToggledArrayValue,
+} from './identification_search_param_builder';
 
 // 필터 토글 비즈니스 서비스
-export * from './identification_filter_toggle_service';
+export { getToggledArrayValue as toggleArrayValue } from './identification_filter_toggle_service';
 
 // 식별 검색 쿼리 비즈니스 서비스
 export * from './identification_search_query_service';

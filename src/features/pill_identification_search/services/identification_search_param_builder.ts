@@ -2,6 +2,8 @@ import { TPillDataSearchParam } from '@services/database/types';
 import { ISearchPillData } from '@features/pill_identification_search/types/identification_domain_type';
 import { SEARCH_ALL_LABEL } from '@features/pill_identification_search/constants/identification_pagination_constant';
 
+export { getToggledArrayValue } from './identification_filter_toggle_service';
+
 // 식별 검색 폼 입력을 SQLite 조회용 SearchParam 객체로 변환하는 빌더 함수
 export const buildSearchParam = (
   raw: ISearchPillData,
