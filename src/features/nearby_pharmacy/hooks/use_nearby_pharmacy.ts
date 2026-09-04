@@ -132,7 +132,13 @@ export const useNearbyPharmacy = () => {
       setClusterPharmacies(null);
       setSelectedPharmacy(pharmacy);
 
-      const isValidCoords = !isNaN(lat) && !isNaN(lng);
+      const isValidCoords =
+        Number.isFinite(lat) &&
+        Number.isFinite(lng) &&
+        lat >= -90 &&
+        lat <= 90 &&
+        lng >= -180 &&
+        lng <= 180;
 
       if (isValidCoords) {
         const latitudeDelta = 0.005;
