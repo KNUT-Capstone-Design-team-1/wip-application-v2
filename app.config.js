@@ -108,6 +108,7 @@ export default {
         {
           icon: './assets/icons/android-adaptive-icon.png',
           color: '#2cb7de',
+          mode: 'production',
         },
       ],
 
