@@ -9,6 +9,19 @@ export interface ISavedFolderWithMeta extends ISavedPillFolder {
   preview_images?: string[];
 }
 
+export interface ISavedFolderWithPillCount extends ISavedPillFolder {
+  pill_count: number;
+}
+
+export interface IPillSaveOperationItem {
+  seq: string;
+  name: string;
+}
+
+export interface IPillSaveOperationResult {
+  alreadyExistsItems: IPillSaveOperationItem[];
+}
+
 // 알약 보관함 폴더 리스트 컴포넌트 Props 인터페이스
 export interface IPillSaveFolderListProps {
   // 폴더 목록
@@ -60,10 +73,7 @@ export interface IFolderSelectModalProps {
   itemName?: string;
 
   // 다중 이동/복사 시 대상 알약 목록
-  items?: {
-    seq: string;
-    name: string;
-  }[];
+  items?: IPillSaveOperationItem[];
 
   // 모달 동작 모드 (저장 / 이동 / 복사)
   mode?: 'save' | 'move' | 'copy';

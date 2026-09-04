@@ -4,12 +4,18 @@ import {
 } from '@features/pill_save/data/datasources/pill_save_sqlite_datasource';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
 import { ISavedPillFolder } from '@services/database/types';
+import {
+  IPillSaveOperationItem,
+  IPillSaveOperationResult,
+  ISavedFolderWithPillCount,
+} from '@features/pill_save/types/pill_save_folder_type';
+import { FolderSortOption } from '@features/pill_save/constants/pill_save_constant';
 
 // 알약 보관함 리포지토리 인터페이스
 export interface IPillSaveRepository {
   getFolders(
-    orderBySql: string,
-  ): Promise<(ISavedPillFolder & { pill_count: number })[]>;
+    sortBy: FolderSortOption,
+  ): Promise<ISavedFolderWithPillCount[]>;
 
   getFolderPreviewImages(folderId: number): Promise<string[]>;
 
@@ -30,15 +36,15 @@ export interface IPillSaveRepository {
   ): Promise<void>;
 
   movePillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     sourceFolderId: number,
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }>;
+  ): Promise<IPillSaveOperationResult>;
 
   copyPillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }>;
+  ): Promise<IPillSaveOperationResult>;
 
   deletePillFromFolder(itemSeq: string, folderId: number): Promise<boolean>;
 
@@ -52,8 +58,8 @@ export class PillSaveRepository implements IPillSaveRepository {
   ) {}
 
   // 폴더 목록 조회
-  async getFolders(orderBySql: string) {
-    return await this.dataSource.getFolders(orderBySql);
+  async getFolders(sortBy: FolderSortOption) {
+    return await this.dataSource.getFolders(sortBy);
   }
 
   // 폴더 프리뷰 이미지 목록 조회
@@ -101,7 +107,7 @@ export class PillSaveRepository implements IPillSaveRepository {
 
   // 알약 다른 폴더들로 이동
   async movePillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     sourceFolderId: number,
     targetFolderIds: number[],
   ) {
@@ -114,7 +120,7 @@ export class PillSaveRepository implements IPillSaveRepository {
 
   // 알약 다른 폴더들로 복사
   async copyPillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     targetFolderIds: number[],
   ) {
     return await this.dataSource.copyPillsToFolders(items, targetFolderIds);

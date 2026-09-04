@@ -3,7 +3,11 @@ import {
   pillSaveRepository,
 } from '@features/pill_save/data/repositories/pill_save_repository';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_type';
-import { ISavedPillFolder } from '@services/database/types';
+import {
+  IPillSaveOperationItem,
+  IPillSaveOperationResult,
+  ISavedFolderWithMeta,
+} from '@features/pill_save/types/pill_save_folder_type';
 import { useAppTrackStore } from '@store/app_track_store';
 import { FolderSortOption } from '@features/pill_save/constants/pill_save_constant';
 
@@ -17,20 +21,9 @@ export class PillSaveService {
   async getFolders(
     sortBy: FolderSortOption = 'name_asc',
   ): Promise<
-    (ISavedPillFolder & { pill_count: number; preview_images?: string[] })[]
+    ISavedFolderWithMeta[]
   > {
-    let orderClause = 'f.created_at ASC';
-    if (sortBy === 'createdAt_desc') {
-      orderClause = 'f.created_at DESC';
-    }
-    if (sortBy === 'name_asc') {
-      orderClause = 'f.name ASC';
-    }
-    if (sortBy === 'pillCount_desc') {
-      orderClause = 'pill_count DESC, f.created_at DESC';
-    }
-
-    const rows = await this.repository.getFolders(orderClause);
+    const rows = await this.repository.getFolders(sortBy);
 
     const result = await Promise.all(
       rows.map(async (row) => {
@@ -115,10 +108,10 @@ export class PillSaveService {
 
   // 알약 다중 이동 유스케이스
   async movePillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     sourceFolderId: number,
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }> {
+  ): Promise<IPillSaveOperationResult> {
     if (items.length === 0 || targetFolderIds.length === 0) {
       return { alreadyExistsItems: [] };
     }
@@ -132,9 +125,9 @@ export class PillSaveService {
 
   // 알약 다중 복사 유스케이스
   async copyPillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }> {
+  ): Promise<IPillSaveOperationResult> {
     if (items.length === 0 || targetFolderIds.length === 0) {
       return { alreadyExistsItems: [] };
     }

@@ -2,6 +2,12 @@ import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from '@services/database/sqlite';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_item_type';
 import { ISavedPillFolder } from '@services/database/types';
+import {
+  IPillSaveOperationItem,
+  IPillSaveOperationResult,
+  ISavedFolderWithPillCount,
+} from '@features/pill_save/types/pill_save_folder_type';
+import { FolderSortOption } from '@features/pill_save/constants/pill_save_constant';
 import logger from '@utils/logger';
 
 // 일관된 데이터소스 에러 로깅 헬퍼 함수
@@ -42,9 +48,7 @@ const runInTransaction = async (
 
 // 알약 보관함 SQLite 데이터 소스 인터페이스
 export interface IPillSaveDataSource {
-  getFolders(
-    orderBySql: string,
-  ): Promise<(ISavedPillFolder & { pill_count: number })[]>;
+  getFolders(sortBy: FolderSortOption): Promise<ISavedFolderWithPillCount[]>;
 
   getFolderPreviewImages(folderId: number): Promise<string[]>;
 
@@ -65,15 +69,15 @@ export interface IPillSaveDataSource {
   ): Promise<void>;
 
   movePillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     sourceFolderId: number,
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }>;
+  ): Promise<IPillSaveOperationResult>;
 
   copyPillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }>;
+  ): Promise<IPillSaveOperationResult>;
 
   deletePillFromFolder(itemSeq: string, folderId: number): Promise<boolean>;
 
@@ -83,9 +87,15 @@ export interface IPillSaveDataSource {
 // SQLite 기반 알약 보관함 데이터 소스 구현체
 export const pillSaveSqliteDataSource: IPillSaveDataSource = {
   // 폴더 목록 및 각 폴더별 알약 개수 조회
-  async getFolders(orderBySql: string) {
+  async getFolders(sortBy: FolderSortOption) {
     try {
       const db = await getDatabase();
+      const orderBySql: Record<FolderSortOption, string> = {
+        createdAt_desc: 'f.created_at DESC',
+        createdAt_asc: 'f.created_at ASC',
+        name_asc: 'f.name ASC',
+        pillCount_desc: 'pill_count DESC, f.created_at DESC',
+      };
 
       const selectFoldersQuery = `
         SELECT 
@@ -95,7 +105,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         ORDER BY f.is_default DESC, ${orderBySql}
       `;
 
-      return await db.getAllAsync<ISavedPillFolder & { pill_count: number }>(
+      return await db.getAllAsync<ISavedFolderWithPillCount>(
         selectFoldersQuery,
       );
     } catch (e) {
@@ -263,10 +273,10 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
 
   // 알약 다중 이동 처리
   async movePillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     sourceFolderId: number,
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }> {
+  ): Promise<IPillSaveOperationResult> {
     try {
       if (items.length === 0 || targetFolderIds.length === 0) {
         return { alreadyExistsItems: [] };
@@ -308,7 +318,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
 
       const alreadyExistsItemsMap = new Map<
         string,
-        { seq: string; name: string }
+        IPillSaveOperationItem
       >();
 
       existingCombinations.forEach((c) =>
@@ -363,9 +373,9 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
 
   // 알약 다중 복사 처리
   async copyPillsToFolders(
-    items: { seq: string; name: string }[],
+    items: IPillSaveOperationItem[],
     targetFolderIds: number[],
-  ): Promise<{ alreadyExistsItems: { seq: string; name: string }[] }> {
+  ): Promise<IPillSaveOperationResult> {
     try {
       if (items.length === 0 || targetFolderIds.length === 0) {
         return { alreadyExistsItems: [] };
@@ -407,7 +417,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
 
       const alreadyExistsItemsMap = new Map<
         string,
-        { seq: string; name: string }
+        IPillSaveOperationItem
       >();
 
       existingCombinations.forEach((c) =>

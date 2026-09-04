@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
-import { ISavedPillFolder } from '@services/database/types';
+import {
+  IPillSaveOperationItem,
+  ISavedFolderWithMeta,
+} from '@features/pill_save/types/pill_save_folder_type';
 import { useToast } from '@hooks/use_toast';
 import {
   validateFolderCreation,
@@ -12,7 +15,7 @@ interface UseFolderSelectModalProps {
   isVisible: boolean;
   itemSeq?: string;
   itemName?: string;
-  items?: { seq: string; name: string }[];
+  items?: IPillSaveOperationItem[];
   mode?: 'save' | 'move' | 'copy';
   sourceId?: number;
   initialSelectedIds: number[];
@@ -32,9 +35,7 @@ export const useFolderSelectModal = ({
   onSaveComplete,
   onClose,
 }: UseFolderSelectModalProps) => {
-  const [folders, setFolders] = useState<
-    (ISavedPillFolder & { pill_count: number })[]
-  >([]);
+  const [folders, setFolders] = useState<ISavedFolderWithMeta[]>([]);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isAdding, setIsAdding] = useState(false);
@@ -194,7 +195,7 @@ export const useFolderSelectModal = ({
 
   // 폴더 저장/이동/복사 작업을 실행하고 결과를 반환하는 헬퍼 함수
   const executeSaveOperation = async () => {
-    let alreadyExistsItems: { seq: string; name: string }[] = [];
+    let alreadyExistsItems: IPillSaveOperationItem[] = [];
 
     const isMoveOperation = mode === 'move' && items && sourceId !== undefined;
     const isCopyOperation = mode === 'copy' && items;
@@ -222,7 +223,7 @@ export const useFolderSelectModal = ({
 
   // 중복된 알약에 대한 토스트 메시지를 표시하는 헬퍼 함수
   const showAlreadyExistsToast = (
-    alreadyExistsItems: { seq: string; name: string }[],
+    alreadyExistsItems: IPillSaveOperationItem[],
   ) => {
     const hasNoDuplicate = alreadyExistsItems.length === 0;
 
