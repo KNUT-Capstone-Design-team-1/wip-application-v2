@@ -90,6 +90,18 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
   async getFolders(sortBy: FolderSortOption) {
     try {
       const db = await getDatabase();
+
+      await db.runAsync(
+        `
+        INSERT INTO saved_pill_folders (name, is_default, sort_order)
+        SELECT ?, 1, 0
+        WHERE NOT EXISTS (
+          SELECT 1 FROM saved_pill_folders WHERE is_default = 1
+        )
+      `,
+        ['기본'],
+      );
+
       const orderBySql: Record<FolderSortOption, string> = {
         createdAt_desc: 'f.created_at DESC',
         createdAt_asc: 'f.created_at ASC',
@@ -102,7 +114,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
           f.*, 
           (SELECT COUNT(*) FROM saved_pills p WHERE p.folder_id = f.id) as pill_count 
         FROM saved_pill_folders f 
-        ORDER BY f.is_default DESC, ${orderBySql}
+        ORDER BY f.is_default DESC, ${orderBySql[sortBy]}
       `;
 
       return await db.getAllAsync<ISavedFolderWithPillCount>(
@@ -316,10 +328,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         )
         .filter((c) => existingSet.has(`${c.targetId}_${c.item.seq}`));
 
-      const alreadyExistsItemsMap = new Map<
-        string,
-        IPillSaveOperationItem
-      >();
+      const alreadyExistsItemsMap = new Map<string, IPillSaveOperationItem>();
 
       existingCombinations.forEach((c) =>
         alreadyExistsItemsMap.set(c.item.seq, c.item),
@@ -415,10 +424,7 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         )
         .filter((c) => existingSet.has(`${c.targetId}_${c.item.seq}`));
 
-      const alreadyExistsItemsMap = new Map<
-        string,
-        IPillSaveOperationItem
-      >();
+      const alreadyExistsItemsMap = new Map<string, IPillSaveOperationItem>();
 
       existingCombinations.forEach((c) =>
         alreadyExistsItemsMap.set(c.item.seq, c.item),
