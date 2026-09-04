@@ -1,12 +1,16 @@
 import { useMemo, useCallback } from 'react';
 import { Region } from 'react-native-maps';
 import { nearbyPharmacyService } from '@features/nearby_pharmacy/services/nearby_pharmacy_service';
+import {
+  ILastFetchedCenter,
+  IPharmacySearchCoordinates,
+} from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 지도의 이동 거리를 계산하여 '이 위치에서 재검색' 버튼 노출 여부를 제어하는 커스텀 훅 (Presentation Layer)
 export const useResearchPharmacy = (
   region: Region | null,
-  lastFetchedCenter: { lat: number; lng: number } | null,
-  fetchPharmacies: (coords: { x: number; y: number }) => void,
+  lastFetchedCenter: ILastFetchedCenter | null,
+  fetchPharmacies: (coords: IPharmacySearchCoordinates) => void,
 ) => {
   // 현재 뷰포트 이동량 기준 재검색 노출 여부 계산
   const shouldResearch = useMemo(() => {
@@ -17,7 +21,9 @@ export const useResearchPharmacy = (
   const handleResearchHere = useCallback(() => {
     const hasRegion = Boolean(region);
 
-    if (hasRegion && region) {
+    const canResearchAtRegion = hasRegion && Boolean(region);
+
+    if (canResearchAtRegion) {
       fetchPharmacies({ x: region.longitude, y: region.latitude });
     }
   }, [fetchPharmacies, region]);

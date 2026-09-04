@@ -18,6 +18,11 @@ import {
 import { nearbyPharmacyService } from '@features/nearby_pharmacy/services/nearby_pharmacy_service';
 import { locationService } from '@features/nearby_pharmacy/services/location_service';
 import { pharmacyActionService } from '@features/nearby_pharmacy/services/pharmacy_action_service';
+import { ICoordinate } from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import {
+  ILastFetchedCenter,
+  IPharmacySearchCoordinates,
+} from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 주변 약국 지도 및 위치 기반 검색 프레젠테이션 커스텀 훅
 export const useNearbyPharmacy = () => {
@@ -37,10 +42,8 @@ export const useNearbyPharmacy = () => {
   >(null);
 
   // 마지막으로 조회가 수행된 지도 중심 좌표 상태
-  const [lastFetchedCenter, setLastFetchedCenter] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [lastFetchedCenter, setLastFetchedCenter] =
+    useState<ILastFetchedCenter | null>(null);
 
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<MapView | null>(null);
@@ -77,7 +80,9 @@ export const useNearbyPharmacy = () => {
   const initialRegion = useMemo(() => {
     const hasLocation = Boolean(location);
 
-    if (hasLocation && location) {
+    const canUseLocation = hasLocation && Boolean(location);
+
+    if (canUseLocation) {
       return {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -152,7 +157,7 @@ export const useNearbyPharmacy = () => {
 
   // 주어진 좌표 기준 약국 목록 비동기 조회
   const fetchPharmacies = useCallback(
-    async (coords: { x: number; y: number }) => {
+    async (coords: IPharmacySearchCoordinates) => {
       try {
         setLoading(true);
 
@@ -179,7 +184,7 @@ export const useNearbyPharmacy = () => {
 
   // 지도 카메라를 지정 좌표로 이동
   const centerMapOn = useCallback(
-    (coords: { latitude: number; longitude: number }) => {
+    (coords: ICoordinate) => {
       mapRef.current?.animateToRegion(
         {
           latitude: coords.latitude,
@@ -197,13 +202,18 @@ export const useNearbyPharmacy = () => {
   const checkPermissionsAndServices = useCallback(async () => {
     const checkResult = await locationService.checkLocationAvailability();
 
-    if (!checkResult.success) {
-      if (checkResult.reason === 'permission_denied') {
+    const isUnavailable = !checkResult.success;
+
+    if (isUnavailable) {
+      const isPermissionDenied = checkResult.reason === 'permission_denied';
+      const isGpsDisabled = checkResult.reason === 'gps_disabled';
+
+      if (isPermissionDenied) {
         showToast({
           type: 'default',
           message: '위치 권한이 거부되었습니다.',
         });
-      } else if (checkResult.reason === 'gps_disabled') {
+      } else if (isGpsDisabled) {
         showToast({
           type: 'default',
           message: '위치 서비스(GPS)가 꺼져 있습니다.',
@@ -233,7 +243,9 @@ export const useNearbyPharmacy = () => {
       const lastLocation = await locationService.getLastKnownLocation();
       const hasLastLocation = Boolean(lastLocation);
 
-      if (hasLastLocation && lastLocation) {
+      const canUseLastLocation = hasLastLocation && Boolean(lastLocation);
+
+      if (canUseLastLocation) {
         setLocation(lastLocation);
         centerMapOn(lastLocation.coords);
         hasLocation = true;
@@ -244,7 +256,10 @@ export const useNearbyPharmacy = () => {
         await locationService.getCurrentPositionWithFallback();
       const hasCurrentLocation = Boolean(currentLocation);
 
-      if (hasCurrentLocation && currentLocation) {
+      const canUseCurrentLocation =
+        hasCurrentLocation && Boolean(currentLocation);
+
+      if (canUseCurrentLocation) {
         setLocation(currentLocation);
         centerMapOn(currentLocation.coords);
         hasLocation = true;
@@ -267,7 +282,9 @@ export const useNearbyPharmacy = () => {
   useEffect(() => {
     const hasLocation = Boolean(location);
 
-    if (hasLocation && location) {
+    const canFetchForLocation = hasLocation && Boolean(location);
+
+    if (canFetchForLocation) {
       fetchPharmacies({
         x: location.coords.longitude,
         y: location.coords.latitude,

@@ -1,5 +1,7 @@
 import { INearbyPharmacies } from '@services/database/types';
-import { Region } from 'react-native-maps';
+import { RefObject } from 'react';
+import { EdgeInsets } from 'react-native-safe-area-context';
+import MapView, { LatLng, Region } from 'react-native-maps';
 import { AnyProps, ClusterFeature, PointFeature } from 'supercluster';
 
 // 지도 좌표 인터페이스
@@ -19,6 +21,8 @@ export type { Region };
 export interface IPharmacyPointProps extends AnyProps {
   pharmacyId: string;
 }
+
+export type TPharmacyPointFeature = PointFeature<IPharmacyPointProps>;
 
 // 클러스터 아이템 타입
 export type TPharmacyClusterItem =
@@ -53,4 +57,23 @@ export interface IPharmacyClusterListProps {
 
   // 닫기 핸들러
   onClosePress: () => void;
+}
+
+export interface IPharmacyMarkerProps {
+  coordinate: LatLng;
+  pharmacy: INearbyPharmacies;
+  selected: boolean;
+  onPress: (pharmacy: INearbyPharmacies) => void;
+}
+
+export interface IPharmacyMapProps {
+  mapRef: RefObject<MapView | null>;
+  initialRegion: Region;
+  onRegionChangeComplete: (region: Region) => void;
+  insets: EdgeInsets;
+  clusters: TPharmacyClusterItem[];
+  pharmaciesById: Map<string, INearbyPharmacies>;
+  selectedPharmacyId?: string;
+  onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
+  onClusterPress: (clusterId: number) => void;
 }

@@ -12,7 +12,9 @@ export class PharmacyActionService {
 
   // 전화번호 문자열 정제 (숫자 및 다이얼 기호만 추출)
   formatPhoneNumber(telephone: string): string {
-    if (!telephone) {
+    const hasNoTelephone = !telephone;
+
+    if (hasNoTelephone) {
       return '';
     }
     return telephone.replace(/[^0-9+*#]/g, '');
@@ -21,7 +23,9 @@ export class PharmacyActionService {
   // 약국 전화 걸기 실행
   async callPharmacy(telephone: string): Promise<boolean> {
     const digits = this.formatPhoneNumber(telephone);
-    if (!digits) {
+    const hasNoDigits = !digits;
+
+    if (hasNoDigits) {
       return false;
     }
 
@@ -36,7 +40,9 @@ export class PharmacyActionService {
 
   // 약국 정보/주소 클립보드 복사 실행
   async copyText(text: string): Promise<boolean> {
-    if (!text || !text.trim()) {
+    const hasNoText = !text || !text.trim();
+
+    if (hasNoText) {
       return false;
     }
 

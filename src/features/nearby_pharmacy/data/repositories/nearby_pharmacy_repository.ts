@@ -6,12 +6,13 @@ import {
   INearbyPharmacies,
   TNearbyPharmaciesSearchParam,
 } from '@services/database/types';
+import { IPharmacySearchOptions } from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 주변 약국 리포지토리 인터페이스
 export interface INearbyPharmacyRepository {
   getNearbyPharmacies(
     params: Partial<TNearbyPharmaciesSearchParam>,
-    queryOption?: { page?: number; limit?: number },
+    queryOption?: IPharmacySearchOptions,
   ): Promise<INearbyPharmacies[]>;
 }
 
@@ -24,7 +25,7 @@ export class NearbyPharmacyRepository implements INearbyPharmacyRepository {
   // 주변 약국 목록 조회
   async getNearbyPharmacies(
     params: Partial<TNearbyPharmaciesSearchParam>,
-    queryOption: { page?: number; limit?: number } = {},
+    queryOption: IPharmacySearchOptions = {},
   ): Promise<INearbyPharmacies[]> {
     const page = queryOption.page ?? 1;
     const limit = queryOption.limit ?? 50;

@@ -37,13 +37,17 @@ export const useClusterSelection = ({
         .map((id) => pharmaciesById.get(id))
         .filter((p): p is INearbyPharmacies => !!p);
 
-      if (list.length === 0) {
+      const hasNoPharmacies = list.length === 0;
+
+      if (hasNoPharmacies) {
         return;
       }
 
       const center = nearbyPharmacyService.calculateCenterCoordinate(list);
 
-      if (center) {
+      const hasCenter = Boolean(center);
+
+      if (hasCenter) {
         // 현재 줌에서 2배 확대 (델타 절반), 최대 확대 제한
         const newLatDelta = Math.max(region.latitudeDelta / 2, 0.002);
         const newLngDelta = Math.max(region.longitudeDelta / 2, 0.002);

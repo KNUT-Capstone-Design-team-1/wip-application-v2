@@ -10,6 +10,14 @@ import {
   RESEARCH_DISPLACEMENT_RATIO,
   RESEARCH_MAX_DISPLACEMENT_KM,
 } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
+import {
+  ICoordinate,
+} from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import {
+  ILastFetchedCenter,
+  IPharmacySearchCoordinates,
+  IPharmacySearchOptions,
+} from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 주변 약국 비즈니스 로직 서비스
 export class NearbyPharmacyService {
@@ -19,8 +27,8 @@ export class NearbyPharmacyService {
 
   // 주어진 좌표(X: 경도, Y: 위도) 기준 주변 약국 목록 조회
   async searchNearbyPharmacies(
-    coords: { x: number; y: number },
-    options: { page?: number; limit?: number } = {},
+    coords: IPharmacySearchCoordinates,
+    options: IPharmacySearchOptions = {},
   ): Promise<INearbyPharmacies[]> {
     return await this.pharmacyRepository.getNearbyPharmacies(
       { coordinate: coords },
@@ -31,7 +39,7 @@ export class NearbyPharmacyService {
   // 지도 이동 거리를 계산하여 '이 위치에서 재검색' 노출 여부 판별
   checkShouldResearch(
     region: Region | null,
-    lastFetchedCenter: { lat: number; lng: number } | null,
+    lastFetchedCenter: ILastFetchedCenter | null,
   ): boolean {
     const isMissingCenterOrRegion = !lastFetchedCenter || !region;
 
@@ -57,19 +65,33 @@ export class NearbyPharmacyService {
   // 약국 목록의 중심 위경도 좌표 계산
   calculateCenterCoordinate(
     pharmacies: INearbyPharmacies[],
-  ): { latitude: number; longitude: number } | null {
-    if (!pharmacies || pharmacies.length === 0) {
+  ): ICoordinate | null {
+    const hasNoPharmacies = pharmacies.length === 0;
+
+    if (hasNoPharmacies) {
       return null;
     }
 
-    const coordinates = pharmacies
+    const coordinates: ICoordinate[] = pharmacies
       .map((p) => ({
         latitude: parseFloat(p.Y),
         longitude: parseFloat(p.X),
       }))
-      .filter((c) => !isNaN(c.latitude) && !isNaN(c.longitude));
+      .filter((coordinate) => {
+        const isValidCoordinate =
+          Number.isFinite(coordinate.latitude) &&
+          Number.isFinite(coordinate.longitude) &&
+          coordinate.latitude >= -90 &&
+          coordinate.latitude <= 90 &&
+          coordinate.longitude >= -180 &&
+          coordinate.longitude <= 180;
 
-    if (coordinates.length === 0) {
+        return isValidCoordinate;
+      });
+
+    const hasNoValidCoordinates = coordinates.length === 0;
+
+    if (hasNoValidCoordinates) {
       return null;
     }
 

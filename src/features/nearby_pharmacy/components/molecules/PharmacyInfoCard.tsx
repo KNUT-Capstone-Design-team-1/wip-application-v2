@@ -28,7 +28,9 @@ const PharmacyInfoCard = ({
   const handlePhonePress = () => {
     const isStockInquiry = Boolean(onStockInquiryPress);
 
-    if (isStockInquiry && onStockInquiryPress) {
+    const canStockInquiry = isStockInquiry && Boolean(onStockInquiryPress);
+
+    if (canStockInquiry) {
       onStockInquiryPress(pharmacy.telephone);
     } else {
       callPharmacy(pharmacy.telephone);

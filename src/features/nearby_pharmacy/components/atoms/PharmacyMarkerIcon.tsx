@@ -13,7 +13,9 @@ interface IPharmacyMarkerIconProps {
 
 // 개별 약국 마커의 아이콘(선택 여부에 따라 디자인 변경)을 렌더링하는 컴포넌트
 const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
-  if (!selected) {
+  const isUnselected = !selected;
+
+  if (isUnselected) {
     return (
       <View style={styles.unselectedOuter}>
         <View style={styles.unselectedMiddle}>

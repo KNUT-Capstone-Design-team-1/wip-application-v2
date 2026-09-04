@@ -33,3 +33,21 @@ export interface IPharmacyQueryParams {
   // 최대 조회 건수
   limit: number;
 }
+
+// 약국 검색 좌표 타입
+export interface IPharmacySearchCoordinates {
+  x: number;
+  y: number;
+}
+
+// 약국 목록 조회 옵션 타입
+export interface IPharmacySearchOptions {
+  page?: number;
+  limit?: number;
+}
+
+// 마지막 약국 조회 중심 좌표 타입
+export interface ILastFetchedCenter {
+  lat: number;
+  lng: number;
+}

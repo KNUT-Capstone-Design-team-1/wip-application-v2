@@ -9,6 +9,7 @@ export * from './hooks/use_stock_inquiry';
 
 // Business Logic
 export * from './services/nearby_pharmacy_service';
+export * from './services/pharmacy_cluster_service';
 export * from './services/location_service';
 export * from './services/pharmacy_action_service';
 

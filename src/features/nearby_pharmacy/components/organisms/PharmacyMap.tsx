@@ -1,23 +1,9 @@
-import React, { RefObject, memo } from 'react';
+import React, { memo } from 'react';
 import MapView, { Region } from 'react-native-maps';
-import { EdgeInsets } from 'react-native-safe-area-context';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { bottomTabSize } from '@constants/size';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
-import { INearbyPharmacies } from '@services/database/types';
-import { TPharmacyClusterItem } from '@features/nearby_pharmacy/hooks/use_pharmacy_clusters';
-
-interface IPharmacyMapProps {
-  mapRef: RefObject<MapView | null>;
-  initialRegion: Region;
-  onRegionChangeComplete: (region: Region) => void;
-  insets: EdgeInsets;
-  clusters: TPharmacyClusterItem[];
-  pharmaciesById: Map<string, INearbyPharmacies>;
-  selectedPharmacyId?: string;
-  onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
-  onClusterPress: (clusterId: number) => void;
-}
+import { IPharmacyMapProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 
 // react-native-maps의 MapView를 감싸고 마커 및 클러스터 렌더링을 담당하는 지도 컴포넌트
 const PharmacyMap = ({

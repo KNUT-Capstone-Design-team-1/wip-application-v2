@@ -19,12 +19,16 @@ export class LocationService {
   // 위치 권한 및 GPS 활성화 여부 확인
   async checkLocationAvailability(): Promise<TLocationCheckResult> {
     const { status } = await this.repository.requestForegroundPermissions();
-    if (status !== 'granted') {
+    const isPermissionDenied = status !== 'granted';
+
+    if (isPermissionDenied) {
       return { success: false, reason: 'permission_denied' };
     }
 
     const enabled = await this.repository.hasServicesEnabled();
-    if (!enabled) {
+    const isGpsDisabled = !enabled;
+
+    if (isGpsDisabled) {
       return { success: false, reason: 'gps_disabled' };
     }
 

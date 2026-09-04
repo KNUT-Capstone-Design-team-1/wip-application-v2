@@ -69,7 +69,9 @@ const NearbyPharmacyScreen = () => {
   );
 
   // 초기 로딩 중이며 위치 정보가 아직 없을 때만 로딩 스피너 표시
-  if (loading && !location) {
+  const shouldShowLoading = loading && !location;
+
+  if (shouldShowLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={COLOR['primary']} />
