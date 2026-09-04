@@ -16,6 +16,8 @@ export interface ISavedFolderWithPillCount extends ISavedPillFolder {
 export interface IPillSaveOperationItem {
   seq: string;
   name: string;
+  folderId?: number;
+  folderName?: string;
 }
 
 export interface IPillSaveOperationResult {

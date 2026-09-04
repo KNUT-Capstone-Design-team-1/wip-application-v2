@@ -303,20 +303,29 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const itemPlaceholders = createPlaceholders(itemSeqs.length);
 
       const selectExistingPillsQuery = `
-        SELECT folder_id, item_seq 
-        FROM saved_pills 
-        WHERE folder_id IN (${targetPlaceholders}) 
-          AND item_seq IN (${itemPlaceholders})
+        SELECT s.folder_id, s.item_seq, f.name as folder_name 
+        FROM saved_pills s
+        LEFT JOIN saved_pill_folders f ON s.folder_id = f.id
+        WHERE s.folder_id IN (${targetPlaceholders}) 
+          AND s.item_seq IN (${itemPlaceholders})
       `;
 
       const existingRows = await db.getAllAsync<{
         folder_id: number;
         item_seq: string;
+        folder_name: string | null;
       }>(selectExistingPillsQuery, [...targetFolderIds, ...itemSeqs]);
 
       const existingSet = new Set(
         existingRows.map((r) => `${r.folder_id}_${r.item_seq}`),
       );
+
+      const folderNameMap = new Map<number, string>();
+      existingRows.forEach((r) => {
+        if (r.folder_name) {
+          folderNameMap.set(r.folder_id, r.folder_name);
+        }
+      });
 
       const combinations = items
         .flatMap((item) =>
@@ -333,7 +342,11 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const alreadyExistsItemsMap = new Map<string, IPillSaveOperationItem>();
 
       existingCombinations.forEach((c) =>
-        alreadyExistsItemsMap.set(c.item.seq, c.item),
+        alreadyExistsItemsMap.set(`${c.targetId}_${c.item.seq}`, {
+          ...c.item,
+          folderId: c.targetId,
+          folderName: folderNameMap.get(c.targetId) || '',
+        }),
       );
 
       // 대상 폴더에 없는 알약만 기존 폴더에서 삭제 (이미 존재하는 알약은 삭제하지 않음)
@@ -398,20 +411,29 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const itemPlaceholders = createPlaceholders(itemSeqs.length);
 
       const selectExistingPillsQuery = `
-        SELECT folder_id, item_seq 
-        FROM saved_pills 
-        WHERE folder_id IN (${targetPlaceholders}) 
-          AND item_seq IN (${itemPlaceholders})
+        SELECT s.folder_id, s.item_seq, f.name as folder_name 
+        FROM saved_pills s
+        LEFT JOIN saved_pill_folders f ON s.folder_id = f.id
+        WHERE s.folder_id IN (${targetPlaceholders}) 
+          AND s.item_seq IN (${itemPlaceholders})
       `;
 
       const existingRows = await db.getAllAsync<{
         folder_id: number;
         item_seq: string;
+        folder_name: string | null;
       }>(selectExistingPillsQuery, [...targetFolderIds, ...itemSeqs]);
 
       const existingSet = new Set(
         existingRows.map((r) => `${r.folder_id}_${r.item_seq}`),
       );
+
+      const folderNameMap = new Map<number, string>();
+      existingRows.forEach((r) => {
+        if (r.folder_name) {
+          folderNameMap.set(r.folder_id, r.folder_name);
+        }
+      });
 
       const combinations = items
         .flatMap((item) =>
@@ -428,7 +450,11 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
       const alreadyExistsItemsMap = new Map<string, IPillSaveOperationItem>();
 
       existingCombinations.forEach((c) =>
-        alreadyExistsItemsMap.set(c.item.seq, c.item),
+        alreadyExistsItemsMap.set(`${c.targetId}_${c.item.seq}`, {
+          ...c.item,
+          folderId: c.targetId,
+          folderName: folderNameMap.get(c.targetId) || '',
+        }),
       );
 
       if (combinations.length > 0) {

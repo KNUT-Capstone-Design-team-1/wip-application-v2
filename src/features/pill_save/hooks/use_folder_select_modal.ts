@@ -10,7 +10,6 @@ import {
   validateFolderSelectionLimit,
   validatePillLimit,
 } from '../utils/pill_save_validator';
-import { useCommonModalStore } from '@store/common_modal_store';
 
 interface UseFolderSelectModalProps {
   isVisible: boolean;
@@ -45,7 +44,6 @@ export const useFolderSelectModal = ({
   const [isSaving, setIsSaving] = useState(false);
 
   const { showToast } = useToast();
-  const { showModal } = useCommonModalStore();
 
   // 폴더 목록을 조회하고 이동/복사 모드의 현재 폴더를 앞에 배치한다.
   const loadFolders = useCallback(async () => {
@@ -236,16 +234,43 @@ export const useFolderSelectModal = ({
     const isOnlyOne = alreadyExistsItems.length === 1;
     const isMoveMode = mode === 'move';
 
+    // 중복 알약이 속한 고유 대상 폴더 이름 목록 추출
+    const targetFolderNames = Array.from(
+      new Set(
+        alreadyExistsItems
+          .map((item) => {
+            if (item.folderName) return item.folderName;
+            if (item.folderId) {
+              const matched = folders.find((f) => f.id === item.folderId);
+              if (matched) return matched.name;
+            }
+            return '';
+          })
+          .filter(Boolean),
+      ),
+    );
+
+    const firstFolderName =
+      targetFolderNames[0] ||
+      folders.find((f) => selectedIds.includes(f.id))?.name ||
+      '선택한 폴더';
+
+    const folderCount = targetFolderNames.length;
+    const folderText =
+      folderCount > 1
+        ? `'${firstFolderName}' 외 ${folderCount - 1}개 폴더`
+        : `'${firstFolderName}' 폴더`;
+
     let message: string;
 
     if (isMoveMode) {
       message = isOnlyOne
-        ? `${alreadyExistsItems[0].name}은(는) 대상 폴더에 이미 존재하여 이동되지 않았습니다.`
-        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 대상 폴더에 이미 존재하여 이동되지 않았습니다.`;
+        ? `${alreadyExistsItems[0].name}은(는) ${folderText}에 이미 존재하여 이동되지 않았습니다.`
+        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 ${folderText}에 이미 존재하여 이동되지 않았습니다.`;
     } else {
       message = isOnlyOne
-        ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
-        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
+        ? `${alreadyExistsItems[0].name}은(는) ${folderText}에 이미 존재합니다.`
+        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 ${folderText}에 이미 존재합니다.`;
     }
 
     showToast({
@@ -292,31 +317,17 @@ export const useFolderSelectModal = ({
     setIsSaving(true);
 
     try {
-      const savedFolderIds =
-        mode === 'save' && itemSeq
-          ? await pillSaveService.getPillSavedFolderIds(itemSeq)
-          : [];
-
       const alreadyExistsItems = await executeSaveOperation();
-
-      if (
-        mode === 'save' &&
-        itemSeq &&
-        itemName &&
-        selectedIds.some((folderId) => savedFolderIds.includes(folderId))
-      ) {
-        alreadyExistsItems.push({ seq: itemSeq, name: itemName });
-      }
 
       onSaveComplete(selectedIds);
       onClose();
 
-      const hasDuplicate = alreadyExistsItems.length > 0;
       const isMoveMode = mode === 'move';
       const isCopyMode = mode === 'copy';
+      const hasDuplicate = alreadyExistsItems.length > 0;
 
       if (hasDuplicate) {
-        // 이동 모드: 이동된 항목이 있으면 성공 토스트와 함께, 전부 중복이면 중복 토스트만
+        // 이동/복사 모드: 이동된 항목이 있으면 성공 토스트와 함께, 전부 중복이면 중복 토스트만
         const totalCount = items ? items.length : 1;
         const duplicateCount = alreadyExistsItems.length;
         const movedCount = totalCount - duplicateCount;
@@ -343,27 +354,8 @@ export const useFolderSelectModal = ({
     }
   };
 
-  // 저장 버튼 클릭 핸들러: 이동 모드에서는 확인 모달 출력 후 실행
+  // 저장 버튼 클릭 핸들러
   const handleSave = () => {
-    const isMoveMode = mode === 'move';
-
-    if (isMoveMode) {
-      const targetFolderName =
-        folders.find((f) => selectedIds.includes(f.id))?.name ?? '선택한 폴더';
-
-      showModal({
-        title: '알약 이동',
-        message: `기존 폴더에서 알약이 삭제되며\n"${targetFolderName}"(으)로 이동됩니다.\n이동하시겠습니까?`,
-        confirmText: '이동',
-        cancelText: '취소',
-        onConfirm: () => {
-          void executeSave();
-        },
-      });
-
-      return;
-    }
-
     void executeSave();
   };
 
