@@ -24,7 +24,16 @@ export const usePillReminderList = () => {
   // 화면 진입 시 알림 권한 확인/요청 및 알림 목록 갱신
   useFocusEffect(
     useCallback(() => {
-      pillReminderNotificationService.initPermissions();
+      void pillReminderNotificationService.initPermissions().then((granted) => {
+        if (!granted) {
+          Toast.show({
+            type: 'error',
+            text1: '알림 권한이 필요합니다.',
+            text2: '복용 알림을 받으려면 알림 권한을 허용해주세요.',
+          });
+        }
+      });
+
       fetchReminders();
     }, [fetchReminders]),
   );
