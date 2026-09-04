@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { IPillDetail } from '../features/pill_search_result_detail/types/pill_detail_type';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import logger from '../utils/logger';
 import { TRecentViewedPill } from '@common_types/recent_viewed_pill';
+import { recentViewedPillService } from '@features/home/services/recent_viewed_pill_service';
 
 interface IRecentViewedPillStore {
   recentViewedPills: TRecentViewedPill[];
@@ -17,27 +17,16 @@ export const useRecentViewedPillStore = create<IRecentViewedPillStore>(
     recentViewedPills: [],
     getRecentViewedPills: async () => {
       try {
-        const raw = await AsyncStorage.getItem('recentViewed');
-        if (raw) {
-          const pills: IPillDetail[] = JSON.parse(raw);
-          set({ recentViewedPills: pills });
-        }
+        const pills = await recentViewedPillService.getRecentViewedPills();
+        set({ recentViewedPills: pills });
       } catch (e) {
         logger.error(`Failed to load recent search pills: ${e.stack || e}`);
       }
     },
     setRecentViewedPills: async (pillData: TRecentViewedPill) => {
       try {
-        const { recentViewedPills } = get();
-
-        // 중복 제거 및 최신화
-        const filteredList = recentViewedPills.filter(
-          (item: TRecentViewedPill) => item.ITEM_SEQ !== pillData.ITEM_SEQ,
-        );
-
-        const updateList = [pillData, ...filteredList].slice(0, 7);
-
-        await AsyncStorage.setItem('recentViewed', JSON.stringify(updateList));
+        await recentViewedPillService.addRecentViewedPill(pillData);
+        const updateList = await recentViewedPillService.getRecentViewedPills();
         set({ recentViewedPills: updateList });
       } catch (e) {
         logger.error(`Failed to save recent search. ${e.stack || e}`);
@@ -45,14 +34,9 @@ export const useRecentViewedPillStore = create<IRecentViewedPillStore>(
     },
     deleteRecentViewed: async (itemSeq: string) => {
       try {
-        const { recentViewedPills } = get();
-        const updatedPills = recentViewedPills.filter(
-          (pill: TRecentViewedPill) => pill.ITEM_SEQ !== itemSeq,
-        );
-        await AsyncStorage.setItem(
-          'recentViewed',
-          JSON.stringify(updatedPills),
-        );
+        await recentViewedPillService.deleteRecentViewedPill(itemSeq);
+        const updatedPills =
+          await recentViewedPillService.getRecentViewedPills();
         set({ recentViewedPills: updatedPills });
       } catch (e) {
         logger.error(`Failed to delete recent search: ${e.stack || e}`);
@@ -60,7 +44,7 @@ export const useRecentViewedPillStore = create<IRecentViewedPillStore>(
     },
     resetRecentViewed: async () => {
       try {
-        await AsyncStorage.removeItem('recentViewed');
+        await recentViewedPillService.clearRecentViewedPills();
         set({ recentViewedPills: [] });
       } catch (e) {
         logger.error(`Failed to reset recent search: ${e.stack || e}`);
