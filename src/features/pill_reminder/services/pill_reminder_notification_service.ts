@@ -50,6 +50,7 @@ export class PillReminderNotificationService {
     }
   }
 
+  // 동시에 요청된 알림 권한 초기화를 하나의 작업으로 합친다.
   private async ensurePermissions() {
     if (!this.permissionInitialization) {
       this.permissionInitialization = this.initPermissions();
@@ -58,6 +59,7 @@ export class PillReminderNotificationService {
     return this.permissionInitialization;
   }
 
+  // 저장된 복용 알림을 OS의 반복 알림으로 다시 등록한다.
   // 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
   public async rescheduleAllNotifications() {
     try {

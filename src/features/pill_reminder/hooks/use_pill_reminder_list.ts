@@ -21,6 +21,7 @@ export const usePillReminderList = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  // 화면에 진입할 때 권한을 확인하고 거부 시 사용자에게 안내한다.
   // 화면 진입 시 알림 권한 확인/요청 및 알림 목록 갱신
   useFocusEffect(
     useCallback(() => {

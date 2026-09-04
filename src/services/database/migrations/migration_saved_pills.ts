@@ -9,6 +9,7 @@ interface ILegacySavedPill {
   ITEM_NAME?: string;
 }
 
+// 기존 AsyncStorage 알약 데이터가 마이그레이션 가능한 형식인지 확인한다.
 const isLegacySavedPill = (value: unknown): value is ILegacySavedPill => {
   if (!value || typeof value !== 'object') {
     return false;
@@ -18,6 +19,7 @@ const isLegacySavedPill = (value: unknown): value is ILegacySavedPill => {
   return typeof item.ITEM_SEQ === 'string' && item.ITEM_SEQ.length > 0;
 };
 
+// 기존 AsyncStorage 저장 데이터를 SQLite 기본 폴더로 이전한다.
 export const migrateAsyncStorageToSQLite = async (db: SQLiteDatabase) => {
   try {
     const raw = await AsyncStorage.getItem(SAVE_DATA_KEY);

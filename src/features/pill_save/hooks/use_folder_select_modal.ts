@@ -45,7 +45,7 @@ export const useFolderSelectModal = ({
 
   const { showToast } = useToast();
 
-  // 폴더 목록 불러오기
+  // 폴더 목록을 조회하고 이동/복사 모드의 현재 폴더를 앞에 배치한다.
   const loadFolders = useCallback(async () => {
     let data = await pillSaveService.getFolders();
 
@@ -101,7 +101,7 @@ export const useFolderSelectModal = ({
     setIsSaving(false);
   }, [isVisible, initialSelectedIds, loadFolders, mode]);
 
-  // 개별 폴더 선택/해제 토글 핸들러
+  // 선택한 폴더를 저장 대상에 추가하거나 대상에서 제거한다.
   const toggleFolder = (id: number) => {
     const isMoveOrCopyMode = mode === 'move' || mode === 'copy';
     const isSourceFolder = isMoveOrCopyMode && id === sourceId;
@@ -141,7 +141,7 @@ export const useFolderSelectModal = ({
     });
   };
 
-  // 새 폴더 생성 핸들러
+  // 새 폴더를 생성하고 저장 대상 폴더로 자동 선택한다.
   const handleCreateFolder = async () => {
     const trimmedName = newFolderName.trim();
 
@@ -193,7 +193,7 @@ export const useFolderSelectModal = ({
     setNewFolderName('');
   };
 
-  // 폴더 저장/이동/복사 작업을 실행하고 결과를 반환하는 헬퍼 함수
+  // 모드에 맞는 폴더 저장, 이동 또는 복사 작업을 실행한다.
   const executeSaveOperation = async () => {
     let alreadyExistsItems: IPillSaveOperationItem[] = [];
 
