@@ -45,9 +45,7 @@ export const useClusterSelection = ({
 
       const center = nearbyPharmacyService.calculateCenterCoordinate(list);
 
-      const hasCenter = Boolean(center);
-
-      if (hasCenter) {
+      if (center) {
         // 현재 줌에서 2배 확대 (델타 절반), 최대 확대 제한
         const newLatDelta = Math.max(region.latitudeDelta / 2, 0.002);
         const newLngDelta = Math.max(region.longitudeDelta / 2, 0.002);

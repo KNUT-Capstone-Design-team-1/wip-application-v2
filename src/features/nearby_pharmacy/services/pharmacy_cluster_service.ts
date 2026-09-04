@@ -68,9 +68,7 @@ export class PharmacyClusterService {
     index: Supercluster<IPharmacyPointProps> | null,
     region: Region | null,
   ): TPharmacyClusterItem[] {
-    const isReady = Boolean(index && region);
-
-    if (!isReady) {
+    if (!index || !region) {
       return [];
     }
 

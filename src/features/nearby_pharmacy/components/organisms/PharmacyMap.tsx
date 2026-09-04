@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import MapView, { Region } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { bottomTabSize } from '@constants/size';
 import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';

@@ -16,7 +16,8 @@ const PharmacyMarkers = ({
         const [longitude, latitude] = item.geometry.coordinates;
 
         // 네이티브 MapView에는 항상 유효한 좌표만 전달한다.
-        const isInvalidCoordinate = !Number.isFinite(latitude) ||
+        const isInvalidCoordinate =
+          !Number.isFinite(latitude) ||
           !Number.isFinite(longitude) ||
           latitude < -90 ||
           latitude > 90 ||

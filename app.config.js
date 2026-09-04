@@ -45,8 +45,6 @@ export default {
         NSUserNotificationsUsageDescription:
           '$(PRODUCT_NAME)에서 설정한 시간에 알약 복용 푸시 알림을 받기 위해 알림 권한이 필요합니다',
 
-        UIBackgroundModes: ['remote-notification'],
-
         LSApplicationQueriesSchemes: ['mailto'],
 
         ITSAppUsesNonExemptEncryption: false,
@@ -94,8 +92,6 @@ export default {
         'android.permission.POST_NOTIFICATIONS',
         'android.permission.VIBRATE',
         'android.permission.RECEIVE_BOOT_COMPLETED',
-        'android.permission.SCHEDULE_EXACT_ALARM',
-        'android.permission.USE_EXACT_ALARM',
         'com.google.android.gms.permission.AD_ID',
       ],
 

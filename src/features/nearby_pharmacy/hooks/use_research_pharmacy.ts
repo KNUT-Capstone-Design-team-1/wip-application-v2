@@ -19,11 +19,7 @@ export const useResearchPharmacy = (
 
   // 현재 지도 중심 위치 기준 재검색 실행 핸들러
   const handleResearchHere = useCallback(() => {
-    const hasRegion = Boolean(region);
-
-    const canResearchAtRegion = hasRegion && Boolean(region);
-
-    if (canResearchAtRegion) {
+    if (region) {
       fetchPharmacies({ x: region.longitude, y: region.latitude });
     }
   }, [fetchPharmacies, region]);

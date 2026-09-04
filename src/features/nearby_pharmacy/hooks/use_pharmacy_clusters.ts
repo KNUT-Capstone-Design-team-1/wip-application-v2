@@ -22,7 +22,10 @@ export const usePharmacyClusters = (
   // 특정 클러스터에 속한 모든 약국 ID 목록 반환 함수
   const getClusterPharmacyIds = useCallback(
     (clusterId: number): string[] => {
-      return pharmacyClusterService.getClusterPharmacyIds(clusterIndex, clusterId);
+      return pharmacyClusterService.getClusterPharmacyIds(
+        clusterIndex,
+        clusterId,
+      );
     },
     [clusterIndex],
   );

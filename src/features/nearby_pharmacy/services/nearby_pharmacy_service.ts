@@ -10,9 +10,7 @@ import {
   RESEARCH_DISPLACEMENT_RATIO,
   RESEARCH_MAX_DISPLACEMENT_KM,
 } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
-import {
-  ICoordinate,
-} from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import { ICoordinate } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 import {
   ILastFetchedCenter,
   IPharmacySearchCoordinates,

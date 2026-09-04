@@ -78,11 +78,7 @@ export const useNearbyPharmacy = () => {
 
   // 지도의 초기 영역 계산
   const initialRegion = useMemo(() => {
-    const hasLocation = Boolean(location);
-
-    const canUseLocation = hasLocation && Boolean(location);
-
-    if (canUseLocation) {
+    if (location) {
       return {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -189,20 +185,17 @@ export const useNearbyPharmacy = () => {
   );
 
   // 지도 카메라를 지정 좌표로 이동
-  const centerMapOn = useCallback(
-    (coords: ICoordinate) => {
-      mapRef.current?.animateToRegion(
-        {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          latitudeDelta: DEFAULT_LATITUDE_DELTA,
-          longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-        },
-        300,
-      );
-    },
-    [],
-  );
+  const centerMapOn = useCallback((coords: ICoordinate) => {
+    mapRef.current?.animateToRegion(
+      {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        latitudeDelta: DEFAULT_LATITUDE_DELTA,
+        longitudeDelta: DEFAULT_LONGITUDE_DELTA,
+      },
+      300,
+    );
+  }, []);
 
   // 위치 권한 및 GPS 활성화 여부 확인
   const checkPermissionsAndServices = useCallback(async () => {
@@ -247,11 +240,7 @@ export const useNearbyPharmacy = () => {
 
       // 마지막 위치 즉시 렌더링 시도
       const lastLocation = await locationService.getLastKnownLocation();
-      const hasLastLocation = Boolean(lastLocation);
-
-      const canUseLastLocation = hasLastLocation && Boolean(lastLocation);
-
-      if (canUseLastLocation) {
+      if (lastLocation) {
         setLocation(lastLocation);
         centerMapOn(lastLocation.coords);
         hasLocation = true;
@@ -260,12 +249,7 @@ export const useNearbyPharmacy = () => {
       // 최신 GPS 탐색
       const currentLocation =
         await locationService.getCurrentPositionWithFallback();
-      const hasCurrentLocation = Boolean(currentLocation);
-
-      const canUseCurrentLocation =
-        hasCurrentLocation && Boolean(currentLocation);
-
-      if (canUseCurrentLocation) {
+      if (currentLocation) {
         setLocation(currentLocation);
         centerMapOn(currentLocation.coords);
         hasLocation = true;
@@ -286,11 +270,7 @@ export const useNearbyPharmacy = () => {
 
   // 위치 상태 변경 시 약국 목록 갱신
   useEffect(() => {
-    const hasLocation = Boolean(location);
-
-    const canFetchForLocation = hasLocation && Boolean(location);
-
-    if (canFetchForLocation) {
+    if (location) {
       fetchPharmacies({
         x: location.coords.longitude,
         y: location.coords.latitude,
