@@ -72,6 +72,12 @@ export const usePillReminderList = () => {
     });
   }, []);
 
+  // 롱프레스 시 편집 모드 활성화 및 해당 아이템 선택 핸들러
+  const handleLongPressItem = useCallback((id: number) => {
+    setIsEditing(true);
+    setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  }, []);
+
   // 전체 선택 여부
   const allSelected = useMemo(() => {
     const hasItems = reminders.length > 0;
@@ -174,6 +180,7 @@ export const usePillReminderList = () => {
     handleToggleEdit,
     toggleSelect,
     toggleSelectAll,
+    handleLongPressItem,
     handleBackgroundPress,
     handleMultipleDelete,
     handleCreateReminder,

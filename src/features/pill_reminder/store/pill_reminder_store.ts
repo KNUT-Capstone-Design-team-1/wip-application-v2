@@ -67,15 +67,27 @@ export const usePillReminderStore = create<IPillReminderStore>((set, get) => ({
     }
   },
 
-  // 특정 복용 알림 활성/비활성 토글
+  // 특정 복용 알림 활성/비활성 토글 (낙관적 업데이트로 스위치 튕김 방지)
   toggleReminder: async (id: number, isEnabled: boolean) => {
+    // 1. UI 상태 즉시 변경
+    set((state) => ({
+      reminders: state.reminders.map((r) => {
+        if (r.id === id) {
+          return { ...r, is_enabled: isEnabled };
+        }
+        return r;
+      }),
+    }));
+
+    // 2. 백그라운드에서 DB 저장 및 알림 재스케줄링
     try {
       const success = await pillReminderService.toggleReminder(id, isEnabled);
-      if (success) {
+      if (!success) {
+        // 실패 시 이전 상태로 롤백
         set((state) => ({
           reminders: state.reminders.map((r) => {
             if (r.id === id) {
-              return { ...r, is_enabled: isEnabled };
+              return { ...r, is_enabled: !isEnabled };
             }
             return r;
           }),
@@ -83,6 +95,15 @@ export const usePillReminderStore = create<IPillReminderStore>((set, get) => ({
       }
       return success;
     } catch {
+      // 에러 발생 시 롤백
+      set((state) => ({
+        reminders: state.reminders.map((r) => {
+          if (r.id === id) {
+            return { ...r, is_enabled: !isEnabled };
+          }
+          return r;
+        }),
+      }));
       return false;
     }
   },

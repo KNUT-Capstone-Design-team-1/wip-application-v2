@@ -15,6 +15,12 @@ export const styles = StyleSheet.create({
   timeText: {
     color: COLOR_TEXT.title,
     marginRight: px(8),
+    minWidth: px(88),
+  },
+  timeTextDisabled: {
+    color: COLOR_TEXT.disabled,
+    marginRight: px(8),
+    minWidth: px(88),
   },
   dayBadge: {
     backgroundColor: COLOR_BG.base,

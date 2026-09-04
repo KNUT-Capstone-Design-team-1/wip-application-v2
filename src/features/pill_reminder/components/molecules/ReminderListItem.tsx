@@ -16,6 +16,7 @@ interface IReminderListItemProps {
   isEditing?: boolean;
   isSelected?: boolean;
   onPress: () => void;
+  onLongPress?: () => void;
   onToggle: (isEnabled: boolean) => void;
 }
 
@@ -26,6 +27,7 @@ export const ReminderListItem = memo(
     isEditing = false,
     isSelected = false,
     onPress,
+    onLongPress,
     onToggle,
   }: IReminderListItemProps) => {
     const daysText = formatReminderDays(reminder.days);
@@ -49,6 +51,7 @@ export const ReminderListItem = memo(
           !reminder.is_enabled && styles.disabledContainer,
         ]}
         onPress={onPress}
+        onLongPress={onLongPress}
         activeOpacity={0.7}
       >
         {/* 알림 이름 표시 */}

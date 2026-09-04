@@ -21,6 +21,7 @@ export const PillReminderListScreen = () => {
     handleToggleEdit,
     toggleSelect,
     toggleSelectAll,
+    handleLongPressItem,
     handleBackgroundPress,
     handleMultipleDelete,
     handleCreateReminder,
@@ -76,6 +77,11 @@ export const PillReminderListScreen = () => {
                     toggleSelect(reminder.id);
                   } else {
                     handleEditReminder(reminder.id);
+                  }
+                }}
+                onLongPress={() => {
+                  if (!isEditing) {
+                    handleLongPressItem(reminder.id);
                   }
                 }}
                 onToggle={(newVal) => handleToggle(reminder.id, !newVal)}

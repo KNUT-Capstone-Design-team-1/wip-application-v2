@@ -28,7 +28,7 @@ export const ReminderTimeHeader = memo(
         <BaseText
           size={18}
           weight="bold"
-          style={isEnabled ? styles.timeText : styles.disabledText}
+          style={isEnabled ? styles.timeText : styles.timeTextDisabled}
         >
           {formattedTime}
         </BaseText>
