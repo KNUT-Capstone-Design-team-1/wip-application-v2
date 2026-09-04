@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAppInitStore } from '../store/app_init_store';
 import { initDatabase } from '@services/database';
 import { AppConfigService } from '@services/index';
-import { ALL_DATA_TABLES, TDataTable } from '@services/database/types';
+import { TDataTable } from '@services/database/types';
 import logger from '@utils/logger';
 import { IUpdateProgress } from '../types';
 import {

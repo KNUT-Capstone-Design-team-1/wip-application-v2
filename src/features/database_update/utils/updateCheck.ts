@@ -1,4 +1,4 @@
-import { DatabaseUpdateService } from '@services/index';
+import { databaseUpdateService } from '../services/database_update_service';
 import { ALL_DATA_TABLES } from '@services/database/types';
 
 export interface IUpdateNeeded {
@@ -27,7 +27,7 @@ export const getRequiredDatabaseUpdates =
     const updatesNeeded: IUpdateNeeded[] = [];
 
     for (const table of ALL_DATA_TABLES) {
-      const result = await DatabaseUpdateService.checkRequireTableUpdate(table);
+      const result = await databaseUpdateService.checkRequireTableUpdate(table);
 
       if (result.code === 'REQUIRE-UPDATE') {
         updatesNeeded.push({

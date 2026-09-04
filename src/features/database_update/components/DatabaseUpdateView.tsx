@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ANI_DURATION = 500;
 
+// 데이터베이스 업데이트 진행 화면
 const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
   status,
   progress,
@@ -30,7 +31,7 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
       duration: ANI_DURATION,
       easing: Easing.out(Easing.cubic),
     });
-  }, [isUpdating]);
+  }, [flexValue, isUpdating]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

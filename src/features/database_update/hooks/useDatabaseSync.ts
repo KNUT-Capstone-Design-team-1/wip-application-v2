@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAppInitStore } from '../store/app_init_store';
-import { DatabaseUpdateService } from '@services/index';
+import { databaseUpdateService } from '../services/database_update_service';
 import logger from '@utils/logger';
 import { TABLE_NAME_MAP } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
@@ -43,7 +43,7 @@ export const useDatabaseSync = (
     // 데이터 삽입 완료 후 누락된 데이터가 없는지 검증
     const verifyDataIntegrity = async () => {
       const actualCount =
-        await DatabaseUpdateService.getTableRowCount(updateCurrentTable);
+        await databaseUpdateService.getTableRowCount(updateCurrentTable);
 
       const expectedCount = expectedTotalCountRef.current;
 
@@ -61,7 +61,7 @@ export const useDatabaseSync = (
       );
 
       if (currentUpdateInfo) {
-        await DatabaseUpdateService.updateDatabaseVersion(
+        await databaseUpdateService.updateDatabaseVersion(
           updateCurrentTable,
           currentUpdateInfo.schemaVer,
           currentUpdateInfo.dataVer,
@@ -85,7 +85,7 @@ export const useDatabaseSync = (
         });
 
         // 해당 테이블 첫 페이지부터 다시 시작하도록 상태 롤백
-        await DatabaseUpdateService.initTable(updateCurrentTable);
+        await databaseUpdateService.initTable(updateCurrentTable);
         setUpdateCurrentPage(1);
         return;
       }
@@ -136,7 +136,7 @@ export const useDatabaseSync = (
           });
 
           const initResult =
-            await DatabaseUpdateService.initTable(updateCurrentTable);
+            await databaseUpdateService.initTable(updateCurrentTable);
 
           if (initResult !== 'OK') {
             throw new Error(`Failed init table ${updateCurrentTable}`);
@@ -144,7 +144,7 @@ export const useDatabaseSync = (
         }
 
         // 데이터 삽입 (페이지 단위)
-        const insertResult = await DatabaseUpdateService.insertData(
+        const insertResult = await databaseUpdateService.insertData(
           updateCurrentPage,
           updateCurrentTable,
         );
