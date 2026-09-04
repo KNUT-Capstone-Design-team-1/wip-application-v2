@@ -17,7 +17,7 @@ export class PillReminderDeleteService {
       const result = await this.repository.toggleReminder(id, isEnabled);
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
-      pillReminderNotificationService.rescheduleAllNotifications();
+      await pillReminderNotificationService.rescheduleAllNotifications();
 
       return result;
     } catch (e) {
@@ -32,7 +32,7 @@ export class PillReminderDeleteService {
       const result = await this.repository.deleteReminder(id);
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
-      pillReminderNotificationService.rescheduleAllNotifications();
+      await pillReminderNotificationService.rescheduleAllNotifications();
 
       return result;
     } catch (e) {
@@ -47,7 +47,7 @@ export class PillReminderDeleteService {
       const result = await this.repository.deleteAllReminders();
 
       // 시스템 로컬 푸시 알림 스케줄 동기화 (모두 취소)
-      pillReminderNotificationService.rescheduleAllNotifications();
+      await pillReminderNotificationService.rescheduleAllNotifications();
 
       return result;
     } catch (e) {

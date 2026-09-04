@@ -20,6 +20,7 @@ import logger from '@utils/logger';
 export class PillReminderNotificationService {
   private timer: NodeJS.Timeout | null = null;
   private lastTriggeredMinute = '';
+  private permissionInitialization: Promise<boolean> | null = null;
 
   constructor(
     private readonly notificationRepository: IPillReminderNotificationRepository = pillReminderNotificationRepository,
@@ -49,9 +50,23 @@ export class PillReminderNotificationService {
     }
   }
 
+  private async ensurePermissions() {
+    if (!this.permissionInitialization) {
+      this.permissionInitialization = this.initPermissions();
+    }
+
+    return this.permissionInitialization;
+  }
+
   // 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
   public async rescheduleAllNotifications() {
     try {
+      const hasPermission = await this.ensurePermissions();
+
+      if (!hasPermission) {
+        return;
+      }
+
       // 기존 스케줄된 모든 로컬 알림 취소
       await this.notificationRepository.cancelAllScheduledNotifications();
 
@@ -166,9 +181,6 @@ export class PillReminderNotificationService {
 
   // 알림 감시 타이머 시작
   public startWatcher() {
-    this.initPermissions();
-    this.rescheduleAllNotifications();
-
     const hasExistingTimer = this.timer !== null;
 
     if (hasExistingTimer && this.timer) {
@@ -179,6 +191,8 @@ export class PillReminderNotificationService {
     this.timer = setInterval(() => {
       this.checkAndTriggerCurrentReminders();
     }, NOTIFICATION_WATCHER_INTERVAL_MS);
+
+    void this.rescheduleAllNotifications();
   }
 
   // 알림 감시 중지

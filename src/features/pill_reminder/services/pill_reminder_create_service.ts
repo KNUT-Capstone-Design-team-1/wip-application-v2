@@ -84,7 +84,7 @@ export class PillReminderCreateService {
         await this.repository.insertReminderWithItems(remindersToInsert);
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
-      pillReminderNotificationService.rescheduleAllNotifications();
+      await pillReminderNotificationService.rescheduleAllNotifications();
 
       return createdIds;
     } catch (e) {

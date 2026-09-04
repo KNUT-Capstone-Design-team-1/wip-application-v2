@@ -73,7 +73,7 @@ export class PillReminderUpdateService {
       );
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
-      pillReminderNotificationService.rescheduleAllNotifications();
+      await pillReminderNotificationService.rescheduleAllNotifications();
 
       return true;
     } catch (e) {
