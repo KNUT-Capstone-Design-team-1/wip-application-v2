@@ -1,8 +1,6 @@
 import { memo, useState, useCallback } from 'react';
 import DetailSection from './DetailSection';
 import { IPillDetail } from '../../types/pill_detail_type';
-import { View } from 'react-native';
-import { styles } from '../../styles/molecules/PillDescriptionSection';
 
 interface IPillDescriptionSectionProps {
   data: IPillDetail;

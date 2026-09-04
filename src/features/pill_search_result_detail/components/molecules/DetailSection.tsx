@@ -16,7 +16,9 @@ const DetailSection = ({
   content,
 }: IDetailSectionProps) => {
   const parsedData = useMemo(() => {
-    if (!content) return null;
+    if (!content) {
+      return null;
+    }
     const result = xmlToJson(content);
     return result.doc;
   }, [content]);

@@ -1,7 +1,7 @@
-import { getNarcotics } from '@services/database/queries/narcotics';
-import { getCannabis } from '@services/database/queries/cannabis';
-import { getPsychotropics } from '@services/database/queries/psychotropics';
-import { getProhibitedList } from '@services/database/queries/prohibited_list';
+import {
+  IPillDetailRepository,
+  pillDetailRepository,
+} from '../data/repositories/pill_detail_repository';
 
 interface ISpecialClassificationResult {
   isNarcotic: boolean;
@@ -73,6 +73,7 @@ const processTokens = (text: string) => {
  */
 const checkProhibitedSubstance = async (
   ingredients: IIngredientParams,
+  repository: IPillDetailRepository,
 ): Promise<{ ingredients: string[] }> => {
   const matched = new Set<string>();
 
@@ -83,10 +84,11 @@ const checkProhibitedSubstance = async (
   const allTokens = Array.from(new Set([...tokensEn, ...tokensKr]));
 
   const checkAndAddProhibitedToken = async (token: string) => {
-    const found = await getProhibitedList(
-      { contents: token },
-      { page: 1, limit: 100 },
-    );
+    const found = await repository.searchProhibitedList({
+      contents: token,
+      page: 1,
+      limit: 100,
+    });
 
     if (found.length > 0) {
       // 검색된 원본 텍스트가 아닌, 파라미터로 들어온 분리된 성분명(token)을 표시
@@ -108,6 +110,7 @@ const checkProhibitedSubstance = async (
 export const checkSpecialClassifications = async (
   materialName?: string,
   materialEngName?: string,
+  repository: IPillDetailRepository = pillDetailRepository,
 ): Promise<ISpecialClassificationResult> => {
   const ingredients: IIngredientParams = {
     kr: materialName?.trim() || '',
@@ -128,10 +131,12 @@ export const checkSpecialClassifications = async (
   }
 
   const [narcotic, cannabis, psychotropic, prohibited] = await Promise.all([
-    checkSubstance(ingredients, getNarcotics),
-    checkSubstance(ingredients, getCannabis),
-    checkSubstance(ingredients, getPsychotropics),
-    checkProhibitedSubstance(ingredients),
+    checkSubstance(ingredients, (params) => repository.searchNarcotics(params)),
+    checkSubstance(ingredients, (params) => repository.searchCannabis(params)),
+    checkSubstance(ingredients, (params) =>
+      repository.searchPsychotropics(params),
+    ),
+    checkProhibitedSubstance(ingredients, repository),
   ]);
 
   return {

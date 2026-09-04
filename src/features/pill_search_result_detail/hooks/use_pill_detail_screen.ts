@@ -27,15 +27,14 @@ export const usePillDetailScreen = () => {
   const { setRecentViewedPills } = useRecentViewedPillStore();
   const { setTitle, resetTitle } = useHeaderTitleStore();
 
-  const {
-    savedFolderIds,
-    isSaved,
-    checkSavedStatus,
-    loading: boxLoading,
-  } = usePillBox(pillData?.ITEM_SEQ ?? '');
+  const { savedFolderIds, isSaved, checkSavedStatus } = usePillBox(
+    pillData?.ITEM_SEQ ?? '',
+  );
 
   const openFolderModal = useCallback(() => {
-    if (!pillData) return;
+    if (!pillData) {
+      return;
+    }
     setFolderModalVisible(true);
   }, [pillData]);
 
@@ -96,7 +95,9 @@ export const usePillDetailScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (loading || !pillData) return;
+      if (loading || !pillData) {
+        return;
+      }
 
       const timer = setTimeout(() => {
         isStay.current = true;

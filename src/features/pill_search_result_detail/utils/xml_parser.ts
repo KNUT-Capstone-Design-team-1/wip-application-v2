@@ -79,7 +79,9 @@ const mapSection = (s: any) => {
 };
 
 export const xmlToJson = (xml: string) => {
-  if (!xml) return { doc: null };
+  if (!xml) {
+    return { doc: null };
+  }
   try {
     const parser = new XMLParser({
       ignoreAttributes: false,
@@ -87,7 +89,9 @@ export const xmlToJson = (xml: string) => {
     });
     const raw = parser.parse(xml);
 
-    if (!raw || !raw.DOC) return { doc: null };
+    if (!raw || !raw.DOC) {
+      return { doc: null };
+    }
 
     const docRaw = raw.DOC;
 

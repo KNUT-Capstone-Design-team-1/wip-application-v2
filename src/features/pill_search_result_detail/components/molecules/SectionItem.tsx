@@ -2,13 +2,14 @@ import React, { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { ISectionItemProps } from '@features/pill_search_result_detail/types/pill_detail_type';
-import { COLOR_TEXT } from '@constants/color';
 import { styles } from '@features/pill_search_result_detail/styles/molecules/SectionItem';
 import { px } from '@utils/responsive';
 import TableWebView from '@features/pill_search_result_detail/components/atoms/TableWebView';
 
 const SectionItem = ({ sectionItem }: ISectionItemProps) => {
-  if (!sectionItem || !sectionItem.sections) return null;
+  if (!sectionItem || !sectionItem.sections) {
+    return null;
+  }
 
   return (
     <View>
