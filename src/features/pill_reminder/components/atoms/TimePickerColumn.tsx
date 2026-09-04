@@ -81,14 +81,11 @@ export const TimePickerColumn = memo(
       const isValidIndex = targetIndex >= 0;
 
       if (isValidIndex) {
-        const timer = setTimeout(() => {
-          listRef.current?.scrollToOffset({
-            offset: targetIndex * ITEM_HEIGHT,
-            animated: true,
-          });
-        }, 50);
-
-        return () => clearTimeout(timer);
+        // animated: false로 즉시 이동하여 렉 방지 (모달 오픈 시 튐 없이 정확히 위치)
+        listRef.current?.scrollToOffset({
+          offset: targetIndex * ITEM_HEIGHT,
+          animated: false,
+        });
       }
     }, [targetIndex]);
 

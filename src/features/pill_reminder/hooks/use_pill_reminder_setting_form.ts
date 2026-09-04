@@ -32,6 +32,7 @@ export const usePillReminderSettingForm = ({
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [hasPermission, setHasPermission] = useState(true);
 
   // 모달 제어 상태
   const [isPillSelectModalVisible, setIsPillSelectModalVisible] =
@@ -46,7 +47,8 @@ export const usePillReminderSettingForm = ({
 
       try {
         // 알림 권한 확인 및 요청
-        await pillReminderNotificationService.initPermissions();
+        const granted = await pillReminderNotificationService.initPermissions();
+        setHasPermission(granted);
 
         // 수정 모드일 때 기존 알림 데이터 세팅
         if (isEditMode && reminderId) {
@@ -313,6 +315,16 @@ export const usePillReminderSettingForm = ({
 
   // 저장 (생성 / 수정) 핸들러
   const handleSave = async () => {
+    // 알림 권한 체크: 권한이 없으면 알림 추가 불가
+    if (!hasPermission) {
+      Toast.show({
+        type: 'error',
+        text1: '알림 권한을 허용하지 않으면 알림이 울리지 않습니다.',
+        text2: '설정에서 알림 권한을 허용한 후 다시 시도해주세요.',
+      });
+      return;
+    }
+
     const hasNoPills = selectedPills.length === 0;
 
     if (hasNoPills) {
@@ -425,6 +437,7 @@ export const usePillReminderSettingForm = ({
     selectedFolderName,
     loading,
     saving,
+    hasPermission,
     isEditMode,
     isFormValid,
     isPillSelectModalVisible,

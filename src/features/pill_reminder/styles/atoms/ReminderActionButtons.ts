@@ -6,5 +6,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
+    minWidth: 52, // Switch 크기만큼 고정하여 ON/OFF 시 레이아웃 이동 방지
   },
 });

@@ -336,7 +336,10 @@ export const pillSaveSqliteDataSource: IPillSaveDataSource = {
         alreadyExistsItemsMap.set(c.item.seq, c.item),
       );
 
-      const seqsToDelete = itemSeqs;
+      // 대상 폴더에 없는 알약만 기존 폴더에서 삭제 (이미 존재하는 알약은 삭제하지 않음)
+      const seqsToDelete = combinations
+        .map((c) => c.item.seq)
+        .filter((seq, idx, arr) => arr.indexOf(seq) === idx);
 
       await runInTransaction(db, async () => {
         if (seqsToDelete.length > 0) {

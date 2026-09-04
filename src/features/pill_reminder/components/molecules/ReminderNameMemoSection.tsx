@@ -57,7 +57,7 @@ export const ReminderNameMemoSection = memo(
           <TextInput
             value={title}
             onChangeText={handleTitleChange}
-            placeholder="알림 이름을 입력하세요 (미입력 시 '알림' 자동 지정)"
+            placeholder="미입력 시 자동으로 이름이 지정됩니다"
             placeholderTextColor={COLOR_TEXT.disabled}
             maxLength={50}
             style={styles.textInput}

@@ -29,8 +29,8 @@ export const usePillReminderList = () => {
         if (!granted) {
           Toast.show({
             type: 'error',
-            text1: '알림 권한이 필요합니다.',
-            text2: '복용 알림을 받으려면 알림 권한을 허용해주세요.',
+            text1: '알림 권한을 허용하지 않으면 알림이 울리지 않습니다.',
+            text2: '설정에서 알림 권한을 허용해주세요.',
           });
         }
       });

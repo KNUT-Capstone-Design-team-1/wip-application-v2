@@ -10,6 +10,7 @@ import {
   validateFolderSelectionLimit,
   validatePillLimit,
 } from '../utils/pill_save_validator';
+import { useCommonModalStore } from '@store/common_modal_store';
 
 interface UseFolderSelectModalProps {
   isVisible: boolean;
@@ -44,6 +45,7 @@ export const useFolderSelectModal = ({
   const [isSaving, setIsSaving] = useState(false);
 
   const { showToast } = useToast();
+  const { showModal } = useCommonModalStore();
 
   // 폴더 목록을 조회하고 이동/복사 모드의 현재 폴더를 앞에 배치한다.
   const loadFolders = useCallback(async () => {
@@ -232,9 +234,19 @@ export const useFolderSelectModal = ({
     }
 
     const isOnlyOne = alreadyExistsItems.length === 1;
-    const message = isOnlyOne
-      ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
-      : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
+    const isMoveMode = mode === 'move';
+
+    let message: string;
+
+    if (isMoveMode) {
+      message = isOnlyOne
+        ? `${alreadyExistsItems[0].name}은(는) 대상 폴더에 이미 존재하여 이동되지 않았습니다.`
+        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 대상 폴더에 이미 존재하여 이동되지 않았습니다.`;
+    } else {
+      message = isOnlyOne
+        ? `${alreadyExistsItems[0].name}은(는) 이미 폴더에 존재합니다.`
+        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 이미 폴더에 존재합니다.`;
+    }
 
     showToast({
       type: 'default',
@@ -242,8 +254,8 @@ export const useFolderSelectModal = ({
     });
   };
 
-  // 선택된 폴더들에 알약 저장/이동/복사 처리 핸들러
-  const handleSave = async () => {
+  // 실제 저장/이동/복사 실행 (확인 후 공통 로직)
+  const executeSave = async () => {
     const isNoFolderSelectedForMoveOrCopy =
       selectedIds.length === 0 && mode !== 'save';
 
@@ -300,13 +312,21 @@ export const useFolderSelectModal = ({
       onClose();
 
       const hasDuplicate = alreadyExistsItems.length > 0;
+      const isMoveMode = mode === 'move';
+      const isCopyMode = mode === 'copy';
 
       if (hasDuplicate) {
+        // 이동 모드: 이동된 항목이 있으면 성공 토스트와 함께, 전부 중복이면 중복 토스트만
+        const totalCount = items ? items.length : 1;
+        const duplicateCount = alreadyExistsItems.length;
+        const movedCount = totalCount - duplicateCount;
+
+        if (isMoveMode && movedCount > 0) {
+          showToast({ type: 'default', message: '이동되었습니다.' });
+        }
+
         showAlreadyExistsToast(alreadyExistsItems);
       } else {
-        const isMoveMode = mode === 'move';
-        const isCopyMode = mode === 'copy';
-
         if (isMoveMode) {
           showToast({ type: 'default', message: '이동되었습니다.' });
         } else if (isCopyMode) {
@@ -321,6 +341,30 @@ export const useFolderSelectModal = ({
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // 저장 버튼 클릭 핸들러: 이동 모드에서는 확인 모달 출력 후 실행
+  const handleSave = () => {
+    const isMoveMode = mode === 'move';
+
+    if (isMoveMode) {
+      const targetFolderName =
+        folders.find((f) => selectedIds.includes(f.id))?.name ?? '선택한 폴더';
+
+      showModal({
+        title: '알약 이동',
+        message: `기존 폴더에서 알약이 삭제되며\n"${targetFolderName}"(으)로 이동됩니다.\n이동하시겠습니까?`,
+        confirmText: '이동',
+        cancelText: '취소',
+        onConfirm: () => {
+          void executeSave();
+        },
+      });
+
+      return;
+    }
+
+    void executeSave();
   };
 
   return {
