@@ -51,8 +51,9 @@ export const usePillReminderSettingForm = ({
       setLoading(true);
 
       try {
-        // 알림 권한 확인 및 요청
-        const granted = await pillReminderNotificationService.initPermissions();
+        // 알림 권한 확인 및 요청 (거부 시 모달 유도)
+        const granted =
+          await pillReminderNotificationService.initPermissions(true);
         setHasPermission(granted);
 
         // 수정 모드일 때 기존 알림 데이터 세팅
@@ -346,13 +347,12 @@ export const usePillReminderSettingForm = ({
 
   // 저장 (생성 / 수정) 핸들러
   const handleSave = async () => {
-    // 알림 권한 체크: 권한이 없으면 알림 추가 불가
-    if (!hasPermission) {
-      Toast.show({
-        type: 'error',
-        text1: '알림 권한을 허용하지 않으면 알림이 울리지 않습니다.',
-        text2: '설정에서 알림 권한을 허용한 후 다시 시도해주세요.',
-      });
+    // 알림 권한 체크: 권한이 없으면 설정 안내 모달 노출 후 중단
+    const isGranted =
+      await pillReminderNotificationService.initPermissions(true);
+    setHasPermission(isGranted);
+
+    if (!isGranted) {
       return;
     }
 

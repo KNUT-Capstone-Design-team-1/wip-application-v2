@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import * as Notifications from 'expo-notifications';
+import { Linking, Platform } from 'react-native';
 import { pillReminderNotificationRepository } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
 import { pillReminderQueryService } from '@features/pill_reminder/services/pill_reminder_query_service';
 import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
@@ -12,47 +13,71 @@ import {
   NOTIFICATION_ACTION_DISMISS,
   SNOOZE_DELAY_SECONDS,
 } from '@features/pill_reminder/constants/reminder_notification_constant';
+import { useCommonModalStore } from '@store/common_modal_store';
 import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
 
 let timer: NodeJS.Timeout | null = null;
 let lastTriggeredMinute = '';
-let permissionInitialization: Promise<boolean> | null = null;
 let responseSubscription: { remove: () => void } | null = null;
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
-  // 시스템 알림 채널 및 권한 초기화 유스케이스
-  async initPermissions(): Promise<boolean> {
+  // 시스템 설정 화면 이동
+  openNotificationSettings(): void {
+    if (Platform.OS === 'ios') {
+      void Linking.openURL('app-settings:');
+    } else {
+      void Linking.openSettings();
+    }
+  },
+
+  // 시스템 알림 채널 및 권한 초기화/요청 유스케이스 (거부 시 설정 이동 모달 팝업)
+  async initPermissions(showModalIfDenied = true): Promise<boolean> {
     try {
       const existingStatus =
         await pillReminderNotificationRepository.getPermissions();
       let finalStatus = existingStatus.status;
 
-      const isNotGranted = existingStatus.status !== 'granted';
-
-      if (isNotGranted) {
+      // 권한이 없거나 canAskAgain 가능한 경우 즉시 시스템 다이얼로그 요청
+      if (finalStatus !== 'granted') {
         const statusResponse =
           await pillReminderNotificationRepository.requestPermissions();
         finalStatus = statusResponse.status;
       }
 
+      // 채널 설정
       await pillReminderNotificationRepository.setNotificationChannel();
 
-      return finalStatus === 'granted';
+      const isGranted = finalStatus === 'granted';
+
+      if (!isGranted && showModalIfDenied) {
+        useCommonModalStore.getState().showModal({
+          title: '알림 권한 필요',
+          message:
+            '복용 시간에 맞춰 알림을 받으시려면\n기기 설정에서 알림 권한을 허용해주세요.',
+          confirmText: '설정으로 이동',
+          cancelText: '닫기',
+          onConfirm: () => {
+            this.openNotificationSettings();
+          },
+        });
+      }
+
+      return isGranted;
     } catch (e) {
       logger.error(`[NOTIFICATION-SERVICE] Failed to init permissions: ${e}`);
       return false;
     }
   },
 
-  // 동시에 요청된 알림 권한 초기화를 하나의 작업으로 합친다.
+  // 권한 상태 확인 (캐싱 없이 실시간 확인)
   async ensurePermissions(): Promise<boolean> {
-    if (!permissionInitialization) {
-      permissionInitialization = this.initPermissions();
+    const status = await pillReminderNotificationRepository.getPermissions();
+    if (status.status === 'granted') {
+      return true;
     }
-
-    return permissionInitialization;
+    return await this.initPermissions(false);
   },
 
   // 사용자 알림 액션 응답 처리 (복용 완료 / 5분 뒤 다시 알림 / 끄기)

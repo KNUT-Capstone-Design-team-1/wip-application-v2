@@ -23,21 +23,11 @@ export const usePillReminderList = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   /**
-   * 화면에 진입할 때 권한을 확인하고 거부 시 사용자에게 안내한다.
-   * 화면 진입 시 알림 권한 확인/요청 및 알림 목록 갱신
+   * 화면 진입 시 알림 권한 확인/요청 (거부된 경우 설정 이동 모달 안내) 및 목록 갱신
    */
   useFocusEffect(
     useCallback(() => {
-      void pillReminderNotificationService.initPermissions().then((granted) => {
-        if (!granted) {
-          Toast.show({
-            type: 'error',
-            text1: '알림 권한을 허용하지 않으면 알림이 울리지 않습니다.',
-            text2: '설정에서 알림 권한을 허용해주세요.',
-          });
-        }
-      });
-
+      void pillReminderNotificationService.initPermissions(true);
       fetchReminders();
     }, [fetchReminders]),
   );
