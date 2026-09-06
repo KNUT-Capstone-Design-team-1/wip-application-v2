@@ -11,10 +11,8 @@ export const NOTIFICATION_ACTION_SNOOZE = 'ACTION_SNOOZE';
 export const NOTIFICATION_ACTION_DISMISS = 'ACTION_DISMISS';
 
 // 진동 패턴 상수
-export const ALARM_VIBRATION_PATTERN = [0, 500, 200, 500, 200, 500];
 export const CHANNEL_VIBRATION_PATTERN = [0, 500, 200, 500];
 
-// 알림 폴링 주기 및 토스트 노출 시간
-export const NOTIFICATION_WATCHER_INTERVAL_MS = 15000;
+// 토스트 노출 시간 및 스누즈 딜레이
 export const NOTIFICATION_TOAST_VISIBILITY_MS = 5000;
 export const SNOOZE_DELAY_SECONDS = 300; // 5분

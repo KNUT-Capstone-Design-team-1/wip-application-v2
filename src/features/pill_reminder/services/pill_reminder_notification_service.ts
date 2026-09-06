@@ -1,12 +1,9 @@
-import dayjs from 'dayjs';
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import { pillReminderNotificationRepository } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
 import { pillReminderQueryService } from '@features/pill_reminder/services/pill_reminder_query_service';
-import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
 import {
   DEFAULT_NOTIFICATION_TITLE,
-  NOTIFICATION_WATCHER_INTERVAL_MS,
   NOTIFICATION_TOAST_VISIBILITY_MS,
   NOTIFICATION_ACTION_CONFIRM,
   NOTIFICATION_ACTION_SNOOZE,
@@ -17,8 +14,6 @@ import { useCommonModalStore } from '@store/common_modal_store';
 import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
 
-let timer: NodeJS.Timeout | null = null;
-let lastTriggeredMinute = '';
 let responseSubscription: { remove: () => void } | null = null;
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
@@ -197,74 +192,8 @@ export const pillReminderNotificationService = {
     }
   },
 
-  // 포그라운드 시 현재 시각과 일치하는 복용 알림 체크 및 즉시 인앱 알림 발송 유스케이스
-  async checkAndTriggerCurrentReminders(): Promise<void> {
-    try {
-      const now = dayjs();
-      const currentMinute = now.format('YYYY-MM-DD HH:mm');
-
-      const isAlreadyTriggeredThisMinute =
-        lastTriggeredMinute === currentMinute;
-
-      if (isAlreadyTriggeredThisMinute) {
-        return;
-      }
-
-      const currentTime = now.format('HH:mm');
-      const currentDayNumber = now.day();
-
-      const reminders = await pillReminderQueryService.getReminders();
-      const activeReminders = reminders.filter(
-        (r) =>
-          r.is_enabled &&
-          r.time === currentTime &&
-          r.days.includes(currentDayNumber),
-      );
-
-      const hasNoActiveReminders = activeReminders.length === 0;
-
-      if (hasNoActiveReminders) {
-        return;
-      }
-
-      lastTriggeredMinute = currentMinute;
-      pillReminderNotificationRepository.triggerVibration();
-
-      for (const reminder of activeReminders) {
-        const itemCount = reminder.items.length;
-        let pillNames = '';
-
-        if (itemCount === 1) {
-          const first = reminder.items[0];
-          pillNames = `${first.item_name} ${first.dosage}정`;
-        } else if (itemCount > 1) {
-          const first = reminder.items[0];
-          pillNames = `${first.item_name} 외 ${itemCount - 1}개`;
-        }
-
-        const formattedTime = formatReminderTime(reminder.time);
-        const reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
-
-        Toast.show({
-          type: 'default',
-          text1: `[${reminderTitle}] ${formattedTime} - ${pillNames}`,
-          text2: reminder.memo ? `${reminder.memo}` : undefined,
-          visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
-        });
-      }
-    } catch (e) {
-      logger.error(`[NOTIFICATION-SERVICE] Failed to check reminders: ${e}`);
-    }
-  },
-
-  // 알림 감시 타이머 및 사용자 액션 응답 리스너 시작
+  // 알림 감시 시작: 사용자 액션 응답 리스너 구독 및 시스템 알림 스케줄 동기화
   startWatcher(): void {
-    const hasExistingTimer = timer !== null;
-
-    if (hasExistingTimer && timer) {
-      clearInterval(timer);
-    }
-
     // 알림 응답(사용자 액션 클릭) 리스너 구독
     if (!responseSubscription) {
       responseSubscription =
@@ -275,23 +204,11 @@ export const pillReminderNotificationService = {
         );
     }
 
-    // 주기적인 인앱 체크
-    timer = setInterval(() => {
-      this.checkAndTriggerCurrentReminders();
-    }, NOTIFICATION_WATCHER_INTERVAL_MS);
-
     void this.rescheduleAllNotifications();
   },
 
   // 알림 감시 중지 및 리스너 해제
   stopWatcher(): void {
-    const hasTimer = timer !== null;
-
-    if (hasTimer && timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-
     if (responseSubscription) {
       responseSubscription.remove();
       responseSubscription = null;

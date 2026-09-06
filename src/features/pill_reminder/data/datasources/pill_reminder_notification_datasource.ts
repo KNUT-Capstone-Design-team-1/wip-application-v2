@@ -1,4 +1,4 @@
-import { Platform, Vibration } from 'react-native';
+import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import {
   NOTIFICATION_CHANNEL_ID,
@@ -9,7 +9,6 @@ import {
   NOTIFICATION_ACTION_SNOOZE,
   NOTIFICATION_ACTION_DISMISS,
   CHANNEL_VIBRATION_PATTERN,
-  ALARM_VIBRATION_PATTERN,
 } from '@features/pill_reminder/constants/reminder_notification_constant';
 import {
   IScheduleWeeklyNotificationParams,
@@ -28,7 +27,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Expo Notifications 및 Vibration 기반 알림 데이터 소스 구현체
+// Expo Notifications 기반 알림 데이터 소스 구현체
 export const pillReminderNotificationDataSource = {
   // 알림 권한 상태 조회
   async getPermissions() {
@@ -169,14 +168,5 @@ export const pillReminderNotificationDataSource = {
     listener: (response: Notifications.NotificationResponse) => void,
   ) {
     return Notifications.addNotificationResponseReceivedListener(listener);
-  },
-
-  // 알람 진동 패턴 실행
-  triggerVibration() {
-    try {
-      Vibration.vibrate(ALARM_VIBRATION_PATTERN, false);
-    } catch (e) {
-      logger.error(`[NOTIFICATION-DATASOURCE] Failed to vibrate: ${e}`);
-    }
   },
 };

@@ -53,9 +53,4 @@ export const pillReminderNotificationRepository = {
       listener,
     );
   },
-
-  // 진동 트리거
-  triggerVibration(): void {
-    pillReminderNotificationDataSource.triggerVibration();
-  },
 };
