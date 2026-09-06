@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { BackHandler } from 'react-native';
 import { usePillReminderStore } from '@features/pill_reminder/store/pill_reminder_store';
 import { useCommonModalStore } from '@store/common_modal_store';
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
@@ -39,6 +40,28 @@ export const usePillReminderList = () => {
 
       fetchReminders();
     }, [fetchReminders]),
+  );
+
+  // 편집 모드일 때 안드로이드 하드웨어 뒤로가기 누르면 화면 이동 대신 편집 모드 해제
+  useFocusEffect(
+    useCallback(() => {
+      if (!isEditing) {
+        return;
+      }
+
+      const onBackPress = () => {
+        setIsEditing(false);
+        setSelectedIds([]);
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [isEditing]),
   );
 
   useEffect(() => {
