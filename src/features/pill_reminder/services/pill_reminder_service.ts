@@ -17,6 +17,24 @@ export const pillReminderService = {
     return pillReminderQueryService.getRemindersByItemSeq(itemSeq);
   },
 
+  // 여러 알약이 포함된 복용 알림 목록 조회
+  getRemindersByItemSeqs(itemSeqs: string[]) {
+    return pillReminderQueryService.getRemindersByItemSeqs(itemSeqs);
+  },
+
+  // 기존 알림 시간과의 중복 검사
+  findDuplicateReminderTimes(
+    itemSeqs: string[],
+    times: string[],
+    excludeReminderId?: number,
+  ) {
+    return pillReminderQueryService.findDuplicateReminderTimes(
+      itemSeqs,
+      times,
+      excludeReminderId,
+    );
+  },
+
   // ID 기준 복용 알림 상세 조회
   getReminderById(id: number) {
     return pillReminderQueryService.getReminderById(id);

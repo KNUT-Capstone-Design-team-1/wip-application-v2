@@ -2,6 +2,9 @@
 export const MAX_REMINDER_TITLE_LENGTH = 50;
 export const MAX_REMINDER_MEMO_LENGTH = 255;
 
+// 복용 시간 등록 제한 상수
+export const MAX_REMINDER_TIMES_COUNT = 6;
+
 // 복용량 기본값 및 제한 범위
 export const DEFAULT_DOSAGE = 1;
 export const MIN_DOSAGE = 1;

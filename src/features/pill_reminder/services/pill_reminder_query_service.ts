@@ -52,9 +52,18 @@ export const pillReminderQueryService = {
 
   // 특정 알약(item_seq)이 포함된 복용 알림 목록 조회 유스케이스
   async getRemindersByItemSeq(itemSeq: string): Promise<IPillReminder[]> {
+    return this.getRemindersByItemSeqs([itemSeq]);
+  },
+
+  // 여러 알약들(itemSeqs)이 포함된 복용 알림 목록 조회 유스케이스
+  async getRemindersByItemSeqs(itemSeqs: string[]): Promise<IPillReminder[]> {
     try {
+      if (itemSeqs.length === 0) {
+        return [];
+      }
+
       const reminders =
-        await pillReminderRepository.getRemindersByItemSeq(itemSeq);
+        await pillReminderRepository.getRemindersByItemSeqs(itemSeqs);
       const hasNoReminders = !reminders || reminders.length === 0;
 
       if (hasNoReminders) {
@@ -77,7 +86,46 @@ export const pillReminderQueryService = {
         mapDbReminderToModel(r, itemsByReminderId.get(r.id) || []),
       );
     } catch (e) {
-      logQueryError('get reminders by itemSeq', e);
+      logQueryError('get reminders by itemSeqs', e);
+      return [];
+    }
+  },
+
+  // 특정 알약들과 대상 시간 목록 간의 기존 알림 시간 중복 검사
+  async findDuplicateReminderTimes(
+    itemSeqs: string[],
+    times: string[],
+    excludeReminderId?: number,
+  ): Promise<{ time: string; pillName: string }[]> {
+    try {
+      if (itemSeqs.length === 0 || times.length === 0) {
+        return [];
+      }
+
+      const existingReminders = await this.getRemindersByItemSeqs(itemSeqs);
+      const timeSet = new Set(times);
+      const duplicates: { time: string; pillName: string }[] = [];
+
+      for (const reminder of existingReminders) {
+        if (excludeReminderId && reminder.id === excludeReminderId) {
+          continue;
+        }
+
+        if (timeSet.has(reminder.time)) {
+          // 중복된 알약 이름 찾기
+          const matchedItem = reminder.items.find((item) =>
+            itemSeqs.includes(item.item_seq),
+          );
+          duplicates.push({
+            time: reminder.time,
+            pillName: matchedItem?.item_name || '선택한 알약',
+          });
+        }
+      }
+
+      return duplicates;
+    } catch (e) {
+      logQueryError('findDuplicateReminderTimes', e);
       return [];
     }
   },

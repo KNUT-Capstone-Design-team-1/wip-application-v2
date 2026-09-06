@@ -2,6 +2,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { ISelectedPillItem } from '@features/pill_reminder/types';
 import { pillReminderService } from '@features/pill_reminder/services/pill_reminder_service';
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
+import {
+  validateReminderTimesLimit,
+  validateNoDuplicateTimes,
+} from '@features/pill_reminder/utils/reminder_validation';
+import { MAX_REMINDER_TIMES_COUNT } from '@features/pill_reminder/constants/reminder_validation_constant';
 import Toast from 'react-native-toast-message';
 import { router } from 'expo-router';
 
@@ -232,6 +237,18 @@ export const usePillReminderSettingForm = ({
     if (isEdit && timeToEdit) {
       setEditingTime(timeToEdit);
     } else {
+      // 신규 추가 시 최대 개수 제한 체크
+      const validation = validateReminderTimesLimit(times.length);
+
+      if (!validation.isValid) {
+        Toast.show({
+          type: 'default',
+          text1: validation.errorMessage,
+        });
+
+        return;
+      }
+
       setEditingTime(null);
     }
 
@@ -271,6 +288,20 @@ export const usePillReminderSettingForm = ({
 
       setIsTimePickerVisible(false);
       setEditingTime(null);
+      return;
+    }
+
+    // 신규 추가: 최대 개수 제한 체크
+    const validation = validateReminderTimesLimit(times.length);
+
+    if (!validation.isValid) {
+      Toast.show({
+        type: 'default',
+        text1: validation.errorMessage,
+      });
+
+      setIsTimePickerVisible(false);
+
       return;
     }
 
@@ -345,6 +376,25 @@ export const usePillReminderSettingForm = ({
       return;
     }
 
+    if (times.length > MAX_REMINDER_TIMES_COUNT) {
+      Toast.show({
+        type: 'default',
+        text1: `복용 시간은 최대 ${MAX_REMINDER_TIMES_COUNT}개까지 등록할 수 있습니다.`,
+      });
+      return;
+    }
+
+    const duplicateTimeValidation = validateNoDuplicateTimes(times);
+
+    if (!duplicateTimeValidation.isValid) {
+      Toast.show({
+        type: 'default',
+        text1: `${duplicateTimeValidation.duplicateTime} 시간이 중복으로 입력되었습니다.`,
+      });
+
+      return;
+    }
+
     const hasNoDays = days.length === 0;
 
     if (hasNoDays) {
@@ -352,6 +402,27 @@ export const usePillReminderSettingForm = ({
         type: 'default',
         text1: '복용 요일을 1개 이상 선택해주세요.',
       });
+      return;
+    }
+
+    // 선택한 알약들의 기존 알림 시간과 중복 검사
+    const itemSeqs = selectedPills.map((p) => p.item_seq);
+    const excludeId = reminderId ? parseInt(reminderId, 10) : undefined;
+    const existingDuplicates =
+      await pillReminderService.findDuplicateReminderTimes(
+        itemSeqs,
+        times,
+        excludeId,
+      );
+
+    if (existingDuplicates.length > 0) {
+      const firstDup = existingDuplicates[0];
+
+      Toast.show({
+        type: 'default',
+        text1: `'${firstDup.pillName}'의 [${firstDup.time}] 복용 알림이 이미 등록되어 있습니다.`,
+      });
+
       return;
     }
 

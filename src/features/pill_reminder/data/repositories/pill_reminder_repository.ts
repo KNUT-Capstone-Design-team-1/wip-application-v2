@@ -19,6 +19,10 @@ export const pillReminderRepository = {
     return await pillReminderSqliteDataSource.getRemindersByItemSeq(itemSeq);
   },
 
+  async getRemindersByItemSeqs(itemSeqs: string[]): Promise<IDbReminderRow[]> {
+    return await pillReminderSqliteDataSource.getRemindersByItemSeqs(itemSeqs);
+  },
+
   async getReminderById(id: number): Promise<IDbReminderRow | null> {
     return await pillReminderSqliteDataSource.getReminderById(id);
   },

@@ -59,6 +59,34 @@ export const pillReminderSqliteDataSource = {
     }
   },
 
+  // 여러 알약들(item_seq 배열)이 포함된 복용 알림 행 목록 조회
+  async getRemindersByItemSeqs(itemSeqs: string[]): Promise<IDbReminderRow[]> {
+    try {
+      if (itemSeqs.length === 0) {
+        return [];
+      }
+
+      const db = await getDatabase();
+      const placeholders = itemSeqs.map(() => '?').join(',');
+
+      const selectByItemSeqsQuery = `
+        SELECT DISTINCT pr.*
+        FROM pill_reminders pr
+        INNER JOIN pill_reminder_items pri ON pr.id = pri.reminder_id
+        WHERE pri.item_seq IN (${placeholders})
+        ORDER BY pr.time ASC, pr.id ASC
+      `;
+
+      return await db.getAllAsync<IDbReminderRow>(
+        selectByItemSeqsQuery,
+        itemSeqs,
+      );
+    } catch (e) {
+      logSqliteError('getRemindersByItemSeqs', e);
+      return [];
+    }
+  },
+
   // ID 기준 단일 복용 알림 행 조회
   async getReminderById(id: number): Promise<IDbReminderRow | null> {
     try {

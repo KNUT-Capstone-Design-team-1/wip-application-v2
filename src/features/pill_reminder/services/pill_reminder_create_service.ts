@@ -3,7 +3,9 @@ import { IPillReminderCreateForm } from '@features/pill_reminder/types/pill_remi
 import {
   sanitizeReminderTitle,
   sanitizeReminderMemo,
+  validateNoDuplicateTimes,
 } from '@features/pill_reminder/utils/reminder_validation';
+import { MAX_REMINDER_TIMES_COUNT } from '@features/pill_reminder/constants/reminder_validation_constant';
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 import logger from '@utils/logger';
 
@@ -25,6 +27,15 @@ export const pillReminderCreateService = {
         times.length === 0 || days.length === 0 || items.length === 0;
 
       if (isInvalidForm) {
+        return [];
+      }
+
+      // 시간 개수 제한 및 중복 체크
+      const isTimesLimitExceeded = times.length > MAX_REMINDER_TIMES_COUNT;
+      const isTimesDuplicate = !validateNoDuplicateTimes(times).isValid;
+      const hasInvalidTimes = isTimesLimitExceeded || isTimesDuplicate;
+
+      if (hasInvalidTimes) {
         return [];
       }
 
