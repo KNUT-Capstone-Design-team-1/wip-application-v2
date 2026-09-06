@@ -7,6 +7,11 @@ import {
 
 // 복용 알림 시스템/기기 알림 리포지토리
 export const pillReminderNotificationRepository = {
+  // 앱 실행 시 마지막 알림 응답(Cold Start 알림 클릭) 조회
+  async getLastNotificationResponse(): Promise<Notifications.NotificationResponse | null> {
+    return await pillReminderNotificationDataSource.getLastNotificationResponse();
+  },
+
   // 권한 조회
   async getPermissions(): Promise<Notifications.PermissionResponse> {
     return await pillReminderNotificationDataSource.getPermissions();

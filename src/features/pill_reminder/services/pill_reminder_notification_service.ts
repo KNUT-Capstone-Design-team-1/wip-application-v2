@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
+import { router } from 'expo-router';
 import { pillReminderNotificationRepository } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
 import { pillReminderQueryService } from '@features/pill_reminder/services/pill_reminder_query_service';
 import {
@@ -20,11 +21,14 @@ let responseSubscription: { remove: () => void } | null = null;
 export const pillReminderNotificationService = {
   // 시스템 설정 화면 이동
   openNotificationSettings(): void {
-    if (Platform.OS === 'ios') {
+    const isIos = Platform.OS === 'ios';
+
+    if (isIos) {
       void Linking.openURL('app-settings:');
-    } else {
-      void Linking.openSettings();
+      return;
     }
+
+    void Linking.openSettings();
   },
 
   // 시스템 알림 채널 및 권한 초기화/요청 유스케이스 (거부 시 설정 이동 모달 팝업)
@@ -34,8 +38,10 @@ export const pillReminderNotificationService = {
         await pillReminderNotificationRepository.getPermissions();
       let finalStatus = existingStatus.status;
 
+      const isPermissionNotGranted = finalStatus !== 'granted';
+
       // 권한이 없거나 canAskAgain 가능한 경우 즉시 시스템 다이얼로그 요청
-      if (finalStatus !== 'granted') {
+      if (isPermissionNotGranted) {
         const statusResponse =
           await pillReminderNotificationRepository.requestPermissions();
         finalStatus = statusResponse.status;
@@ -45,8 +51,9 @@ export const pillReminderNotificationService = {
       await pillReminderNotificationRepository.setNotificationChannel();
 
       const isGranted = finalStatus === 'granted';
+      const shouldShowDeniedModal = !isGranted && showModalIfDenied;
 
-      if (!isGranted && showModalIfDenied) {
+      if (shouldShowDeniedModal) {
         useCommonModalStore.getState().showModal({
           title: '알림 권한 필요',
           message:
@@ -69,13 +76,16 @@ export const pillReminderNotificationService = {
   // 권한 상태 확인 (캐싱 없이 실시간 확인)
   async ensurePermissions(): Promise<boolean> {
     const status = await pillReminderNotificationRepository.getPermissions();
-    if (status.status === 'granted') {
+    const isGranted = status.status === 'granted';
+
+    if (isGranted) {
       return true;
     }
+
     return await this.initPermissions(false);
   },
 
-  // 사용자 알림 액션 응답 처리 (복용 완료 / 5분 뒤 다시 알림 / 끄기)
+  // 사용자 알림 액션 응답 처리 (본체 탭: 복용 알림 목록 또는 수정화면 이동 / 액션: 복용 완료 / 5분 뒤 다시 알림 / 끄기)
   async handleNotificationResponse(
     response: Notifications.NotificationResponse,
   ): Promise<void> {
@@ -90,14 +100,38 @@ export const pillReminderNotificationService = {
         `[NOTIFICATION-SERVICE] Notification action received: ${actionId}, reminderId: ${reminderId}`,
       );
 
-      if (actionId === NOTIFICATION_ACTION_CONFIRM) {
+      const isDefaultTap = actionId === Notifications.DEFAULT_ACTION_IDENTIFIER;
+
+      // 알림 본체(기본 탭)를 클릭하여 앱에 진입한 경우
+      if (isDefaultTap) {
+        const hasReminderId = Boolean(reminderId);
+
+        if (hasReminderId && reminderId) {
+          router.push({
+            pathname: '/pill-reminder-setting',
+            params: { reminderId: reminderId.toString() },
+          });
+          return;
+        }
+
+        router.push('/pill-reminder');
+        return;
+      }
+
+      const isConfirmAction = actionId === NOTIFICATION_ACTION_CONFIRM;
+      if (isConfirmAction) {
         // 복용 완료 처리
         Toast.show({
           type: 'default',
           text1: '복용 완료 처리되었어요.',
           visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
         });
-      } else if (actionId === NOTIFICATION_ACTION_SNOOZE && reminderId) {
+        return;
+      }
+
+      const isSnoozeAction =
+        actionId === NOTIFICATION_ACTION_SNOOZE && Boolean(reminderId);
+      if (isSnoozeAction && reminderId) {
         // 5분 뒤 다시 알림 스케줄 등록
         const reminder =
           await pillReminderQueryService.getReminderById(reminderId);
@@ -116,14 +150,39 @@ export const pillReminderNotificationService = {
           text1: '5분 뒤 다시 알림이 설정되었습니다.',
           visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
         });
-      } else if (actionId === NOTIFICATION_ACTION_DISMISS) {
+        return;
+      }
+
+      const isDismissAction = actionId === NOTIFICATION_ACTION_DISMISS;
+      if (isDismissAction) {
         logger.info(
           `[NOTIFICATION-SERVICE] Reminder dismissed for ID: ${reminderId}`,
         );
+        return;
       }
     } catch (e) {
       logger.error(
         `[NOTIFICATION-SERVICE] Failed to handle notification response: ${e}`,
+      );
+    }
+  },
+
+  // Cold Start(앱 완전 종료 상태에서 알림 클릭으로 켜졌을 때) 알림 응답 소비 유스케이스
+  async checkColdStartNotification(): Promise<void> {
+    try {
+      const lastResponse =
+        await pillReminderNotificationRepository.getLastNotificationResponse();
+
+      const hasColdStartResponse = Boolean(lastResponse);
+
+      if (!hasColdStartResponse || !lastResponse) {
+        return;
+      }
+
+      await this.handleNotificationResponse(lastResponse);
+    } catch (e) {
+      logger.error(
+        `[NOTIFICATION-SERVICE] Failed to check cold start notification: ${e}`,
       );
     }
   },
@@ -155,10 +214,13 @@ export const pillReminderNotificationService = {
         const itemCount = reminder.items.length;
         let pillBody = '복용할 시간이에요!';
 
-        if (itemCount === 1) {
+        const isSingleItem = itemCount === 1;
+        const isMultipleItems = itemCount > 1;
+
+        if (isSingleItem) {
           const first = reminder.items[0];
           pillBody = `${first.item_name} ${first.dosage}정 복용할 시간이에요!`;
-        } else if (itemCount > 1) {
+        } else if (isMultipleItems) {
           const first = reminder.items[0];
           pillBody = `${first.item_name} 외 ${itemCount - 1}개 복용할 시간이에요!`;
         }
@@ -192,10 +254,12 @@ export const pillReminderNotificationService = {
     }
   },
 
-  // 알림 감시 시작: 사용자 액션 응답 리스너 구독 및 시스템 알림 스케줄 동기화
+  // 알림 감시 시작: 사용자 액션 응답 리스너 구독, Cold Start 응답 확인 및 시스템 알림 스케줄 동기화
   startWatcher(): void {
+    const hasNoSubscription = !responseSubscription;
+
     // 알림 응답(사용자 액션 클릭) 리스너 구독
-    if (!responseSubscription) {
+    if (hasNoSubscription) {
       responseSubscription =
         pillReminderNotificationRepository.addNotificationResponseListener(
           (response) => {
@@ -204,14 +268,21 @@ export const pillReminderNotificationService = {
         );
     }
 
+    // Cold Start 알림 클릭 확인
+    void this.checkColdStartNotification();
+
     void this.rescheduleAllNotifications();
   },
 
   // 알림 감시 중지 및 리스너 해제
   stopWatcher(): void {
-    if (responseSubscription) {
-      responseSubscription.remove();
-      responseSubscription = null;
+    const hasSubscription = Boolean(responseSubscription);
+
+    if (!hasSubscription || !responseSubscription) {
+      return;
     }
+
+    responseSubscription.remove();
+    responseSubscription = null;
   },
 };

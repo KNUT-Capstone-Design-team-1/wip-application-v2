@@ -29,6 +29,11 @@ Notifications.setNotificationHandler({
 
 // Expo Notifications 기반 알림 데이터 소스 구현체
 export const pillReminderNotificationDataSource = {
+  // 앱 실행 시 마지막 알림 응답(Cold Start 알림 클릭) 조회
+  async getLastNotificationResponse() {
+    return await Notifications.getLastNotificationResponseAsync();
+  },
+
   // 알림 권한 상태 조회
   async getPermissions() {
     return await Notifications.getPermissionsAsync();
