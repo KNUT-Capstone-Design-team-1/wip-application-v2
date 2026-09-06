@@ -231,7 +231,12 @@ export const useFolderSelectModal = ({
       return;
     }
 
-    const isOnlyOne = alreadyExistsItems.length === 1;
+    // 고유한 중복 알약 목록 추출 (대상 폴더가 여러 개여도 알약 자체는 중복 카운트되지 않도록 seq 기준 고유화)
+    const uniqueExistingPills = Array.from(
+      new Map(alreadyExistsItems.map((item) => [item.seq, item])).values(),
+    );
+
+    const isOnlyOne = uniqueExistingPills.length === 1;
     const isMoveMode = mode === 'move';
 
     // 중복 알약이 속한 고유 대상 폴더 이름 목록 추출
@@ -265,12 +270,12 @@ export const useFolderSelectModal = ({
 
     if (isMoveMode) {
       message = isOnlyOne
-        ? `${alreadyExistsItems[0].name}은(는) ${folderText}에 이미 존재하여 이동되지 않았습니다.`
-        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 ${folderText}에 이미 존재하여 이동되지 않았습니다.`;
+        ? `${uniqueExistingPills[0].name}은(는) ${folderText}에 이미 존재하여 이동되지 않았습니다.`
+        : `${uniqueExistingPills[0].name} 외 ${uniqueExistingPills.length - 1}개는 ${folderText}에 이미 존재하여 이동되지 않았습니다.`;
     } else {
       message = isOnlyOne
-        ? `${alreadyExistsItems[0].name}은(는) ${folderText}에 이미 존재합니다.`
-        : `${alreadyExistsItems[0].name} 외 ${alreadyExistsItems.length - 1}개는 ${folderText}에 이미 존재합니다.`;
+        ? `${uniqueExistingPills[0].name}은(는) ${folderText}에 이미 존재합니다.`
+        : `${uniqueExistingPills[0].name} 외 ${uniqueExistingPills.length - 1}개는 ${folderText}에 이미 존재합니다.`;
     }
 
     showToast({
@@ -327,10 +332,14 @@ export const useFolderSelectModal = ({
       const hasDuplicate = alreadyExistsItems.length > 0;
 
       if (hasDuplicate) {
-        // 이동/복사 모드: 이동된 항목이 있으면 성공 토스트와 함께, 전부 중복이면 중복 토스트만
+        // 이동/복사 모드: 이동된 고유 알약이 있으면 성공 토스트와 함께, 전부 중복이면 중복 토스트만
         const totalCount = items ? items.length : 1;
-        const duplicateCount = alreadyExistsItems.length;
-        const movedCount = totalCount - duplicateCount;
+
+        const uniqueDuplicateCount = new Set(
+          alreadyExistsItems.map((item) => item.seq),
+        ).size;
+
+        const movedCount = totalCount - uniqueDuplicateCount;
 
         if (isMoveMode && movedCount > 0) {
           showToast({ type: 'default', message: '이동되었습니다.' });
