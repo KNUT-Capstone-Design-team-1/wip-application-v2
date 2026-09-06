@@ -6,24 +6,18 @@ import {
   TABLE_CONFIG_KEYS_MAP,
 } from '@services/database/types';
 import { IDatabaseVersionResponse } from '@services/apis/google_cloud/wip_database_version';
-import {
-  IDatabaseUpdateRepository,
-  databaseUpdateRepository,
-} from '../data/repositories/database_update_repository';
+import { databaseUpdateRepository } from '../data/repositories/database_update_repository';
 
-export class DatabaseUpdateService {
-  private databaseVersionOnServer?: IDatabaseVersionResponse;
+let databaseVersionOnServer: IDatabaseVersionResponse | undefined;
 
-  constructor(
-    private readonly repository: IDatabaseUpdateRepository = databaseUpdateRepository,
-  ) {}
-
+export const databaseUpdateService = {
   // 서버 버전과 로컬 버전을 비교해 업데이트 필요 여부를 판단한다.
   async checkRequireTableUpdate(table: TDataTable) {
-    this.databaseVersionOnServer ??= await this.repository.getDatabaseVersion();
+    databaseVersionOnServer ??=
+      await databaseUpdateRepository.getDatabaseVersion();
     const { schemaVersion: newSchemaVersion, dataVersion: newDataVersion } =
-      this.databaseVersionOnServer[table];
-    const currentVersion = await this.repository.getConfigs(
+      databaseVersionOnServer[table];
+    const currentVersion = await databaseUpdateRepository.getConfigs(
       TABLE_CONFIG_KEYS_MAP[table],
     );
     const currentSchemaVersion = currentVersion.find((v) =>
@@ -56,16 +50,16 @@ export class DatabaseUpdateService {
       oldSchemaVersion,
       oldDataVersion,
     };
-  }
+  },
 
   async initTable(table: TDataTable): Promise<DATABSE_UPDATE_RESULT_CODE> {
-    const schema = await this.repository.getTableSchema(table);
+    const schema = await databaseUpdateRepository.getTableSchema(table);
     if (!schema.columns?.length) {
       return 'INVALID-SCHEMA';
     }
 
     try {
-      await this.repository.dropTable(table);
+      await databaseUpdateRepository.dropTable(table);
     } catch (error) {
       logger.error(
         `[INIT-TABLE] Failed to drop ${table} table. ${(error as Error).stack || error}`,
@@ -74,7 +68,7 @@ export class DatabaseUpdateService {
     }
 
     try {
-      await this.repository.createTable(table, schema.columns);
+      await databaseUpdateRepository.createTable(table, schema.columns);
       return 'OK';
     } catch (error) {
       logger.error(
@@ -82,15 +76,18 @@ export class DatabaseUpdateService {
       );
       return 'ERROR-CREATE-TABLE';
     }
-  }
+  },
 
   async insertData(currentPage: number, table: TDataTable) {
     let response: Awaited<
-      ReturnType<IDatabaseUpdateRepository['getResourceData']>
+      ReturnType<(typeof databaseUpdateRepository)['getResourceData']>
     >;
 
     try {
-      response = await this.repository.getResourceData(table, currentPage);
+      response = await databaseUpdateRepository.getResourceData(
+        table,
+        currentPage,
+      );
       if (!response?.resource?.length || !response?.totalPage) {
         return {
           code: 'ERROR-NO-RESOURCE-DATA' as const,
@@ -106,7 +103,7 @@ export class DatabaseUpdateService {
     }
 
     try {
-      await this.repository.insertData(table, response.resource);
+      await databaseUpdateRepository.insertData(table, response.resource);
       return {
         code: 'OK' as const,
         totalPage: response.totalPage,
@@ -122,11 +119,11 @@ export class DatabaseUpdateService {
         total: response.total,
       };
     }
-  }
+  },
 
   getTableRowCount(table: TDataTable) {
-    return this.repository.getTableRowCount(table);
-  }
+    return databaseUpdateRepository.getTableRowCount(table);
+  },
 
   async updateDatabaseVersion(
     table: TDataTable,
@@ -135,7 +132,7 @@ export class DatabaseUpdateService {
   ) {
     try {
       const configKeys = TABLE_CONFIG_KEYS_MAP[table];
-      await this.repository.updateConfigs([
+      await databaseUpdateRepository.updateConfigs([
         {
           key: configKeys.find((key) =>
             key.endsWith('SchemaVersion'),
@@ -156,7 +153,5 @@ export class DatabaseUpdateService {
       );
       return 'ERROR-UPDATE-DATABASE-VERSION' as const;
     }
-  }
-}
-
-export const databaseUpdateService = new DatabaseUpdateService();
+  },
+};

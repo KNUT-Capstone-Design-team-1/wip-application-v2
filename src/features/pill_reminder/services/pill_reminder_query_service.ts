@@ -1,10 +1,8 @@
-import {
-  IPillReminderRepository,
-  pillReminderRepository,
-} from '@features/pill_reminder/data/repositories/pill_reminder_repository';
+import { pillReminderRepository } from '@features/pill_reminder/data/repositories/pill_reminder_repository';
 import {
   IPillReminder,
   IPillReminderItem,
+  IPillReminderFolderInfo,
 } from '@features/pill_reminder/types/pill_reminder_type';
 import {
   mapDbItemToReminderItem,
@@ -20,15 +18,11 @@ const logQueryError = (operation: string, error: unknown) => {
 };
 
 // 복용 알림 조회 전용 비즈니스 서비스
-export class PillReminderQueryService {
-  constructor(
-    private readonly repository: IPillReminderRepository = pillReminderRepository,
-  ) {}
-
+export const pillReminderQueryService = {
   // 모든 복용 알림 목록 조회 유스케이스
   async getReminders(): Promise<IPillReminder[]> {
     try {
-      const reminders = await this.repository.getAllReminders();
+      const reminders = await pillReminderRepository.getAllReminders();
       const hasNoReminders = !reminders || reminders.length === 0;
 
       if (hasNoReminders) {
@@ -37,7 +31,7 @@ export class PillReminderQueryService {
 
       const reminderIds = reminders.map((r) => r.id);
       const items =
-        await this.repository.getReminderItemsByReminderIds(reminderIds);
+        await pillReminderRepository.getReminderItemsByReminderIds(reminderIds);
 
       const itemsByReminderId = new Map<number, IPillReminderItem[]>();
 
@@ -54,12 +48,13 @@ export class PillReminderQueryService {
       logQueryError('get reminders', e);
       return [];
     }
-  }
+  },
 
   // 특정 알약(item_seq)이 포함된 복용 알림 목록 조회 유스케이스
   async getRemindersByItemSeq(itemSeq: string): Promise<IPillReminder[]> {
     try {
-      const reminders = await this.repository.getRemindersByItemSeq(itemSeq);
+      const reminders =
+        await pillReminderRepository.getRemindersByItemSeq(itemSeq);
       const hasNoReminders = !reminders || reminders.length === 0;
 
       if (hasNoReminders) {
@@ -68,7 +63,7 @@ export class PillReminderQueryService {
 
       const reminderIds = reminders.map((r) => r.id);
       const items =
-        await this.repository.getReminderItemsByReminderIds(reminderIds);
+        await pillReminderRepository.getReminderItemsByReminderIds(reminderIds);
 
       const itemsByReminderId = new Map<number, IPillReminderItem[]>();
 
@@ -85,19 +80,20 @@ export class PillReminderQueryService {
       logQueryError('get reminders by itemSeq', e);
       return [];
     }
-  }
+  },
 
   // 특정 알림 ID로 상세 조회 유스케이스
   async getReminderById(id: number): Promise<IPillReminder | null> {
     try {
-      const reminder = await this.repository.getReminderById(id);
+      const reminder = await pillReminderRepository.getReminderById(id);
       const isNotFound = !reminder;
 
       if (isNotFound) {
         return null;
       }
 
-      const items = await this.repository.getReminderItemsByReminderId(id);
+      const items =
+        await pillReminderRepository.getReminderItemsByReminderId(id);
       const mappedItems = items.map(mapDbItemToReminderItem);
 
       return mapDbReminderToModel(reminder, mappedItems);
@@ -105,7 +101,7 @@ export class PillReminderQueryService {
       logQueryError('get reminder by id', e);
       return null;
     }
-  }
+  },
 
   // 특정 알약들의 상세 정보 조회 유스케이스
   async getPillsBySeqs(itemSeqs: string[]): Promise<
@@ -124,7 +120,7 @@ export class PillReminderQueryService {
         return [];
       }
 
-      const rows = await this.repository.getPillDataBySeqs(itemSeqs);
+      const rows = await pillReminderRepository.getPillDataBySeqs(itemSeqs);
       const map = new Map(rows.map((r) => [r.ITEM_SEQ, r]));
 
       const missingSeqs = itemSeqs.filter((seq) => !map.has(seq));
@@ -136,7 +132,8 @@ export class PillReminderQueryService {
       const hasMissingSeqs = missingSeqs.length > 0;
 
       if (hasMissingSeqs) {
-        missingRows = await this.repository.getSavedPillsBySeqs(missingSeqs);
+        missingRows =
+          await pillReminderRepository.getSavedPillsBySeqs(missingSeqs);
       }
 
       const missingMap = new Map(missingRows.map((r) => [r.item_seq, r]));
@@ -169,37 +166,35 @@ export class PillReminderQueryService {
       logQueryError('get pills by seqs', e);
       return [];
     }
-  }
+  },
 
   // 특정 알약이 속한 보관함 폴더 정보 조회 유스케이스
   async getFolderInfoByItemSeq(
     itemSeq: string,
   ): Promise<{ id: number; name: string } | null> {
     try {
-      return await this.repository.getFolderInfoByItemSeq(itemSeq);
+      return await pillReminderRepository.getFolderInfoByItemSeq(itemSeq);
     } catch (e) {
       logQueryError('get folder info by itemSeq', e);
       return null;
     }
-  }
+  },
 
   // 특정 알약이 속한 보관함 폴더명 조회 유스케이스
   async getFolderNameByItemSeq(itemSeq: string): Promise<string | null> {
     const info = await this.getFolderInfoByItemSeq(itemSeq);
     return info?.name || null;
-  }
+  },
 
   // 전체 보관함 폴더 목록 조회 유스케이스
-  async getFolders(): Promise<
-    { id: number; name: string; is_default: number }[]
-  > {
+  async getFolders(): Promise<IPillReminderFolderInfo[]> {
     try {
-      return await this.repository.getFolders();
+      return await pillReminderRepository.getFolders();
     } catch (e) {
       logQueryError('get folders', e);
       return [];
     }
-  }
+  },
 
   // 특정 폴더에 속한 알약 목록 조회 유스케이스
   async getPillsByFolder(folderId: number): Promise<
@@ -212,7 +207,7 @@ export class PillReminderQueryService {
     }[]
   > {
     try {
-      const rows = await this.repository.getPillsByFolder(folderId);
+      const rows = await pillReminderRepository.getPillsByFolder(folderId);
 
       return rows.map((r) => ({
         item_seq: r.item_seq,
@@ -225,18 +220,15 @@ export class PillReminderQueryService {
       logQueryError('get pills by folder', e);
       return [];
     }
-  }
+  },
 
   // 복용 알림에 등록된 item_seq 목록 조회 유스케이스
   async getRemindedItemSeqs(folderId?: number): Promise<string[]> {
     try {
-      return await this.repository.getRemindedItemSeqs(folderId);
+      return await pillReminderRepository.getRemindedItemSeqs(folderId);
     } catch (e) {
       logQueryError('get reminded item seqs', e);
       return [];
     }
-  }
-}
-
-// 복용 알림 조회 서비스 싱글톤 인스턴스
-export const pillReminderQueryService = new PillReminderQueryService();
+  },
+};

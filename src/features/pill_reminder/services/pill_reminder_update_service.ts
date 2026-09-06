@@ -1,7 +1,4 @@
-import {
-  IPillReminderRepository,
-  pillReminderRepository,
-} from '@features/pill_reminder/data/repositories/pill_reminder_repository';
+import { pillReminderRepository } from '@features/pill_reminder/data/repositories/pill_reminder_repository';
 import { IPillReminderUpdateForm } from '@features/pill_reminder/types/pill_reminder_type';
 import {
   sanitizeReminderTitle,
@@ -11,11 +8,7 @@ import { pillReminderNotificationService } from '@features/pill_reminder/service
 import logger from '@utils/logger';
 
 // 복용 알림 수정 비즈니스 서비스
-export class PillReminderUpdateService {
-  constructor(
-    private readonly repository: IPillReminderRepository = pillReminderRepository,
-  ) {}
-
+export const pillReminderUpdateService = {
   // 복용 알림 수정 유스케이스
   async updateReminder(form: IPillReminderUpdateForm): Promise<boolean> {
     try {
@@ -44,7 +37,7 @@ export class PillReminderUpdateService {
       if (!targetFolderId && items.length > 0) {
         const firstSeq = items[0].item_seq;
         const savedFolderId =
-          await this.repository.getSavedPillFolderIdByItemSeq(firstSeq);
+          await pillReminderRepository.getSavedPillFolderIdByItemSeq(firstSeq);
 
         if (savedFolderId) {
           targetFolderId = savedFolderId;
@@ -52,7 +45,7 @@ export class PillReminderUpdateService {
       }
 
       if (!targetFolderId) {
-        const defaultFolder = (await this.repository.getFolders()).find(
+        const defaultFolder = (await pillReminderRepository.getFolders()).find(
           (folder) => folder.is_default === 1,
         );
 
@@ -66,7 +59,7 @@ export class PillReminderUpdateService {
       );
       const cleanMemo = sanitizeReminderMemo(memo);
 
-      await this.repository.updateReminderWithItems(
+      await pillReminderRepository.updateReminderWithItems(
         id,
         targetFolderId,
         finalTitle,
@@ -86,10 +79,7 @@ export class PillReminderUpdateService {
       return true;
     } catch (e) {
       logger.error(`[PILL-REMINDER-UPDATE-SERVICE] Failed to update: ${e}`);
-      throw e;
+      return false;
     }
-  }
-}
-
-// 복용 알림 수정 서비스 싱글톤 인스턴스
-export const pillReminderUpdateService = new PillReminderUpdateService();
+  },
+};

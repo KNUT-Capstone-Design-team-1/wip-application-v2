@@ -11,34 +11,13 @@ export * from './hooks/use_pill_reminder_select_modal';
 export * from './hooks/use_day_selector';
 
 // Business Logic Services
-export {
-  PillReminderService,
-  pillReminderService,
-} from './services/pill_reminder_service';
-export {
-  PillReminderQueryService,
-  pillReminderQueryService,
-} from './services/pill_reminder_query_service';
-export {
-  PillReminderMutationService,
-  pillReminderMutationService,
-} from './services/pill_reminder_mutation_service';
-export {
-  PillReminderCreateService,
-  pillReminderCreateService,
-} from './services/pill_reminder_create_service';
-export {
-  PillReminderUpdateService,
-  pillReminderUpdateService,
-} from './services/pill_reminder_update_service';
-export {
-  PillReminderDeleteService,
-  pillReminderDeleteService,
-} from './services/pill_reminder_delete_service';
-export {
-  PillReminderNotificationService,
-  pillReminderNotificationService,
-} from './services/pill_reminder_notification_service';
+export { pillReminderService } from './services/pill_reminder_service';
+export { pillReminderQueryService } from './services/pill_reminder_query_service';
+export { pillReminderMutationService } from './services/pill_reminder_mutation_service';
+export { pillReminderCreateService } from './services/pill_reminder_create_service';
+export { pillReminderUpdateService } from './services/pill_reminder_update_service';
+export { pillReminderDeleteService } from './services/pill_reminder_delete_service';
+export { pillReminderNotificationService } from './services/pill_reminder_notification_service';
 export * from './services/pill_reminder_mapper';
 
 // Data Access

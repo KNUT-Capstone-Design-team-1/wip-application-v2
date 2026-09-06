@@ -45,48 +45,12 @@ const runInTransaction = async (
   }
 };
 
-// 알약 보관함 SQLite 데이터 소스 인터페이스
-export interface IPillSaveDataSource {
-  getFolders(sortBy: FolderSortOption): Promise<ISavedFolderWithPillCount[]>;
-
-  getFolderPreviewImages(folderId: number): Promise<string[]>;
-
-  createFolder(name: string): Promise<number | null>;
-
-  renameFolder(folderId: number, name: string): Promise<boolean>;
-
-  deleteFolder(folderId: number): Promise<boolean>;
-
-  deleteMultiplePills(itemSeqs: string[], folderId: number): Promise<boolean>;
-
-  getPillSavedFolderIds(itemSeq: string): Promise<number[]>;
-
-  savePillToFolders(
-    itemSeq: string,
-    itemName: string,
-    folderIds: number[],
-  ): Promise<void>;
-
-  movePillsToFolders(
-    items: IPillSaveOperationItem[],
-    sourceFolderId: number,
-    targetFolderIds: number[],
-  ): Promise<IPillSaveOperationResult>;
-
-  copyPillsToFolders(
-    items: IPillSaveOperationItem[],
-    targetFolderIds: number[],
-  ): Promise<IPillSaveOperationResult>;
-
-  deletePillFromFolder(itemSeq: string, folderId: number): Promise<boolean>;
-
-  getPillsByFolder(folderId: number): Promise<IPillSaveData[]>;
-}
-
 // SQLite 기반 알약 보관함 데이터 소스 구현체
-export const pillSaveSqliteDataSource: IPillSaveDataSource = {
+export const pillSaveSqliteDataSource = {
   // 폴더 목록 및 각 폴더별 알약 개수 조회
-  async getFolders(sortBy: FolderSortOption) {
+  async getFolders(
+    sortBy: FolderSortOption,
+  ): Promise<ISavedFolderWithPillCount[]> {
     try {
       const db = await getDatabase();
 

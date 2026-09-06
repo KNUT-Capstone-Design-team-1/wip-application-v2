@@ -1,7 +1,4 @@
-import {
-  INearbyPharmacyRepository,
-  nearbyPharmacyRepository,
-} from '@features/nearby_pharmacy/data/repositories/nearby_pharmacy_repository';
+import { nearbyPharmacyRepository } from '@features/nearby_pharmacy/data/repositories/nearby_pharmacy_repository';
 import { INearbyPharmacies } from '@services/database/types';
 import { Region } from 'react-native-maps';
 import {
@@ -18,21 +15,17 @@ import {
 } from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 주변 약국 비즈니스 로직 서비스
-export class NearbyPharmacyService {
-  constructor(
-    private readonly pharmacyRepository: INearbyPharmacyRepository = nearbyPharmacyRepository,
-  ) {}
-
+export const nearbyPharmacyService = {
   // 주어진 좌표(X: 경도, Y: 위도) 기준 주변 약국 목록 조회
   async searchNearbyPharmacies(
     coords: IPharmacySearchCoordinates,
     options: IPharmacySearchOptions = {},
   ): Promise<INearbyPharmacies[]> {
-    return await this.pharmacyRepository.getNearbyPharmacies(
+    return await nearbyPharmacyRepository.getNearbyPharmacies(
       { coordinate: coords },
       options,
     );
-  }
+  },
 
   // 지도 이동 거리를 계산하여 '이 위치에서 재검색' 노출 여부 판별
   checkShouldResearch(
@@ -58,7 +51,7 @@ export class NearbyPharmacyService {
     );
 
     return displacementKm > thresholdKm;
-  }
+  },
 
   // 약국 목록의 중심 위경도 좌표 계산
   calculateCenterCoordinate(
@@ -103,8 +96,5 @@ export class NearbyPharmacyService {
       latitude: centerLat,
       longitude: centerLng,
     };
-  }
-}
-
-// 주변 약국 비즈니스 로직 서비스 싱글톤 인스턴스
-export const nearbyPharmacyService = new NearbyPharmacyService();
+  },
+};

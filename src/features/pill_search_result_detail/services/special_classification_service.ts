@@ -1,7 +1,4 @@
-import {
-  IPillDetailRepository,
-  pillDetailRepository,
-} from '../data/repositories/pill_detail_repository';
+import { pillDetailRepository } from '../data/repositories/pill_detail_repository';
 
 interface ISpecialClassificationResult {
   isNarcotic: boolean;
@@ -60,43 +57,39 @@ const processTokens = (text: string) => {
       /\b(hydrochloride|hydrate|sulfate|maleate|tartrate|citrate|mesylate|acetate|bromide|anhydrous|micronized|diluted)\b/gi,
       '',
     )
-    .trim();
+    .replace(/[^\w\s/|,-]/g, ' ');
 
   return sanitized
-    .split(/[\/|,]+/)
-    .map((t) => t.trim())
-    .filter((t) => t.length > 0);
+    .split(/[/|, -]+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length >= 3);
 };
 
 /**
- * 금지 약물(도핑) 여부 확인 (추가 정보 포함)
+ * 도핑 금지 성분 확인 로직
  */
 const checkProhibitedSubstance = async (
   ingredients: IIngredientParams,
-  repository: IPillDetailRepository,
+  repository: typeof pillDetailRepository = pillDetailRepository,
 ): Promise<{ ingredients: string[] }> => {
   const matched = new Set<string>();
 
-  const tokensEn = processTokens(ingredients.en);
-  const tokensKr = processTokens(ingredients.kr);
-
-  // 중복된 토큰 검사를 피하기 위해 Set으로 병합
-  const allTokens = Array.from(new Set([...tokensEn, ...tokensKr]));
+  const krTokens = processTokens(ingredients.kr);
+  const enTokens = processTokens(ingredients.en);
+  const allTokens = Array.from(new Set([...krTokens, ...enTokens]));
 
   const checkAndAddProhibitedToken = async (token: string) => {
-    const found = await repository.searchProhibitedList({
-      contents: token,
-      page: 1,
-      limit: 100,
-    });
+    const isAlphabet = /^[a-zA-Z]+$/.test(token);
+    const query = isAlphabet
+      ? { chemicalNameEn: token }
+      : { chemicalNameKr: token };
 
-    if (found.length > 0) {
-      // 검색된 원본 텍스트가 아닌, 파라미터로 들어온 분리된 성분명(token)을 표시
-      matched.add(token);
-    }
+    const results = await repository.searchProhibitedList(query);
+    results.forEach((item) => {
+      matched.add(item.chemicalNameKr || item.chemicalNameEn);
+    });
   };
 
-  // 병렬로 도핑 금지 약물 테이블(prohibited_list)에서 검색
   await Promise.all(allTokens.map(checkAndAddProhibitedToken));
 
   return { ingredients: Array.from(matched) };
@@ -110,7 +103,7 @@ const checkProhibitedSubstance = async (
 export const checkSpecialClassifications = async (
   materialName?: string,
   materialEngName?: string,
-  repository: IPillDetailRepository = pillDetailRepository,
+  repository: typeof pillDetailRepository = pillDetailRepository,
 ): Promise<ISpecialClassificationResult> => {
   const ingredients: IIngredientParams = {
     kr: materialName?.trim() || '',

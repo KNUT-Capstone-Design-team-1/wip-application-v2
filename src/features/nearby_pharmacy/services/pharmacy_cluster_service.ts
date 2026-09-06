@@ -12,7 +12,7 @@ import {
   TPharmacyPointFeature,
 } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 
-export class PharmacyClusterService {
+export const pharmacyClusterService = {
   createIndex(
     pharmacies: INearbyPharmacies[],
   ): Supercluster<IPharmacyPointProps> | null {
@@ -62,7 +62,7 @@ export class PharmacyClusterService {
 
     index.load(points);
     return index;
-  }
+  },
 
   getClusters(
     index: Supercluster<IPharmacyPointProps> | null,
@@ -95,7 +95,7 @@ export class PharmacyClusterService {
     const clampedZoom = Math.min(Math.max(zoom, 0), CLUSTER_MAX_ZOOM);
 
     return index.getClusters(bbox, clampedZoom);
-  }
+  },
 
   getClusterPharmacyIds(
     index: Supercluster<IPharmacyPointProps> | null,
@@ -110,7 +110,5 @@ export class PharmacyClusterService {
     return index
       .getLeaves(clusterId, Infinity)
       .map((leaf) => leaf.properties.pharmacyId);
-  }
-}
-
-export const pharmacyClusterService = new PharmacyClusterService();
+  },
+};

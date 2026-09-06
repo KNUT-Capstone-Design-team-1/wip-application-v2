@@ -1,11 +1,5 @@
-import {
-  IDatabaseUpdateRemoteDataSource,
-  databaseUpdateRemoteDataSource,
-} from '../datasources/database_update_remote_datasource';
-import {
-  IDatabaseUpdateSqliteDataSource,
-  databaseUpdateSqliteDataSource,
-} from '../datasources/database_update_sqlite_datasource';
+import { databaseUpdateRemoteDataSource } from '../datasources/database_update_remote_datasource';
+import { databaseUpdateSqliteDataSource } from '../datasources/database_update_sqlite_datasource';
 import {
   IConfig,
   ITableColumnSchema,
@@ -13,77 +7,62 @@ import {
   TDataTable,
   TResourceDataSchemas,
 } from '@services/database/types';
+import { IDatabaseVersionResponse } from '@services/apis/google_cloud/wip_database_version';
+import { GoogleCloud } from '@services/apis';
 
-export interface IDatabaseUpdateRepository {
-  getDatabaseVersion(): ReturnType<
-    IDatabaseUpdateRemoteDataSource['getDatabaseVersion']
-  >;
-  getTableSchema(table: TDataTable): Promise<{ columns: ITableColumnSchema[] }>;
+export const databaseUpdateRepository = {
+  // 원격 데이터소스에서 서버 버전을 가져온다.
+  getDatabaseVersion(): Promise<IDatabaseVersionResponse> {
+    return databaseUpdateRemoteDataSource.getDatabaseVersion();
+  },
+
+  // 원격 데이터소스에서 테이블 스키마를 가져온다.
+  getTableSchema(
+    table: TDataTable,
+  ): Promise<{ columns: ITableColumnSchema[] }> {
+    return databaseUpdateRemoteDataSource.getTableSchema(table);
+  },
+
+  // 원격 데이터소스에서 페이지 데이터를 가져온다.
   getResourceData(
     table: TDataTable,
     page: number,
-  ): ReturnType<IDatabaseUpdateRemoteDataSource['getResourceData']>;
-  getConfigs(keys: TConfigKey[]): Promise<IConfig[]>;
-  dropTable(table: TDataTable): Promise<void>;
-  createTable(table: TDataTable, columns: ITableColumnSchema[]): Promise<void>;
+  ): Promise<
+    GoogleCloud.ResourceDataAPI.IResourceDataResponse<TResourceDataSchemas>
+  > {
+    return databaseUpdateRemoteDataSource.getResourceData(table, page);
+  },
+
+  // SQLite 데이터소스에서 로컬 버전을 가져온다.
+  getConfigs(keys: TConfigKey[]): Promise<IConfig[]> {
+    return databaseUpdateSqliteDataSource.getConfigs(keys);
+  },
+
+  // SQLite 데이터소스에서 테이블을 삭제한다.
+  dropTable(table: TDataTable): Promise<void> {
+    return databaseUpdateSqliteDataSource.dropTable(table);
+  },
+
+  // SQLite 데이터소스에서 테이블을 생성한다.
+  createTable(table: TDataTable, columns: ITableColumnSchema[]): Promise<void> {
+    return databaseUpdateSqliteDataSource.createTable(table, columns);
+  },
+
+  // SQLite 데이터소스에 페이지 데이터를 삽입한다.
   insertData(
     table: TDataTable,
     data: Partial<TResourceDataSchemas>[],
-  ): Promise<void>;
-  getTableRowCount(table: TDataTable): Promise<number>;
-  updateConfigs(configs: IConfig[]): Promise<unknown>;
-}
+  ): Promise<void> {
+    return databaseUpdateSqliteDataSource.insertData(table, data);
+  },
 
-export class DatabaseUpdateRepository implements IDatabaseUpdateRepository {
-  constructor(
-    private readonly remoteDataSource: IDatabaseUpdateRemoteDataSource = databaseUpdateRemoteDataSource,
-    private readonly sqliteDataSource: IDatabaseUpdateSqliteDataSource = databaseUpdateSqliteDataSource,
-  ) {}
+  // SQLite 데이터소스에서 테이블 행 개수를 조회한다.
+  getTableRowCount(table: TDataTable): Promise<number> {
+    return databaseUpdateSqliteDataSource.getTableRowCount(table);
+  },
 
-  // 원격 데이터소스에서 서버 버전을 가져온다.
-  getDatabaseVersion() {
-    return this.remoteDataSource.getDatabaseVersion();
-  }
-
-  // 원격 데이터소스에서 테이블 스키마를 가져온다.
-  getTableSchema(table: TDataTable) {
-    return this.remoteDataSource.getTableSchema(table);
-  }
-
-  // 원격 데이터소스에서 페이지 데이터를 가져온다.
-  getResourceData(table: TDataTable, page: number) {
-    return this.remoteDataSource.getResourceData(table, page);
-  }
-
-  // SQLite 데이터소스에서 로컬 버전을 가져온다.
-  getConfigs(keys: TConfigKey[]) {
-    return this.sqliteDataSource.getConfigs(keys);
-  }
-
-  // SQLite 데이터소스에서 테이블을 삭제한다.
-  async dropTable(table: TDataTable) {
-    await this.sqliteDataSource.dropTable(table);
-  }
-
-  // SQLite 데이터소스에서 테이블을 생성한다.
-  async createTable(table: TDataTable, columns: ITableColumnSchema[]) {
-    await this.sqliteDataSource.createTable(table, columns);
-  }
-
-  // SQLite 데이터소스에 페이지 데이터를 저장한다.
-  insertData(table: TDataTable, data: Partial<TResourceDataSchemas>[]) {
-    return this.sqliteDataSource.insertData(table, data);
-  }
-
-  // SQLite 테이블의 행 개수를 조회한다.
-  getTableRowCount(table: TDataTable) {
-    return this.sqliteDataSource.getTableRowCount(table);
-  }
-
-  // SQLite에 새 버전을 저장한다.
-  updateConfigs(configs: IConfig[]) {
-    return this.sqliteDataSource.updateConfigs(configs);
-  }
-}
-
-export const databaseUpdateRepository = new DatabaseUpdateRepository();
+  // SQLite 데이터소스에 로컬 버전을 저장한다.
+  updateConfigs(configs: IConfig[]): Promise<unknown> {
+    return databaseUpdateSqliteDataSource.updateConfigs(configs);
+  },
+};

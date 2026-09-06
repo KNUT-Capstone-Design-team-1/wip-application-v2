@@ -1,7 +1,4 @@
-import {
-  IPillReminderRepository,
-  pillReminderRepository,
-} from '@features/pill_reminder/data/repositories/pill_reminder_repository';
+import { pillReminderRepository } from '@features/pill_reminder/data/repositories/pill_reminder_repository';
 import { IPillReminderCreateForm } from '@features/pill_reminder/types/pill_reminder_type';
 import {
   sanitizeReminderTitle,
@@ -11,11 +8,7 @@ import { pillReminderNotificationService } from '@features/pill_reminder/service
 import logger from '@utils/logger';
 
 // 복용 알림 신규 생성 비즈니스 서비스
-export class PillReminderCreateService {
-  constructor(
-    private readonly repository: IPillReminderRepository = pillReminderRepository,
-  ) {}
-
+export const pillReminderCreateService = {
   // 복용 알림 일괄 생성 유스케이스
   async createReminders(form: IPillReminderCreateForm): Promise<number[]> {
     try {
@@ -43,7 +36,7 @@ export class PillReminderCreateService {
       if (!explicitFolderId && items.length > 0) {
         const firstSeq = items[0].item_seq;
         const savedFolderId =
-          await this.repository.getSavedPillFolderIdByItemSeq(firstSeq);
+          await pillReminderRepository.getSavedPillFolderIdByItemSeq(firstSeq);
 
         if (savedFolderId) {
           targetFolderId = savedFolderId;
@@ -51,7 +44,7 @@ export class PillReminderCreateService {
       }
 
       if (!targetFolderId) {
-        const defaultFolder = (await this.repository.getFolders()).find(
+        const defaultFolder = (await pillReminderRepository.getFolders()).find(
           (folder) => folder.is_default === 1,
         );
 
@@ -62,26 +55,23 @@ export class PillReminderCreateService {
         return [];
       }
 
-      // 기존 알림 수 조회하여 기본 이름 카운트 계산
-      const baseCount = await this.repository.getExistingReminderCount();
-      const cleanMemo = sanitizeReminderMemo(memo);
+      const sanitizedTitle = sanitizeReminderTitle(title);
+      const sanitizedMemo = sanitizeReminderMemo(memo);
 
-      const remindersToInsert = times.map((time, i) => {
-        const trimmedTitle = title.trim();
-        const hasUserTitle = trimmedTitle.length > 0;
-        const defaultAutoTitle =
-          times.length > 1
-            ? `알림 ${baseCount + i + 1}`
-            : `알림 ${baseCount + 1}`;
+      const count = await pillReminderRepository.getExistingReminderCount();
 
-        const finalTitle = sanitizeReminderTitle(
-          hasUserTitle ? trimmedTitle : defaultAutoTitle,
-        );
+      const reminderPayloads = times.map((time, idx) => {
+        const finalTitle =
+          sanitizedTitle.length > 0
+            ? times.length > 1
+              ? `${sanitizedTitle} (${idx + 1})`
+              : sanitizedTitle
+            : `알림 ${count + idx + 1}`;
 
         return {
-          folderId: targetFolderId,
+          folderId: targetFolderId as number,
           title: finalTitle,
-          memo: cleanMemo,
+          memo: sanitizedMemo,
           time,
           daysStr,
           items: items.map((item) => ({
@@ -92,19 +82,16 @@ export class PillReminderCreateService {
         };
       });
 
-      const createdIds =
-        await this.repository.insertReminderWithItems(remindersToInsert);
+      const ids =
+        await pillReminderRepository.insertReminderWithItems(reminderPayloads);
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
       await pillReminderNotificationService.rescheduleAllNotifications();
 
-      return createdIds;
+      return ids;
     } catch (e) {
       logger.error(`[PILL-REMINDER-CREATE-SERVICE] Failed to create: ${e}`);
-      throw e;
+      return [];
     }
-  }
-}
-
-// 복용 알림 생성 서비스 싱글톤 인스턴스
-export const pillReminderCreateService = new PillReminderCreateService();
+  },
+};

@@ -54,3 +54,52 @@ export interface IDbReminderItemRow {
   // 제약사명 (JOIN pill_data)
   ENTP_NAME?: string;
 }
+
+// 알약 상세 정보 모델
+export interface IPillReminderPillData {
+  ITEM_SEQ: string;
+  ITEM_NAME: string;
+  ITEM_IMAGE?: string;
+  CLASS_NAME?: string;
+  ENTP_NAME?: string;
+}
+
+// 보관함 알약 정보 모델
+export interface IPillReminderSavedPill {
+  item_seq: string;
+  item_name: string;
+}
+
+// 보관함 폴더 정보 모델
+export interface IPillReminderFolderInfo {
+  id: number;
+  name: string;
+  is_default: number;
+}
+
+// 알림 생성/수정용 알약 항목 페이로드
+export interface IPillReminderItemPayload {
+  item_seq: string;
+  item_name: string;
+  dosage: number;
+}
+
+// 알림 일괄 삽입용 페이로드
+export interface IPillReminderInsertPayload {
+  folderId: number;
+  title: string;
+  memo: string;
+  time: string;
+  daysStr: string;
+  items: IPillReminderItemPayload[];
+}
+
+// 주간 반복 알림 스케줄 등록 매개변수 타입
+export interface IScheduleWeeklyNotificationParams {
+  title: string;
+  body: string;
+  weekday: number;
+  hour: number;
+  minute: number;
+  data: { reminderId: number };
+}

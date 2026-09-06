@@ -2,6 +2,11 @@ import { getDatabase } from '@services/database/sqlite';
 import {
   IDbReminderRow,
   IDbReminderItemRow,
+  IPillReminderPillData,
+  IPillReminderSavedPill,
+  IPillReminderFolderInfo,
+  IPillReminderItemPayload,
+  IPillReminderInsertPayload,
 } from '@features/pill_reminder/types/pill_reminder_data_type';
 import logger from '@utils/logger';
 
@@ -12,91 +17,8 @@ const logSqliteError = (operation: string, error: unknown) => {
   );
 };
 
-// 복용 알림 SQLite 데이터 소스 인터페이스
-export interface IPillReminderSqliteDataSource {
-  getAllReminders(): Promise<IDbReminderRow[]>;
-
-  getRemindersByItemSeq(itemSeq: string): Promise<IDbReminderRow[]>;
-
-  getReminderById(id: number): Promise<IDbReminderRow | null>;
-
-  getReminderItemsByReminderIds(
-    reminderIds: number[],
-  ): Promise<IDbReminderItemRow[]>;
-
-  getReminderItemsByReminderId(
-    reminderId: number,
-  ): Promise<IDbReminderItemRow[]>;
-
-  getPillDataBySeqs(itemSeqs: string[]): Promise<
-    {
-      ITEM_SEQ: string;
-      ITEM_NAME: string;
-      ITEM_IMAGE?: string;
-      CLASS_NAME?: string;
-      ENTP_NAME?: string;
-    }[]
-  >;
-
-  getSavedPillsBySeqs(itemSeqs: string[]): Promise<
-    {
-      item_seq: string;
-      item_name: string;
-    }[]
-  >;
-
-  getFolderInfoByItemSeq(
-    itemSeq: string,
-  ): Promise<{ id: number; name: string } | null>;
-
-  getSavedPillFolderIdByItemSeq(itemSeq: string): Promise<number | null>;
-
-  getExistingReminderCount(): Promise<number>;
-
-  getFolders(): Promise<{ id: number; name: string; is_default: number }[]>;
-
-  getPillsByFolder(folderId: number): Promise<
-    {
-      item_seq: string;
-      item_name: string;
-      ITEM_IMAGE?: string;
-      CLASS_NAME?: string;
-      ENTP_NAME?: string;
-    }[]
-  >;
-
-  getRemindedItemSeqs(folderId?: number): Promise<string[]>;
-
-  insertReminderWithItems(
-    reminders: {
-      folderId: number;
-      title: string;
-      memo: string;
-      time: string;
-      daysStr: string;
-      items: { item_seq: string; item_name: string; dosage: number }[];
-    }[],
-  ): Promise<number[]>;
-
-  updateReminderWithItems(
-    id: number,
-    targetFolderId: number | undefined,
-    title: string,
-    memo: string,
-    time: string,
-    daysStr: string,
-    items: { item_seq: string; item_name: string; dosage: number }[],
-  ): Promise<void>;
-
-  toggleReminder(id: number, isEnabled: boolean): Promise<boolean>;
-
-  deleteReminder(id: number): Promise<boolean>;
-
-  deleteAllReminders(): Promise<boolean>;
-}
-
 // SQLite 기반 복용 알림 데이터 소스 구현체
-export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
+export const pillReminderSqliteDataSource = {
   // 모든 복용 알림 행 조회
   async getAllReminders(): Promise<IDbReminderRow[]> {
     try {
@@ -227,7 +149,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
   },
 
   // pill_data 테이블에서 특정 item_seq 목록 조회
-  async getPillDataBySeqs(itemSeqs: string[]) {
+  async getPillDataBySeqs(
+    itemSeqs: string[],
+  ): Promise<IPillReminderPillData[]> {
     try {
       if (itemSeqs.length === 0) {
         return [];
@@ -247,13 +171,10 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         WHERE ITEM_SEQ IN (${placeholders})
       `;
 
-      return await db.getAllAsync<{
-        ITEM_SEQ: string;
-        ITEM_NAME: string;
-        ITEM_IMAGE?: string;
-        CLASS_NAME?: string;
-        ENTP_NAME?: string;
-      }>(selectPillDataQuery, itemSeqs);
+      return await db.getAllAsync<IPillReminderPillData>(
+        selectPillDataQuery,
+        itemSeqs,
+      );
     } catch (e) {
       logSqliteError('getPillDataBySeqs', e);
       return [];
@@ -261,7 +182,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
   },
 
   // saved_pills 테이블에서 누락된 item_seq 목록 조회
-  async getSavedPillsBySeqs(itemSeqs: string[]) {
+  async getSavedPillsBySeqs(
+    itemSeqs: string[],
+  ): Promise<IPillReminderSavedPill[]> {
     try {
       if (itemSeqs.length === 0) {
         return [];
@@ -276,10 +199,10 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         WHERE item_seq IN (${placeholders})
       `;
 
-      return await db.getAllAsync<{
-        item_seq: string;
-        item_name: string;
-      }>(selectSavedPillsQuery, itemSeqs);
+      return await db.getAllAsync<IPillReminderSavedPill>(
+        selectSavedPillsQuery,
+        itemSeqs,
+      );
     } catch (e) {
       logSqliteError('getSavedPillsBySeqs', e);
       return [];
@@ -289,7 +212,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
   // 특정 알약이 속한 보관함 폴더 정보 조회
   async getFolderInfoByItemSeq(
     itemSeq: string,
-  ): Promise<{ id: number; name: string } | null> {
+  ): Promise<IPillReminderFolderInfo | null> {
     try {
       const db = await getDatabase();
 
@@ -301,7 +224,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         LIMIT 1
       `;
 
-      return await db.getFirstAsync<{ id: number; name: string }>(
+      return await db.getFirstAsync<IPillReminderFolderInfo>(
         selectFolderInfoQuery,
         [itemSeq],
       );
@@ -357,9 +280,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
   },
 
   // 전체 보관함 폴더 목록 조회
-  async getFolders(): Promise<
-    { id: number; name: string; is_default: number }[]
-  > {
+  async getFolders(): Promise<IPillReminderFolderInfo[]> {
     try {
       const db = await getDatabase();
 
@@ -369,11 +290,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         ORDER BY id ASC
       `;
 
-      return await db.getAllAsync<{
-        id: number;
-        name: string;
-        is_default: number;
-      }>(selectFoldersQuery);
+      return await db.getAllAsync<IPillReminderFolderInfo>(selectFoldersQuery);
     } catch (e) {
       logSqliteError('getFolders', e);
       return [];
@@ -381,7 +298,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
   },
 
   // 특정 폴더에 속한 알약 목록 조회
-  async getPillsByFolder(folderId: number) {
+  async getPillsByFolder(
+    folderId: number,
+  ): Promise<(IPillReminderSavedPill & Partial<IPillReminderPillData>)[]> {
     try {
       const db = await getDatabase();
 
@@ -398,13 +317,9 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
         ORDER BY s.idx DESC
       `;
 
-      return await db.getAllAsync<{
-        item_seq: string;
-        item_name: string;
-        ITEM_IMAGE?: string;
-        CLASS_NAME?: string;
-        ENTP_NAME?: string;
-      }>(selectPillsByFolderQuery, [folderId]);
+      return await db.getAllAsync<
+        IPillReminderSavedPill & Partial<IPillReminderPillData>
+      >(selectPillsByFolderQuery, [folderId]);
     } catch (e) {
       logSqliteError('getPillsByFolder', e);
       return [];
@@ -450,14 +365,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
 
   // 복용 알림 및 하위 알약 항목 트랜잭션 일괄 삽입
   async insertReminderWithItems(
-    reminders: {
-      folderId: number;
-      title: string;
-      memo: string;
-      time: string;
-      daysStr: string;
-      items: { item_seq: string; item_name: string; dosage: number }[];
-    }[],
+    reminders: IPillReminderInsertPayload[],
   ): Promise<number[]> {
     const db = await getDatabase();
     const createdIds: number[] = [];
@@ -507,7 +415,7 @@ export const pillReminderSqliteDataSource: IPillReminderSqliteDataSource = {
     memo: string,
     time: string,
     daysStr: string,
-    items: { item_seq: string; item_name: string; dosage: number }[],
+    items: IPillReminderItemPayload[],
   ): Promise<void> {
     const db = await getDatabase();
 

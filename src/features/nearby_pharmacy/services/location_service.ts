@@ -1,8 +1,5 @@
 import * as Location from 'expo-location';
-import {
-  ILocationRepository,
-  locationRepository,
-} from '@features/nearby_pharmacy/data/repositories/location_repository';
+import { locationRepository } from '@features/nearby_pharmacy/data/repositories/location_repository';
 import logger from '@utils/logger';
 
 // 위치 가용성 검증 결과 타입
@@ -11,21 +8,17 @@ export type TLocationCheckResult =
   | { success: false; reason: 'permission_denied' | 'gps_disabled' };
 
 // 위치 관련 비즈니스 로직 서비스
-export class LocationService {
-  constructor(
-    private readonly repository: ILocationRepository = locationRepository,
-  ) {}
-
+export const locationService = {
   // 위치 권한 및 GPS 활성화 여부 확인
   async checkLocationAvailability(): Promise<TLocationCheckResult> {
-    const { status } = await this.repository.requestForegroundPermissions();
+    const { status } = await locationRepository.requestForegroundPermissions();
     const isPermissionDenied = status !== 'granted';
 
     if (isPermissionDenied) {
       return { success: false, reason: 'permission_denied' };
     }
 
-    const enabled = await this.repository.hasServicesEnabled();
+    const enabled = await locationRepository.hasServicesEnabled();
     const isGpsDisabled = !enabled;
 
     if (isGpsDisabled) {
@@ -33,7 +26,7 @@ export class LocationService {
     }
 
     return { success: true };
-  }
+  },
 
   // 타임아웃 및 정밀도 Fallback을 적용한 현재 위치 조회
   async getCurrentPositionWithFallback(
@@ -41,7 +34,7 @@ export class LocationService {
   ): Promise<Location.LocationObject | null> {
     const withTimeout = (accuracy: Location.Accuracy) =>
       Promise.race([
-        this.repository.getCurrentPosition({ accuracy }),
+        locationRepository.getCurrentPosition({ accuracy }),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('Location timeout')), timeoutMs),
         ),
@@ -58,18 +51,19 @@ export class LocationService {
         return null;
       }
     }
-  }
+  },
 
-  // 마지막으로 확인된 위치 조회
-  async getLastKnownLocation(): Promise<Location.LocationObject | null> {
+  // 마지막 알려진 위치를 안전하게 조회
+  async getLastKnownPositionSafely(): Promise<Location.LocationObject | null> {
     try {
-      return await this.repository.getLastKnownPosition();
-    } catch (e) {
-      logger.warn(`Failed to get last known position: ${e}`);
+      return await locationRepository.getLastKnownPosition();
+    } catch {
       return null;
     }
-  }
-}
+  },
 
-// 위치 서비스 싱글톤 인스턴스
-export const locationService = new LocationService();
+  // 호환성 별칭
+  async getLastKnownLocation(): Promise<Location.LocationObject | null> {
+    return this.getLastKnownPositionSafely();
+  },
+};
