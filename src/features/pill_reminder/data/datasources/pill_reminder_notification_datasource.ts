@@ -22,7 +22,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
@@ -37,7 +37,16 @@ export const pillReminderNotificationDataSource = {
 
   // 알림 권한 요청
   async requestPermissions() {
-    return await Notifications.requestPermissionsAsync();
+    return await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+        allowDisplayInCarPlay: true,
+        allowCriticalAlerts: true,
+        provideAppNotificationSettings: true,
+      },
+    });
   },
 
   // Android 알림 채널 및 인터랙티브 알림 카테고리(iOS/Android 공통) 설정

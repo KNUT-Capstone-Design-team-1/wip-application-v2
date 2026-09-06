@@ -94,6 +94,8 @@ export default {
         'android.permission.ACCESS_COARSE_LOCATION',
         'android.permission.ACCESS_FINE_LOCATION',
         'android.permission.POST_NOTIFICATIONS',
+        'android.permission.SCHEDULE_EXACT_ALARM',
+        'android.permission.USE_EXACT_ALARM',
         'android.permission.VIBRATE',
         'android.permission.RECEIVE_BOOT_COMPLETED',
         'com.google.android.gms.permission.AD_ID',
