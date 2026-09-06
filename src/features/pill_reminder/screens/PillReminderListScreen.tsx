@@ -40,11 +40,6 @@ export const PillReminderListScreen = () => {
     );
   }
 
-  // 데이터 없음 상태 Early Return
-  if (isListEmpty) {
-    return <ReminderListEmptyView onCreateReminder={handleCreateReminder} />;
-  }
-
   return (
     <Pressable style={styles.container} onPress={handleBackgroundPress}>
       {/* 상단 카운트 및 편집/전체선택 헤더 */}
@@ -56,40 +51,44 @@ export const PillReminderListScreen = () => {
         onSelectAll={toggleSelectAll}
       />
 
-      {/* 알림 카드 목록 스크롤 뷰 */}
-      <ScrollView
-        style={styles.scrollContainer}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Pressable onPress={handleBackgroundPress}>
-          {reminders.map((reminder) => {
-            const isSelected = selectedIds.includes(reminder.id);
+      {/* 목록 본문 (데이터 없음 또는 카드 목록 스크롤 뷰) */}
+      {isListEmpty ? (
+        <ReminderListEmptyView />
+      ) : (
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Pressable onPress={handleBackgroundPress}>
+            {reminders.map((reminder) => {
+              const isSelected = selectedIds.includes(reminder.id);
 
-            return (
-              <ReminderListItem
-                key={reminder.id}
-                reminder={reminder}
-                isEditing={isEditing}
-                isSelected={isSelected}
-                onPress={() => {
-                  if (isEditing) {
-                    toggleSelect(reminder.id);
-                  } else {
-                    handleEditReminder(reminder.id);
-                  }
-                }}
-                onLongPress={() => {
-                  if (!isEditing) {
-                    handleLongPressItem(reminder.id);
-                  }
-                }}
-                onToggle={(newVal) => handleToggle(reminder.id, !newVal)}
-              />
-            );
-          })}
-        </Pressable>
-      </ScrollView>
+              return (
+                <ReminderListItem
+                  key={reminder.id}
+                  reminder={reminder}
+                  isEditing={isEditing}
+                  isSelected={isSelected}
+                  onPress={() => {
+                    if (isEditing) {
+                      toggleSelect(reminder.id);
+                    } else {
+                      handleEditReminder(reminder.id);
+                    }
+                  }}
+                  onLongPress={() => {
+                    if (!isEditing) {
+                      handleLongPressItem(reminder.id);
+                    }
+                  }}
+                  onToggle={(newVal) => handleToggle(reminder.id, !newVal)}
+                />
+              );
+            })}
+          </Pressable>
+        </ScrollView>
+      )}
 
       {/* 하단 고정 바 (편집 모드: 큰 삭제 버튼 바 / 일반 모드: 추가 버튼 푸터) */}
       {isEditing ? (
