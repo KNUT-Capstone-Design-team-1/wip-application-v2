@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 import { PillReminderSettingScreen } from '@features/pill_reminder/screens/PillReminderSettingScreen';
 
@@ -14,10 +14,5 @@ export default function PillReminderSettingRoute() {
     }, [reminderId, resetTitle, setTitle]),
   );
 
-  return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <PillReminderSettingScreen />
-    </>
-  );
+  return <PillReminderSettingScreen />;
 }

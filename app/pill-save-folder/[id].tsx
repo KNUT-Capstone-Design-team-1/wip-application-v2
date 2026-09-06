@@ -1,5 +1,5 @@
 import PillSaveFolderDetail from '@features/pill_save/screens/PillSaveFolderDetail';
-import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 import { useCallback } from 'react';
 
@@ -17,10 +17,5 @@ export default function FolderDetailRoute() {
     }, [folderName, resetTitle, setTitle]),
   );
 
-  return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <PillSaveFolderDetail />
-    </>
-  );
+  return <PillSaveFolderDetail />;
 }
