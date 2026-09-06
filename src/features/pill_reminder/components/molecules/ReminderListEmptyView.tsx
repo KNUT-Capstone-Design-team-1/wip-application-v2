@@ -17,7 +17,6 @@ export const ReminderListEmptyView = memo(
           <NotItem
             mainText="등록된 복용 알림이 없습니다."
             subText="복용 알림을 추가하여 제때 약을 챙겨드세요!"
-            marginTop="40%"
           />
         </View>
 

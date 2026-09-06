@@ -10,7 +10,8 @@ const NotItem = ({ mainText, subText, marginTop, height }: INotItemProps) => {
     <View
       style={[
         styles.notItemWrapper,
-        { marginTop: Number(marginTop), height: Number(height) },
+        marginTop !== undefined && { marginTop: Number(marginTop) },
+        height !== undefined && { height: Number(height) },
       ]}
     >
       <BaseText

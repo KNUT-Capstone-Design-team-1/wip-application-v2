@@ -16,7 +16,6 @@ const EmptyBox = memo(() => (
   <NotItem
     mainText={'보관된 알약이 없습니다.'}
     subText={'북마크 아이콘을 누르면 보관함에 저장돼요!'}
-    marginTop={'40%'}
   />
 ));
 
