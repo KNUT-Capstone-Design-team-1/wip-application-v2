@@ -70,31 +70,27 @@ export const pillReminderCreateService = {
       const sanitizedMemo = sanitizeReminderMemo(memo);
 
       const count = await pillReminderRepository.getExistingReminderCount();
+      const finalTitle =
+        sanitizedTitle.length > 0 ? sanitizedTitle : `알림 ${count + 1}`;
 
-      const reminderPayloads = times.map((time, idx) => {
-        const finalTitle =
-          sanitizedTitle.length > 0
-            ? times.length > 1
-              ? `${sanitizedTitle} (${idx + 1})`
-              : sanitizedTitle
-            : `알림 ${count + idx + 1}`;
+      const timesStr = times.sort().join(',');
 
-        return {
-          folderId: targetFolderId as number,
-          title: finalTitle,
-          memo: sanitizedMemo,
-          time,
-          daysStr,
-          items: items.map((item) => ({
-            item_seq: item.item_seq,
-            item_name: item.item_name,
-            dosage: item.dosage || 1,
-          })),
-        };
-      });
+      const reminderPayload = {
+        folderId: targetFolderId as number,
+        title: finalTitle,
+        memo: sanitizedMemo,
+        timesStr,
+        daysStr,
+        items: items.map((item) => ({
+          item_seq: item.item_seq,
+          item_name: item.item_name,
+          dosage: item.dosage || 1,
+        })),
+      };
 
-      const ids =
-        await pillReminderRepository.insertReminderWithItems(reminderPayloads);
+      const ids = await pillReminderRepository.insertReminderWithItems([
+        reminderPayload,
+      ]);
 
       // 시스템 로컬 푸시 알림 스케줄 동기화
       await pillReminderNotificationService.rescheduleAllNotifications();

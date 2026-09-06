@@ -4,11 +4,15 @@ import { BaseText } from '@components/common/BaseText';
 import { ChevronRight } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
+import {
+  formatReminderTime,
+  formatReminderTimes,
+} from '@features/pill_reminder/utils/reminder_format';
 import { styles } from '@features/pill_reminder/styles/atoms/SpecificReminderCardBody';
 
 interface ISpecificReminderCardBodyProps {
-  time: string;
+  time?: string;
+  times?: string[];
   itemName: string;
   dosage: string;
   otherText: string;
@@ -16,8 +20,20 @@ interface ISpecificReminderCardBodyProps {
 
 // 특정 알약 복용 알림 카드 중간 시간 및 복용량 표시 컴포넌트
 export const SpecificReminderCardBody = memo(
-  ({ time, itemName, dosage, otherText }: ISpecificReminderCardBodyProps) => {
-    const formattedTime = formatReminderTime(time);
+  ({
+    time,
+    times,
+    itemName,
+    dosage,
+    otherText,
+  }: ISpecificReminderCardBodyProps) => {
+    const effectiveTimes =
+      times && times.length > 0 ? times : time ? [time] : [];
+
+    const formattedTime =
+      effectiveTimes.length > 0
+        ? formatReminderTimes(effectiveTimes)
+        : formatReminderTime(time || '');
 
     return (
       <View style={styles.cardBody}>

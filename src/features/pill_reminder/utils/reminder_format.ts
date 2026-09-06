@@ -54,6 +54,15 @@ export const formatReminderTime = (time24: string): string => {
   return `오전 ${h}:${m}`;
 };
 
+// 24시간제 시간 목록(["08:00", "12:00", "18:00"])을 오전/오후 12시간제 목록 텍스트로 포맷팅
+export const formatReminderTimes = (times: string[]): string => {
+  if (!times || times.length === 0) {
+    return '';
+  }
+
+  return times.map((t) => formatReminderTime(t)).join(', ');
+};
+
 // 24시간제("08:30", "13:00")를 12시간제('오전'/'오후', '08', '30')로 변환
 export const parse24To12 = (
   time24: string,

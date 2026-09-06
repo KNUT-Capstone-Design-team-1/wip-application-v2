@@ -36,6 +36,7 @@ export const SpecificReminderCard = memo(
 
         {/* 시간 및 복용량 본문 */}
         <SpecificReminderCardBody
+          times={reminder.times}
           time={reminder.time}
           itemName={itemName}
           dosage={dosage}

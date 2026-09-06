@@ -67,9 +67,12 @@ export const usePillReminderSettingForm = ({
           if (hasReminder && reminder) {
             setTitle(reminder.title || '');
 
-            setMemo(reminder.memo || '');
+            const initialTimes =
+              reminder.times && reminder.times.length > 0
+                ? reminder.times
+                : [reminder.time || '08:00'];
 
-            setTimes([reminder.time]);
+            setTimes(initialTimes);
 
             setDays(reminder.days);
 
@@ -436,6 +439,7 @@ export const usePillReminderSettingForm = ({
           folder_id: selectedFolderId,
           title,
           memo,
+          times,
           time: times[0] || '08:00',
           days,
           items: selectedPills.map((p) => ({
@@ -479,7 +483,7 @@ export const usePillReminderSettingForm = ({
         if (isCreated) {
           Toast.show({
             type: 'success',
-            text1: `${ids.length}개의 복용 알림이 설정되었습니다.`,
+            text1: '복용 알림이 설정되었습니다.',
           });
           router.back();
         } else {

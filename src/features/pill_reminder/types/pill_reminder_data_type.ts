@@ -12,8 +12,8 @@ export interface IDbReminderRow {
   // 메모
   memo: string;
 
-  // 시간 ('HH:mm')
-  time: string;
+  // 복용 시간 콤마 구분 문자열 (예: '08:00,12:00,18:00')
+  times: string;
 
   // 요일 콤마 구분 문자열 (예: '1,2,3')
   days: string;
@@ -89,7 +89,7 @@ export interface IPillReminderInsertPayload {
   folderId: number;
   title: string;
   memo: string;
-  time: string;
+  timesStr: string;
   daysStr: string;
   items: IPillReminderItemPayload[];
 }

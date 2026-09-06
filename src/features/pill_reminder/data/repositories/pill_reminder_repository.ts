@@ -98,7 +98,7 @@ export const pillReminderRepository = {
     targetFolderId: number | undefined,
     title: string,
     memo: string,
-    time: string,
+    timesStr: string,
     daysStr: string,
     items: IPillReminderItemPayload[],
   ): Promise<void> {
@@ -107,7 +107,7 @@ export const pillReminderRepository = {
       targetFolderId,
       title,
       memo,
-      time,
+      timesStr,
       daysStr,
       items,
     );

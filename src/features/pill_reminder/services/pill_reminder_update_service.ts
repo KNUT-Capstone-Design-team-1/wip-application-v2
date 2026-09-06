@@ -17,19 +17,26 @@ export const pillReminderUpdateService = {
         folder_id: explicitFolderId,
         title = '',
         memo = '',
+        times = [],
         time,
         days,
         items,
       } = form;
 
+      const effectiveTimes = times.length > 0 ? times : time ? [time] : [];
+
       const isInvalidForm =
-        !id || !time || days.length === 0 || items.length === 0;
+        !id ||
+        effectiveTimes.length === 0 ||
+        days.length === 0 ||
+        items.length === 0;
 
       if (isInvalidForm) {
         return false;
       }
 
       const daysStr = days.sort((a, b) => a - b).join(',');
+      const timesStr = effectiveTimes.sort().join(',');
 
       // folder_id 결정
       let targetFolderId = explicitFolderId;
@@ -64,7 +71,7 @@ export const pillReminderUpdateService = {
         targetFolderId,
         finalTitle,
         cleanMemo,
-        time,
+        timesStr,
         daysStr,
         items.map((item) => ({
           item_seq: item.item_seq,

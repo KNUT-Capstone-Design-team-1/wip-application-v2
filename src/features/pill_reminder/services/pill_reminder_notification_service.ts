@@ -207,9 +207,10 @@ export const pillReminderNotificationService = {
       const activeReminders = reminders.filter((r) => r.is_enabled);
 
       for (const reminder of activeReminders) {
-        const [hourStr, minuteStr] = reminder.time.split(':');
-        const hour = parseInt(hourStr, 10);
-        const minute = parseInt(minuteStr, 10);
+        const reminderTimes =
+          reminder.times && reminder.times.length > 0
+            ? reminder.times
+            : [reminder.time];
 
         const itemCount = reminder.items.length;
         let pillBody = '복용할 시간이에요!';
@@ -232,19 +233,28 @@ export const pillReminderNotificationService = {
 
         const reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
 
-        // 각 요일별 주간 반복 알림 스케줄 등록
-        for (const day of reminder.days) {
-          // JS day(0: 일, 1: 월... 6: 토) -> Expo weekday(1: 일, 2: 월... 7: 토)
-          const expoWeekday = day === 0 ? 1 : day + 1;
+        // 알림에 등록된 모든 복용 시간에 대해 스케줄 등록
+        for (const timeStr of reminderTimes) {
+          const [hourStr, minuteStr] = timeStr.split(':');
+          const hour = parseInt(hourStr, 10);
+          const minute = parseInt(minuteStr, 10);
 
-          await pillReminderNotificationRepository.scheduleWeeklyNotification({
-            title: `[${reminderTitle}]`,
-            body: finalBody,
-            weekday: expoWeekday,
-            hour,
-            minute,
-            data: { reminderId: reminder.id },
-          });
+          // 각 요일별 주간 반복 알림 스케줄 등록
+          for (const day of reminder.days) {
+            // JS day(0: 일, 1: 월... 6: 토) -> Expo weekday(1: 일, 2: 월... 7: 토)
+            const expoWeekday = day === 0 ? 1 : day + 1;
+
+            await pillReminderNotificationRepository.scheduleWeeklyNotification(
+              {
+                title: `[${reminderTitle}]`,
+                body: finalBody,
+                weekday: expoWeekday,
+                hour,
+                minute,
+                data: { reminderId: reminder.id },
+              },
+            );
+          }
         }
       }
     } catch (e) {

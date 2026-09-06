@@ -27,7 +27,7 @@ export const pillReminderSqliteDataSource = {
       const selectAllRemindersQuery = `
         SELECT * 
         FROM pill_reminders 
-        ORDER BY time ASC, id ASC
+        ORDER BY times ASC, id ASC
       `;
 
       return await db.getAllAsync<IDbReminderRow>(selectAllRemindersQuery);
@@ -47,7 +47,7 @@ export const pillReminderSqliteDataSource = {
         FROM pill_reminders pr
         INNER JOIN pill_reminder_items pri ON pr.id = pri.reminder_id
         WHERE pri.item_seq = ?
-        ORDER BY pr.time ASC, pr.id ASC
+        ORDER BY pr.times ASC, pr.id ASC
       `;
 
       return await db.getAllAsync<IDbReminderRow>(selectByItemSeqQuery, [
@@ -74,7 +74,7 @@ export const pillReminderSqliteDataSource = {
         FROM pill_reminders pr
         INNER JOIN pill_reminder_items pri ON pr.id = pri.reminder_id
         WHERE pri.item_seq IN (${placeholders})
-        ORDER BY pr.time ASC, pr.id ASC
+        ORDER BY pr.times ASC, pr.id ASC
       `;
 
       return await db.getAllAsync<IDbReminderRow>(
@@ -399,7 +399,7 @@ export const pillReminderSqliteDataSource = {
     const createdIds: number[] = [];
 
     const insertReminderQuery = `
-      INSERT INTO pill_reminders (folder_id, title, memo, time, days, is_enabled) 
+      INSERT INTO pill_reminders (folder_id, title, memo, times, days, is_enabled) 
       VALUES (?, ?, ?, ?, ?, 1)
     `;
 
@@ -414,7 +414,7 @@ export const pillReminderSqliteDataSource = {
           r.folderId,
           r.title,
           r.memo,
-          r.time,
+          r.timesStr,
           r.daysStr,
         ]);
 
@@ -441,7 +441,7 @@ export const pillReminderSqliteDataSource = {
     targetFolderId: number | undefined,
     title: string,
     memo: string,
-    time: string,
+    timesStr: string,
     daysStr: string,
     items: IPillReminderItemPayload[],
   ): Promise<void> {
@@ -449,13 +449,13 @@ export const pillReminderSqliteDataSource = {
 
     const updateWithFolderQuery = `
       UPDATE pill_reminders 
-      SET folder_id = ?, title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') 
+      SET folder_id = ?, title = ?, memo = ?, times = ?, days = ?, updated_at = datetime('now', 'localtime') 
       WHERE id = ?
     `;
 
     const updateWithoutFolderQuery = `
       UPDATE pill_reminders 
-      SET title = ?, memo = ?, time = ?, days = ?, updated_at = datetime('now', 'localtime') 
+      SET title = ?, memo = ?, times = ?, days = ?, updated_at = datetime('now', 'localtime') 
       WHERE id = ?
     `;
 
@@ -475,7 +475,7 @@ export const pillReminderSqliteDataSource = {
           targetFolderId,
           title,
           memo,
-          time,
+          timesStr,
           daysStr,
           id,
         ]);
@@ -483,7 +483,7 @@ export const pillReminderSqliteDataSource = {
         await db.runAsync(updateWithoutFolderQuery, [
           title,
           memo,
-          time,
+          timesStr,
           daysStr,
           id,
         ]);

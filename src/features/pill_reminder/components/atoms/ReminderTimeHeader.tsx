@@ -8,15 +8,22 @@ import { formatReminderTime } from '@features/pill_reminder/utils/reminder_forma
 import { styles } from '@features/pill_reminder/styles/atoms/ReminderTimeHeader';
 
 interface IReminderTimeHeaderProps {
-  time: string;
+  time?: string;
+  times?: string[];
   daysText: string;
   isEnabled: boolean;
 }
 
 // 알림 카드 상단 시간 및 요일 뱃지 컴포넌트 (오전/오후 표시)
 export const ReminderTimeHeader = memo(
-  ({ time, daysText, isEnabled }: IReminderTimeHeaderProps) => {
-    const formattedTime = formatReminderTime(time);
+  ({ time, times, daysText, isEnabled }: IReminderTimeHeaderProps) => {
+    const effectiveTimes =
+      times && times.length > 0 ? times : time ? [time] : [];
+
+    const formattedTimeStr =
+      effectiveTimes.length > 0
+        ? effectiveTimes.map((t) => formatReminderTime(t)).join(', ')
+        : '';
 
     return (
       <View style={styles.container}>
@@ -26,11 +33,11 @@ export const ReminderTimeHeader = memo(
           style={styles.bellIcon}
         />
         <BaseText
-          size={18}
+          size={16}
           weight="bold"
           style={isEnabled ? styles.timeText : styles.timeTextDisabled}
         >
-          {formattedTime}
+          {formattedTimeStr}
         </BaseText>
         <View style={styles.dayBadge}>
           <BaseText

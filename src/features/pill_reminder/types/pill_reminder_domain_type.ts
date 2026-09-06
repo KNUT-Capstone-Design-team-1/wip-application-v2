@@ -39,7 +39,10 @@ export interface IPillReminder {
   // 복용 메모
   memo: string;
 
-  // 복용 시간 ('HH:mm')
+  // 복용 시간 목록 (['08:00', '12:00', '18:00'])
+  times: string[];
+
+  // 하위 호환용 대표 시간 (첫 번째 복용 시간 'HH:mm')
   time: string;
 
   // 반복 요일 (0: 일, 1: 월, ... 6: 토)

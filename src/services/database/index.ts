@@ -104,7 +104,7 @@ export const initPillReminderTables = async (db: SQLiteDatabase) => {
       folder_id INTEGER NOT NULL DEFAULT 1,
       title TEXT NOT NULL DEFAULT '',
       memo TEXT NOT NULL DEFAULT '',
-      time TEXT NOT NULL,
+      times TEXT NOT NULL,
       days TEXT NOT NULL,
       is_enabled INTEGER NOT NULL DEFAULT 1,
       created_at DATETIME DEFAULT (datetime('now', 'localtime')),

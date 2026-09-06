@@ -1,5 +1,13 @@
 import { pillReminderService } from '../../../src/features/pill_reminder/services/pill_reminder_service';
 
+jest.mock('expo-router', () => ({
+  router: {
+    push: jest.fn(),
+    back: jest.fn(),
+    replace: jest.fn(),
+  },
+}));
+
 jest.mock('expo-notifications', () => ({
   setNotificationHandler: jest.fn(),
   getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
@@ -11,6 +19,7 @@ jest.mock('expo-notifications', () => ({
   scheduleNotificationAsync: jest.fn(() => Promise.resolve('notif-1')),
   AndroidImportance: { HIGH: 4 },
   SchedulableTriggerInputTypes: { WEEKLY: 'weekly' },
+  DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
 }));
 
 jest.mock('react-native-toast-message', () => ({
@@ -42,7 +51,7 @@ const mockDb = {
         folder_id: params[0],
         title: params[1],
         memo: params[2],
-        time: params[3],
+        times: params[3],
         days: params[4],
         is_enabled: 1,
         created_at: '2026-09-02 08:00:00',
@@ -94,7 +103,7 @@ const mockDb = {
         r.folder_id = params[0];
         r.title = params[1];
         r.memo = params[2];
-        r.time = params[3];
+        r.times = params[3];
         r.days = params[4];
       }
       return Promise.resolve({ changes: 1 });
@@ -179,7 +188,7 @@ describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
     nextItemId = 1;
   });
 
-  test('복용 알림 생성 및 조회 (folder_id, 자동 이름 부여 및 메모)', async () => {
+  test('복용 알림 생성 및 조회 (folder_id, 자동 이름 부여 및 다중 복용 시간 단일 알림 관리)', async () => {
     const createdIds = await pillReminderService.createReminders({
       folder_id: 1,
       times: ['08:00', '20:00'],
@@ -191,18 +200,18 @@ describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
       ],
     });
 
-    expect(createdIds).toHaveLength(2);
-    expect(remindersDb).toHaveLength(2);
+    // 이제 2개 시간을 지정해도 1개의 단일 알림 레코드로 관리됨
+    expect(createdIds).toHaveLength(1);
+    expect(remindersDb).toHaveLength(1);
 
     const allReminders = await pillReminderService.getReminders();
-    expect(allReminders).toHaveLength(2);
+    expect(allReminders).toHaveLength(1);
     expect(allReminders[0].folder_id).toBe(1);
     expect(allReminders[0].title).toBe('알림 1');
     expect(allReminders[0].memo).toBe('식후 30분 복용');
+    expect(allReminders[0].times).toEqual(['08:00', '20:00']);
     expect(allReminders[0].time).toBe('08:00');
     expect(allReminders[0].days).toEqual([1, 2, 3, 4, 5]);
-
-    expect(allReminders[1].title).toBe('알림 2');
   });
 
   test('특정 폴더에 등록된 item_seq 목록만 정확히 조회', async () => {
@@ -237,7 +246,7 @@ describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
       folder_id: 1,
       title: '아침 식후약',
       memo: '물 많이 마시기',
-      time: '09:00',
+      times: ['09:00', '18:00'],
       days: [1, 2, 3, 4, 5],
       items: [{ item_seq: '199303108', item_name: '타이레놀', dosage: 2 }],
     });
@@ -247,7 +256,7 @@ describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
     const updated = await pillReminderService.getReminderById(reminderId);
     expect(updated?.title).toBe('아침 식후약');
     expect(updated?.memo).toBe('물 많이 마시기');
-    expect(updated?.time).toBe('09:00');
+    expect(updated?.times).toEqual(['09:00', '18:00']);
   });
 
   test('복용 알림 단일 삭제', async () => {
@@ -271,7 +280,7 @@ describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
       items: [{ item_seq: '199303108', item_name: '타이레놀', dosage: 1 }],
     });
 
-    expect(remindersDb).toHaveLength(3);
+    expect(remindersDb).toHaveLength(1);
 
     const success = await pillReminderService.deleteAllReminders();
     expect(success).toBe(true);

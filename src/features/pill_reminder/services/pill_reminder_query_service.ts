@@ -111,15 +111,17 @@ export const pillReminderQueryService = {
           continue;
         }
 
-        if (timeSet.has(reminder.time)) {
-          // 중복된 알약 이름 찾기
-          const matchedItem = reminder.items.find((item) =>
-            itemSeqs.includes(item.item_seq),
-          );
-          duplicates.push({
-            time: reminder.time,
-            pillName: matchedItem?.item_name || '선택한 알약',
-          });
+        for (const existingTime of reminder.times) {
+          if (timeSet.has(existingTime)) {
+            // 중복된 알약 이름 찾기
+            const matchedItem = reminder.items.find((item) =>
+              itemSeqs.includes(item.item_seq),
+            );
+            duplicates.push({
+              time: existingTime,
+              pillName: matchedItem?.item_name || '선택한 알약',
+            });
+          }
         }
       }
 

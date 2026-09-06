@@ -39,8 +39,11 @@ export interface IPillReminderUpdateForm {
   // 복용 메모
   memo?: string;
 
-  // 복용 시간 ('HH:mm')
-  time: string;
+  // 복용 시간 목록 ('HH:mm')
+  times: string[];
+
+  // 하위 호환용 단일 시간
+  time?: string;
 
   // 반복 요일 (0: 일, 1: 월, ... 6: 토)
   days: number[];

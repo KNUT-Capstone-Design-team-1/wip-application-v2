@@ -12,6 +12,13 @@ export const mapDbReminderToModel = (
   row: IDbReminderRow,
   items: IPillReminderItem[] = [],
 ): IPillReminder => {
+  const timesArray = row.times
+    ? row.times
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0)
+    : [];
+
   const daysArray = row.days
     ? row.days
         .split(',')
@@ -24,7 +31,8 @@ export const mapDbReminderToModel = (
     folder_id: row.folder_id,
     title: row.title,
     memo: row.memo,
-    time: row.time,
+    times: timesArray,
+    time: timesArray[0] || '08:00',
     days: daysArray,
     is_enabled: row.is_enabled === 1,
     created_at: row.created_at,

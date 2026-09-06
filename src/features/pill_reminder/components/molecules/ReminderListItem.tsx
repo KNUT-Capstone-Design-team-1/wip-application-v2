@@ -60,6 +60,7 @@ export const ReminderListItem = memo(
         {/* 시간, 요일 및 조작 버튼 (일반: 토글 스위치, 편집: 체크 버튼) */}
         <View style={styles.topRow}>
           <ReminderTimeHeader
+            times={reminder.times}
             time={reminder.time}
             daysText={daysText}
             isEnabled={reminder.is_enabled}
