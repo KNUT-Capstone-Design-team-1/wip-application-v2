@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Modal, ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native';
+import { BaseBottomSheet } from '@components/common/BaseBottomSheet';
 import { SpecificReminderHeader } from '@features/pill_reminder/components/molecules/SpecificReminderHeader';
 import { SpecificReminderCard } from '@features/pill_reminder/components/molecules/SpecificReminderCard';
 import { SpecificReminderFooter } from '@features/pill_reminder/components/molecules/SpecificReminderFooter';
@@ -24,52 +25,40 @@ export const PillSpecificReminderBottomSheet = ({
   const { reminders, handleSelectReminder, handleAddReminder } =
     useSpecificReminders(visible, itemSeq, onClose);
 
-  // 닫혀 있으면 렌더링 생략
-  if (!visible) {
-    return null;
-  }
-
   return (
-    <Modal
+    <BaseBottomSheet
       visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
+      onClose={onClose}
+      containerStyle={styles.bottomSheet}
+      showDragHandle={false}
+      enablePanDownToClose={true}
     >
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
+      {/* 헤더 & 드래그 바 */}
+      <SpecificReminderHeader itemName={itemName} onClose={onClose} />
+
+      {/* 알림 목록 스크롤 영역 */}
+      <ScrollView
+        style={styles.scrollList}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.bottomSheet} onStartShouldSetResponder={() => true}>
-          {/* 헤더 & 드래그 바 */}
-          <SpecificReminderHeader itemName={itemName} onClose={onClose} />
+        {reminders.length === 0 ? (
+          <SpecificReminderEmptyView />
+        ) : (
+          reminders.map((reminder) => (
+            <SpecificReminderCard
+              key={reminder.id}
+              reminder={reminder}
+              itemSeq={itemSeq}
+              itemName={itemName}
+              onPress={handleSelectReminder}
+            />
+          ))
+        )}
+      </ScrollView>
 
-          {/* 알림 목록 스크롤 영역 */}
-          <ScrollView
-            style={styles.scrollList}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {reminders.length === 0 ? (
-              <SpecificReminderEmptyView />
-            ) : (
-              reminders.map((reminder) => (
-                <SpecificReminderCard
-                  key={reminder.id}
-                  reminder={reminder}
-                  itemSeq={itemSeq}
-                  itemName={itemName}
-                  onPress={handleSelectReminder}
-                />
-              ))
-            )}
-          </ScrollView>
-
-          {/* 하단 고정 액션 버튼 푸터 */}
-          <SpecificReminderFooter onAdd={handleAddReminder} onClose={onClose} />
-        </View>
-      </TouchableOpacity>
-    </Modal>
+      {/* 하단 고정 액션 버튼 푸터 */}
+      <SpecificReminderFooter onAdd={handleAddReminder} onClose={onClose} />
+    </BaseBottomSheet>
   );
 };

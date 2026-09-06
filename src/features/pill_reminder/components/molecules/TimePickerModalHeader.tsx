@@ -15,10 +15,14 @@ export const TimePickerModalHeader = memo(
   ({ onClose }: ITimePickerModalHeaderProps) => {
     return (
       <View style={styles.header}>
-        <BaseText size={18} weight="bold" style={styles.title}>
+        <BaseText size={20} weight="bold" style={styles.title}>
           복용 시간 설정
         </BaseText>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+        <TouchableOpacity
+          onPress={onClose}
+          style={styles.closeButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <X size={fontPx(22)} color={COLOR_TEXT.sub} />
         </TouchableOpacity>
       </View>
