@@ -47,4 +47,13 @@ export const pharmacyActionService = {
       return false;
     }
   },
+
+  // 약국 재고 문의용 추천 멘트 생성
+  generateInquiryScript(pillName: string, className?: string): string {
+    const cleanName = pillName ? pillName.trim() : '알약';
+    if (className && className.trim()) {
+      return `안녕하세요, 약사님! 혹시 '${cleanName}'(${className.trim()}) 재고가 있을까요? 혹시 없다면 동일 성분/효능으로 대체조제 가능한 약이 있을까요?`;
+    }
+    return `안녕하세요, 약사님! 혹시 '${cleanName}' 재고가 있을까요? 혹시 없다면 동일 성분으로 대체 가능한 약이 있을까요?`;
+  },
 };

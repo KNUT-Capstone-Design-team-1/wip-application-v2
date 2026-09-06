@@ -15,6 +15,8 @@ import PharmacyLocateButton from '@features/nearby_pharmacy/components/atoms/Pha
 import PharmacyMap from '@features/nearby_pharmacy/components/organisms/PharmacyMap';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import StockInquirySummaryModal from '@features/nearby_pharmacy/components/molecules/StockInquirySummaryModal';
+
 // 주변 약국 지도 화면
 const NearbyPharmacyScreen = () => {
   // 약국 데이터 및 위치 관련 전역 훅
@@ -38,7 +40,11 @@ const NearbyPharmacyScreen = () => {
   } = useNearbyPharmacy();
 
   // 재고 문의 모드 훅
-  const { isStockInquiryMode, handleStockInquiryCall } = useStockInquiry();
+  const { isStockInquiryMode, pillContext, handleStockInquiryCall } =
+    useStockInquiry();
+
+  // 재고 문의 요약 모달 표시 여부 상태
+  const [inquiryModalVisible, setInquiryModalVisible] = useState(false);
 
   // 안전 영역(노치 등) 여백 값
   const insets = useSafeAreaInsets();
@@ -99,30 +105,43 @@ const NearbyPharmacyScreen = () => {
         <ResearchHereButton loading={loading} onPress={handleResearchHere} />
       )}
 
-      {/* 하단 약국 상세 정보 또는 클러스터(묶음) 목록 오버레이 */}
-      <View style={styles.bottomOverlay}>
-        {clusterPharmacies ? (
-          <PharmacyClusterList
-            pharmacies={clusterPharmacies}
-            onPharmacyPress={handleClusterPharmacySelect}
-            onClosePress={closeClusterList}
-          />
-        ) : (
-          selectedPharmacy && (
-            <PharmacyInfoCard
-              pharmacy={selectedPharmacy}
-              onCopyPress={handleCopy}
-              onClosePress={handleCloseInfoCard}
-              onStockInquiryPress={
-                isStockInquiryMode ? handleStockInquiryCall : undefined
-              }
+      {/* 하단 약국 상세 정보 또는 클러스터(묶음) 목록 오버레이 (재고 문의 모달 열림 시 숨김) */}
+      {!inquiryModalVisible && (
+        <View style={styles.bottomOverlay}>
+          {clusterPharmacies ? (
+            <PharmacyClusterList
+              pharmacies={clusterPharmacies}
+              onPharmacyPress={handleClusterPharmacySelect}
+              onClosePress={closeClusterList}
             />
-          )
-        )}
-      </View>
+          ) : (
+            selectedPharmacy && (
+              <PharmacyInfoCard
+                pharmacy={selectedPharmacy}
+                onCopyPress={handleCopy}
+                onClosePress={handleCloseInfoCard}
+                onStockInquiryPress={
+                  isStockInquiryMode
+                    ? () => setInquiryModalVisible(true)
+                    : undefined
+                }
+              />
+            )
+          )}
+        </View>
+      )}
 
       {/* 현재 내 위치(GPS)로 카메라를 이동시키는 버튼 */}
       <PharmacyLocateButton onPress={handleLocate} insets={insets} />
+
+      {/* 재고 문의 요약 및 원터치 전화 모달 */}
+      <StockInquirySummaryModal
+        isVisible={inquiryModalVisible}
+        pharmacy={selectedPharmacy}
+        pillContext={pillContext}
+        onClose={() => setInquiryModalVisible(false)}
+        onCall={handleStockInquiryCall}
+      />
     </View>
   );
 };

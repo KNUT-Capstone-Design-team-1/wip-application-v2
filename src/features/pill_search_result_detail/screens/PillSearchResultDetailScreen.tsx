@@ -76,7 +76,15 @@ const PillSearchResultDetailScreen = () => {
             data={pillData}
             saveState={isSaved}
             onSaveToggle={openFolderModal}
-            onStockInquiry={openStockInquiryModal}
+            onStockInquiry={() =>
+              openStockInquiryModal({
+                seq: pillData.ITEM_SEQ,
+                name: pillData.ITEM_NAME,
+                entpName: pillData.ENTP_NAME,
+                className: pillData.CLASS_NAME,
+                image: itemImageStr || pillData.ITEM_IMAGE,
+              })
+            }
             detailLoading={detailLoading}
           />
 

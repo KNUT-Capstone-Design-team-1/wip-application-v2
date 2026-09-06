@@ -7,5 +7,3 @@ export const STOCK_INQUIRY_MODAL = {
   confirmText: '확인',
   cancelText: '취소',
 } as const;
-
-export const CALL_BACK_NAV_DELAY_MS = 500;
