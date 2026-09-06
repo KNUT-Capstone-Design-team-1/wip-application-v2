@@ -9,9 +9,7 @@ import { ITEMS_PER_PAGE } from '@features/notice/constants/notice';
 import { GlobalBannerAd } from '@features/ads/components/GlobalBannerAd';
 import { BannerAdSize } from 'react-native-google-mobile-ads';
 
-/**
- * 페이지네이션 섹션 컴포넌트
- */
+// 페이지네이션 섹션 컴포넌트
 const PaginationSection = ({
   currentPage,
   totalPages,

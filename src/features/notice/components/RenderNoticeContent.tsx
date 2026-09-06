@@ -8,8 +8,10 @@ import { styles } from '../styles/RenderNoticeContent';
 const base64Regex = /^data:image\/[a-zA-Z]+;base64,/;
 
 const RenderNoticeContent = ({ contents }: { contents: string }) => {
-  // 1. 개행 문자 기준으로 줄 단위로 나눈 후
-  // 2. 각 줄 안에서 base64 여부 판단
+  /**
+   * 1. 개행 문자 기준으로 줄 단위로 나눈 후
+   * 2. 각 줄 안에서 base64 여부 판단
+   */
   const lines = contents.split(/\n|\\n/);
 
   return (

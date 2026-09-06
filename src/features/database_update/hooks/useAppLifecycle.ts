@@ -3,9 +3,7 @@ import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAppInitStore } from '../store/app_init_store';
 
-/**
- * AppState 변화 감지하여 PAUSED / RUNNING 상태 전환
- */
+// AppState 변화 감지하여 PAUSED / RUNNING 상태 전환
 export const useAppLifecycle = (
   currentTableIndexRef: React.RefObject<number>,
 ) => {

@@ -16,9 +16,7 @@ export const useNotices = () => {
       })),
     );
 
-  /**
-   * 전체 공지사항 목록을 서비스로부터 가져옴
-   */
+  // 전체 공지사항 목록을 서비스로부터 가져옴
   const getNoticeList = useCallback(async (): Promise<INoticeData[]> => {
     try {
       setIsNoticeLoading(true);
@@ -33,9 +31,7 @@ export const useNotices = () => {
     }
   }, [setNoticeData, setIsNoticeLoading]);
 
-  /**
-   * 홈 화면 바텀시트용 공지사항 로드 (캐시 우선 전략)
-   */
+  // 홈 화면 바텀시트용 공지사항 로드 (캐시 우선 전략)
   const getNoticeBottomSheet = useCallback(async () => {
     const isNeverShowAgain = useNoticeStore.getState().isNeverShowAgain;
 

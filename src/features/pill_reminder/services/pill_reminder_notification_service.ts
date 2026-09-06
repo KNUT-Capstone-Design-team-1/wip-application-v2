@@ -49,8 +49,10 @@ export const pillReminderNotificationService = {
     return permissionInitialization;
   },
 
-  // 저장된 복용 알림을 OS의 반복 알림으로 다시 등록한다.
-  // 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
+  /**
+   * 저장된 복용 알림을 OS의 반복 알림으로 다시 등록한다.
+   * 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
+   */
   async rescheduleAllNotifications(): Promise<void> {
     try {
       const hasPermission = await this.ensurePermissions();

@@ -15,9 +15,7 @@ const writeLog = async (logLevel: TLogLevel, logContents: string) => {
   }
 };
 
-/**
- * 로그 기록을 위한 로거
- */
+//  로그 기록을 위한 로거
 const logger = {
   info: (contents: string) => {
     writeLog('info', contents);

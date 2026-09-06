@@ -7,9 +7,7 @@ type TToastShowProps = {
   duration?: number;
 };
 
-/**
- * Toast 메시지를 관리하는 Hook
- */
+//  Toast 메시지를 관리하는 Hook
 export const useToast = () => {
   /**
    * Toast 메시지 표시
@@ -28,9 +26,7 @@ export const useToast = () => {
     [],
   );
 
-  /**
-   * Toast 메시지 숨김
-   */
+  //  Toast 메시지 숨김
   const hideToast = useCallback(() => {
     Toast.hide();
   }, []);

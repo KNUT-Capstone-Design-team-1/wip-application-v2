@@ -18,10 +18,12 @@ const PharmacyMarker = ({
   selected,
   onPress,
 }: IPharmacyMarkerProps) => {
-  // iOS MapKit은 custom Marker View를 `tracksViewChanges=true` 상태로
-  // 계속 snapshot 하면 지도 이동 중 snapshot이 폭증하여 메모리/렌더링
-  // 문제가 발생할 수 있다. 마커가 처음 표시되거나 선택 상태가 바뀔 때만
-  // 잠시 snapshot을 허용하고 이후에는 정지시킨다.
+  /**
+   * iOS MapKit은 custom Marker View를 `tracksViewChanges=true` 상태로
+   * 계속 snapshot 하면 지도 이동 중 snapshot이 폭증하여 메모리/렌더링
+   * 문제가 발생할 수 있다. 마커가 처음 표시되거나 선택 상태가 바뀔 때만
+   * 잠시 snapshot을 허용하고 이후에는 정지시킨다.
+   */
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
 
   useEffect(() => {

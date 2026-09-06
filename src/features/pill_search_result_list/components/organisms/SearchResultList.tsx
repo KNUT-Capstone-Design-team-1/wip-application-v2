@@ -8,9 +8,7 @@ import { ISearchResultData } from '@features/pill_search_result_list/types/pill_
 import NotItem from '@components/common/NotItem';
 import { IPillData } from '@services/database/types';
 
-/**
- * 검색 결과가 없을 때 표시할 컴포넌트
- */
+// 검색 결과가 없을 때 표시할 컴포넌트
 const EmptyResult = () => (
   <NotItem
     mainText={'이런! 검색 결과가 없어요'}
@@ -19,9 +17,7 @@ const EmptyResult = () => (
   />
 );
 
-/**
- * 알약 리스트를 렌더링하는 FlashList 컴포넌트
- */
+// 알약 리스트를 렌더링하는 FlashList 컴포넌트
 const ResultFlashList = ({
   data,
   onLoadMore,

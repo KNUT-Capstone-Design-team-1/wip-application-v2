@@ -61,7 +61,6 @@ export const createTable = async (
 
 /**
  * batch 데이터에서 INSERT 대상 column 목록을 추출한다.
- *
  * @param batch INSERT 대상 batch 데이터
  */
 const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {

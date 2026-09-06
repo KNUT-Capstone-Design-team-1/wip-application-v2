@@ -2,9 +2,7 @@ import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { interstitialService } from '@features/ads/services/interstitial_service';
 import logger from '@utils/logger';
 
-/**
- * Mobile Ads SDK 설정 및 초기화
- */
+// Mobile Ads SDK 설정 및 초기화
 export const initAdMob = async () => {
   try {
     // 아웃바운드 설정

@@ -6,9 +6,7 @@ import { styles } from '@features/pill_search_result_list/styles/molecules/Searc
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
 
-/**
- * 알약 썸네일 이미지 컴포넌트
- */
+// 알약 썸네일 이미지 컴포넌트
 const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
   <View style={styles.searchItemImage}>
     {imageUri ? (
@@ -27,9 +25,7 @@ const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
   </View>
 );
 
-/**
- * 알약 상세 정보 텍스트 컴포넌트
- */
+// 알약 상세 정보 텍스트 컴포넌트
 const PillInfo = ({ pill }: { pill: IPillData }) => {
   const itemNames = pill.ITEM_NAME.split(/(?=\()/, 2);
 

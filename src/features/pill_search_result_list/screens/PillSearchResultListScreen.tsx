@@ -13,18 +13,14 @@ import { COLOR } from '@constants/color';
 import { useRouter } from 'expo-router';
 import { useSyncSearchIdStore } from '@features/pill_search_result_list/hooks/useSyncSearchIdStore';
 
-/**
- * 상단 검색바 섹션
- */
+//  상단 검색바 섹션
 const SearchBarSection = () => (
   <View style={styles.searchBarWrapper}>
     <UnifiedSearchBar />
   </View>
 );
 
-/**
- * 검색 결과 정보 섹션 (태그 및 건수)
- */
+//  검색 결과 정보 섹션 (태그 및 건수)
 const ResultInfoSection = ({
   count,
   markImages,
@@ -42,9 +38,7 @@ const ResultInfoSection = ({
   </View>
 );
 
-/**
- * 초기 로딩 화면
- */
+//  초기 로딩 화면
 const InitialLoadingView = () => (
   <View style={styles.loadingContainer}>
     <ActivityIndicator size="large" color={COLOR['primary']} />
@@ -71,8 +65,10 @@ const PillSearchResultListScreen = () => {
   useFetchMarkImages();
 
   const handleTagPress = useCallback(() => {
-    // 통합검색(KEYWORD 파라미터 사용)인 경우 식별검색 폼으로 이동하지 않음
-    // TODO: 나중에 통합검색 필터나 전용 화면이 추가되면 해당 화면으로 라우팅되도록 작업 필요
+    /**
+     * 통합검색(KEYWORD 파라미터 사용)인 경우 식별검색 폼으로 이동하지 않음
+     * TODO: 나중에 통합검색 필터나 전용 화면이 추가되면 해당 화면으로 라우팅되도록 작업 필요
+     */
     if (searchParam?.KEYWORD) {
       return;
     }

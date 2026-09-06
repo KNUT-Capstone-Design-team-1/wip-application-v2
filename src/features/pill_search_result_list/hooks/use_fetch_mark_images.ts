@@ -6,9 +6,7 @@ import { pillSearchResultListService } from '../services/pill_search_result_list
 export const useFetchMarkImages = () => {
   const { searchParam, setMarkImages } = useSearchResultListStore();
 
-  /**
-   * 마크 코드 배열을 받아 이미지 정보를 가져오고 스토어에 업데이트
-   */
+  // 마크 코드 배열을 받아 이미지 정보를 가져오고 스토어에 업데이트
   const updateMarkImages = useCallback(
     async (marks: string[]) => {
       if (marks.length === 0) {

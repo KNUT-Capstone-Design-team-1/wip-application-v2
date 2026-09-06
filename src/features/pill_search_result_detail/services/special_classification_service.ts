@@ -16,9 +16,7 @@ interface IIngredientParams {
   en: string;
 }
 
-/**
- * 특정 성분이 특정 분류에 속하는지 확인하는 범용 함수
- */
+// 특정 성분이 특정 분류에 속하는지 확인하는 범용 함수
 const checkSubstance = async (
   ingredients: IIngredientParams,
   queryFn: (
@@ -43,9 +41,7 @@ const checkSubstance = async (
   return Array.from(matched);
 };
 
-/**
- * 성분명 분리: 불필요한 염(Salt)/수화물 단어 제거, 특수문자(/, |, ,) 기준 분리
- */
+// 성분명 분리: 불필요한 염(Salt)/수화물 단어 제거, 특수문자(/, |, ,) 기준 분리
 const processTokens = (text: string) => {
   if (!text) {
     return [];
@@ -65,9 +61,7 @@ const processTokens = (text: string) => {
     .filter((token) => token.length >= 3);
 };
 
-/**
- * 도핑 금지 성분 확인 로직
- */
+// 도핑 금지 성분 확인 로직
 const checkProhibitedSubstance = async (
   ingredients: IIngredientParams,
   repository: typeof pillDetailRepository = pillDetailRepository,
@@ -144,9 +138,7 @@ export const checkSpecialClassifications = async (
   };
 };
 
-/**
- * 문서 데이터에서 운전 및 기계 조작 주의 키워드 확인
- */
+// 문서 데이터에서 운전 및 기계 조작 주의 키워드 확인
 export const getDrivingWarningKeywords = (
   eeData?: string,
   udData?: string,

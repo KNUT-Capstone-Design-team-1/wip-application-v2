@@ -8,11 +8,8 @@ import {
   INoticeItemProps,
 } from '@features/notice/types/notice_type';
 import { formatDate, isModified } from '@utils/dateUtils';
-import { px } from '@utils/responsive';
 
-/**
- * 공지사항 텍스트 정보 컴포넌트 (제목 및 날짜)
- */
+// 공지사항 텍스트 정보 컴포넌트 (제목 및 날짜)
 const NoticeInfo = ({ notice }: { notice: INoticeData }) => {
   const isContentModified = isModified(notice.createDate, notice.updateDate);
 
@@ -34,9 +31,7 @@ const NoticeInfo = ({ notice }: { notice: INoticeData }) => {
   );
 };
 
-/**
- * 필독 공지 뱃지 컴포넌트
- */
+// 필독 공지 뱃지 컴포넌트
 const MustReadBadge = ({ mustRead }: { mustRead: number }) => {
   if (mustRead !== 1) return null;
 

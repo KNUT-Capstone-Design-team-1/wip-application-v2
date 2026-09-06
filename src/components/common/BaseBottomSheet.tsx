@@ -17,41 +17,41 @@ import { styles } from './styles/BaseBottomSheet';
 import { px } from '@utils/responsive';
 
 export interface IBaseBottomSheetProps {
-  /** 바텀시트 표시 여부 */
+  // 바텀시트 표시 여부
   visible: boolean;
-  /** 닫기 핸들러 */
+  // 닫기 핸들러
   onClose: () => void;
-  /** 바텀시트 내부 컨텐츠 */
+  // 바텀시트 내부 컨텐츠
   children?: React.ReactNode;
-  /** 백드롭 커스텀 스타일 */
+  // 백드롭 커스텀 스타일
   backdropStyle?: StyleProp<ViewStyle>;
-  /** 바텀시트 메인 뷰 컨테이너 커스텀 스타일 */
+  // 바텀시트 메인 뷰 컨테이너 커스텀 스타일
   containerStyle?: StyleProp<ViewStyle>;
-  /** 애니메이션 지속 시간 (ms, 기본값: 300) */
+  // 애니메이션 지속 시간 (ms, 기본값: 300)
   animationDuration?: number;
-  /** 백드롭 터치 시 닫기 여부 (기본값: true) */
+  // 백드롭 터치 시 닫기 여부 (기본값: true)
   closeOnBackdropPress?: boolean;
-  /** 안드로이드 하드웨어 뒤로가기 키 입력 시 닫기 여부 (기본값: true) */
+  // 안드로이드 하드웨어 뒤로가기 키 입력 시 닫기 여부 (기본값: true)
   closeOnBackHandler?: boolean;
-  /** 아래로 드래그하여 닫기 제스처 활성화 여부 (기본값: true) */
+  // 아래로 드래그하여 닫기 제스처 활성화 여부 (기본값: true)
   enablePanDownToClose?: boolean;
-  /** 드래그 제스처 적용 대상 ('handle': 상단 핸들바에만 적용, 'sheet': 시트 전체에 적용, 기본값: 'handle') */
+  // 드래그 제스처 적용 대상 ('handle': 상단 핸들바에만 적용, 'sheet': 시트 전체에 적용, 기본값: 'handle')
   panGestureTarget?: 'handle' | 'sheet';
-  /** 상단 드래그 핸들 바(그랩바) 표시 여부 (기본값: true) */
+  // 상단 드래그 핸들 바(그랩바) 표시 여부 (기본값: true)
   showDragHandle?: boolean;
-  /** 드래그 핸들 바 커스텀 스타일 */
+  // 드래그 핸들 바 커스텀 스타일
   dragHandleStyle?: StyleProp<ViewStyle>;
-  /** Safe Area Insets 하단 패딩 자동 적용 여부 (기본값: true) */
+  // Safe Area Insets 하단 패딩 자동 적용 여부 (기본값: true)
   enableSafeArea?: boolean;
-  /** Edge-to-edge 환경에서 Status Bar를 가리지 않도록 상단 Safe Area 및 최대 높이 자동 제한 여부 (기본값: true) */
+  // Edge-to-edge 환경에서 Status Bar를 가리지 않도록 상단 Safe Area 및 최대 높이 자동 제한 여부 (기본값: true)
   enableTopSafeArea?: boolean;
-  /** 바텀시트 최대 높이 (기본값: screenHeight - insets.top) */
+  // 바텀시트 최대 높이 (기본값: screenHeight - insets.top)
   maxHeight?: ViewStyle['maxHeight'];
-  /** 상단 여백 오프셋 (기본값: 0) */
+  // 상단 여백 오프셋 (기본값: 0)
   topOffset?: number;
-  /** 열림 애니메이션 완료 콜백 */
+  // 열림 애니메이션 완료 콜백
   onOpenComplete?: () => void;
-  /** 닫힘 애니메이션 완료 콜백 */
+  // 닫힘 애니메이션 완료 콜백
   onCloseComplete?: () => void;
 }
 

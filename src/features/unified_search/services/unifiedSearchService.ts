@@ -10,9 +10,7 @@ export interface IUnifiedSearchResult {
 }
 
 export const unifiedSearchService = {
-  /**
-   * 통합 검색 키워드 기반 원격 검색 및 로컬 알약 데이터 조회 비즈니스 로직
-   */
+  //  통합 검색 키워드 기반 원격 검색 및 로컬 알약 데이터 조회 비즈니스 로직
   async executeUnifiedSearch(
     keyword: string,
     limit: number = 50,

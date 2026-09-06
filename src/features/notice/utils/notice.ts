@@ -1,6 +1,4 @@
-/**
- * BottomSheet 에서 base64 이미지 제거 및 텍스트 길이 제한
- */
+// BottomSheet 에서 base64 이미지 제거 및 텍스트 길이 제한
 export const formatContents = (contents: string) => {
   // 개행 문자 처리
   const textNewline = contents.replace(/\\n/g, '\n');

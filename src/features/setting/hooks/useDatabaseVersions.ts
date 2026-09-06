@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { settingService } from '../services/setting_service';
 import { IDatabaseVersionInfo } from '../types/version_info';
 
-/** 앱 내 모든 데이터베이스 테이블의 버전 정보 목록을 가져오는 커스텀 훅 */
+// 앱 내 모든 데이터베이스 테이블의 버전 정보 목록을 가져오는 커스텀 훅
 export const useDatabaseVersions = () => {
   const [versions, setVersions] = useState<IDatabaseVersionInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);

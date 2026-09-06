@@ -45,9 +45,11 @@ const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
       query: `(Y BETWEEN ? AND ?) AND (X BETWEEN ? AND ?)`,
       values: (coordinate: { x: number; y: number }) => {
         const { x, y } = coordinate;
-        // 약 3km 반경을 위경도로 변환 (근사치)
-        // 위도 1도 ≒ 111km -> 3km ≒ 0.027도
-        // 경도 1도 ≒ 88km (한국 위도 기준) -> 3km ≒ 0.034도
+        /**
+         * 약 3km 반경을 위경도로 변환 (근사치)
+         * 위도 1도 ≒ 111km -> 3km ≒ 0.027도
+         * 경도 1도 ≒ 88km (한국 위도 기준) -> 3km ≒ 0.034도
+         */
         const latDelta = 0.027;
         const lonDelta = 0.034;
 

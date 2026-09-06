@@ -5,9 +5,7 @@ import logger from '@utils/logger';
 
 import { migrateAsyncStorageToSQLite } from './migrations/migration_saved_pills';
 
-/**
- * 기본 config
- */
+//  기본 config
 const DEFAULT_CONFIG: IConfig[] = [
   { key: 'pillDataSchemaVersion', value: 0 },
   { key: 'pillDataDataVersion', value: 0 },
@@ -47,9 +45,7 @@ export const initConfigTable = async (db: SQLiteDatabase) => {
   );
 };
 
-/**
- * 알약 보관함 테이블 초기화
- */
+//  알약 보관함 테이블 초기화
 export const initSavedPillTables = async (db: SQLiteDatabase) => {
   // 폴더 테이블 생성
   await db.execAsync(`
@@ -99,9 +95,7 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
   await migrateAsyncStorageToSQLite(db);
 };
 
-/**
- * 알약 복용 알림 테이블 초기화
- */
+//  알약 복용 알림 테이블 초기화
 export const initPillReminderTables = async (db: SQLiteDatabase) => {
   // 복용 알림 일정 테이블 (folder_id, title, memo 포함 및 폴더 삭제 시 CASCADE)
   await db.execAsync(`

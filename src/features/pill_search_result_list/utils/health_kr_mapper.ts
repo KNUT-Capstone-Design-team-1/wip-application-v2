@@ -1,6 +1,4 @@
-/**
- * 알약 식별 정보 → 약학정보원(health.kr) 검색 파라미터 매핑 유틸리티
- */
+//  알약 식별 정보 → 약학정보원(health.kr) 검색 파라미터 매핑 유틸리티
 
 const mapShapeToCode = (shape: string): string => {
   const mapping: Record<string, string> = {
@@ -61,9 +59,7 @@ const mapFormToCode = (form: string): string => {
   return mapping[form] || '';
 };
 
-/**
- * 검색 조건을 약학정보원(health.kr) 검색 URL로 변환
- */
+//  검색 조건을 약학정보원(health.kr) 검색 URL로 변환
 export const mapToHealthKrUrl = (
   searchParam: any,
   baseUrl: string = 'https://www.health.kr',
