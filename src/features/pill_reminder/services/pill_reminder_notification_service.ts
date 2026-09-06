@@ -74,7 +74,7 @@ export const pillReminderNotificationService = {
         // 복용 완료 처리
         Toast.show({
           type: 'default',
-          text1: '💊 복용이 확인되었습니다.',
+          text1: '복용 완료 처리되었어요.',
           visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
         });
       } else if (actionId === NOTIFICATION_ACTION_SNOOZE && reminderId) {
@@ -85,7 +85,7 @@ export const pillReminderNotificationService = {
         const body = `[다시 알림] ${reminder?.items.map((i) => i.item_name).join(', ') || '약'} 복용할 시간이에요!`;
 
         await pillReminderNotificationRepository.scheduleSnoozeNotification({
-          title: `🔔 [${title}]`,
+          title: `[${title}]`,
           body,
           seconds: SNOOZE_DELAY_SECONDS,
           data: { reminderId },
@@ -93,7 +93,7 @@ export const pillReminderNotificationService = {
 
         Toast.show({
           type: 'default',
-          text1: '⏰ 5분 뒤 다시 알림이 설정되었습니다.',
+          text1: '5분 뒤 다시 알림이 설정되었습니다.',
           visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
         });
       } else if (actionId === NOTIFICATION_ACTION_DISMISS) {
@@ -156,7 +156,7 @@ export const pillReminderNotificationService = {
           const expoWeekday = day === 0 ? 1 : day + 1;
 
           await pillReminderNotificationRepository.scheduleWeeklyNotification({
-            title: `🔔 [${reminderTitle}]`,
+            title: `[${reminderTitle}]`,
             body: finalBody,
             weekday: expoWeekday,
             hour,
@@ -222,8 +222,8 @@ export const pillReminderNotificationService = {
 
         Toast.show({
           type: 'default',
-          text1: `🔔 [${reminderTitle}] ${formattedTime} - ${pillNames}`,
-          text2: reminder.memo ? `📝 ${reminder.memo}` : undefined,
+          text1: `[${reminderTitle}] ${formattedTime} - ${pillNames}`,
+          text2: reminder.memo ? `${reminder.memo}` : undefined,
           visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
         });
       }

@@ -49,21 +49,21 @@ export const pillReminderNotificationDataSource = {
         [
           {
             identifier: NOTIFICATION_ACTION_CONFIRM,
-            buttonTitle: '💊 복용 완료',
+            buttonTitle: '복용 완료',
             options: {
               opensAppToForeground: false,
             },
           },
           {
             identifier: NOTIFICATION_ACTION_SNOOZE,
-            buttonTitle: '⏰ 5분 뒤 다시 알림',
+            buttonTitle: '5분 뒤 다시 알림',
             options: {
               opensAppToForeground: false,
             },
           },
           {
             identifier: NOTIFICATION_ACTION_DISMISS,
-            buttonTitle: '✕ 끄기',
+            buttonTitle: '끄기',
             options: {
               isDestructive: true,
               opensAppToForeground: false,

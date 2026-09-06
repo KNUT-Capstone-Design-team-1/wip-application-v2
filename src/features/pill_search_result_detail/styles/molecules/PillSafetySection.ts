@@ -48,6 +48,11 @@ export const styles = StyleSheet.create({
   normalText: {
     color: COLOR_TEXT['body'],
   },
+  warningBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(4),
+  },
   warningText: {
     color: COLOR['alert'],
   },

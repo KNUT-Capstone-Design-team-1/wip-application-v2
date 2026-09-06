@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { px } from '@utils/responsive';
+import { px, fontPx } from '@utils/responsive';
 import { Image } from '@components/common/CustomImage';
+import { Pill } from 'lucide-react-native';
+import { COLOR_TEXT } from '@constants/color';
 import { SelectionRadioButton } from '@features/pill_save/components/atoms/SelectionRadioButton';
 import { IPillSelectOption } from '@features/pill_reminder/components/organisms/PillReminderSelectModal';
 import { styles } from '@features/pill_reminder/styles/atoms/PillSelectListItem';
@@ -31,7 +33,7 @@ export const PillSelectListItem = memo(
             />
           ) : (
             <View style={styles.pillThumbPlaceholder}>
-              <BaseText size={18}>💊</BaseText>
+              <Pill size={fontPx(20)} color={COLOR_TEXT.sub} />
             </View>
           )}
           <View style={styles.pillInfo}>

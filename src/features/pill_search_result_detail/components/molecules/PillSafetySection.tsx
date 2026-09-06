@@ -1,8 +1,10 @@
-// 주의 및 특수 분류 정보를 표시하고 관련 외부 링크 및 오류 신고 기능을 제공하는 섹션 컴포넌트
 import { memo, useCallback } from 'react';
 import { View, TouchableOpacity, Linking, Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { BaseText } from '@components/common/BaseText';
+import { AlertTriangle } from 'lucide-react-native';
+import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
 import InfoRow from '../atoms/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
@@ -29,9 +31,12 @@ const WarningRow = memo(
   }: IWarningRowProps) => {
     const value = isWarning ? (
       <>
-        <BaseText weight="bold" size={14} style={styles.warningText}>
-          ⚠️ 주의
-        </BaseText>
+        <View style={styles.warningBadgeRow}>
+          <AlertTriangle size={fontPx(14)} color={COLOR['alert']} />
+          <BaseText weight="bold" size={14} style={styles.warningText}>
+            주의
+          </BaseText>
+        </View>
         {`\n`}
         <BaseText weight="medium" size={14} style={styles.normalText}>
           {prefixLabel}

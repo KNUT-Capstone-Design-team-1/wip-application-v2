@@ -166,7 +166,7 @@ export const initDatabase = async () => {
     await initSavedPillTables(db);
     await initPillReminderTables(db);
 
-    logger.info('Database initialized successfully');
+    console.log('Database initialized successfully');
   } catch (error) {
     logger.error(`Database initialization failed: ${error}`);
     throw error;

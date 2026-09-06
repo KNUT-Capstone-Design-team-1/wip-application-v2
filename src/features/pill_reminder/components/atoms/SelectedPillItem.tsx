@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { X } from 'lucide-react-native';
+import { X, Pill } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { Image } from '@components/common/CustomImage';
@@ -34,7 +34,7 @@ export const SelectedPillItem = memo(
           />
         ) : (
           <View style={styles.pillThumbPlaceholder}>
-            <BaseText size={14}>💊</BaseText>
+            <Pill size={fontPx(16)} color={COLOR_TEXT.sub} />
           </View>
         )}
 
