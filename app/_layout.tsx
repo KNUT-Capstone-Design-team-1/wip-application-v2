@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { styles } from './styles/_layout';
-import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import Layout from '@layouts/Layout';
@@ -17,8 +16,9 @@ import { px } from '@utils/responsive';
 import { initAdMob } from '@features/ads/utils/config';
 import FullSizeLoading from '@components/common/FullSizeLoading';
 import CommonModal from '@components/common/CommonModal';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
+import CameraGuideModal from '@features/pill_image_search/components/organisms/CameraGuideModal';
+import ImageSelectBottomSheet from '@features/pill_image_search/components/organisms/ImageSelectBottomSheet';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -42,46 +42,32 @@ const RootLayout = () => {
   // 초기화 중이면 로딩 화면 표시
   if (isInitializing) {
     return (
-      <GestureHandlerRootView style={styles.container}>
-        <SafeAreaProvider>
-          <StatusBar style="dark" />
-          <DatabaseUpdateView
-            status={updateProgress.status}
-            progress={updateProgress.progress}
-            isUpdating={updateProgress.isUpdating}
-          />
-          <DatabaseUpdateModal />
-          <Toast
-            config={toastConfig}
-            position="bottom"
-            bottomOffset={px(100)}
-          />
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <DatabaseUpdateView
+          status={updateProgress.status}
+          progress={updateProgress.progress}
+          isUpdating={updateProgress.isUpdating}
+        />
+        <DatabaseUpdateModal />
+        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
+      </SafeAreaProvider>
     );
   }
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <Layout>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-        </Layout>
-        <MainNoticeBottomSheet />
-        <FullSizeLoading />
-        <CommonModal />
-        <View style={styles.toastContainer}>
-          <Toast
-            config={toastConfig}
-            position="bottom"
-            bottomOffset={px(100)}
-          />
-        </View>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <Layout />
+      <MainNoticeBottomSheet />
+      <FullSizeLoading />
+      <CommonModal />
+      <CameraGuideModal />
+      <ImageSelectBottomSheet />
+      <View style={styles.toastContainer}>
+        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
+      </View>
+    </SafeAreaProvider>
   );
 };
 

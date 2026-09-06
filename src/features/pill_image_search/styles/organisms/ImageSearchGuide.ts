@@ -4,8 +4,6 @@ import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   contentContainer: {
-    position: 'relative',
-    display: 'flex',
     alignItems: 'center',
     textAlign: 'center',
   },

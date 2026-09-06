@@ -1,0 +1,24 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Corner Viewfinders -->
+  <path d="M5.0013 1.66406H1.66797V4.9974" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15 1.66406H18.3333V4.9974" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1.66797 15V18.3333H5.0013" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18.3333 15V18.3333H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Pill Outline -->
+  <path d="M9.5469 5.47134C8.42219 4.34663 6.59868 4.34663 5.47397 5.47134C4.34926 6.59605 4.34926 8.41957 5.47397 9.54428L10.452 14.5223C11.5767 15.647 13.4002 15.647 14.5249 14.5223C15.6496 13.3976 15.6496 11.5741 14.5249 10.4494L9.5469 5.47134Z" stroke="currentColor" stroke-width="1.5"/>
+
+  <!-- Centered FRONT Vector Path (scaled down to fit comfortably inside the pill) -->
+  <g transform="translate(10, 10) rotate(45) scale(0.7)">
+    <!-- F -->
+    <path d="M-5.25 -1.1V1.1 M-5.25 -1.1H-3.85 M-5.25 -0.05H-4.15" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- R -->
+    <path d="M-3.15 -1.1V1.1 M-3.15 -1.1H-2.1C-1.5 -1.1 -1.5 -0.05 -2.1 -0.05H-3.15 M-2.15 -0.05L-1.6 1.1" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- O -->
+    <path d="M-0.65 -0.6C-0.65 -1.1 -0.2 -1.1 0.2 -1.1C0.6 -1.1 1.05 -1.1 1.05 -0.6V0.6C1.05 1.1 0.6 1.1 0.2 1.1C-0.2 1.1 -0.65 1.1 -0.65 0.6Z" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- N -->
+    <path d="M1.75 1.1V-1.1L3.15 1.1V-1.1" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- T -->
+    <path d="M3.75 -1.1H5.25 M4.5 -1.1V1.1" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

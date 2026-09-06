@@ -1,5 +1,9 @@
 import { px } from '@utils/responsive';
 
+export const headerSize = {
+  minHeight: px(54),
+};
+
 export const bottomTabSize = {
   height: px(80),
 };

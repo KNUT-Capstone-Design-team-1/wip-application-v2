@@ -1,33 +1,28 @@
-import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { usePathname } from 'expo-router';
-import Header from './header/Header';
-import SubHeader from './header/SubHeader';
-import { styles } from './styles/Layout';
+import { Stack } from 'expo-router';
+import GlobalHeader from './header/GlobalHeader';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout = ({ children }: LayoutProps) => {
+const Layout = () => {
   const insets = useSafeAreaInsets();
-  const pathname = usePathname();
-
-  const isMainPage = pathname === '/';
-
-  const renderHeader = () => {
-    if (isMainPage) {
-      return <Header />;
-    }
-
-    return <SubHeader />;
-  };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {renderHeader()}
-      <View style={styles.content}>{children}</View>
-    </View>
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        header: () => <GlobalHeader />,
+        contentStyle: { backgroundColor: '#fff', paddingTop: insets.top },
+      }}
+    >
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen
+        name="camera/index"
+        options={{
+          headerShown: false,
+          contentStyle: { paddingTop: 0 },
+          animation: 'slide_from_bottom',
+        }}
+      />
+    </Stack>
   );
 };
 

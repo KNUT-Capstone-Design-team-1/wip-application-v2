@@ -43,6 +43,8 @@ export const styles = StyleSheet.create({
     height: px(24),
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLOR_BG['overlay'],
+    borderRadius: px(40),
   },
   emptySlot: {
     aspectRatio: 1,

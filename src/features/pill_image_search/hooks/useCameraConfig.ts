@@ -1,17 +1,12 @@
 import { useCallback } from 'react';
 import { targetImageSize } from '@constants/size';
 
-import {
-  useCameraDevice,
-  useCameraFormat,
-  useCameraPermission,
-} from 'react-native-vision-camera';
+import { useCameraDevice, useCameraFormat } from 'react-native-vision-camera';
 import { DimensionValue } from 'react-native';
 
 // Camera 기기 설정, 포맷, 권한 및 뷰파인더 가이드라인 크기를 관리하는 커스텀 Hook
 export const useCameraConfig = () => {
-  const { hasPermission, requestPermission } = useCameraPermission();
-  const device = useCameraDevice('back'); // 기본 wide-angle
+  const device = useCameraDevice('back');
   const format = useCameraFormat(device, [
     {
       photoResolution: { width: 4000, height: 3000 }, // landscape(가로모드) 4:3 비율 기준
@@ -42,5 +37,5 @@ export const useCameraConfig = () => {
     return `${guidePercentage}%`;
   }, [format]);
 
-  return { device, format, hasPermission, requestPermission, getGuideWidth };
+  return { device, format, getGuideWidth };
 };

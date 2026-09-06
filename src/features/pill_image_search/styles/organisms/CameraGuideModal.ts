@@ -1,9 +1,13 @@
-import { COLOR, COLOR_BG } from '@constants/color';
+import { COLOR_BG } from '@constants/color';
 import { px } from '@utils/responsive';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1000,
+  },
+  backdrop: {
     flex: 1,
     backgroundColor: COLOR_BG['overlay'],
     justifyContent: 'center',
@@ -15,11 +19,6 @@ export const styles = StyleSheet.create({
     paddingBottom: px(28),
     paddingHorizontal: px(16),
     borderRadius: px(16),
-    elevation: 5,
-    shadowColor: COLOR['shadow'],
-    shadowOffset: { width: 0, height: px(2) },
-    shadowOpacity: 0.25,
-    shadowRadius: px(3.84),
   },
   closeButton: {
     position: 'absolute',

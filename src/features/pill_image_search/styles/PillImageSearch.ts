@@ -8,9 +8,11 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLOR_BG['surface'],
     paddingHorizontal: screenPadding.horizontal,
-    paddingBottom: px(40),
   },
-  contentContainer: {},
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
   hr: {
     width: '100%',
     height: px(2),
