@@ -1,4 +1,3 @@
-import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import Layout from '@layouts/Layout';
@@ -44,11 +43,7 @@ const RootLayout = () => {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <Layout>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </Layout>
+      <Layout />
       <MainNoticeBottomSheet />
       <FullSizeLoading />
       <View style={{ zIndex: 999999 }}>

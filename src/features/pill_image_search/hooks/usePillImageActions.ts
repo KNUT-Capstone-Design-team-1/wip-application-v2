@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { usePillImageStore } from '../store/pill_image_store';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import logger from '@utils/logger';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
@@ -17,6 +17,7 @@ import {
   hasExtractedFeatures,
   searchPillData,
 } from '../utils/pillImageActionUtils';
+import { useCameraPermission } from 'react-native-vision-camera';
 
 /**
  * 알약 이미지 검색 액션(이벤트 핸들러)을 제공하는 훅.
@@ -25,6 +26,8 @@ import {
 export const usePillImageActions = () => {
   const { showInterstitial } = useInterstitialAd();
   const { showToast } = useToast();
+  const router = useRouter();
+  const { hasPermission, requestPermission } = useCameraPermission();
 
   const setFrontImage = usePillImageStore((state) => state.setFrontImage);
   const setBackImage = usePillImageStore((state) => state.setBackImage);
@@ -39,6 +42,9 @@ export const usePillImageActions = () => {
   );
   const setBackImageOnLoad = usePillImageStore(
     (state) => state.setBackImageOnLoad,
+  );
+  const setShowPermissionAlert = usePillImageStore(
+    (state) => state.setShowPermissionAlert,
   );
 
   const setSearchResultData = useSearchResultListStore(
@@ -55,6 +61,13 @@ export const usePillImageActions = () => {
   const setSheetOpen = useImageSearchBottomSheetStore(
     (state) => state.setSheetOpen,
   );
+
+  const checkEmptySlotDirection = useCallback(() => {
+    const pillImages = usePillImageStore.getState().pillImages;
+    if (!pillImages.front) return 'front';
+    if (!pillImages.back) return 'back';
+    return 'front';
+  }, []);
 
   // 이미지 로드 완료
   const handleImageOnLoad = useCallback(
@@ -148,6 +161,26 @@ export const usePillImageActions = () => {
     [handleMultipleImageSelect, setFrontImage, setBackImage, showToast],
   );
 
+  // '촬영하기' 버튼 클릭 핸들러
+  const handleCameraPress = useCallback(async () => {
+    const side = checkEmptySlotDirection();
+
+    if (hasPermission) {
+      setDirection(side);
+      router.push('/camera');
+      return;
+    }
+
+    const isGranted = await requestPermission();
+
+    if (isGranted) {
+      setDirection(side);
+      router.push('/camera');
+    } else {
+      setShowPermissionAlert(true);
+    }
+  }, [hasPermission, requestPermission, setShowPermissionAlert]);
+
   // '앨범에서 선택하기' 버튼 클릭 핸들러
   const handleAlbumPress = useCallback(async () => {
     const pillImages = usePillImageStore.getState().pillImages;
@@ -175,6 +208,11 @@ export const usePillImageActions = () => {
     handleImageSelect(imageUri, direction);
     setDirection(direction === 'front' ? 'back' : 'front');
   };
+
+  // 카메라 권한 모달 닫기 핸들러
+  const handlePermissionAlertClose = useCallback(() => {
+    setShowPermissionAlert(false);
+  }, [setShowPermissionAlert]);
 
   // 카메라 화면 닫기 핸들러
   const handleCameraClose = () => {};
@@ -264,6 +302,7 @@ export const usePillImageActions = () => {
 
   return {
     handleImageRemove,
+    handleCameraPress,
     handleAlbumPress,
     handleFilePress,
     handleCameraCapture,
@@ -273,5 +312,6 @@ export const usePillImageActions = () => {
     handlePreviewPress,
     handleImageReplace,
     handleImageOnLoad,
+    handlePermissionAlertClose,
   };
 };

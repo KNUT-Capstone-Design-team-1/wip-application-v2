@@ -1,36 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/organisms/ImageLoadButtons';
 import { COLOR, COLOR_BG } from '@constants/color';
-import CameraScreen from './CameraScreen';
 import { Camera, ChevronRight, Image } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
 import { usePillImageActions } from '../../hooks/usePillImageActions';
 
 const ImageLoadButtons = () => {
-  const { handleAlbumPress, handleFilePress, handleCameraClose } =
+  const { handleCameraPress, handleAlbumPress, handleFilePress } =
     usePillImageActions();
-
-  // 카메라 모달 표시 여부 상태
-  const [showCamera, setShowCamera] = useState(false);
-
-  // '촬영하기' 버튼 클릭 핸들러: 카메라 모달 열기
-  const handleCameraPress = () => {
-    setShowCamera(true);
-  };
 
   return (
     <>
-      {/* 커스텀 카메라 화면 */}
-      <CameraScreen
-        visible={showCamera}
-        onClose={() => {
-          setShowCamera(false);
-          handleCameraClose();
-        }}
-      />
-
       {/* 촬영/선택 버튼 */}
       <View style={styles.imageSearchButtonsWrapper}>
         <TouchableOpacity

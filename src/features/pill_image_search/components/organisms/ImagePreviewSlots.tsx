@@ -65,7 +65,7 @@ const ImagePreviewSlots = ({
                 style={styles.removeButton}
                 onPress={() => onRemove('front')}
               >
-                <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
+                <X size={fontPx(18)} color={COLOR['white']} strokeWidth={3} />
               </TouchableOpacity>
             </View>
           ) : (
@@ -97,7 +97,7 @@ const ImagePreviewSlots = ({
                 style={styles.removeButton}
                 onPress={() => onRemove('back')}
               >
-                <X size={fontPx(24)} color={COLOR['white']} strokeWidth={2} />
+                <X size={fontPx(18)} color={COLOR['white']} strokeWidth={3} />
               </TouchableOpacity>
             </View>
           ) : (

@@ -1,4 +1,4 @@
-import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { COLOR_BG, COLOR_LINE } from '@constants/color';
 import { StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
 import { screenPadding } from '@constants/size';
@@ -9,7 +9,10 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['surface'],
     paddingHorizontal: screenPadding.horizontal,
   },
-  contentContainer: {},
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
   hr: {
     width: '100%',
     height: px(2),

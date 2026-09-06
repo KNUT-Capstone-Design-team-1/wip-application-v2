@@ -18,6 +18,8 @@ interface PillImageState {
   direction: 'front' | 'back';
   // 이미지 로드 여부
   isImageLoadComplete: ImageLoadComplete;
+  // 카메라 권한 거부시 표시되는 modal
+  showPermissionAlert: boolean;
 
   // 이미지 선택
   setFrontImage: (uri: string) => void;
@@ -31,6 +33,9 @@ interface PillImageState {
   // 이미지 로드 완료
   setFrontImageOnLoad: (load: boolean) => void;
   setBackImageOnLoad: (load: boolean) => void;
+
+  // 카메라 권한 관련
+  setShowPermissionAlert: (showPermissionAlert: boolean) => void;
 
   // 이미지 삭제
   removeFrontImage: () => void;
@@ -56,6 +61,7 @@ export const usePillImageStore = create<PillImageState>((set) => ({
     front: false,
     back: false,
   },
+  showPermissionAlert: false,
 
   setFrontImage: (uri: string) =>
     set((state) => ({
@@ -85,6 +91,9 @@ export const usePillImageStore = create<PillImageState>((set) => ({
     set((state) => ({
       isImageLoadComplete: { ...state.isImageLoadComplete, back: load },
     })),
+
+  setShowPermissionAlert: (showPermissionAlert: boolean) =>
+    set({ showPermissionAlert }),
 
   removeFrontImage: () =>
     set((state) => ({
