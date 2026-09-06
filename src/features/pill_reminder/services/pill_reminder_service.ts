@@ -5,7 +5,7 @@ import {
   IPillReminderUpdateForm,
 } from '@features/pill_reminder/types/pill_reminder_type';
 
-// 복용 알림 SQLite CRUD 통합 파사드 서비스 (Business Logic Layer)
+// 복용 알림 비즈니스 로직 서비스
 export const pillReminderService = {
   // 모든 복용 알림 목록 조회
   getReminders() {
