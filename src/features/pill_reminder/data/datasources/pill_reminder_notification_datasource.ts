@@ -4,10 +4,17 @@ import {
   NOTIFICATION_CHANNEL_ID,
   NOTIFICATION_CHANNEL_NAME,
   NOTIFICATION_LIGHT_COLOR,
+  NOTIFICATION_CATEGORY_REMINDER,
+  NOTIFICATION_ACTION_CONFIRM,
+  NOTIFICATION_ACTION_SNOOZE,
+  NOTIFICATION_ACTION_DISMISS,
   CHANNEL_VIBRATION_PATTERN,
   ALARM_VIBRATION_PATTERN,
 } from '@features/pill_reminder/constants/reminder_notification_constant';
-import { IScheduleWeeklyNotificationParams } from '@features/pill_reminder/types/pill_reminder_data_type';
+import {
+  IScheduleWeeklyNotificationParams,
+  IScheduleSnoozeNotificationParams,
+} from '@features/pill_reminder/types/pill_reminder_data_type';
 import logger from '@utils/logger';
 
 // 포그라운드 알림 수신 동작 기본 설정
@@ -33,16 +40,60 @@ export const pillReminderNotificationDataSource = {
     return await Notifications.requestPermissionsAsync();
   },
 
-  // Android 알림 채널 설정
+  // Android 알림 채널 및 인터랙티브 알림 카테고리(iOS/Android 공통) 설정
   async setNotificationChannel() {
-    if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync(NOTIFICATION_CHANNEL_ID, {
-        name: NOTIFICATION_CHANNEL_NAME,
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: CHANNEL_VIBRATION_PATTERN,
-        lightColor: NOTIFICATION_LIGHT_COLOR,
-        sound: 'default',
-      });
+    try {
+      // 1. 대화형 알림 카테고리 등록 (iOS/Android 공통 액션 버튼)
+      await Notifications.setNotificationCategoryAsync(
+        NOTIFICATION_CATEGORY_REMINDER,
+        [
+          {
+            identifier: NOTIFICATION_ACTION_CONFIRM,
+            buttonTitle: '💊 복용 완료',
+            options: {
+              opensAppToForeground: false,
+            },
+          },
+          {
+            identifier: NOTIFICATION_ACTION_SNOOZE,
+            buttonTitle: '⏰ 5분 뒤 다시 알림',
+            options: {
+              opensAppToForeground: false,
+            },
+          },
+          {
+            identifier: NOTIFICATION_ACTION_DISMISS,
+            buttonTitle: '✕ 끄기',
+            options: {
+              isDestructive: true,
+              opensAppToForeground: false,
+            },
+          },
+        ],
+      );
+
+      // 2. Android 알림 채널 최고 중요도(MAX/헤드업) 설정
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync(
+          NOTIFICATION_CHANNEL_ID,
+          {
+            name: NOTIFICATION_CHANNEL_NAME,
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: CHANNEL_VIBRATION_PATTERN,
+            lightColor: NOTIFICATION_LIGHT_COLOR,
+            sound: 'default',
+            enableVibrate: true,
+            showBadge: true,
+            lockscreenVisibility:
+              Notifications.AndroidNotificationVisibility.PUBLIC,
+            bypassDnd: false,
+          },
+        );
+      }
+    } catch (e) {
+      logger.error(
+        `[NOTIFICATION-DATASOURCE] Failed to set channel or categories: ${e}`,
+      );
     }
   },
 
@@ -62,6 +113,7 @@ export const pillReminderNotificationDataSource = {
           body: params.body,
           sound: 'default',
           data: params.data,
+          categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
@@ -75,6 +127,39 @@ export const pillReminderNotificationDataSource = {
       logger.error(`[NOTIFICATION-DATASOURCE] Failed to schedule: ${e}`);
       throw e;
     }
+  },
+
+  // 스누즈(5분 뒤 다시 알림) 스케줄 등록
+  async scheduleSnoozeNotification(
+    params: IScheduleSnoozeNotificationParams,
+  ): Promise<string> {
+    try {
+      return await Notifications.scheduleNotificationAsync({
+        content: {
+          title: params.title,
+          body: params.body,
+          sound: 'default',
+          data: params.data,
+          categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: params.seconds,
+          repeats: false,
+          channelId: NOTIFICATION_CHANNEL_ID,
+        },
+      });
+    } catch (e) {
+      logger.error(`[NOTIFICATION-DATASOURCE] Failed to schedule snooze: ${e}`);
+      throw e;
+    }
+  },
+
+  // 알림 응답(사용자 액션 클릭) 리스너 등록
+  addNotificationResponseListener(
+    listener: (response: Notifications.NotificationResponse) => void,
+  ) {
+    return Notifications.addNotificationResponseReceivedListener(listener);
   },
 
   // 알람 진동 패턴 실행

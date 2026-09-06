@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import * as Notifications from 'expo-notifications';
 import { pillReminderNotificationRepository } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
 import { pillReminderQueryService } from '@features/pill_reminder/services/pill_reminder_query_service';
 import { formatReminderTime } from '@features/pill_reminder/utils/reminder_format';
@@ -6,6 +7,10 @@ import {
   DEFAULT_NOTIFICATION_TITLE,
   NOTIFICATION_WATCHER_INTERVAL_MS,
   NOTIFICATION_TOAST_VISIBILITY_MS,
+  NOTIFICATION_ACTION_CONFIRM,
+  NOTIFICATION_ACTION_SNOOZE,
+  NOTIFICATION_ACTION_DISMISS,
+  SNOOZE_DELAY_SECONDS,
 } from '@features/pill_reminder/constants/reminder_notification_constant';
 import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
@@ -13,6 +18,7 @@ import logger from '@utils/logger';
 let timer: NodeJS.Timeout | null = null;
 let lastTriggeredMinute = '';
 let permissionInitialization: Promise<boolean> | null = null;
+let responseSubscription: { remove: () => void } | null = null;
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
@@ -47,6 +53,59 @@ export const pillReminderNotificationService = {
     }
 
     return permissionInitialization;
+  },
+
+  // 사용자 알림 액션 응답 처리 (복용 완료 / 5분 뒤 다시 알림 / 끄기)
+  async handleNotificationResponse(
+    response: Notifications.NotificationResponse,
+  ): Promise<void> {
+    try {
+      const actionId = response.actionIdentifier;
+      const notificationData = response.notification.request.content.data as {
+        reminderId?: number;
+      };
+      const reminderId = notificationData?.reminderId;
+
+      logger.info(
+        `[NOTIFICATION-SERVICE] Notification action received: ${actionId}, reminderId: ${reminderId}`,
+      );
+
+      if (actionId === NOTIFICATION_ACTION_CONFIRM) {
+        // 복용 완료 처리
+        Toast.show({
+          type: 'default',
+          text1: '💊 복용이 확인되었습니다.',
+          visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
+        });
+      } else if (actionId === NOTIFICATION_ACTION_SNOOZE && reminderId) {
+        // 5분 뒤 다시 알림 스케줄 등록
+        const reminder =
+          await pillReminderQueryService.getReminderById(reminderId);
+        const title = reminder?.title || DEFAULT_NOTIFICATION_TITLE;
+        const body = `[다시 알림] ${reminder?.items.map((i) => i.item_name).join(', ') || '약'} 복용할 시간이에요!`;
+
+        await pillReminderNotificationRepository.scheduleSnoozeNotification({
+          title: `🔔 [${title}]`,
+          body,
+          seconds: SNOOZE_DELAY_SECONDS,
+          data: { reminderId },
+        });
+
+        Toast.show({
+          type: 'default',
+          text1: '⏰ 5분 뒤 다시 알림이 설정되었습니다.',
+          visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
+        });
+      } else if (actionId === NOTIFICATION_ACTION_DISMISS) {
+        logger.info(
+          `[NOTIFICATION-SERVICE] Reminder dismissed for ID: ${reminderId}`,
+        );
+      }
+    } catch (e) {
+      logger.error(
+        `[NOTIFICATION-SERVICE] Failed to handle notification response: ${e}`,
+      );
+    }
   },
 
   /**
@@ -173,12 +232,22 @@ export const pillReminderNotificationService = {
     }
   },
 
-  // 알림 감시 타이머 시작
+  // 알림 감시 타이머 및 사용자 액션 응답 리스너 시작
   startWatcher(): void {
     const hasExistingTimer = timer !== null;
 
     if (hasExistingTimer && timer) {
       clearInterval(timer);
+    }
+
+    // 알림 응답(사용자 액션 클릭) 리스너 구독
+    if (!responseSubscription) {
+      responseSubscription =
+        pillReminderNotificationRepository.addNotificationResponseListener(
+          (response) => {
+            void this.handleNotificationResponse(response);
+          },
+        );
     }
 
     // 주기적인 인앱 체크
@@ -189,13 +258,18 @@ export const pillReminderNotificationService = {
     void this.rescheduleAllNotifications();
   },
 
-  // 알림 감시 중지
+  // 알림 감시 중지 및 리스너 해제
   stopWatcher(): void {
     const hasTimer = timer !== null;
 
     if (hasTimer && timer) {
       clearInterval(timer);
       timer = null;
+    }
+
+    if (responseSubscription) {
+      responseSubscription.remove();
+      responseSubscription = null;
     }
   },
 };

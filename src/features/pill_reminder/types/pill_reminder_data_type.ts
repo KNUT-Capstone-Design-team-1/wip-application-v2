@@ -103,3 +103,11 @@ export interface IScheduleWeeklyNotificationParams {
   minute: number;
   data: { reminderId: number };
 }
+
+// 스누즈(다시 알림) 스케줄 등록 매개변수 타입
+export interface IScheduleSnoozeNotificationParams {
+  title: string;
+  body: string;
+  seconds: number;
+  data: { reminderId: number };
+}
