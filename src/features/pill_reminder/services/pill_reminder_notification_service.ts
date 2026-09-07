@@ -86,17 +86,36 @@ const handleConfirmAction = (): void => {
 };
 
 // 다시 알림 액션을 5분 뒤 예약한다.
-const handleSnoozeAction = async (reminderId: number): Promise<void> => {
-  const reminder = await pillReminderQueryService.getReminderById(reminderId);
-  const title = reminder?.title || DEFAULT_NOTIFICATION_TITLE;
-  const itemNames = reminder?.items.map((item) => item.item_name).join(', ');
+const handleSnoozeAction = async (reminderId?: number): Promise<void> => {
+  let targetReminderId = reminderId;
+  let reminderTitle = DEFAULT_NOTIFICATION_TITLE;
+  let itemNames = '';
+
+  if (targetReminderId) {
+    const reminder =
+      await pillReminderQueryService.getReminderById(targetReminderId);
+    if (reminder) {
+      reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
+      itemNames = reminder.items.map((item) => item.item_name).join(', ');
+    }
+  } else {
+    // reminderId가 없는 경우 가장 가까운 활성 알림 조회
+    const reminders = await pillReminderQueryService.getReminders();
+    const activeReminder = reminders.find((r) => r.is_enabled) || reminders[0];
+    if (activeReminder) {
+      targetReminderId = activeReminder.id;
+      reminderTitle = activeReminder.title || DEFAULT_NOTIFICATION_TITLE;
+      itemNames = activeReminder.items.map((item) => item.item_name).join(', ');
+    }
+  }
+
   const body = `[다시 알림] ${itemNames || '약'} 복용할 시간이에요!`;
 
   await pillReminderNotificationRepository.scheduleSnoozeNotification({
-    title: `[${title}]`,
+    title: `[${reminderTitle}]`,
     body,
     seconds: SNOOZE_DELAY_SECONDS,
-    data: { reminderId },
+    data: { reminderId: targetReminderId ?? 0 },
   });
 
   Toast.show({
@@ -258,11 +277,7 @@ export const pillReminderNotificationService = {
       }
 
       if (actionId === NOTIFICATION_ACTION_SNOOZE) {
-        if (reminderId) {
-          await handleSnoozeAction(reminderId);
-        } else {
-          logger.warn('[NOTIFICATION-SERVICE] Snooze action has no reminderId');
-        }
+        await handleSnoozeAction(reminderId);
         return;
       }
 
