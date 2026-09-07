@@ -28,7 +28,7 @@ export const pillReminderNotificationChannelDataSource = {
           {
             identifier: NOTIFICATION_ACTION_SNOOZE,
             buttonTitle: '5분 뒤 다시 알림',
-            options: { opensAppToForeground: false },
+            options: { opensAppToForeground: true },
           },
           {
             identifier: NOTIFICATION_ACTION_DISMISS,

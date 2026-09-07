@@ -7,9 +7,10 @@ import { pillReminderNotificationChannelDataSource } from '@features/pill_remind
 import { pillReminderNotificationPermissionDataSource } from '@features/pill_reminder/data/datasources/pill_reminder_notification_permission_datasource';
 import { pillReminderNotificationScheduleDataSource } from '@features/pill_reminder/data/datasources/pill_reminder_notification_schedule_datasource';
 
-// 포그라운드 알림 수신 동작 기본 설정
+// 포그라운드(앱이 켜져 있을 때) 알림 수신 동작 설정: 배너, 알람 소리, 배지, 알림 목록 모두 표시
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
+    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
