@@ -6,3 +6,6 @@ export * from './pill_reminder_form_type';
 
 // 데이터베이스 레코드 모델
 export * from './pill_reminder_data_type';
+
+// 알림 모델
+export * from './pill_reminder_notification_type';

@@ -14,6 +14,7 @@ import {
   IScheduleWeeklyNotificationParams,
   IScheduleSnoozeNotificationParams,
 } from '@features/pill_reminder/types/pill_reminder_data_type';
+import { ScheduledNotificationSummarySource } from '@features/pill_reminder/types/pill_reminder_notification_type';
 import logger from '@utils/logger';
 
 // 포그라운드 알림 수신 동작 기본 설정
@@ -53,6 +54,33 @@ export const pillReminderNotificationDataSource = {
     });
   },
 
+  // 실제 OS에 등록된 알림을 요약해 기록
+  async logScheduledNotifications() {
+    const scheduledNotifications =
+      await Notifications.getAllScheduledNotificationsAsync();
+
+    const summaries = scheduledNotifications.map(
+      (notification: ScheduledNotificationSummarySource) => {
+        const trigger = notification.trigger;
+
+        return {
+          id: notification.identifier,
+          title: notification.content.title,
+          body: notification.content.body,
+          triggerType: trigger?.type,
+          weekday: trigger?.weekday,
+          hour: trigger?.hour,
+          minute: trigger?.minute,
+          channelId: trigger?.channelId,
+        };
+      },
+    );
+
+    logger.info(
+      `[NOTIFICATION] Scheduled notifications: ${JSON.stringify(summaries)}`,
+    );
+  },
+
   // Android 알림 채널 및 인터랙티브 알림 카테고리(iOS/Android 공통) 설정
   async setNotificationChannel() {
     try {
@@ -87,6 +115,7 @@ export const pillReminderNotificationDataSource = {
 
       // 2. Android 알림 채널 최고 중요도(MAX/헤드업) 설정
       if (Platform.OS === 'android') {
+        // Android channel settings are sticky; reinstall after changing them.
         await Notifications.setNotificationChannelAsync(
           NOTIFICATION_CHANNEL_ID,
           {
@@ -120,7 +149,7 @@ export const pillReminderNotificationDataSource = {
     params: IScheduleWeeklyNotificationParams,
   ): Promise<string> {
     try {
-      return await Notifications.scheduleNotificationAsync({
+      const identifier = await Notifications.scheduleNotificationAsync({
         content: {
           title: params.title,
           body: params.body,
@@ -136,6 +165,9 @@ export const pillReminderNotificationDataSource = {
           channelId: NOTIFICATION_CHANNEL_ID,
         },
       });
+
+      await this.logScheduledNotifications();
+      return identifier;
     } catch (e) {
       logger.error(`[NOTIFICATION-DATASOURCE] Failed to schedule: ${e}`);
       throw e;
@@ -147,7 +179,7 @@ export const pillReminderNotificationDataSource = {
     params: IScheduleSnoozeNotificationParams,
   ): Promise<string> {
     try {
-      return await Notifications.scheduleNotificationAsync({
+      const identifier = await Notifications.scheduleNotificationAsync({
         content: {
           title: params.title,
           body: params.body,
@@ -162,6 +194,9 @@ export const pillReminderNotificationDataSource = {
           channelId: NOTIFICATION_CHANNEL_ID,
         },
       });
+
+      await this.logScheduledNotifications();
+      return identifier;
     } catch (e) {
       logger.error(`[NOTIFICATION-DATASOURCE] Failed to schedule snooze: ${e}`);
       throw e;

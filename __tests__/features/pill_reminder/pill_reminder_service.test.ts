@@ -15,6 +15,7 @@ jest.mock('expo-notifications', () => ({
     Promise.resolve({ status: 'granted' }),
   ),
   setNotificationChannelAsync: jest.fn(() => Promise.resolve()),
+  getAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve([])),
   cancelAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve()),
   scheduleNotificationAsync: jest.fn(() => Promise.resolve('notif-1')),
   AndroidImportance: { HIGH: 4 },

@@ -16,6 +16,7 @@ import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
 
 let responseSubscription: { remove: () => void } | null = null;
+let reschedulePromise: Promise<void> | null = null;
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
@@ -34,23 +35,28 @@ export const pillReminderNotificationService = {
   // 시스템 알림 채널 및 권한 초기화/요청 유스케이스 (거부 시 설정 이동 모달 팝업)
   async initPermissions(showModalIfDenied = true): Promise<boolean> {
     try {
+      // Android 13+ permission prompts require the channel to exist first.
+      await pillReminderNotificationRepository.setNotificationChannel();
+
       const existingStatus =
         await pillReminderNotificationRepository.getPermissions();
       let finalStatus = existingStatus.status;
 
       const isPermissionNotGranted = finalStatus !== 'granted';
 
-      // 권한이 없거나 canAskAgain 가능한 경우 즉시 시스템 다이얼로그 요청
-      if (isPermissionNotGranted) {
+      // 영구 거부 상태에서는 반복 요청하지 않고 설정 이동만 안내한다.
+      if (isPermissionNotGranted && existingStatus.canAskAgain) {
         const statusResponse =
           await pillReminderNotificationRepository.requestPermissions();
         finalStatus = statusResponse.status;
       }
 
-      // 채널 설정
-      await pillReminderNotificationRepository.setNotificationChannel();
-
       const isGranted = finalStatus === 'granted';
+      if (!isGranted) {
+        logger.warn(
+          `[NOTIFICATION-SERVICE] Notifications are not granted: ${finalStatus}, canAskAgain=${existingStatus.canAskAgain}`,
+        );
+      }
       const shouldShowDeniedModal = !isGranted && showModalIfDenied;
 
       if (shouldShowDeniedModal) {
@@ -75,6 +81,9 @@ export const pillReminderNotificationService = {
 
   // 권한 상태 확인 (캐싱 없이 실시간 확인)
   async ensurePermissions(): Promise<boolean> {
+    // 권한 확인 전에 Android 채널을 먼저 보장
+    await pillReminderNotificationRepository.setNotificationChannel();
+
     const status = await pillReminderNotificationRepository.getPermissions();
     const isGranted = status.status === 'granted';
 
@@ -192,6 +201,25 @@ export const pillReminderNotificationService = {
    * 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
    */
   async rescheduleAllNotifications(): Promise<void> {
+    // 앱 시작과 CRUD 재등록 요청이 동시에 실행되지 않도록 직렬화
+    if (reschedulePromise) {
+      return await reschedulePromise;
+    }
+
+    const currentReschedule = this.rescheduleAllNotificationsInternal();
+    reschedulePromise = currentReschedule;
+
+    try {
+      await currentReschedule;
+    } finally {
+      if (reschedulePromise === currentReschedule) {
+        reschedulePromise = null;
+      }
+    }
+  },
+
+  // 활성화된 복용 알림을 OS 반복 알림으로 재등록
+  async rescheduleAllNotificationsInternal(): Promise<void> {
     try {
       const hasPermission = await this.ensurePermissions();
 
@@ -201,6 +229,7 @@ export const pillReminderNotificationService = {
 
       // 기존 스케줄된 모든 로컬 알림 취소
       await pillReminderNotificationRepository.cancelAllScheduledNotifications();
+      await pillReminderNotificationRepository.logScheduledNotifications();
 
       const reminders = await pillReminderQueryService.getReminders();
 
@@ -257,6 +286,9 @@ export const pillReminderNotificationService = {
           }
         }
       }
+
+      // 재등록이 끝난 뒤 OS가 보유한 최종 상태를 기록한다.
+      await pillReminderNotificationRepository.logScheduledNotifications();
     } catch (e) {
       logger.error(
         `[NOTIFICATION-SERVICE] Failed to reschedule notifications: ${e}`,

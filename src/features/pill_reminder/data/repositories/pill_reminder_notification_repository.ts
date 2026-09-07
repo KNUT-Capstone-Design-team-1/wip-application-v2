@@ -22,6 +22,11 @@ export const pillReminderNotificationRepository = {
     return await pillReminderNotificationDataSource.requestPermissions();
   },
 
+  // 실제 OS에 등록된 예약 알림 목록 조회를 위임
+  async logScheduledNotifications(): Promise<void> {
+    await pillReminderNotificationDataSource.logScheduledNotifications();
+  },
+
   // 채널 설정
   async setNotificationChannel(): Promise<void> {
     await pillReminderNotificationDataSource.setNotificationChannel();
