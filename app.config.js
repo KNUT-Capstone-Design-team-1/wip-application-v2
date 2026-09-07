@@ -96,6 +96,7 @@ export default {
         'android.permission.POST_NOTIFICATIONS',
         // Required by Android 12+ for exact medication-time alarms.
         'android.permission.SCHEDULE_EXACT_ALARM',
+        'android.permission.USE_EXACT_ALARM',
         'android.permission.VIBRATE',
         'android.permission.RECEIVE_BOOT_COMPLETED',
         'com.google.android.gms.permission.AD_ID',
