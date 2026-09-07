@@ -1,4 +1,6 @@
 import * as Notifications from 'expo-notifications';
+import * as Application from 'expo-application';
+import * as IntentLauncher from 'expo-intent-launcher';
 import { Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { pillReminderNotificationRepository } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
@@ -21,7 +23,6 @@ import {
 
 let responseSubscription: { remove: () => void } | null = null;
 let reschedulePromise: Promise<NotificationRescheduleSummary> | null = null;
-const loadNativeModule = (moduleName: string) => require(moduleName); // eslint-disable-line @typescript-eslint/no-require-imports
 
 // 네이티브 오류 정보를 JSON으로 보존한다.
 const describeNotificationError = (error: unknown): string => {
@@ -69,20 +70,12 @@ export const pillReminderNotificationService = {
       return;
     }
 
-    // 설정 화면을 호출할 때만 네이티브 모듈을 로드한다.
-    const Application = loadNativeModule(
-      'expo-application',
-    ) as typeof import('expo-application');
     const applicationId = Application.applicationId;
     if (!applicationId) {
       void Linking.openSettings();
       return;
     }
 
-    // Android 설정 화면을 호출할 때만 네이티브 모듈을 로드한다.
-    const IntentLauncher = loadNativeModule(
-      'expo-intent-launcher',
-    ) as typeof import('expo-intent-launcher');
     void IntentLauncher.startActivityAsync(
       'android.settings.REQUEST_SCHEDULE_EXACT_ALARM',
       { data: `package:${applicationId}` },

@@ -12,6 +12,14 @@ jest.mock('expo-router', () => ({
   },
 }));
 
+jest.mock('expo-application', () => ({
+  applicationId: 'com.example.whatispill',
+}));
+
+jest.mock('expo-intent-launcher', () => ({
+  startActivityAsync: jest.fn(() => Promise.resolve()),
+}));
+
 jest.mock('expo-notifications', () => ({
   setNotificationHandler: jest.fn(),
   getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
