@@ -9,3 +9,6 @@ export * from './pill_reminder_data_type';
 
 // 알림 모델
 export * from './pill_reminder_notification_type';
+
+// 훅 모델
+export * from './pill_reminder_hook_type';

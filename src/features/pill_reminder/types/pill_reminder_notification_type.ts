@@ -1,3 +1,5 @@
+import * as Notifications from 'expo-notifications';
+
 // OS에 등록된 알림 요약 모델
 export type ScheduledNotificationSummarySource = {
   identifier: string;
@@ -29,4 +31,23 @@ export type NotificationRescheduleSummary = {
   success: number;
   failed: number;
   failures: NotificationScheduleFailure[];
+};
+
+// 알림 페이로드 내 reminderId 데이터 타입
+export type NotificationReminderData = {
+  reminderId?: number | string;
+};
+
+// Notifications.scheduleNotificationAsync에 전달되는 스케줄 요청 객체 타입
+export type ScheduleNotificationRequest = Omit<
+  Parameters<typeof Notifications.scheduleNotificationAsync>[0],
+  'trigger'
+> & {
+  trigger: Notifications.SchedulableNotificationTriggerInput;
+};
+
+// 복용 알림 본문 생성용 알약 아이템 타입
+export type PillReminderNotificationBodyItem = {
+  item_name: string;
+  dosage?: number;
 };
