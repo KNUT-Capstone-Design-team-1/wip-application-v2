@@ -14,13 +14,14 @@ export const pillReminderNotificationPermissionDataSource = {
     return await Notifications.getPermissionsAsync();
   },
 
-  // Exact alarm은 일반 런타임 권한이 아니므로 설정 화면에서 허용한다.
+  // Expo Notifications는 Exact Alarm이 없어도 부정확 알람으로 예약한다.
+  // SCHEDULE_EXACT_ALARM은 일반 런타임 권한이 아니므로 PermissionsAndroid로 확인하지 않는다.
   async getExactAlarmPermissionStatus(): Promise<boolean> {
     if (Platform.OS !== 'android' || Number(Platform.Version) < 31) {
       return true;
     }
 
-    // Android가 예약 시 실제 허용 상태를 적용한다.
+    // 예약 가능 여부는 Expo 네이티브 스케줄러가 AlarmManager로 처리한다.
     return true;
   },
 

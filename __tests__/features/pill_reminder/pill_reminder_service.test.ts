@@ -300,7 +300,7 @@ test('주간 알림 예약은 JSON-safe 데이터만 전달한다', async () => 
 
   const payload = scheduleSpy.mock.calls[0][0];
   expect(payload.content.data).toEqual({
-    reminderId: 123,
+    reminderId: '123',
     meta: '{"nested":"value"}',
   });
 });

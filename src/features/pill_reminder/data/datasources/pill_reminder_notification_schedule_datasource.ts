@@ -11,24 +11,28 @@ import {
 import { ScheduledNotificationSummarySource } from '@features/pill_reminder/types/pill_reminder_notification_type';
 import logger from '@utils/logger';
 
+// Android가 처리할 수 있는 JSON 기본값으로 알림 데이터를 변환한다.
 const sanitizeNotificationData = (data?: Record<string, unknown>) => {
   const hasNoData = !data;
   if (hasNoData) {
     return {};
   }
 
-  const sanitizer = (value: unknown): string | number | boolean | null => {
+  const sanitizer = (value: unknown): string | boolean | null => {
     const isEmptyValue = value === undefined || value === null;
     if (isEmptyValue) {
       return null;
     }
 
-    const isPrimitiveValue =
-      typeof value === 'string' ||
-      typeof value === 'number' ||
-      typeof value === 'boolean';
-    if (isPrimitiveValue) {
+    const isStringOrBoolean =
+      typeof value === 'string' || typeof value === 'boolean';
+    if (isStringOrBoolean) {
       return value;
+    }
+
+    const isNumberValue = typeof value === 'number';
+    if (isNumberValue) {
+      return String(value);
     }
 
     const isDateValue = value instanceof Date;
@@ -48,14 +52,16 @@ const sanitizeNotificationData = (data?: Record<string, unknown>) => {
     return String(value);
   };
 
-  return Object.entries(data).reduce<
-    Record<string, string | number | boolean | null>
-  >((acc, [key, value]) => {
-    acc[key] = sanitizer(value);
-    return acc;
-  }, {});
+  return Object.entries(data).reduce<Record<string, string | boolean | null>>(
+    (acc, [key, value]) => {
+      acc[key] = sanitizer(value);
+      return acc;
+    },
+    {},
+  );
 };
 
+// 스케줄 예약 오류를 로그에 남길 문자열로 변환한다.
 const describeScheduleError = (error: unknown): string => {
   if (error instanceof Error) {
     const details = Object.getOwnPropertyNames(error).reduce<

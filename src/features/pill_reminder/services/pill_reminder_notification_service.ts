@@ -44,6 +44,75 @@ const describeNotificationError = (error: unknown): string => {
   return String(error);
 };
 
+type NotificationReminderData = { reminderId?: number | string };
+
+// 알림 응답 데이터에서 유효한 복용 알림 ID를 추출한다.
+const getReminderId = (
+  response: Notifications.NotificationResponse,
+): number | undefined => {
+  const data = response.notification.request.content
+    .data as NotificationReminderData;
+  const value = data?.reminderId;
+  const reminderId =
+    typeof value === 'string' ? Number.parseInt(value, 10) : value;
+
+  return typeof reminderId === 'number' &&
+    Number.isInteger(reminderId) &&
+    reminderId > 0
+    ? reminderId
+    : undefined;
+};
+
+// 알림 본체 탭에 해당하는 화면으로 이동한다.
+const openReminderFromNotification = (reminderId?: number): void => {
+  if (reminderId) {
+    router.push({
+      pathname: '/pill-reminder-setting',
+      params: { reminderId: reminderId.toString() },
+    });
+    return;
+  }
+
+  router.push('/pill-reminder');
+};
+
+// 복용 완료 액션의 안내 토스트를 표시한다.
+const handleConfirmAction = (): void => {
+  Toast.show({
+    type: 'default',
+    text1: '복용 완료 처리되었어요.',
+    visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
+  });
+};
+
+// 다시 알림 액션을 5분 뒤 예약한다.
+const handleSnoozeAction = async (reminderId: number): Promise<void> => {
+  const reminder = await pillReminderQueryService.getReminderById(reminderId);
+  const title = reminder?.title || DEFAULT_NOTIFICATION_TITLE;
+  const itemNames = reminder?.items.map((item) => item.item_name).join(', ');
+  const body = `[다시 알림] ${itemNames || '약'} 복용할 시간이에요!`;
+
+  await pillReminderNotificationRepository.scheduleSnoozeNotification({
+    title: `[${title}]`,
+    body,
+    seconds: SNOOZE_DELAY_SECONDS,
+    data: { reminderId },
+  });
+
+  Toast.show({
+    type: 'default',
+    text1: '5분 뒤 다시 알림이 설정되었습니다.',
+    visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
+  });
+};
+
+// 알림 닫기 액션을 로그로 기록한다.
+const handleDismissAction = (reminderId?: number): void => {
+  logger.info(
+    `[NOTIFICATION-SERVICE] Reminder dismissed for ID: ${reminderId ?? 'n/a'}`,
+  );
+};
+
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
   // 시스템 설정 화면 이동
@@ -131,23 +200,12 @@ export const pillReminderNotificationService = {
 
       if (shouldShowDeniedModal) {
         useCommonModalStore.getState().showModal({
-          title:
-            Platform.OS === 'android'
-              ? '정확한 알림 권한 필요'
-              : '알림 권한 필요',
+          title: '알림 권한 필요',
           message:
-            Platform.OS === 'android'
-              ? '정확한 시간에 약 복용 알림을 받으려면\n기기 설정에서 알람 및 리마인더 권한을 허용해주세요.'
-              : '복용 시간에 맞춰 알림을 받으시려면\n기기 설정에서 알림 권한을 허용해주세요.',
+            '복용 시간에 맞춰 알림을 받으시려면\n기기 설정에서 알림 권한을 허용해주세요.',
           confirmText: '설정으로 이동',
           cancelText: '닫기',
-          onConfirm: () => {
-            if (Platform.OS === 'android') {
-              this.openExactAlarmSettings();
-              return;
-            }
-            this.openNotificationSettings();
-          },
+          onConfirm: () => this.openNotificationSettings(),
         });
       }
 
@@ -183,73 +241,33 @@ export const pillReminderNotificationService = {
   ): Promise<void> {
     try {
       const actionId = response.actionIdentifier;
-      const notificationData = response.notification.request.content.data as {
-        reminderId?: number;
-      };
-      const reminderId = notificationData?.reminderId;
+      const reminderId = getReminderId(response);
 
       logger.info(
         `[NOTIFICATION-SERVICE] Notification action received: ${actionId}, reminderId: ${reminderId}`,
       );
 
-      const isDefaultTap = actionId === Notifications.DEFAULT_ACTION_IDENTIFIER;
+      if (actionId === Notifications.DEFAULT_ACTION_IDENTIFIER) {
+        openReminderFromNotification(reminderId);
+        return;
+      }
 
-      // 알림 본체(기본 탭)를 클릭하여 앱에 진입한 경우
-      if (isDefaultTap) {
-        const hasReminderId = Boolean(reminderId);
+      if (actionId === NOTIFICATION_ACTION_CONFIRM) {
+        handleConfirmAction();
+        return;
+      }
 
-        if (hasReminderId && reminderId) {
-          router.push({
-            pathname: '/pill-reminder-setting',
-            params: { reminderId: reminderId.toString() },
-          });
-          return;
+      if (actionId === NOTIFICATION_ACTION_SNOOZE) {
+        if (reminderId) {
+          await handleSnoozeAction(reminderId);
+        } else {
+          logger.warn('[NOTIFICATION-SERVICE] Snooze action has no reminderId');
         }
-
-        router.push('/pill-reminder');
         return;
       }
 
-      const isConfirmAction = actionId === NOTIFICATION_ACTION_CONFIRM;
-      if (isConfirmAction) {
-        // 복용 완료 처리
-        Toast.show({
-          type: 'default',
-          text1: '복용 완료 처리되었어요.',
-          visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
-        });
-        return;
-      }
-
-      const isSnoozeAction =
-        actionId === NOTIFICATION_ACTION_SNOOZE && Boolean(reminderId);
-      if (isSnoozeAction && reminderId) {
-        // 5분 뒤 다시 알림 스케줄 등록
-        const reminder =
-          await pillReminderQueryService.getReminderById(reminderId);
-        const title = reminder?.title || DEFAULT_NOTIFICATION_TITLE;
-        const body = `[다시 알림] ${reminder?.items.map((i) => i.item_name).join(', ') || '약'} 복용할 시간이에요!`;
-
-        await pillReminderNotificationRepository.scheduleSnoozeNotification({
-          title: `[${title}]`,
-          body,
-          seconds: SNOOZE_DELAY_SECONDS,
-          data: { reminderId },
-        });
-
-        Toast.show({
-          type: 'default',
-          text1: '5분 뒤 다시 알림이 설정되었습니다.',
-          visibilityTime: NOTIFICATION_TOAST_VISIBILITY_MS,
-        });
-        return;
-      }
-
-      const isDismissAction = actionId === NOTIFICATION_ACTION_DISMISS;
-      if (isDismissAction) {
-        logger.info(
-          `[NOTIFICATION-SERVICE] Reminder dismissed for ID: ${reminderId}`,
-        );
+      if (actionId === NOTIFICATION_ACTION_DISMISS) {
+        handleDismissAction(reminderId);
         return;
       }
     } catch (e) {
@@ -310,8 +328,6 @@ export const pillReminderNotificationService = {
       failed: 0,
       failures: [],
     };
-    let hasShownExactAlarmModal = false;
-
     try {
       const hasPermission = await this.ensurePermissions();
 
@@ -384,18 +400,6 @@ export const pillReminderNotificationService = {
                 reminderId: reminder.id,
                 reason,
               });
-
-              if (Platform.OS === 'android' && !hasShownExactAlarmModal) {
-                hasShownExactAlarmModal = true;
-                useCommonModalStore.getState().showModal({
-                  title: '알람 및 리마인더 권한 필요',
-                  message:
-                    '정확한 시간에 약 복용 알림을 받으려면\n기기 설정에서 알람 및 리마인더 권한을 허용해주세요.',
-                  confirmText: '설정으로 이동',
-                  cancelText: '닫기',
-                  onConfirm: () => this.openExactAlarmSettings(),
-                });
-              }
 
               logger.error(
                 `[NOTIFICATION-SERVICE] Failed to reschedule reminderId=${reminder.id}, weekday=${expoWeekday}, time=${timeStr}: ${describeNotificationError(e)}`,
