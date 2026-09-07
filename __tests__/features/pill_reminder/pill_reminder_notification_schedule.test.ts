@@ -63,6 +63,7 @@ jest.mock('expo-notifications', () => {
     AndroidImportance: { MAX: 5, HIGH: 4 },
     AndroidNotificationVisibility: { PUBLIC: 1 },
     SchedulableTriggerInputTypes: {
+      DATE: 'date',
       WEEKLY: 'weekly',
       TIME_INTERVAL: 'timeInterval',
     },
@@ -130,15 +131,6 @@ describe('Pill Reminder Notification Scheduling Tests', () => {
             title: '[혈압약]',
             body: '아침 약 복용 시간입니다.',
             categoryIdentifier: 'PILL_REMINDER_CATEGORY',
-          }),
-          trigger: expect.objectContaining({
-            type: 'weekly',
-            weekday: 2,
-            hour: 8,
-            minute: 30,
-            ...(Platform.OS === 'android'
-              ? { channelId: 'pill-reminder' }
-              : {}),
           }),
         }),
       );

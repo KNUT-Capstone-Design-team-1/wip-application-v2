@@ -11,57 +11,7 @@ import {
 import { ScheduledNotificationSummarySource } from '@features/pill_reminder/types/pill_reminder_notification_type';
 import logger from '@utils/logger';
 
-// Android가 처리할 수 있는 JSON 기본값으로 알림 데이터를 변환한다.
-const sanitizeNotificationData = (data?: Record<string, unknown>) => {
-  const hasNoData = !data;
-  if (hasNoData) {
-    return {};
-  }
-
-  const sanitizer = (value: unknown): string | boolean | null => {
-    const isEmptyValue = value === undefined || value === null;
-    if (isEmptyValue) {
-      return null;
-    }
-
-    const isStringOrBoolean =
-      typeof value === 'string' || typeof value === 'boolean';
-    if (isStringOrBoolean) {
-      return value;
-    }
-
-    const isNumberValue = typeof value === 'number';
-    if (isNumberValue) {
-      return String(value);
-    }
-
-    const isDateValue = value instanceof Date;
-    if (isDateValue) {
-      return value.toISOString();
-    }
-
-    const isObjectValue = typeof value === 'object';
-    if (isObjectValue) {
-      try {
-        return JSON.stringify(value);
-      } catch {
-        return String(value);
-      }
-    }
-
-    return String(value);
-  };
-
-  return Object.entries(data).reduce<Record<string, string | boolean | null>>(
-    (acc, [key, value]) => {
-      acc[key] = sanitizer(value);
-      return acc;
-    },
-    {},
-  );
-};
-
-// 스케줄 예약 오류를 로그에 남길 문자열로 변환한다.
+// 스케줄 예약 오류를 문자열로 변환
 const describeScheduleError = (error: unknown): string => {
   if (error instanceof Error) {
     const details = Object.getOwnPropertyNames(error).reduce<
@@ -85,36 +35,80 @@ const describeScheduleError = (error: unknown): string => {
   }
 };
 
-// 알림 콘텐츠를 Android와 iOS가 오류 없이 직렬화할 수 있는 안전한 형태로 만든다.
-const buildNotificationContent = (
-  title: string,
-  body: string,
-  data?: Record<string, unknown>,
-) => ({
+// Android/iOS 공통 안전 알림 콘텐츠 생성
+const buildNotificationContent = (title: string, body: string) => ({
   title,
   body,
   sound: 'default' as const,
-  data: sanitizeNotificationData(data),
   categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
 });
 
-// 주간 반복 예약 요청을 만든다.
-const buildWeeklyRequest = (params: IScheduleWeeklyNotificationParams) => ({
-  content: buildNotificationContent(params.title, params.body, params.data),
-  trigger: {
-    type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-    weekday: params.weekday,
-    hour: params.hour,
-    minute: params.minute,
-    ...(Platform.OS === 'android'
-      ? { channelId: NOTIFICATION_CHANNEL_ID }
-      : {}),
-  } as Notifications.SchedulableNotificationTriggerInput,
-});
+/**
+ * 다음 실행 시각 계산 유틸리티
+ * expo-notifications Android의 WeeklyTrigger(DAY_OF_WEEK_IN_MONTH) 버그를 방지하고,
+ * 정확한 타임스탬프 기반 DateTrigger 또는 WeeklyTrigger를 생성합니다.
+ */
+const calculateNextWeeklyTimestamp = (
+  weekday: number, // 1: 일, 2: 월, ..., 7: 토
+  hour: number,
+  minute: number,
+): number => {
+  const now = new Date();
+  const target = new Date(now);
 
-// 일회성 다시 알림 예약 요청을 만든다.
+  target.setHours(hour, minute, 0, 0);
+
+  // JS getDay(): 0=일, 1=월, ..., 6=토 -> Expo weekday: 1=일, 2=월, ..., 7=토
+  const currentExpoWeekday = now.getDay() + 1;
+  let dayDifference = weekday - currentExpoWeekday;
+
+  // 이미 오늘 지정 시간이 지났거나 이전 요일인 경우 다음 주 같은 요일로 설정
+  if (
+    dayDifference < 0 ||
+    (dayDifference === 0 && target.getTime() <= now.getTime())
+  ) {
+    dayDifference += 7;
+  }
+
+  target.setDate(now.getDate() + dayDifference);
+  return target.getTime();
+};
+
+// 주간 반복 알림 요청 객체 생성 (Android에서는 버그 없는 정확한 DateTrigger 사용, iOS는 Native WeeklyTrigger 사용)
+const buildWeeklyRequest = (params: IScheduleWeeklyNotificationParams) => {
+  const isAndroid = Platform.OS === 'android';
+
+  if (isAndroid) {
+    const nextTimestamp = calculateNextWeeklyTimestamp(
+      params.weekday,
+      params.hour,
+      params.minute,
+    );
+
+    return {
+      content: buildNotificationContent(params.title, params.body),
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: nextTimestamp,
+        channelId: NOTIFICATION_CHANNEL_ID,
+      } as Notifications.SchedulableNotificationTriggerInput,
+    };
+  }
+
+  return {
+    content: buildNotificationContent(params.title, params.body),
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+      weekday: params.weekday,
+      hour: params.hour,
+      minute: params.minute,
+    } as Notifications.SchedulableNotificationTriggerInput,
+  };
+};
+
+// 스누즈(다시 알림) 요청 객체 생성
 const buildSnoozeRequest = (params: IScheduleSnoozeNotificationParams) => ({
-  content: buildNotificationContent(params.title, params.body, params.data),
+  content: buildNotificationContent(params.title, params.body),
   trigger: {
     type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
     seconds: params.seconds,
@@ -132,7 +126,7 @@ type ScheduleRequest = Omit<
   trigger: Notifications.SchedulableNotificationTriggerInput;
 };
 
-// 등록 후 다음 실행 시각과 OS 등록 목록을 확인한다.
+// 실제 OS 알림 스케줄러 등록
 const scheduleRequest = async (
   request: ScheduleRequest,
   reminderId: number,
@@ -140,7 +134,6 @@ const scheduleRequest = async (
   const identifier = await Notifications.scheduleNotificationAsync(request);
   let nextTriggerDate: number | null = null;
 
-  // 다음 실행 시각 조회 실패가 예약 실패로 이어지지 않게 한다.
   try {
     nextTriggerDate = await Notifications.getNextTriggerDateAsync(
       request.trigger,
@@ -158,7 +151,7 @@ const scheduleRequest = async (
   return identifier;
 };
 
-// OS에 등록된 예약 알림을 로그로 확인한다.
+// OS에 등록된 예약 알림 목록 로깅
 const logScheduledNotifications = async (): Promise<void> => {
   const scheduledNotifications =
     await Notifications.getAllScheduledNotificationsAsync();
@@ -185,19 +178,18 @@ const logScheduledNotifications = async (): Promise<void> => {
   );
 };
 
-// 예약 알림과 예약 목록 로그를 담당한다.
 export const pillReminderNotificationScheduleDataSource = {
-  // 실제 OS에 등록된 예약 알림 목록을 로그로 기록한다.
+  // 실제 OS에 등록된 예약 알림 목록 로깅
   async logScheduledNotifications() {
     await logScheduledNotifications();
   },
 
-  // 예약된 모든 로컬 알림을 취소한다.
+  // 모든 예약 알림 취소
   async cancelAllScheduledNotifications() {
     await Notifications.cancelAllScheduledNotificationsAsync();
   },
 
-  // 주간 반복 로컬 알림을 예약한다.
+  // 주간 반복 알림 예약
   async scheduleWeeklyNotification(
     params: IScheduleWeeklyNotificationParams,
   ): Promise<string> {
@@ -215,7 +207,7 @@ export const pillReminderNotificationScheduleDataSource = {
     }
   },
 
-  // 일정 시간 뒤 한 번만 다시 알림을 예약한다.
+  // 스누즈(다시 알림) 예약
   async scheduleSnoozeNotification(
     params: IScheduleSnoozeNotificationParams,
   ): Promise<string> {

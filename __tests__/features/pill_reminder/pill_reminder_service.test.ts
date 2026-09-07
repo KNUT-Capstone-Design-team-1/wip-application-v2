@@ -278,7 +278,7 @@ describe('PillReminderNotification permission state', () => {
   });
 });
 
-test('주간 알림 예약은 JSON-safe 데이터만 전달한다', async () => {
+test('주간 알림 예약은 Android 네이티브 직렬화 충돌을 방지하기 위해 안전하게 요청을 생성한다', async () => {
   const scheduleSpy = jest.spyOn(
     require('expo-notifications'),
     'scheduleNotificationAsync',
@@ -299,10 +299,9 @@ test('주간 알림 예약은 JSON-safe 데이터만 전달한다', async () => 
   );
 
   const payload = scheduleSpy.mock.calls[0][0];
-  expect(payload.content.data).toEqual({
-    reminderId: '123',
-    meta: '{"nested":"value"}',
-  });
+  expect(payload.content.title).toBe('약 알림');
+  expect(payload.content.body).toBe('복용할 시간입니다');
+  expect(payload.content.data).toBeUndefined();
 });
 
 describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
