@@ -211,6 +211,22 @@ describe('PillReminderNotification permission state', () => {
     expect(state.exactAlarmGranted).toBe(true);
   });
 
+  test('PermissionsAndroid가 Exact Alarm을 거부로 반환해도 권한 재요청을 유발하지 않는다', async () => {
+    const notifications = require('expo-notifications');
+    jest.spyOn(notifications, 'getPermissionsAsync').mockResolvedValueOnce({
+      status: 'granted',
+      canAskAgain: true,
+    });
+
+    PermissionsAndroid.check = jest.fn(() => Promise.resolve(false));
+
+    const state =
+      await pillReminderNotificationService.getNotificationPermissionState();
+
+    expect(state.notificationGranted).toBe(true);
+    expect(state.exactAlarmGranted).toBe(true);
+  });
+
   test('재등록 중 실패한 알림은 나머지 알림을 지속시키고 결과를 반환한다', async () => {
     const reminderSpy = jest.spyOn(pillReminderQueryService, 'getReminders');
 
