@@ -4,6 +4,7 @@ import {
   IScheduleWeeklyNotificationParams,
   IScheduleSnoozeNotificationParams,
 } from '@features/pill_reminder/types/pill_reminder_data_type';
+import { NotificationPermissionState } from '@features/pill_reminder/types/pill_reminder_notification_type';
 
 // 복용 알림 시스템/기기 알림 리포지토리
 export const pillReminderNotificationRepository = {
@@ -15,6 +16,16 @@ export const pillReminderNotificationRepository = {
   // 권한 조회
   async getPermissions(): Promise<Notifications.PermissionResponse> {
     return await pillReminderNotificationDataSource.getPermissions();
+  },
+
+  // 알림 권한 상태를 앱에서 명확히 분리해 확인한다.
+  async getNotificationPermissionState(): Promise<NotificationPermissionState> {
+    return await pillReminderNotificationDataSource.getNotificationPermissionState();
+  },
+
+  // Android의 정밀 알람 사용 가능 여부를 별도로 확인한다.
+  async getExactAlarmPermissionStatus(): Promise<boolean> {
+    return await pillReminderNotificationDataSource.getExactAlarmPermissionStatus();
   },
 
   // 권한 요청

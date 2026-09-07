@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import {
   NOTIFICATION_CHANNEL_ID,
@@ -14,7 +14,10 @@ import {
   IScheduleWeeklyNotificationParams,
   IScheduleSnoozeNotificationParams,
 } from '@features/pill_reminder/types/pill_reminder_data_type';
-import { ScheduledNotificationSummarySource } from '@features/pill_reminder/types/pill_reminder_notification_type';
+import {
+  NotificationPermissionState,
+  ScheduledNotificationSummarySource,
+} from '@features/pill_reminder/types/pill_reminder_notification_type';
 import logger from '@utils/logger';
 
 // 포그라운드 알림 수신 동작 기본 설정
@@ -38,6 +41,44 @@ export const pillReminderNotificationDataSource = {
   // 알림 권한 상태 조회
   async getPermissions() {
     return await Notifications.getPermissionsAsync();
+  },
+
+  // Android 12+에서 정확한 알람 허용 여부를 실시간 확인한다.
+  async getExactAlarmPermissionStatus(): Promise<boolean> {
+    try {
+      if (Platform.OS !== 'android') {
+        return true;
+      }
+
+      if (Number(Platform.Version) < 31) {
+        return true;
+      }
+
+      const exactAlarmPermission =
+        'android.permission.SCHEDULE_EXACT_ALARM' as any;
+      const status = await PermissionsAndroid.check(exactAlarmPermission);
+      return status;
+    } catch (e) {
+      logger.warn(
+        `[NOTIFICATION-DATASOURCE] Failed to read Schedule Exact Alarm status: ${e}`,
+      );
+      return false;
+    }
+  },
+
+  // 알림 권한과 Exact Alarm 상태를 분리해 관리한다.
+  async getNotificationPermissionState(): Promise<NotificationPermissionState> {
+    const permissions = await this.getPermissions();
+    const notificationGranted = permissions.status === 'granted';
+
+    if (Platform.OS !== 'android') {
+      return { notificationGranted };
+    }
+
+    return {
+      notificationGranted,
+      exactAlarmGranted: await this.getExactAlarmPermissionStatus(),
+    };
   },
 
   // 알림 권한 요청
@@ -145,10 +186,19 @@ export const pillReminderNotificationDataSource = {
   },
 
   // 주간 반복 로컬 푸시 알림 등록
+  // 주간 반복 약 복용 알림을 예약하고 다음 실행 시각을 로그로 남긴다.
   async scheduleWeeklyNotification(
     params: IScheduleWeeklyNotificationParams,
   ): Promise<string> {
     try {
+      const trigger: Notifications.SchedulableNotificationTriggerInput = {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: params.weekday,
+        hour: params.hour,
+        minute: params.minute,
+        channelId: NOTIFICATION_CHANNEL_ID,
+      };
+
       const identifier = await Notifications.scheduleNotificationAsync({
         content: {
           title: params.title,
@@ -157,14 +207,14 @@ export const pillReminderNotificationDataSource = {
           data: params.data,
           categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
         },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-          weekday: params.weekday,
-          hour: params.hour,
-          minute: params.minute,
-          channelId: NOTIFICATION_CHANNEL_ID,
-        },
+        trigger,
       });
+
+      const nextTriggerDate =
+        await Notifications.getNextTriggerDateAsync(trigger);
+      logger.info(
+        `[NOTIFICATION] reminderId=${params.data?.reminderId ?? 'n/a'} notificationId=${identifier} trigger=${JSON.stringify(trigger)} nextTriggerDate=${nextTriggerDate ?? 'none'} scheduled=true`,
+      );
 
       await this.logScheduledNotifications();
       return identifier;
@@ -175,10 +225,18 @@ export const pillReminderNotificationDataSource = {
   },
 
   // 스누즈(5분 뒤 다시 알림) 스케줄 등록
+  // 스누즈 알림은 짧은 지연 시간으로 한 번만 다시 예약한다.
   async scheduleSnoozeNotification(
     params: IScheduleSnoozeNotificationParams,
   ): Promise<string> {
     try {
+      const trigger: Notifications.SchedulableNotificationTriggerInput = {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: params.seconds,
+        repeats: false,
+        channelId: NOTIFICATION_CHANNEL_ID,
+      };
+
       const identifier = await Notifications.scheduleNotificationAsync({
         content: {
           title: params.title,
@@ -187,13 +245,14 @@ export const pillReminderNotificationDataSource = {
           data: params.data,
           categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
         },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: params.seconds,
-          repeats: false,
-          channelId: NOTIFICATION_CHANNEL_ID,
-        },
+        trigger,
       });
+
+      const nextTriggerDate =
+        await Notifications.getNextTriggerDateAsync(trigger);
+      logger.info(
+        `[NOTIFICATION] reminderId=${params.data?.reminderId ?? 'n/a'} notificationId=${identifier} trigger=${JSON.stringify(trigger)} nextTriggerDate=${nextTriggerDate ?? 'none'} scheduled=true`,
+      );
 
       await this.logScheduledNotifications();
       return identifier;

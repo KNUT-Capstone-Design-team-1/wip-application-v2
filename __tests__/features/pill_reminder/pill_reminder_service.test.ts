@@ -1,4 +1,5 @@
 import { pillReminderService } from '../../../src/features/pill_reminder/services/pill_reminder_service';
+import { pillReminderNotificationService } from '../../../src/features/pill_reminder/services/pill_reminder_notification_service';
 
 jest.mock('expo-router', () => ({
   router: {
@@ -180,6 +181,70 @@ const mockDb = {
 jest.mock('../../../src/services/database/sqlite', () => ({
   getDatabase: jest.fn(() => Promise.resolve(mockDb)),
 }));
+
+describe('PillReminderNotification permission state', () => {
+  test('알림 권한과 Exact Alarm 상태를 분리해서 확인한다', async () => {
+    const notifications = require('expo-notifications');
+    jest.spyOn(notifications, 'getPermissionsAsync').mockResolvedValueOnce({
+      status: 'granted',
+      canAskAgain: true,
+    });
+
+    const { PermissionsAndroid } = require('react-native');
+    jest.spyOn(PermissionsAndroid, 'check').mockResolvedValueOnce(true);
+
+    const state =
+      await pillReminderNotificationService.getNotificationPermissionState();
+
+    expect(state.notificationGranted).toBe(true);
+    expect(state.exactAlarmGranted).toBe(true);
+  });
+
+  test('재등록 중 실패한 알림은 나머지 알림을 지속시키고 결과를 반환한다', async () => {
+    const reminderSpy = jest.spyOn(
+      require('../../../src/features/pill_reminder/services/pill_reminder_query_service'),
+      'getReminders',
+    );
+
+    reminderSpy.mockResolvedValueOnce([
+      {
+        id: 1,
+        title: '아침 약',
+        items: [{ item_name: '타이레놀', dosage: 1 }],
+        memo: '',
+        days: [1, 2, 3],
+        times: ['08:00'],
+        is_enabled: 1,
+      },
+      {
+        id: 2,
+        title: '저녁 약',
+        items: [{ item_name: '비타민', dosage: 1 }],
+        memo: '',
+        days: [1, 2, 3],
+        times: ['20:00'],
+        is_enabled: 1,
+      },
+    ]);
+
+    const scheduleSpy = jest.spyOn(
+      require('../../../src/features/pill_reminder/data/repositories/pill_reminder_notification_repository'),
+      'scheduleWeeklyNotification',
+    );
+
+    scheduleSpy
+      .mockRejectedValueOnce(new Error('schedule failed'))
+      .mockResolvedValueOnce('scheduled-2');
+
+    const result =
+      await pillReminderNotificationService.rescheduleAllNotifications();
+
+    expect(result.total).toBe(2);
+    expect(result.success).toBe(1);
+    expect(result.failed).toBe(1);
+    expect(result.failures[0].reminderId).toBe(1);
+  });
+});
 
 describe('PillReminderService 3-Tier CRUD 통합 테스트', () => {
   beforeEach(() => {

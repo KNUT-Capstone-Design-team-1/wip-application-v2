@@ -14,9 +14,13 @@ import {
 import { useCommonModalStore } from '@store/common_modal_store';
 import Toast from 'react-native-toast-message';
 import logger from '@utils/logger';
+import {
+  NotificationPermissionState,
+  NotificationRescheduleSummary,
+} from '@features/pill_reminder/types/pill_reminder_notification_type';
 
 let responseSubscription: { remove: () => void } | null = null;
-let reschedulePromise: Promise<void> | null = null;
+let reschedulePromise: Promise<NotificationRescheduleSummary> | null = null;
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
@@ -32,7 +36,22 @@ export const pillReminderNotificationService = {
     void Linking.openSettings();
   },
 
-  // 시스템 알림 채널 및 권한 초기화/요청 유스케이스 (거부 시 설정 이동 모달 팝업)
+  // 알림/정밀 알람 권한 상태를 한 번에 정리해서 조회한다.
+  async getNotificationPermissionState(): Promise<NotificationPermissionState> {
+    return await pillReminderNotificationRepository.getNotificationPermissionState();
+  },
+
+  // Android 설정 화면으로 이동해 사용자에게 직접 권한을 허용하게 한다.
+  openExactAlarmSettings(): void {
+    if (Platform.OS !== 'android') {
+      this.openNotificationSettings();
+      return;
+    }
+
+    void Linking.openSettings();
+  },
+
+  // 알림 권한과 Exact Alarm 상태를 확인한 뒤 필요한 경우 안내를 띄운다.
   async initPermissions(showModalIfDenied = true): Promise<boolean> {
     try {
       // Android 13+ permission prompts require the channel to exist first.
@@ -44,29 +63,53 @@ export const pillReminderNotificationService = {
 
       const isPermissionNotGranted = finalStatus !== 'granted';
 
-      // 영구 거부 상태에서는 반복 요청하지 않고 설정 이동만 안내한다.
       if (isPermissionNotGranted && existingStatus.canAskAgain) {
         const statusResponse =
           await pillReminderNotificationRepository.requestPermissions();
         finalStatus = statusResponse.status;
       }
 
-      const isGranted = finalStatus === 'granted';
-      if (!isGranted) {
+      const notificationGranted = finalStatus === 'granted';
+      const exactAlarmState = await this.getNotificationPermissionState();
+      const exactAlarmGranted =
+        Platform.OS === 'android'
+          ? exactAlarmState.exactAlarmGranted
+          : undefined;
+      const isExactAlarmAllowed =
+        Platform.OS !== 'android' || exactAlarmGranted !== false;
+      const isGranted = notificationGranted && isExactAlarmAllowed;
+
+      if (!notificationGranted) {
         logger.warn(
           `[NOTIFICATION-SERVICE] Notifications are not granted: ${finalStatus}, canAskAgain=${existingStatus.canAskAgain}`,
         );
       }
+
+      if (Platform.OS === 'android' && exactAlarmGranted === false) {
+        logger.warn(
+          '[NOTIFICATION-SERVICE] Exact alarm permission is not granted. The system may defer precise medication reminders.',
+        );
+      }
+
       const shouldShowDeniedModal = !isGranted && showModalIfDenied;
 
       if (shouldShowDeniedModal) {
         useCommonModalStore.getState().showModal({
-          title: '알림 권한 필요',
+          title:
+            Platform.OS === 'android'
+              ? '정확한 알림 권한 필요'
+              : '알림 권한 필요',
           message:
-            '복용 시간에 맞춰 알림을 받으시려면\n기기 설정에서 알림 권한을 허용해주세요.',
+            Platform.OS === 'android'
+              ? '정확한 시간에 약 복용 알림을 받으려면\n기기 설정에서 알람 및 리마인더 권한을 허용해주세요.'
+              : '복용 시간에 맞춰 알림을 받으시려면\n기기 설정에서 알림 권한을 허용해주세요.',
           confirmText: '설정으로 이동',
           cancelText: '닫기',
           onConfirm: () => {
+            if (Platform.OS === 'android') {
+              this.openExactAlarmSettings();
+              return;
+            }
             this.openNotificationSettings();
           },
         });
@@ -79,15 +122,17 @@ export const pillReminderNotificationService = {
     }
   },
 
-  // 권한 상태 확인 (캐싱 없이 실시간 확인)
+  // 최신 권한 상태를 다시 확인해 예약 전 조건을 검증한다.
   async ensurePermissions(): Promise<boolean> {
     // 권한 확인 전에 Android 채널을 먼저 보장
     await pillReminderNotificationRepository.setNotificationChannel();
 
-    const status = await pillReminderNotificationRepository.getPermissions();
-    const isGranted = status.status === 'granted';
+    const permissionState = await this.getNotificationPermissionState();
+    const isGranted = permissionState.notificationGranted;
+    const isExactAlarmAllowed =
+      Platform.OS !== 'android' || permissionState.exactAlarmGranted !== false;
 
-    if (isGranted) {
+    if (isGranted && isExactAlarmAllowed) {
       return true;
     }
 
@@ -200,7 +245,8 @@ export const pillReminderNotificationService = {
    * 저장된 복용 알림을 OS의 반복 알림으로 다시 등록한다.
    * 등록된 모든 활성 복용 알림을 OS 시스템 스케줄러에 등록 유스케이스 (앱 종료 시에도 작동)
    */
-  async rescheduleAllNotifications(): Promise<void> {
+  // 저장된 약 알림을 다시 OS에 재등록하고 결과를 요약한다.
+  async rescheduleAllNotifications(): Promise<NotificationRescheduleSummary> {
     // 앱 시작과 CRUD 재등록 요청이 동시에 실행되지 않도록 직렬화
     if (reschedulePromise) {
       return await reschedulePromise;
@@ -210,7 +256,7 @@ export const pillReminderNotificationService = {
     reschedulePromise = currentReschedule;
 
     try {
-      await currentReschedule;
+      return await currentReschedule;
     } finally {
       if (reschedulePromise === currentReschedule) {
         reschedulePromise = null;
@@ -218,13 +264,20 @@ export const pillReminderNotificationService = {
     }
   },
 
-  // 활성화된 복용 알림을 OS 반복 알림으로 재등록
-  async rescheduleAllNotificationsInternal(): Promise<void> {
+  // 개별 실패가 전체 재등록을 멈추지 않도록 안전하게 재등록한다.
+  async rescheduleAllNotificationsInternal(): Promise<NotificationRescheduleSummary> {
+    const summary: NotificationRescheduleSummary = {
+      total: 0,
+      success: 0,
+      failed: 0,
+      failures: [],
+    };
+
     try {
       const hasPermission = await this.ensurePermissions();
 
       if (!hasPermission) {
-        return;
+        return summary;
       }
 
       // 기존 스케줄된 모든 로컬 알림 취소
@@ -232,7 +285,6 @@ export const pillReminderNotificationService = {
       await pillReminderNotificationRepository.logScheduledNotifications();
 
       const reminders = await pillReminderQueryService.getReminders();
-
       const activeReminders = reminders.filter((r) => r.is_enabled);
 
       for (const reminder of activeReminders) {
@@ -262,37 +314,53 @@ export const pillReminderNotificationService = {
 
         const reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
 
-        // 알림에 등록된 모든 복용 시간에 대해 스케줄 등록
         for (const timeStr of reminderTimes) {
           const [hourStr, minuteStr] = timeStr.split(':');
           const hour = parseInt(hourStr, 10);
           const minute = parseInt(minuteStr, 10);
 
-          // 각 요일별 주간 반복 알림 스케줄 등록
           for (const day of reminder.days) {
             // JS day(0: 일, 1: 월... 6: 토) -> Expo weekday(1: 일, 2: 월... 7: 토)
             const expoWeekday = day === 0 ? 1 : day + 1;
+            summary.total += 1;
 
-            await pillReminderNotificationRepository.scheduleWeeklyNotification(
-              {
-                title: `[${reminderTitle}]`,
-                body: finalBody,
-                weekday: expoWeekday,
-                hour,
-                minute,
-                data: { reminderId: reminder.id },
-              },
-            );
+            try {
+              await pillReminderNotificationRepository.scheduleWeeklyNotification(
+                {
+                  title: `[${reminderTitle}]`,
+                  body: finalBody,
+                  weekday: expoWeekday,
+                  hour,
+                  minute,
+                  data: { reminderId: reminder.id },
+                },
+              );
+              summary.success += 1;
+            } catch (e) {
+              const reason = e instanceof Error ? e.message : String(e);
+              summary.failed += 1;
+              summary.failures.push({
+                reminderId: reminder.id,
+                reason,
+              });
+              logger.error(
+                `[NOTIFICATION-SERVICE] Failed to reschedule reminderId=${reminder.id}, weekday=${expoWeekday}, time=${timeStr}: ${reason}`,
+              );
+            }
           }
         }
       }
 
-      // 재등록이 끝난 뒤 OS가 보유한 최종 상태를 기록한다.
       await pillReminderNotificationRepository.logScheduledNotifications();
+      logger.info(
+        `[NOTIFICATION-SERVICE] Reschedule summary: total=${summary.total}, success=${summary.success}, failed=${summary.failed}`,
+      );
+      return summary;
     } catch (e) {
       logger.error(
         `[NOTIFICATION-SERVICE] Failed to reschedule notifications: ${e}`,
       );
+      return summary;
     }
   },
 
