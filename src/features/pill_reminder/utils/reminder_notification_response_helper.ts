@@ -127,8 +127,21 @@ export const handleSnoozeAction = async (
   });
 };
 
-// 알림 닫기 액션을 로그로 기록한다.
-export const handleDismissAction = (reminderId?: number): void => {
+// 알림 닫기 액션을 처리한다.
+export const handleDismissAction = async (
+  notificationIdentifier?: string,
+  reminderId?: number,
+): Promise<void> => {
+  if (notificationIdentifier) {
+    try {
+      await Notifications.dismissNotificationAsync(notificationIdentifier);
+    } catch (e) {
+      logger.warn(
+        `[NOTIFICATION-SERVICE] Failed to dismiss notification ${notificationIdentifier}: ${e}`,
+      );
+    }
+  }
+
   logger.info(
     `[NOTIFICATION-SERVICE] Reminder dismissed for ID: ${reminderId ?? 'n/a'}`,
   );
@@ -141,9 +154,10 @@ export const dispatchNotificationResponse = async (
   try {
     const actionId = response.actionIdentifier;
     const reminderId = getReminderId(response);
+    const notificationId = response.notification?.request?.identifier;
 
     logger.info(
-      `[NOTIFICATION-SERVICE] Notification action received: ${actionId}, reminderId: ${reminderId}`,
+      `[NOTIFICATION-SERVICE] Notification action received: ${actionId}, reminderId: ${reminderId}, notificationId: ${notificationId}`,
     );
 
     if (actionId === Notifications.DEFAULT_ACTION_IDENTIFIER) {
@@ -152,17 +166,27 @@ export const dispatchNotificationResponse = async (
     }
 
     if (actionId === NOTIFICATION_ACTION_CONFIRM) {
+      if (notificationId) {
+        void Notifications.dismissNotificationAsync(notificationId).catch(
+          () => undefined,
+        );
+      }
       handleConfirmAction();
       return;
     }
 
     if (actionId === NOTIFICATION_ACTION_SNOOZE) {
+      if (notificationId) {
+        void Notifications.dismissNotificationAsync(notificationId).catch(
+          () => undefined,
+        );
+      }
       await handleSnoozeAction(reminderId);
       return;
     }
 
     if (actionId === NOTIFICATION_ACTION_DISMISS) {
-      handleDismissAction(reminderId);
+      await handleDismissAction(notificationId, reminderId);
       return;
     }
   } catch (e) {
