@@ -1,5 +1,8 @@
 import { pillReminderService } from '../../../src/features/pill_reminder/services/pill_reminder_service';
 import { pillReminderNotificationService } from '../../../src/features/pill_reminder/services/pill_reminder_notification_service';
+import { pillReminderQueryService } from '../../../src/features/pill_reminder/services/pill_reminder_query_service';
+import { pillReminderNotificationRepository } from '../../../src/features/pill_reminder/data/repositories/pill_reminder_notification_repository';
+import { Platform, PermissionsAndroid } from 'react-native';
 
 jest.mock('expo-router', () => ({
   router: {
@@ -19,8 +22,12 @@ jest.mock('expo-notifications', () => ({
   getAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve([])),
   cancelAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve()),
   scheduleNotificationAsync: jest.fn(() => Promise.resolve('notif-1')),
+  getNextTriggerDateAsync: jest.fn(() => Promise.resolve(Date.now() + 60000)),
   AndroidImportance: { HIGH: 4 },
-  SchedulableTriggerInputTypes: { WEEKLY: 'weekly' },
+  SchedulableTriggerInputTypes: {
+    WEEKLY: 'weekly',
+    TIME_INTERVAL: 'time_interval',
+  },
   DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
 }));
 
@@ -183,6 +190,11 @@ jest.mock('../../../src/services/database/sqlite', () => ({
 }));
 
 describe('PillReminderNotification permission state', () => {
+  beforeEach(() => {
+    Platform.OS = 'android';
+    PermissionsAndroid.check = jest.fn(() => Promise.resolve(true));
+  });
+
   test('알림 권한과 Exact Alarm 상태를 분리해서 확인한다', async () => {
     const notifications = require('expo-notifications');
     jest.spyOn(notifications, 'getPermissionsAsync').mockResolvedValueOnce({
@@ -190,7 +202,6 @@ describe('PillReminderNotification permission state', () => {
       canAskAgain: true,
     });
 
-    const { PermissionsAndroid } = require('react-native');
     jest.spyOn(PermissionsAndroid, 'check').mockResolvedValueOnce(true);
 
     const state =
@@ -201,10 +212,7 @@ describe('PillReminderNotification permission state', () => {
   });
 
   test('재등록 중 실패한 알림은 나머지 알림을 지속시키고 결과를 반환한다', async () => {
-    const reminderSpy = jest.spyOn(
-      require('../../../src/features/pill_reminder/services/pill_reminder_query_service'),
-      'getReminders',
-    );
+    const reminderSpy = jest.spyOn(pillReminderQueryService, 'getReminders');
 
     reminderSpy.mockResolvedValueOnce([
       {
@@ -228,7 +236,7 @@ describe('PillReminderNotification permission state', () => {
     ]);
 
     const scheduleSpy = jest.spyOn(
-      require('../../../src/features/pill_reminder/data/repositories/pill_reminder_notification_repository'),
+      pillReminderNotificationRepository,
       'scheduleWeeklyNotification',
     );
 
@@ -239,10 +247,37 @@ describe('PillReminderNotification permission state', () => {
     const result =
       await pillReminderNotificationService.rescheduleAllNotifications();
 
-    expect(result.total).toBe(2);
-    expect(result.success).toBe(1);
+    expect(result.total).toBe(6);
+    expect(result.success).toBe(5);
     expect(result.failed).toBe(1);
     expect(result.failures[0].reminderId).toBe(1);
+  });
+});
+
+test('주간 알림 예약은 JSON-safe 데이터만 전달한다', async () => {
+  const scheduleSpy = jest.spyOn(
+    require('expo-notifications'),
+    'scheduleNotificationAsync',
+  );
+
+  await require('../../../src/features/pill_reminder/data/datasources/pill_reminder_notification_datasource').pillReminderNotificationDataSource.scheduleWeeklyNotification(
+    {
+      title: '약 알림',
+      body: '복용할 시간입니다',
+      weekday: 2,
+      hour: 8,
+      minute: 0,
+      data: {
+        reminderId: 123,
+        meta: { nested: 'value' },
+      },
+    },
+  );
+
+  const payload = scheduleSpy.mock.calls[0][0];
+  expect(payload.content.data).toEqual({
+    reminderId: 123,
+    meta: '{"nested":"value"}',
   });
 });
 

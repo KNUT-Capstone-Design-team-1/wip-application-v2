@@ -1,24 +1,11 @@
-import { PermissionsAndroid, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import {
-  NOTIFICATION_CHANNEL_ID,
-  NOTIFICATION_CHANNEL_NAME,
-  NOTIFICATION_LIGHT_COLOR,
-  NOTIFICATION_CATEGORY_REMINDER,
-  NOTIFICATION_ACTION_CONFIRM,
-  NOTIFICATION_ACTION_SNOOZE,
-  NOTIFICATION_ACTION_DISMISS,
-  CHANNEL_VIBRATION_PATTERN,
-} from '@features/pill_reminder/constants/reminder_notification_constant';
-import {
-  IScheduleWeeklyNotificationParams,
   IScheduleSnoozeNotificationParams,
+  IScheduleWeeklyNotificationParams,
 } from '@features/pill_reminder/types/pill_reminder_data_type';
-import {
-  NotificationPermissionState,
-  ScheduledNotificationSummarySource,
-} from '@features/pill_reminder/types/pill_reminder_notification_type';
-import logger from '@utils/logger';
+import { pillReminderNotificationChannelDataSource } from '@features/pill_reminder/data/datasources/pill_reminder_notification_channel_datasource';
+import { pillReminderNotificationPermissionDataSource } from '@features/pill_reminder/data/datasources/pill_reminder_notification_permission_datasource';
+import { pillReminderNotificationScheduleDataSource } from '@features/pill_reminder/data/datasources/pill_reminder_notification_schedule_datasource';
 
 // 포그라운드 알림 수신 동작 기본 설정
 Notifications.setNotificationHandler({
@@ -31,238 +18,67 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Expo Notifications 기반 알림 데이터 소스 구현체
+// 기존 repository API를 유지하면서 기능별 데이터소스를 연결한다.
 export const pillReminderNotificationDataSource = {
-  // 앱 실행 시 마지막 알림 응답(Cold Start 알림 클릭) 조회
+  // 앱 실행 시 마지막 알림 응답을 조회한다.
   async getLastNotificationResponse() {
-    return await Notifications.getLastNotificationResponseAsync();
+    return await pillReminderNotificationPermissionDataSource.getLastNotificationResponse();
   },
 
-  // 알림 권한 상태 조회
+  // 알림 권한 상태를 조회한다.
   async getPermissions() {
-    return await Notifications.getPermissionsAsync();
+    return await pillReminderNotificationPermissionDataSource.getPermissions();
   },
 
-  // Android 12+에서 정확한 알람 허용 여부를 실시간 확인한다.
+  // Android 정확한 알람 권한 상태를 조회한다.
   async getExactAlarmPermissionStatus(): Promise<boolean> {
-    try {
-      if (Platform.OS !== 'android') {
-        return true;
-      }
-
-      if (Number(Platform.Version) < 31) {
-        return true;
-      }
-
-      const exactAlarmPermission =
-        'android.permission.SCHEDULE_EXACT_ALARM' as any;
-      const status = await PermissionsAndroid.check(exactAlarmPermission);
-      return status;
-    } catch (e) {
-      logger.warn(
-        `[NOTIFICATION-DATASOURCE] Failed to read Schedule Exact Alarm status: ${e}`,
-      );
-      return false;
-    }
+    return await pillReminderNotificationPermissionDataSource.getExactAlarmPermissionStatus();
   },
 
-  // 알림 권한과 Exact Alarm 상태를 분리해 관리한다.
-  async getNotificationPermissionState(): Promise<NotificationPermissionState> {
-    const permissions = await this.getPermissions();
-    const notificationGranted = permissions.status === 'granted';
-
-    if (Platform.OS !== 'android') {
-      return { notificationGranted };
-    }
-
-    return {
-      notificationGranted,
-      exactAlarmGranted: await this.getExactAlarmPermissionStatus(),
-    };
+  // 일반 알림과 정확한 알람 권한을 분리해서 조회한다.
+  async getNotificationPermissionState() {
+    return await pillReminderNotificationPermissionDataSource.getNotificationPermissionState();
   },
 
-  // 알림 권한 요청
+  // 알림 권한을 요청한다.
   async requestPermissions() {
-    return await Notifications.requestPermissionsAsync({
-      ios: {
-        allowAlert: true,
-        allowBadge: true,
-        allowSound: true,
-        allowDisplayInCarPlay: true,
-        allowCriticalAlerts: true,
-        provideAppNotificationSettings: true,
-      },
-    });
+    return await pillReminderNotificationPermissionDataSource.requestPermissions();
   },
 
-  // 실제 OS에 등록된 알림을 요약해 기록
+  // 실제 OS에 등록된 예약 알림 목록을 로그로 기록한다.
   async logScheduledNotifications() {
-    const scheduledNotifications =
-      await Notifications.getAllScheduledNotificationsAsync();
-
-    const summaries = scheduledNotifications.map(
-      (notification: ScheduledNotificationSummarySource) => {
-        const trigger = notification.trigger;
-
-        return {
-          id: notification.identifier,
-          title: notification.content.title,
-          body: notification.content.body,
-          triggerType: trigger?.type,
-          weekday: trigger?.weekday,
-          hour: trigger?.hour,
-          minute: trigger?.minute,
-          channelId: trigger?.channelId,
-        };
-      },
-    );
-
-    logger.info(
-      `[NOTIFICATION] Scheduled notifications: ${JSON.stringify(summaries)}`,
-    );
+    await pillReminderNotificationScheduleDataSource.logScheduledNotifications();
   },
 
-  // Android 알림 채널 및 인터랙티브 알림 카테고리(iOS/Android 공통) 설정
+  // Android 채널과 알림 액션 카테고리를 설정한다.
   async setNotificationChannel() {
-    try {
-      // 1. 대화형 알림 카테고리 등록 (iOS/Android 공통 액션 버튼)
-      await Notifications.setNotificationCategoryAsync(
-        NOTIFICATION_CATEGORY_REMINDER,
-        [
-          {
-            identifier: NOTIFICATION_ACTION_CONFIRM,
-            buttonTitle: '복용 완료',
-            options: {
-              opensAppToForeground: false,
-            },
-          },
-          {
-            identifier: NOTIFICATION_ACTION_SNOOZE,
-            buttonTitle: '5분 뒤 다시 알림',
-            options: {
-              opensAppToForeground: false,
-            },
-          },
-          {
-            identifier: NOTIFICATION_ACTION_DISMISS,
-            buttonTitle: '끄기',
-            options: {
-              isDestructive: true,
-              opensAppToForeground: false,
-            },
-          },
-        ],
-      );
-
-      // 2. Android 알림 채널 최고 중요도(MAX/헤드업) 설정
-      if (Platform.OS === 'android') {
-        // Android channel settings are sticky; reinstall after changing them.
-        await Notifications.setNotificationChannelAsync(
-          NOTIFICATION_CHANNEL_ID,
-          {
-            name: NOTIFICATION_CHANNEL_NAME,
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: CHANNEL_VIBRATION_PATTERN,
-            lightColor: NOTIFICATION_LIGHT_COLOR,
-            sound: 'default',
-            enableVibrate: true,
-            showBadge: true,
-            lockscreenVisibility:
-              Notifications.AndroidNotificationVisibility.PUBLIC,
-            bypassDnd: false,
-          },
-        );
-      }
-    } catch (e) {
-      logger.error(
-        `[NOTIFICATION-DATASOURCE] Failed to set channel or categories: ${e}`,
-      );
-    }
+    await pillReminderNotificationChannelDataSource.setNotificationChannel();
   },
 
-  // 스케줄된 모든 로컬 알림 취소
+  // 예약된 모든 로컬 알림을 취소한다.
   async cancelAllScheduledNotifications() {
-    await Notifications.cancelAllScheduledNotificationsAsync();
+    await pillReminderNotificationScheduleDataSource.cancelAllScheduledNotifications();
   },
 
-  // 주간 반복 로컬 푸시 알림 등록
-  // 주간 반복 약 복용 알림을 예약하고 다음 실행 시각을 로그로 남긴다.
+  // 주간 반복 로컬 알림을 예약한다.
   async scheduleWeeklyNotification(
     params: IScheduleWeeklyNotificationParams,
   ): Promise<string> {
-    try {
-      const trigger: Notifications.SchedulableNotificationTriggerInput = {
-        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-        weekday: params.weekday,
-        hour: params.hour,
-        minute: params.minute,
-        channelId: NOTIFICATION_CHANNEL_ID,
-      };
-
-      const identifier = await Notifications.scheduleNotificationAsync({
-        content: {
-          title: params.title,
-          body: params.body,
-          sound: 'default',
-          data: params.data,
-          categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
-        },
-        trigger,
-      });
-
-      const nextTriggerDate =
-        await Notifications.getNextTriggerDateAsync(trigger);
-      logger.info(
-        `[NOTIFICATION] reminderId=${params.data?.reminderId ?? 'n/a'} notificationId=${identifier} trigger=${JSON.stringify(trigger)} nextTriggerDate=${nextTriggerDate ?? 'none'} scheduled=true`,
-      );
-
-      await this.logScheduledNotifications();
-      return identifier;
-    } catch (e) {
-      logger.error(`[NOTIFICATION-DATASOURCE] Failed to schedule: ${e}`);
-      throw e;
-    }
+    return await pillReminderNotificationScheduleDataSource.scheduleWeeklyNotification(
+      params,
+    );
   },
 
-  // 스누즈(5분 뒤 다시 알림) 스케줄 등록
-  // 스누즈 알림은 짧은 지연 시간으로 한 번만 다시 예약한다.
+  // 일정 시간 뒤 한 번만 다시 알림을 예약한다.
   async scheduleSnoozeNotification(
     params: IScheduleSnoozeNotificationParams,
   ): Promise<string> {
-    try {
-      const trigger: Notifications.SchedulableNotificationTriggerInput = {
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-        seconds: params.seconds,
-        repeats: false,
-        channelId: NOTIFICATION_CHANNEL_ID,
-      };
-
-      const identifier = await Notifications.scheduleNotificationAsync({
-        content: {
-          title: params.title,
-          body: params.body,
-          sound: 'default',
-          data: params.data,
-          categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
-        },
-        trigger,
-      });
-
-      const nextTriggerDate =
-        await Notifications.getNextTriggerDateAsync(trigger);
-      logger.info(
-        `[NOTIFICATION] reminderId=${params.data?.reminderId ?? 'n/a'} notificationId=${identifier} trigger=${JSON.stringify(trigger)} nextTriggerDate=${nextTriggerDate ?? 'none'} scheduled=true`,
-      );
-
-      await this.logScheduledNotifications();
-      return identifier;
-    } catch (e) {
-      logger.error(`[NOTIFICATION-DATASOURCE] Failed to schedule snooze: ${e}`);
-      throw e;
-    }
+    return await pillReminderNotificationScheduleDataSource.scheduleSnoozeNotification(
+      params,
+    );
   },
 
-  // 알림 응답(사용자 액션 클릭) 리스너 등록
+  // 알림 응답 리스너를 등록한다.
   addNotificationResponseListener(
     listener: (response: Notifications.NotificationResponse) => void,
   ) {
