@@ -411,7 +411,7 @@ export const pillReminderNotificationService = {
 
       await pillReminderNotificationRepository.logScheduledNotifications();
       logger.info(
-        `[NOTIFICATION-SERVICE] Reschedule summary: total=${summary.total}, success=${summary.success}, failed=${summary.failed}`,
+        `[NOTIFICATION-SERVICE] Reschedule summary: reminderCount=${activeReminders.length}, scheduleCount=${summary.total}, successCount=${summary.success}, failedCount=${summary.failed}`,
       );
       return summary;
     } catch (e) {

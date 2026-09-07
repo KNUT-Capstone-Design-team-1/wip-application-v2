@@ -10,7 +10,6 @@ import { pillReminderNotificationScheduleDataSource } from '@features/pill_remin
 // 포그라운드 알림 수신 동작 기본 설정
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,

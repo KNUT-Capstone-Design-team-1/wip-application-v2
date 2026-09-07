@@ -85,11 +85,11 @@ const describeScheduleError = (error: unknown): string => {
   }
 };
 
-// 알림 콘텐츠를 Android가 읽을 수 있는 값으로 만든다.
+// 알림 콘텐츠를 Android와 iOS가 오류 없이 직렬화할 수 있는 안전한 형태로 만든다.
 const buildNotificationContent = (
   title: string,
   body: string,
-  data: { reminderId: number },
+  data?: Record<string, unknown>,
 ) => ({
   title,
   body,
@@ -154,15 +154,6 @@ const scheduleRequest = async (
   logger.info(
     `[NOTIFICATION] reminderId=${reminderId} notificationId=${identifier} trigger=${JSON.stringify(request.trigger)} nextTriggerDate=${nextTriggerDate ?? 'none'} scheduled=true`,
   );
-
-  // OS 목록 조회 실패가 예약 실패로 이어지지 않게 한다.
-  try {
-    await logScheduledNotifications();
-  } catch (error) {
-    logger.warn(
-      `[NOTIFICATION] Failed to verify scheduled notifications reminderId=${reminderId} error=${describeScheduleError(error)}`,
-    );
-  }
 
   return identifier;
 };
