@@ -86,22 +86,30 @@ export const styles = StyleSheet.create({
   periodTabTextActive: {
     color: COLOR.white,
   },
-  timeRow: {
+  // 2. 중앙 메인 시간 디스플레이 및 컬럼 컨테이너
+  timeColumnsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     gap: px(12),
+    marginTop: px(4),
+  },
+  timeColumn: {
+    flex: 1,
+    maxWidth: px(140),
+    alignItems: 'center',
+    gap: px(8),
   },
   timeBox: {
+    width: '100%',
     backgroundColor: COLOR_BG.surface,
     borderRadius: px(14),
     borderWidth: 1.5,
     borderColor: COLOR_LINE.border,
-    paddingHorizontal: px(12),
-    paddingVertical: px(6),
+    paddingHorizontal: px(10),
+    paddingVertical: px(8),
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: px(88),
   },
   timeBoxActive: {
     borderColor: COLOR.primary,
@@ -121,22 +129,22 @@ export const styles = StyleSheet.create({
   },
   colonText: {
     color: COLOR_TEXT.sub,
-    marginHorizontal: px(2),
+    marginTop: px(14),
   },
 
-  // 3. 빠른 미세 조절 버튼 (Quick Adjust)
-  adjustContainer: {
+  // 3. 컬럼 내 증감 버튼 행
+  columnAdjustRow: {
     flexDirection: 'row',
-    gap: px(8),
-    marginBottom: px(20),
+    width: '100%',
+    gap: px(6),
   },
-  adjustBtn: {
+  adjustBtnSmall: {
     flex: 1,
     backgroundColor: COLOR_BG.surface,
     borderWidth: 1,
     borderColor: COLOR_LINE.border,
-    borderRadius: px(12),
-    paddingVertical: px(11),
+    borderRadius: px(10),
+    paddingVertical: px(8),
     alignItems: 'center',
     justifyContent: 'center',
   },

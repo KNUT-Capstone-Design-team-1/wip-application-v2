@@ -23,12 +23,12 @@ export const pillReminderNotificationChannelDataSource = {
           {
             identifier: NOTIFICATION_ACTION_CONFIRM,
             buttonTitle: '복용 완료',
-            options: { opensAppToForeground: true },
+            options: { opensAppToForeground: false },
           },
           {
             identifier: NOTIFICATION_ACTION_SNOOZE,
             buttonTitle: '5분 뒤 다시 알림',
-            options: { opensAppToForeground: true },
+            options: { opensAppToForeground: false },
           },
           {
             identifier: NOTIFICATION_ACTION_DISMISS,
