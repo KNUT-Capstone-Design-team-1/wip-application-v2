@@ -9,27 +9,23 @@ import {
 } from '@features/pill_reminder/types/pill_reminder_notification_type';
 import logger from '@utils/logger';
 
-// 개별 복용 알림 본문 텍스트 생성
+// 개별 복용 알림 본문 텍스트 생성: 모든 알약과 복용량(예: 타이레놀 2정, 비타민C 3정) + [메모]
 export const buildNotificationBody = (
   items: PillReminderNotificationBodyItem[],
   memo?: string,
 ): string => {
-  const itemCount = items.length;
-  let pillBody = '복용할 시간이에요!';
+  const pillsText = items
+    .map((item) => `${item.item_name} ${item.dosage ?? 1}정`)
+    .join(', ');
 
-  const isSingleItem = itemCount === 1;
-  const isMultipleItems = itemCount > 1;
+  const bodyLines: string[] = [pillsText || '약 복용할 시간이에요!'];
 
-  if (isSingleItem) {
-    const first = items[0];
-    pillBody = `${first.item_name} ${first.dosage ?? 1}정 복용할 시간이에요!`;
-  } else if (isMultipleItems) {
-    const first = items[0];
-    pillBody = `${first.item_name} 외 ${itemCount - 1}개 복용할 시간이에요!`;
+  const trimmedMemo = memo?.trim();
+  if (trimmedMemo) {
+    bodyLines.push(`[${trimmedMemo}]`);
   }
 
-  const hasMemo = Boolean(memo);
-  return hasMemo ? `${pillBody}\n메모: ${memo}` : pillBody;
+  return bodyLines.join('\n');
 };
 
 // 저장된 약 알림을 다시 OS에 안전하게 재등록하고 결과를 요약한다.
@@ -79,7 +75,7 @@ export const rescheduleAllPillReminders =
             try {
               await pillReminderNotificationRepository.scheduleWeeklyNotification(
                 {
-                  title: `[${reminderTitle}]`,
+                  title: reminderTitle,
                   body: finalBody,
                   weekday: expoWeekday,
                   hour,

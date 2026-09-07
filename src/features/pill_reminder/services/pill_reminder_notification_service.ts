@@ -1,10 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { pillReminderNotificationRepository } from '@features/pill_reminder/data/repositories/pill_reminder_notification_repository';
 import { pillReminderNotificationPermissionService } from '@features/pill_reminder/services/pill_reminder_notification_permission_service';
-import {
-  describeNotificationError,
-  dispatchNotificationResponse,
-} from '@features/pill_reminder/utils/reminder_notification_response_helper';
+import { dispatchNotificationResponse } from '@features/pill_reminder/utils/reminder_notification_response_helper';
 import { rescheduleAllPillReminders } from '@features/pill_reminder/services/pill_reminder_reschedule_service';
 import {
   NotificationPermissionState,

@@ -1,5 +1,4 @@
 import {
-  ISelectedPillItem,
   IUsePillReminderFormInitParams,
   IUsePillReminderFormInitReturn,
 } from '@features/pill_reminder/types';

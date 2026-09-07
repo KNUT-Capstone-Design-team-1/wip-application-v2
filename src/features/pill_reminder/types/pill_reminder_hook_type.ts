@@ -1,4 +1,3 @@
-import { IPillReminderItem } from './pill_reminder_domain_type';
 import { ISelectedPillItem } from './pill_reminder_form_type';
 
 // 폼 초기화 훅 파라미터 타입

@@ -81,12 +81,17 @@ export const handleSnoozeAction = async (
   let reminderTitle = DEFAULT_NOTIFICATION_TITLE;
   let itemNames = '';
 
+  let reminderMemo = '';
+
   if (targetReminderId) {
     const reminder =
       await pillReminderQueryService.getReminderById(targetReminderId);
     if (reminder) {
       reminderTitle = reminder.title || DEFAULT_NOTIFICATION_TITLE;
-      itemNames = reminder.items.map((item) => item.item_name).join(', ');
+      reminderMemo = reminder.memo || '';
+      itemNames = reminder.items
+        .map((item) => `${item.item_name} ${item.dosage ?? 1}정`)
+        .join(', ');
     }
   } else {
     // reminderId가 없는 경우 가장 가까운 활성 알림 조회
@@ -95,15 +100,22 @@ export const handleSnoozeAction = async (
     if (activeReminder) {
       targetReminderId = activeReminder.id;
       reminderTitle = activeReminder.title || DEFAULT_NOTIFICATION_TITLE;
-      itemNames = activeReminder.items.map((item) => item.item_name).join(', ');
+      reminderMemo = activeReminder.memo || '';
+      itemNames = activeReminder.items
+        .map((item) => `${item.item_name} ${item.dosage ?? 1}정`)
+        .join(', ');
     }
   }
 
-  const body = `[다시 알림] ${itemNames || '약'} 복용할 시간이에요!`;
+  const bodyLines: string[] = [itemNames || '약 복용할 시간이에요!'];
+  const trimmedMemo = reminderMemo.trim();
+  if (trimmedMemo) {
+    bodyLines.push(`[${trimmedMemo}]`);
+  }
 
   await pillReminderNotificationRepository.scheduleSnoozeNotification({
-    title: `[${reminderTitle}]`,
-    body,
+    title: `${reminderTitle} (다시 알림)`,
+    body: bodyLines.join('\n'),
     seconds: SNOOZE_DELAY_SECONDS,
     data: { reminderId: targetReminderId ?? 0 },
   });
