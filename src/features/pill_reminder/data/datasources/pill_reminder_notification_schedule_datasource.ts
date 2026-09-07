@@ -36,10 +36,11 @@ const describeScheduleError = (error: unknown): string => {
 };
 
 // Android/iOS 공통 안전 알림 콘텐츠 생성
+// sound: 'default' 문자열을 넘기면 Android 네이티브 SoundResolver가 직렬화 불가능한 android.net.Uri(HierarchicalUri)를 생성하므로 생략합니다.
+// 소리 및 진동은 setNotificationChannelAsync('pill-reminder') 채널 설정에 의해 자동으로 정상 출력됩니다.
 const buildNotificationContent = (title: string, body: string) => ({
   title,
   body,
-  sound: 'default' as const,
   categoryIdentifier: NOTIFICATION_CATEGORY_REMINDER,
 });
 
