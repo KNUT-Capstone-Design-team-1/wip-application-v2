@@ -21,6 +21,27 @@ import {
 
 let responseSubscription: { remove: () => void } | null = null;
 let reschedulePromise: Promise<NotificationRescheduleSummary> | null = null;
+const loadNativeModule = (moduleName: string) => require(moduleName); // eslint-disable-line @typescript-eslint/no-require-imports
+
+// 네이티브 오류 정보를 JSON으로 보존한다.
+const describeNotificationError = (error: unknown): string => {
+  if (error instanceof Error) {
+    const details = Object.getOwnPropertyNames(error).reduce<
+      Record<string, unknown>
+    >((result, key) => {
+      result[key] = (error as unknown as Record<string, unknown>)[key];
+      return result;
+    }, {});
+
+    return JSON.stringify({
+      name: error.name,
+      message: error.message,
+      ...details,
+    });
+  }
+
+  return String(error);
+};
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
@@ -48,7 +69,29 @@ export const pillReminderNotificationService = {
       return;
     }
 
-    void Linking.openSettings();
+    // 설정 화면을 호출할 때만 네이티브 모듈을 로드한다.
+    const Application = loadNativeModule(
+      'expo-application',
+    ) as typeof import('expo-application');
+    const applicationId = Application.applicationId;
+    if (!applicationId) {
+      void Linking.openSettings();
+      return;
+    }
+
+    // Android 설정 화면을 호출할 때만 네이티브 모듈을 로드한다.
+    const IntentLauncher = loadNativeModule(
+      'expo-intent-launcher',
+    ) as typeof import('expo-intent-launcher');
+    void IntentLauncher.startActivityAsync(
+      'android.settings.REQUEST_SCHEDULE_EXACT_ALARM',
+      { data: `package:${applicationId}` },
+    ).catch((error) => {
+      logger.error(
+        `[NOTIFICATION-SERVICE] Failed to open exact alarm settings: ${describeNotificationError(error)}`,
+      );
+      void Linking.openSettings();
+    });
   },
 
   // 알림 권한과 Exact Alarm 상태를 확인한 뒤 필요한 경우 안내를 띄운다.
@@ -117,7 +160,9 @@ export const pillReminderNotificationService = {
 
       return isGranted;
     } catch (e) {
-      logger.error(`[NOTIFICATION-SERVICE] Failed to init permissions: ${e}`);
+      logger.error(
+        `[NOTIFICATION-SERVICE] Failed to init permissions: ${describeNotificationError(e)}`,
+      );
       return false;
     }
   },
@@ -272,6 +317,7 @@ export const pillReminderNotificationService = {
       failed: 0,
       failures: [],
     };
+    let hasShownExactAlarmModal = false;
 
     try {
       const hasPermission = await this.ensurePermissions();
@@ -338,13 +384,28 @@ export const pillReminderNotificationService = {
               summary.success += 1;
             } catch (e) {
               const reason = e instanceof Error ? e.message : String(e);
+
               summary.failed += 1;
+
               summary.failures.push({
                 reminderId: reminder.id,
                 reason,
               });
+
+              if (Platform.OS === 'android' && !hasShownExactAlarmModal) {
+                hasShownExactAlarmModal = true;
+                useCommonModalStore.getState().showModal({
+                  title: '알람 및 리마인더 권한 필요',
+                  message:
+                    '정확한 시간에 약 복용 알림을 받으려면\n기기 설정에서 알람 및 리마인더 권한을 허용해주세요.',
+                  confirmText: '설정으로 이동',
+                  cancelText: '닫기',
+                  onConfirm: () => this.openExactAlarmSettings(),
+                });
+              }
+
               logger.error(
-                `[NOTIFICATION-SERVICE] Failed to reschedule reminderId=${reminder.id}, weekday=${expoWeekday}, time=${timeStr}: ${reason}`,
+                `[NOTIFICATION-SERVICE] Failed to reschedule reminderId=${reminder.id}, weekday=${expoWeekday}, time=${timeStr}: ${describeNotificationError(e)}`,
               );
             }
           }
@@ -358,7 +419,7 @@ export const pillReminderNotificationService = {
       return summary;
     } catch (e) {
       logger.error(
-        `[NOTIFICATION-SERVICE] Failed to reschedule notifications: ${e}`,
+        `[NOTIFICATION-SERVICE] Failed to reschedule notifications: ${describeNotificationError(e)}`,
       );
       return summary;
     }

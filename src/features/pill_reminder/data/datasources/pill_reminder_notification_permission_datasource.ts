@@ -14,15 +14,13 @@ export const pillReminderNotificationPermissionDataSource = {
     return await Notifications.getPermissionsAsync();
   },
 
-  // Exact alarm은 일반 런타임 권한이 아닌 Android 특수 앱 액세스 권한이다.
-  // Expo/React Native의 PermissionsAndroid.check()로는 이 권한을 판정할 수 없다.
+  // Exact alarm은 일반 런타임 권한이 아니므로 설정 화면에서 허용한다.
   async getExactAlarmPermissionStatus(): Promise<boolean> {
     if (Platform.OS !== 'android' || Number(Platform.Version) < 31) {
       return true;
     }
 
-    // SCHEDULE_EXACT_ALARM is declared in app.config.js. Its actual state is
-    // enforced by Android when an exact notification is scheduled.
+    // Android가 예약 시 실제 허용 상태를 적용한다.
     return true;
   },
 
