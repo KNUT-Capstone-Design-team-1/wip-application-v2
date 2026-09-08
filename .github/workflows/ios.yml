@@ -49,35 +49,10 @@ jobs:
           sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
           xcodebuild -version
       
-      - name: cache-node-modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: remove-ios-folder
-        run: rm -rf ios
-
       - name: install-dependencies
         run: |
           npm install -g eas-cli
           yarn install --frozen-lockfile
-
-      - name: regenerate-native-project
-        run: |
-          npx expo prebuild --platform ios --clean
-
-      - name: setup-cocoapods
-        run: |
-          sudo gem install cocoapods
-
-      - name: install-pods
-        run: |
-          cd ios 
-          pod install
 
       - name: versioning
         run: |
