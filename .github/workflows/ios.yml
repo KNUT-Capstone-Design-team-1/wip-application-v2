@@ -24,7 +24,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-14
 
     steps:
       - name: checkout
@@ -38,12 +38,6 @@ jobs:
           node-version: 22
           cache: yarn
 
-      - name: Check Xcode
-        run: |
-          xcodebuild -version
-          xcode-select -p
-          ls /Applications
-      
       - name: install-dependencies
         run: |
           npm install -g eas-cli
@@ -60,26 +54,24 @@ jobs:
           echo "Version: $VERSION"
           echo "Build: $BUILD"
 
-      - name: build-local
+      - name: build-ipa-local
         env:
           BUILD: ${{ env.BUILD }}
         run: |
-          xcodebuild -version
-      
           eas build \
             -p ios \
             --profile ${{ github.event.inputs.environment }} \
             --local \
             --non-interactive
 
-      - name: collect-artifact
-        run: |
-          IPA=$(find . -type f -name "*.ipa" | head -n 1)
+          IPA=$(find . -type f -name "*.ipa" | xargs ls -t | head -n 1)
 
           if [ -z "$IPA" ]; then
-            echo "ipa not found"
+            echo "IPA not found"
             exit 1
           fi
+
+          echo "Found: $IPA"
 
           cp "$IPA" \
             "wip-${VERSION}-${BUILD}-${{ github.event.inputs.environment }}.ipa"
