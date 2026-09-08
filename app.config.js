@@ -99,6 +99,7 @@ export default {
     },
 
     plugins: [
+      './plugins/withPodfileSwiftConfig',
       'expo-image',
       'expo-sqlite',
       [
