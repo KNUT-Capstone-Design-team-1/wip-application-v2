@@ -38,6 +38,11 @@ jobs:
           node-version: 22
           cache: yarn
 
+      - name: Select Xcode 16.1
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
+          xcodebuild -version
+
       - name: install-dependencies
         run: |
           npm install -g eas-cli
@@ -57,6 +62,7 @@ jobs:
       - name: build-ipa-local
         env:
           BUILD: ${{ env.BUILD }}
+          DEVELOPER_DIR: /Applications/Xcode_16.1.app/Contents/Developer
         run: |
           eas build \
             -p ios \
