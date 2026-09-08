@@ -77,17 +77,15 @@ export const styles = StyleSheet.create({
     color: COLOR_TEXT['white'],
   },
   detailButton: {
-    position: 'absolute',
-    bottom: px(74),
-    right: px(16),
-    paddingVertical: px(8),
-    paddingHorizontal: px(12),
-    zIndex: 10,
+    alignSelf: 'flex-end',
+    paddingVertical: px(4),
+    paddingHorizontal: px(8),
+    marginTop: px(4),
   },
   detailButtonText: {
     color: COLOR['white'],
     borderBottomWidth: px(1),
-    borderBottomColor: COLOR_BG['surface'],
+    borderBottomColor: COLOR['white'],
     paddingBottom: px(2),
   },
 });

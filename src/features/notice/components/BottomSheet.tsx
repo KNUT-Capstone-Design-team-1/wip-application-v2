@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
   Dimensions,
@@ -12,12 +11,12 @@ import { FlashList } from '@shopify/flash-list';
 import { styles } from '../styles/BottomSheet';
 import { useBottomSheet } from '../hooks/use_bottom_sheet';
 import { IBottomSheetProps, INoticeData } from '../types/notice_type';
-import { formatContents } from '@features/notice/utils/notice';
-import { px } from '@utils/responsive';
-import { BaseText } from '@components/common/BaseText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BottomSheetItem from './BottomSheetItem';
+import BottomSheetPagination from './BottomSheetPagination';
+import BottomSheetControl from './BottomSheetControl';
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const BottomSheet = ({
   data,
@@ -101,20 +100,28 @@ const BottomSheet = ({
     });
   };
 
-  const renderItem = ({ item }: { item: INoticeData }) => (
-    <View
-      style={[
-        styles.slideItem,
-        { width: SCREEN_WIDTH, paddingHorizontal: px(16) },
-      ]}
-    >
-      <BaseText size={18} weight="bold" style={styles.title}>
-        {item.title}
-      </BaseText>
-      <BaseText size={14} weight="medium" style={styles.contents}>
-        {formatContents(item.contents)}
-      </BaseText>
-    </View>
+  const handlePressDetail = useCallback(
+    (item: INoticeData) => {
+      if (isClosing.current) return;
+      isClosing.current = true;
+
+      Animated.timing(slideAnim, {
+        toValue: SCREEN_HEIGHT,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        onClose();
+        moveToDetailContent(item);
+      });
+    },
+    [moveToDetailContent, onClose, slideAnim],
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: INoticeData }) => (
+      <BottomSheetItem item={item} onPressDetail={handlePressDetail} />
+    ),
+    [handlePressDetail],
   );
 
   return (
@@ -130,14 +137,10 @@ const BottomSheet = ({
           },
         ]}
       >
-        <View style={styles.navigationContainer}>
-          {data.map((_, index) => (
-            <View
-              key={index}
-              style={[styles.dot, currentIndex === index && styles.activeDot]}
-            />
-          ))}
-        </View>
+        <BottomSheetPagination
+          totalCount={data.length}
+          currentIndex={currentIndex}
+        />
         <FlashList
           data={data}
           horizontal
@@ -149,53 +152,11 @@ const BottomSheet = ({
           viewabilityConfig={viewabilityConfig}
           style={styles.flatList}
         />
-        <TouchableOpacity
-          style={styles.detailButton}
-          onPress={() => {
-            if (isClosing.current) return;
-            isClosing.current = true;
-            // 애니메이션 시작
-            Animated.timing(slideAnim, {
-              toValue: SCREEN_HEIGHT,
-              duration: 300,
-              useNativeDriver: true,
-            }).start(() => {
-              // 애니메이션 완료 후 바텀시트 닫기
-              onClose();
-              // 네비게이션
-              moveToDetailContent(data[currentIndex]);
-            });
-          }}
-        >
-          <BaseText size={14} weight="semiBold" style={styles.detailButtonText}>
-            자세히 보기
-          </BaseText>
-        </TouchableOpacity>
-        <View
-          style={[
-            styles.bottomSheetControl,
-            { paddingBottom: Math.max(insets.bottom, px(12)) },
-          ]}
-        >
-          <TouchableOpacity onPress={handleNeverShowAgain}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={styles.sheetCloseTodayText}
-            >
-              하루 동안 보지 않기
-            </BaseText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleClose}>
-            <BaseText
-              size={14}
-              weight="medium"
-              style={styles.sheetCloseButtonText}
-            >
-              닫기
-            </BaseText>
-          </TouchableOpacity>
-        </View>
+        <BottomSheetControl
+          bottomInset={insets.bottom}
+          onNeverShowAgain={handleNeverShowAgain}
+          onClose={handleClose}
+        />
       </Animated.View>
     </View>
   );
