@@ -3,7 +3,6 @@ import * as Notifications from 'expo-notifications';
 import {
   CHANNEL_VIBRATION_PATTERN,
   NOTIFICATION_ACTION_CONFIRM,
-  NOTIFICATION_ACTION_DISMISS,
   NOTIFICATION_ACTION_SNOOZE,
   NOTIFICATION_CATEGORY_REMINDER,
   NOTIFICATION_CHANNEL_ID,
@@ -29,14 +28,6 @@ export const pillReminderNotificationChannelDataSource = {
             identifier: NOTIFICATION_ACTION_SNOOZE,
             buttonTitle: '5분 뒤 다시 알림',
             options: { opensAppToForeground: true },
-          },
-          {
-            identifier: NOTIFICATION_ACTION_DISMISS,
-            buttonTitle: '끄기',
-            options: {
-              isDestructive: true,
-              opensAppToForeground: true,
-            },
           },
         ],
       );
