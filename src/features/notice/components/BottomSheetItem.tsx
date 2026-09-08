@@ -21,15 +21,28 @@ const BottomSheetItem = ({ item, onPressDetail }: IBottomSheetItemProps) => {
         { width: SCREEN_WIDTH, paddingHorizontal: px(16) },
       ]}
     >
-      <BaseText size={18} weight="bold" style={styles.title}>
-        {item.title}
-      </BaseText>
-      <BaseText size={14} weight="medium" style={styles.contents}>
-        {formatContents(item.contents)}
-      </BaseText>
+      <View style={styles.slideContent}>
+        <BaseText
+          size={18}
+          weight="bold"
+          style={styles.title}
+          numberOfLines={1}
+        >
+          {item.title}
+        </BaseText>
+        <BaseText
+          size={14}
+          weight="medium"
+          style={styles.contents}
+          numberOfLines={3}
+        >
+          {formatContents(item.contents)}
+        </BaseText>
+      </View>
       <TouchableOpacity
         style={styles.detailButton}
         onPress={() => onPressDetail(item)}
+        activeOpacity={0.7}
       >
         <BaseText size={14} weight="semiBold" style={styles.detailButtonText}>
           자세히 보기
