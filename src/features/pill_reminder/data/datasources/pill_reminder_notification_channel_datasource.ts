@@ -50,7 +50,6 @@ export const pillReminderNotificationChannelDataSource = {
             importance: Notifications.AndroidImportance.MAX,
             vibrationPattern: CHANNEL_VIBRATION_PATTERN,
             lightColor: NOTIFICATION_LIGHT_COLOR,
-            sound: 'default',
             enableVibrate: true,
             showBadge: true,
             lockscreenVisibility:
