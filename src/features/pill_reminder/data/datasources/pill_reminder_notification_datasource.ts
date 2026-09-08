@@ -10,7 +10,6 @@ import { pillReminderNotificationScheduleDataSource } from '@features/pill_remin
 // 포그라운드(앱이 켜져 있을 때) 알림 수신 동작 설정: 배너, 알람 소리, 배지, 알림 목록 모두 표시
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
