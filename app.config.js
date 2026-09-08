@@ -53,21 +53,11 @@ export default {
 
         ITSAppUsesNonExemptEncryption: false,
       },
-
-      config: {
-        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY_IOS,
-      },
     },
 
     android: {
       package: 'com.mbm.whatispill',
       versionCode: Number(BUILD),
-
-      config: {
-        googleMaps: {
-          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY_ANDROID,
-        },
-      },
 
       splash: {
         image: './assets/icons/splash-icon.png',
@@ -85,7 +75,6 @@ export default {
         backgroundColor: '#ffffff',
       },
 
-      edgeToEdgeEnabled: true,
       softwareKeyboardLayoutMode: 'resize',
 
       permissions: [
@@ -110,6 +99,8 @@ export default {
     },
 
     plugins: [
+      'expo-image',
+      'expo-sqlite',
       [
         'expo-notifications',
         {
@@ -247,6 +238,14 @@ export default {
         {
           androidAppId: ADMOB_ANDROID_APP_ID,
           iosAppId: ADMOB_IOS_APP_ID,
+        },
+      ],
+      [
+        'react-native-maps',
+        {
+          androidGoogleMapsApiKey:
+            process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY_ANDROID,
+          iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY_IOS,
         },
       ],
     ],
