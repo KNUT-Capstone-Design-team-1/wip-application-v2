@@ -43,14 +43,14 @@ jobs:
       - name: setup-nodeJS
         uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: yarn
 
       - name: setup-java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: install-dependencies
         run: |
