@@ -21,30 +21,31 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    minHeight: px(280),
-    maxHeight: '45%',
     backgroundColor: COLOR_BG['sheetNotice'],
     borderTopRightRadius: px(24),
     borderTopLeftRadius: px(24),
     overflow: 'hidden',
   },
   flatList: {
-    flex: 1,
+    flexGrow: 0,
+    height: px(180),
   },
   slideItem: {
-    flex: 1,
+    height: px(180),
     justifyContent: 'space-between',
-    paddingTop: px(12),
-    paddingBottom: px(12),
+    paddingTop: px(10),
+    paddingBottom: px(8),
+    paddingHorizontal: px(16),
   },
   slideContent: {
-    gap: px(8),
+    gap: px(6),
   },
   navigationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: px(16),
+    paddingBottom: px(4),
     gap: px(8),
   },
   dot: {
@@ -63,7 +64,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: px(16),
-    paddingTop: px(10),
+    paddingTop: px(12),
     backgroundColor: COLOR_BG['surface'],
   },
   sheetCloseTodayText: {
@@ -77,12 +78,13 @@ export const styles = StyleSheet.create({
   },
   contents: {
     color: COLOR_TEXT['white'],
+    lineHeight: px(20),
   },
   detailButton: {
     alignSelf: 'flex-end',
     paddingVertical: px(4),
-    paddingHorizontal: px(8),
-    marginTop: px(4),
+    paddingHorizontal: px(4),
+    marginTop: px(8),
   },
   detailButtonText: {
     color: COLOR['white'],

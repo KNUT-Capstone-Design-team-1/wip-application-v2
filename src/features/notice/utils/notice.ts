@@ -9,9 +9,9 @@ export const formatContents = (contents: string) => {
     '',
   );
 
-  // 100글자 넘으면 ... 처리
-  if (textWithoutBase64.length > 20) {
-    return textWithoutBase64.substring(0, 100) + '...';
+  // 120글자 넘으면 ... 처리
+  if (textWithoutBase64.length > 120) {
+    return textWithoutBase64.substring(0, 120) + '...';
   }
 
   return textWithoutBase64;

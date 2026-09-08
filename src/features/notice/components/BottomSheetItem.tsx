@@ -15,18 +15,13 @@ interface IBottomSheetItemProps {
 
 const BottomSheetItem = ({ item, onPressDetail }: IBottomSheetItemProps) => {
   return (
-    <View
-      style={[
-        styles.slideItem,
-        { width: SCREEN_WIDTH, paddingHorizontal: px(16) },
-      ]}
-    >
+    <View style={[styles.slideItem, { width: SCREEN_WIDTH }]}>
       <View style={styles.slideContent}>
         <BaseText
           size={18}
           weight="bold"
           style={styles.title}
-          numberOfLines={1}
+          numberOfLines={2}
         >
           {item.title}
         </BaseText>
@@ -34,7 +29,7 @@ const BottomSheetItem = ({ item, onPressDetail }: IBottomSheetItemProps) => {
           size={14}
           weight="medium"
           style={styles.contents}
-          numberOfLines={3}
+          numberOfLines={4}
         >
           {formatContents(item.contents)}
         </BaseText>
