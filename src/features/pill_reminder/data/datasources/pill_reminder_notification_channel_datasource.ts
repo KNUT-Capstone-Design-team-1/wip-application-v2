@@ -23,7 +23,7 @@ export const pillReminderNotificationChannelDataSource = {
           {
             identifier: NOTIFICATION_ACTION_CONFIRM,
             buttonTitle: '복용 완료',
-            options: { opensAppToForeground: false },
+            options: { opensAppToForeground: true },
           },
           {
             identifier: NOTIFICATION_ACTION_SNOOZE,
@@ -35,7 +35,7 @@ export const pillReminderNotificationChannelDataSource = {
             buttonTitle: '끄기',
             options: {
               isDestructive: true,
-              opensAppToForeground: false,
+              opensAppToForeground: true,
             },
           },
         ],
