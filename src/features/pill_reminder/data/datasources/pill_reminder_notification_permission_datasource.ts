@@ -48,9 +48,6 @@ export const pillReminderNotificationPermissionDataSource = {
         allowAlert: true,
         allowBadge: true,
         allowSound: true,
-        allowDisplayInCarPlay: true,
-        allowCriticalAlerts: true,
-        provideAppNotificationSettings: true,
       },
     });
   },
