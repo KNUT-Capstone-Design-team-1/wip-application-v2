@@ -1,9 +1,35 @@
-import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 import config from './config.json';
 import data from './data.json';
 import { GoogleCloud, CloudFlare } from '../../src/services/apis';
 
-dotenv.config({ path: '.env.local' });
+try {
+  const envPath = path.resolve(process.cwd(), '.env.local');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split(/\r?\n/).forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const eqIndex = trimmed.indexOf('=');
+      if (eqIndex !== -1) {
+        const key = trimmed.slice(0, eqIndex).trim();
+        let value = trimmed.slice(eqIndex + 1).trim();
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
+          value = value.slice(1, -1);
+        }
+        if (!(key in process.env)) {
+          process.env[key] = value;
+        }
+      }
+    });
+  }
+} catch (e) {
+  console.warn('[CALL-API] Failed to load .env.local:', e);
+}
 
 export async function callAPI() {
   const { apiList } = config;
@@ -77,6 +103,7 @@ export async function callAPI() {
       results['unified-search'] =
         await CloudFlare.UnifiedSearchAPI.requestUnifiedSearch(
           data.unifiedSearch.keywords,
+          50,
         );
     }
 
