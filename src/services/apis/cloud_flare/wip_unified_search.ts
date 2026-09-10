@@ -10,7 +10,10 @@ interface UnifiedSearchResponse {
  * @param keywords 검색 단어 목록
  * @returns
  */
-export async function requestUnifiedSearch(keywords: string[], limit: number) {
+export async function requestUnifiedSearch(
+  keywords: string[],
+  limit: number = 300,
+) {
   const token = await getToken();
 
   try {

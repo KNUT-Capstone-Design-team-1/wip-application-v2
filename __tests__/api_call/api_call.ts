@@ -103,7 +103,7 @@ export async function callAPI() {
       results['unified-search'] =
         await CloudFlare.UnifiedSearchAPI.requestUnifiedSearch(
           data.unifiedSearch.keywords,
-          50,
+          300,
         );
     }
 
