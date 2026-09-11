@@ -3,7 +3,6 @@
 // 스토리지 키 상수
 export const STORAGE_KEYS = {
   UPDATE_STATE: '@db_update_persisted_state',
-  ENCRYPTION_KEY: '@db_sync_temp_encryption_key',
 } as const;
 
 // 네트워크 및 다운로드 정책 상수
@@ -11,12 +10,6 @@ export const DOWNLOAD_CONFIG = {
   MAX_RETRY_COUNT: 3,
   RETRY_DELAY_MS: 300,
   DOWNLOAD_TIMEOUT_MS: 30000,
-} as const;
-
-// 암호화 관련 상수
-export const ENCRYPTION_CONFIG = {
-  CIPHER_PREFIX: 'AES256:',
-  KEY_SIZE_BYTES: 32,
 } as const;
 
 // 동기화 단계별 통합 UI 상태 메시지

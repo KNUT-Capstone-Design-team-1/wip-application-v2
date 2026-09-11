@@ -5,8 +5,6 @@ import { GoogleCloud } from '@services/apis';
 import { getToken } from '@services/apis/google_cloud/google_cloud_token';
 import logger from '@utils/logger';
 import { ICachedPageData, IPersistedUpdateState } from '../types';
-import { databaseEncryptionService } from './database_encryption_service';
-
 import { STORAGE_KEYS, DOWNLOAD_CONFIG } from '../constants';
 
 // 타임아웃이 적용된 프로미스 래퍼
@@ -91,7 +89,7 @@ export const databaseDownloadService = {
     return this.isPageDataCached(table, page);
   },
 
-  // 수신된 임시 JSON 파일의 AES-256 암호화 변환 및 데이터 파싱 검증
+  // 수신된 임시 JSON 파일의 데이터 구조 및 필드 유효성 검증
   async processAndEncryptDownloadedPayload(
     filePath: string,
     table: TDataTable,
@@ -107,7 +105,6 @@ export const databaseDownloadService = {
       );
     }
 
-    await databaseEncryptionService.encryptFile(filePath);
     return parsed;
   },
 
@@ -139,7 +136,7 @@ export const databaseDownloadService = {
     }
   },
 
-  // 백그라운드 세션 실패 시 axios 직접 호출을 통한 fallback 수신 및 암호화 저장
+  // 백그라운드 세션 실패 시 axios 직접 호출을 통한 fallback 수신 및 저장
   async executeDirectAxiosFallback(
     table: TDataTable,
     page: number,
@@ -156,10 +153,10 @@ export const databaseDownloadService = {
       );
 
       if (hasValidFallback) {
-        const encrypted = await databaseEncryptionService.encrypt(
+        await FileSystem.writeAsStringAsync(
+          filePath,
           JSON.stringify(fallbackResponse),
         );
-        await FileSystem.writeAsStringAsync(filePath, encrypted);
         return fallbackResponse as ICachedPageData;
       }
     } catch (fallbackErr) {
@@ -274,14 +271,13 @@ export const databaseDownloadService = {
     return this.fetchAndCachePageData(table, page, retries);
   },
 
-  // 캐시된 페이지 JSON 파일 데이터 복호화 및 읽기
+  // 캐시된 페이지 JSON 파일 데이터 읽기 (초고속 직접 파싱)
   async readCachedPageData(
     table: TDataTable,
     page: number,
   ): Promise<ICachedPageData> {
     const filePath = this.getPageFilePath(table, page);
-    const content =
-      await databaseEncryptionService.readAndDecryptFile(filePath);
+    const content = await FileSystem.readAsStringAsync(filePath);
     return JSON.parse(content) as ICachedPageData;
   },
 
@@ -315,7 +311,7 @@ export const databaseDownloadService = {
     return this.verifyAllTablePagesCached(table, totalPages);
   },
 
-  // 임시 캐시 파일 및 암호화 키 전체 삭제
+  // 임시 캐시 파일 디렉토리 전체 삭제
   async cleanTempCache(): Promise<void> {
     try {
       const dir = this.getTempDirectory();
@@ -325,7 +321,6 @@ export const databaseDownloadService = {
       if (isDirExisting) {
         await FileSystem.deleteAsync(dir, { idempotent: true });
       }
-      await databaseEncryptionService.clearKey();
     } catch (error) {
       logger.warn(
         `[CLEANUP-TEMP] Failed to delete temp cache directory: ${(error as Error).message}`,
