@@ -26,10 +26,6 @@ export const databaseBootstrapService = {
       isUpdating: false,
     });
 
-    // 앱 재실행 시 이전 중단된 임시 캐시 및 상태 정리 (처음부터 깨끗하게 다시 받기)
-    await databaseDownloadService.cleanTempCache();
-    await databaseDownloadService.clearUpdateState();
-
     await initDatabase();
   },
 

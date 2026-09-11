@@ -2,7 +2,6 @@ import * as FileSystem from 'expo-file-system/legacy';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TDataTable } from '@services/database/types';
 import { GoogleCloud } from '@services/apis';
-import { getToken } from '@services/apis/google_cloud/google_cloud_token';
 import logger from '@utils/logger';
 import { ICachedPageData, IPersistedUpdateState } from '../types';
 import { STORAGE_KEYS, DOWNLOAD_CONFIG } from '../constants';
@@ -150,46 +149,7 @@ export const databaseDownloadService = {
     }
   },
 
-  // 백그라운드 세션 실패 시 axios 직접 호출을 통한 fallback 수신 및 저장
-  async executeDirectAxiosFallback(
-    table: TDataTable,
-    page: number,
-    filePath: string,
-  ): Promise<ICachedPageData> {
-    try {
-      logger.warn(
-        `[FETCH-FALLBACK] Attempting direct axios fetch for ${table} p${page}`,
-      );
-      const fallbackResponse = await withTimeout(
-        GoogleCloud.ResourceDataAPI.requestResourceData(
-          table,
-          page,
-          DOWNLOAD_CONFIG.PAGE_LIMIT,
-        ),
-        DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS,
-        `Axios fallback timeout after ${DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS}ms for ${table} p${page}`,
-      );
-      const hasValidFallback: boolean = Boolean(
-        fallbackResponse?.resource && fallbackResponse.totalPage,
-      );
-
-      if (hasValidFallback) {
-        await FileSystem.writeAsStringAsync(
-          filePath,
-          JSON.stringify(fallbackResponse),
-        );
-        return fallbackResponse as ICachedPageData;
-      }
-    } catch (fallbackErr) {
-      logger.error(
-        `[FETCH-FALLBACK] Fallback failed for ${table} p${page}: ${(fallbackErr as Error).message}`,
-      );
-    }
-
-    throw new Error(`Failed to fetch and cache ${table} page ${page}`);
-  },
-
-  // REST API 응답 JSON을 네이티브 백그라운드 세션으로 파일에 캐싱 (실패 시 지연 재시도)
+  // REST API 응답 JSON 데이터를 수신하여 임시 파일로 캐싱 (실패 시 지연 재시도)
   async fetchAndCachePageData(
     table: TDataTable,
     page: number,
@@ -205,36 +165,32 @@ export const databaseDownloadService = {
     }
 
     let lastError: Error | null = null;
-    const url = this.getResourceApiUrl(table, page);
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const token = getToken();
-        const headers: Record<string, string> = {
-          Authorization: `Bearer ${token}`,
-        };
-
-        // 네이티브 백그라운드 세션을 통해 API 응답 본문을 파일로 직접 수신 (타임아웃 적용)
-        const downloadPromise = FileSystem.downloadAsync(url, filePath, {
-          headers,
-          sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
-        });
-
-        const result = await withTimeout(
-          downloadPromise,
+        const response = await withTimeout(
+          GoogleCloud.ResourceDataAPI.requestResourceData(
+            table,
+            page,
+            DOWNLOAD_CONFIG.PAGE_LIMIT,
+          ),
           DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS,
-          `Download timeout after ${DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS}ms for ${table} p${page}`,
+          `Request timeout after ${DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS}ms for ${table} p${page}`,
         );
 
-        const isHttpSuccess: boolean =
-          result.status >= 200 && result.status < 300;
+        const isPayloadValid: boolean =
+          this.validateCachedPayloadStructure(response);
 
-        if (isHttpSuccess) {
-          return await this.processDownloadedPayload(filePath, table, page);
+        if (isPayloadValid) {
+          await FileSystem.writeAsStringAsync(
+            filePath,
+            JSON.stringify(response),
+          );
+          return response as ICachedPageData;
         }
 
         throw new Error(
-          `HTTP ${result.status} while fetching ${table} page ${page}`,
+          `Invalid JSON structure in response for ${table} page ${page}`,
         );
       } catch (err) {
         lastError = err as Error;
@@ -249,12 +205,9 @@ export const databaseDownloadService = {
       }
     }
 
-    return this.executeDirectAxiosFallback(table, page, filePath).catch(() => {
-      throw (
-        lastError ||
-        new Error(`Failed to fetch and cache ${table} page ${page}`)
-      );
-    });
+    throw (
+      lastError || new Error(`Failed to fetch and cache ${table} page ${page}`)
+    );
   },
 
   // 특정 테이블의 여러 페이지를 최적의 동시성 풀(Worker Pool)로 제어하여 수신 (소켓 정체 및 타임아웃 방지)

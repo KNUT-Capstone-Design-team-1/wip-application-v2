@@ -165,62 +165,51 @@ describe('databaseDownloadService 단위 테스트', () => {
       (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
         exists: false,
       });
-      (FileSystem.downloadAsync as jest.Mock).mockResolvedValue({
-        status: 200,
-        uri: 'file:///mock/path',
+      (
+        GoogleCloud.ResourceDataAPI.requestResourceData as jest.Mock
+      ).mockResolvedValue({
+        resource: [{ ITEM_SEQ: '999' }],
+        total: 50,
+        totalPage: 2,
+        current: 1,
       });
-      (FileSystem.readAsStringAsync as jest.Mock).mockResolvedValue(
-        JSON.stringify({
-          resource: [{ ITEM_SEQ: '999' }],
-          total: 50,
-          totalPage: 2,
-          current: 1,
-        }),
-      );
 
       const result = await databaseDownloadService.fetchAndCachePageData(
         'cannabis',
         1,
       );
 
-      expect(FileSystem.downloadAsync).toHaveBeenCalledWith(
-        'https://api.example.com/resource?table=cannabis&page=1&limit=5000',
-        'file:///data/user/0/com.mbm.whatispill/files/db_updates/cannabis_p1.json',
-        expect.objectContaining({
-          sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
-          headers: { Authorization: 'Bearer mock-token' },
-        }),
-      );
+      expect(
+        GoogleCloud.ResourceDataAPI.requestResourceData,
+      ).toHaveBeenCalledWith('cannabis', 1, 5000);
+      expect(FileSystem.writeAsStringAsync).toHaveBeenCalled();
       expect(result.total).toBe(50);
     });
 
-    it('다운로드 실패 시 fallback API를 통해 성공적으로 복구되어야 한다', async () => {
+    it('API 호출 실패 후 재시도에 성공하면 정상적으로 캐시 및 반환해야 한다', async () => {
       (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
         exists: false,
       });
-      (FileSystem.downloadAsync as jest.Mock).mockRejectedValue(
-        new Error('Network error'),
-      );
-      (
-        GoogleCloud.ResourceDataAPI.requestResourceData as jest.Mock
-      ).mockResolvedValue({
-        resource: [{ ITEM_SEQ: 'fallback_1' }],
-        total: 10,
-        totalPage: 1,
-        current: 1,
-      });
+      (GoogleCloud.ResourceDataAPI.requestResourceData as jest.Mock)
+        .mockRejectedValueOnce(new Error('Temporary network error'))
+        .mockResolvedValueOnce({
+          resource: [{ ITEM_SEQ: 'retry_1' }],
+          total: 10,
+          totalPage: 1,
+          current: 1,
+        });
 
       const result = await databaseDownloadService.fetchAndCachePageData(
         'narcotics',
         1,
-        1,
+        2,
       );
 
       expect(
         GoogleCloud.ResourceDataAPI.requestResourceData,
       ).toHaveBeenCalledWith('narcotics', 1, 5000);
       expect(FileSystem.writeAsStringAsync).toHaveBeenCalled();
-      expect(result.resource[0].ITEM_SEQ).toBe('fallback_1');
+      expect(result.resource[0].ITEM_SEQ).toBe('retry_1');
     });
 
     it('여러 페이지를 병렬로 수신하고 콜백을 호출해야 한다', async () => {

@@ -51,14 +51,12 @@ describe('databaseBootstrapService 단위 테스트', () => {
   });
 
   describe('executeInitialSetup', () => {
-    it('외부 설정 로드, 임시 캐시 정리 및 데이터베이스 초기화를 순차적으로 실행해야 한다', async () => {
+    it('외부 설정 로드 및 데이터베이스 초기화를 순차적으로 실행해야 한다', async () => {
       const setUpdateProgress = jest.fn();
 
       await databaseBootstrapService.executeInitialSetup(setUpdateProgress);
 
       expect(AppConfigService.loadExternalConfig).toHaveBeenCalled();
-      expect(databaseDownloadService.cleanTempCache).toHaveBeenCalled();
-      expect(databaseDownloadService.clearUpdateState).toHaveBeenCalled();
       expect(initDatabase).toHaveBeenCalled();
       expect(setUpdateProgress).toHaveBeenCalledWith(
         expect.objectContaining({ status: '서버 연결 중' }),
