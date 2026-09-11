@@ -26,8 +26,7 @@ export type TPharmacyPointFeature = PointFeature<IPharmacyPointProps>;
 
 // 클러스터 아이템 타입
 export type TPharmacyClusterItem =
-  | PointFeature<IPharmacyPointProps>
-  | ClusterFeature<AnyProps>;
+  PointFeature<IPharmacyPointProps> | ClusterFeature<AnyProps>;
 
 // 약국 지도 마커 렌더링 Props 인터페이스
 export interface IPharmacyMarkersProps {

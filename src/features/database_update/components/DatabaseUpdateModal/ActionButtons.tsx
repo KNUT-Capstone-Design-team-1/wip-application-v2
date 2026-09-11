@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/DatabaseUpdateModal.styles';
 
+// 업데이트 모달 취소/확인 액션 버튼 컴포넌트
 export const ActionButtons = ({
   onCancel,
   onConfirm,

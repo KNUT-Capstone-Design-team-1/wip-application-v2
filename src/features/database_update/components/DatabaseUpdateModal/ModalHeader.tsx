@@ -2,6 +2,7 @@ import React from 'react';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/DatabaseUpdateModal.styles';
 
+// 업데이트 안내 문구 헤더 컴포넌트
 export const ModalHeader = () => (
   <>
     <BaseText size={18} weight="bold" style={styles.title}>

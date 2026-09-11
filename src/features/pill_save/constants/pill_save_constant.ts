@@ -1,8 +1,5 @@
 export type FolderSortOption =
-  | 'createdAt_desc'
-  | 'createdAt_asc'
-  | 'name_asc'
-  | 'pillCount_desc';
+  'createdAt_desc' | 'createdAt_asc' | 'name_asc' | 'pillCount_desc';
 
 // 폴더 정렬 옵션 목록
 export const FOLDER_SORT_OPTIONS: {

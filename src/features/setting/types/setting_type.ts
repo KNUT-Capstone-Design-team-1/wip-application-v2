@@ -1,8 +1,5 @@
 export type SettingAction =
-  | 'NONE'
-  | 'CLEAR_STORAGE'
-  | 'CLEAR_RECENT_VIEWED'
-  | 'CLEAR_ALL_REMINDERS';
+  'NONE' | 'CLEAR_STORAGE' | 'CLEAR_RECENT_VIEWED' | 'CLEAR_ALL_REMINDERS';
 
 export interface ISettingListType {
   id: SettingAction;

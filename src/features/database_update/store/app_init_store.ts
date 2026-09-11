@@ -1,45 +1,34 @@
 import { create } from 'zustand';
-import { TDataTable } from '@services/database/types';
-import { IUpdateNeeded } from '../utils/updateCheck';
+import { InitStatus, DatabaseUpdateStatus, AppInitState } from '../types';
 
-export type InitStatus = 'IDLE' | 'RUNNING' | 'PAUSED' | 'ERROR' | 'COMPLETED';
-
-export interface AppInitState {
-  status: InitStatus;
-  updateCurrentTable: TDataTable | null;
-  updateCurrentPage: number;
-  totalPages: number;
-  overallProgress: number;
-  updateModalData: IUpdateNeeded[] | null;
-  updateModalResolve: ((result: boolean) => void) | null;
-  setStatus: (status: InitStatus) => void;
-  setUpdateCurrentTable: (table: TDataTable | null) => void;
-  setUpdateCurrentPage: (page: number) => void;
-  setTotalPages: (pages: number) => void;
-  setOverallProgress: (progress: number) => void;
-  setUpdateModal: (
-    data: IUpdateNeeded[] | null,
-    resolve: ((result: boolean) => void) | null,
-  ) => void;
-  tablesToUpdate: IUpdateNeeded[];
-  setTablesToUpdate: (tables: IUpdateNeeded[]) => void;
-}
-
-export const useAppInitStore = create<AppInitState>((set) => ({
-  status: 'IDLE',
+const initialState = {
+  status: 'IDLE' as InitStatus,
+  updateStatus: 'idle' as DatabaseUpdateStatus,
   updateCurrentTable: null,
   updateCurrentPage: 1,
   totalPages: 1,
   overallProgress: 0,
+  downloadedBytes: 0,
+  totalBytes: 0,
+  errorMessage: null,
   updateModalData: null,
   updateModalResolve: null,
   tablesToUpdate: [],
+};
+
+export const useAppInitStore = create<AppInitState>((set) => ({
+  ...initialState,
   setStatus: (status) => set({ status }),
+  setUpdateStatus: (updateStatus) => set({ updateStatus }),
   setUpdateCurrentTable: (table) => set({ updateCurrentTable: table }),
   setUpdateCurrentPage: (page) => set({ updateCurrentPage: page }),
   setTotalPages: (pages) => set({ totalPages: pages }),
   setOverallProgress: (progress) => set({ overallProgress: progress }),
+  setDownloadedBytes: (downloadedBytes) => set({ downloadedBytes }),
+  setTotalBytes: (totalBytes) => set({ totalBytes }),
+  setErrorMessage: (errorMessage) => set({ errorMessage }),
   setUpdateModal: (data, resolve) =>
     set({ updateModalData: data, updateModalResolve: resolve }),
   setTablesToUpdate: (tables) => set({ tablesToUpdate: tables }),
+  reset: () => set(initialState),
 }));
