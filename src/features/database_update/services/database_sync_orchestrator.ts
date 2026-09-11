@@ -99,7 +99,7 @@ export const fetchAndPersistRemainingPages = async (
   );
 };
 
-// 1단계: REST API로부터 페이지 데이터를 백그라운드 세션으로 수신 및 로컬 캐싱
+// 1단계: REST API로부터 모든 대상 테이블의 메타데이터를 선행 확보하고, 모든 페이지를 네이티브 백그라운드 세션에 일괄 병렬 디스패치
 export const executeFetchPhase = async (
   tablesToUpdate: IUpdateNeeded[],
   currentTableIndexRef: React.RefObject<number>,
@@ -109,6 +109,7 @@ export const executeFetchPhase = async (
   const totalTables: number = tablesToUpdate.length;
   const tableMetadataMap = new Map<string, ITableMetadata>();
 
+  // 1-1. 전체 대상 테이블의 1페이지(메타데이터) 선행 수신하여 총 페이지 수 확정
   for (let tIdx = 0; tIdx < totalTables; tIdx++) {
     const isTaskCancelled: boolean = isCancelled();
     if (isTaskCancelled) break;
@@ -125,17 +126,30 @@ export const executeFetchPhase = async (
       callbacks,
     );
     tableMetadataMap.set(table, meta);
+  }
 
-    await fetchAndPersistRemainingPages(
+  // 1-2. 모든 테이블의 2페이지부터 끝까지를 일괄 병렬 다운로드 큐에 디스패치
+  const remainingTableTasks = tablesToUpdate.map((updateInfo, tIdx) => {
+    const table = updateInfo.table as TDataTable;
+    const meta = tableMetadataMap.get(table);
+    const hasRemainingPages: boolean = Boolean(meta && meta.totalPages > 1);
+
+    if (!hasRemainingPages) {
+      return Promise.resolve();
+    }
+
+    return fetchAndPersistRemainingPages(
       table,
-      meta.totalPages,
+      meta!.totalPages,
       tIdx,
       totalTables,
       tablesToUpdate,
       isCancelled,
       callbacks,
     );
-  }
+  });
+
+  await Promise.all(remainingTableTasks);
 
   return tableMetadataMap;
 };
