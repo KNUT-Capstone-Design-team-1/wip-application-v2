@@ -6,14 +6,10 @@ import {
   prepareRowForInsert,
 } from '../util';
 
-const INSERT_BATCH_SIZE = 50;
+const INSERT_BATCH_SIZE = 500;
 
-/**
- * 테이블 유무 확인
- * !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
- * @param table 테이블 이름
- * @returns
- */
+// 테이블 유무 확인
+// !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
 export const checkTableExist = async (table: TDataTable) => {
   const db = await getDatabase();
 
@@ -29,23 +25,16 @@ export const checkTableExist = async (table: TDataTable) => {
   return result?.exists;
 };
 
-/**
- * 테이블 DROP
- * !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
- * @param table 테이블 이름
- */
+// 테이블 DROP
+// !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
 export const dropTable = async (table: TDataTable) => {
   const db = await getDatabase();
 
   await db.execAsync(`DROP TABLE IF EXISTS ${table}`);
 };
 
-/**
- * 테이블 CREATE
- * !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
- * @param table 테이블 이름
- * @param columnData 스키마 컬럼 데이터
- */
+// 테이블 CREATE
+// !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
 export const createTable = async (
   table: TDataTable,
   columnData: ITableColumnSchema[],
@@ -59,10 +48,7 @@ export const createTable = async (
   await db.execAsync(sql);
 };
 
-/**
- * batch 데이터에서 INSERT 대상 column 목록을 추출한다.
- * @param batch INSERT 대상 batch 데이터
- */
+// batch 데이터에서 INSERT 대상 column 목록을 추출한다.
 const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
   const columnSet = new Set<string>();
 
@@ -79,11 +65,7 @@ const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
   return [...columnSet];
 };
 
-/**
- * INSERT SQL 문을 생성한다.
- * @param table INSERT 대상 테이블
- * @param columns INSERT 대상 column 목록
- */
+// INSERT SQL 문을 생성한다.
 const createInsertSql = (table: TDataTable, columns: string[]): string => {
   const escapedColumns = columns.map((column) => `"${column}"`);
 
@@ -91,11 +73,7 @@ const createInsertSql = (table: TDataTable, columns: string[]): string => {
           VALUES (${columns.map(() => '?').join(', ')})`;
 };
 
-/**
- * row 데이터를 SQL parameter 배열로 변환한다.
- * @param row INSERT 대상 row 데이터
- * @param columns INSERT 대상 column 목록
- */
+// row 데이터를 SQL parameter 배열로 변환한다.
 const createInsertValues = (
   row: Partial<TResourceDataSchemas>,
   columns: string[],
@@ -105,10 +83,7 @@ const createInsertValues = (
   return columns.map((column) => preparedRow[column] ?? null);
 };
 
-/**
- * prepared statement 를 안전하게 종료한다.
- * @param statement finalize 대상 statement
- */
+// prepared statement 를 안전하게 종료한다.
 const finalizeStatement = async (
   statement: Awaited<ReturnType<typeof getDatabase>>['prepareAsync'] extends (
     ...args: never[]
@@ -123,32 +98,36 @@ const finalizeStatement = async (
   try {
     await statement.finalizeAsync();
   } catch (e) {
-    logger.warn(`Failed to finalize statement. ${e.stack || e}`);
+    logger.warn(`Failed to finalize statement. ${(e as Error).stack || e}`);
   }
 };
 
-/**
- * batch 데이터를 transaction 내부에서 INSERT 한다.
- * @param db SQLite database instance
- * @param sql INSERT SQL
- * @param columns INSERT 대상 column 목록
- * @param batch INSERT 대상 batch 데이터
- */
-const executeBatchInsert = async (
-  db: Awaited<ReturnType<typeof getDatabase>>,
-  sql: string,
-  columns: string[],
-  batch: Partial<TResourceDataSchemas>[],
+// 대량 데이터를 batch 단위 및 단일 트랜잭션으로 빠르게 INSERT 한다.
+export const insertData = async (
+  table: TDataTable,
+  data: Partial<TResourceDataSchemas>[],
 ) => {
+  const hasNoData: boolean = data.length === 0;
+  if (hasNoData) {
+    return;
+  }
+
+  const columns = getBatchColumns(data);
+  const hasNoColumns: boolean = columns.length === 0;
+  if (hasNoColumns) {
+    return;
+  }
+
+  const db = await getDatabase();
+  const sql = createInsertSql(table, columns);
   let statement: Awaited<ReturnType<typeof db.prepareAsync>> | null = null;
 
   try {
     statement = await db.prepareAsync(sql);
 
     await db.withTransactionAsync(async () => {
-      for (const row of batch) {
+      for (const row of data) {
         const values = createInsertValues(row, columns);
-
         await statement!.executeAsync(values);
       }
     });
@@ -157,40 +136,7 @@ const executeBatchInsert = async (
   }
 };
 
-/**
- * 대량 데이터를 batch 단위로 나누어 INSERT 한다.
- * @param table INSERT 대상 테이블
- * @param data INSERT 대상 데이터 목록
- */
-export const insertData = async (
-  table: TDataTable,
-  data: Partial<TResourceDataSchemas>[],
-) => {
-  if (data.length === 0) {
-    return;
-  }
-
-  const db = await getDatabase();
-
-  for (let i = 0; i < data.length; i += INSERT_BATCH_SIZE) {
-    const batch = data.slice(i, i + INSERT_BATCH_SIZE);
-
-    const columns = getBatchColumns(batch);
-
-    if (columns.length === 0) {
-      continue;
-    }
-
-    const sql = createInsertSql(table, columns);
-
-    await executeBatchInsert(db, sql, columns, batch);
-  }
-};
-
-/**
- * 특정 테이블의 전체 행 개수(Row Count)를 조회한다.
- * @param table 데이터 테이블
- */
+// 특정 테이블의 전체 행 개수(Row Count)를 조회한다.
 export const getTableRowCount = async (table: TDataTable): Promise<number> => {
   const db = await getDatabase();
   const sql = `SELECT COUNT(*) as count FROM ${table}`;
