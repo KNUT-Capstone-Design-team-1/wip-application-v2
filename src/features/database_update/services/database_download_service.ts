@@ -5,6 +5,7 @@ import { GoogleCloud } from '@services/apis';
 import { getToken } from '@services/apis/google_cloud/google_cloud_token';
 import logger from '@utils/logger';
 import { ICachedPageData, IPersistedUpdateState } from '../types';
+import { databaseEncryptionService } from './database_encryption_service';
 
 const STORAGE_KEY_UPDATE_STATE = '@db_update_persisted_state';
 const MAX_RETRY_COUNT = 3;
@@ -47,6 +48,17 @@ export const databaseDownloadService = {
     return this.getResourceApiUrl(table, page);
   },
 
+  // 파싱된 캐시 데이터의 구조 및 필드 유효성 검증
+  validateCachedPayloadStructure(parsed: any): boolean {
+    const hasValidResource: boolean = Array.isArray(parsed?.resource);
+    const hasValidTotal: boolean = typeof parsed?.total === 'number';
+    const hasValidTotalPage: boolean = typeof parsed?.totalPage === 'number';
+    const isPayloadValid: boolean =
+      hasValidResource && hasValidTotal && hasValidTotalPage;
+
+    return isPayloadValid;
+  },
+
   // 해당 페이지의 JSON 데이터가 이미 로컬에 올바르게 캐시되어 있는지 검증
   async isPageDataCached(table: TDataTable, page: number): Promise<boolean> {
     const filePath = this.getPageFilePath(table, page);
@@ -57,17 +69,11 @@ export const databaseDownloadService = {
         return false;
       }
 
-      const content = await FileSystem.readAsStringAsync(filePath);
+      const content =
+        await databaseEncryptionService.readAndDecryptFile(filePath);
       const parsed = JSON.parse(content) as ICachedPageData;
 
-      const hasValidResourceList: boolean = Array.isArray(parsed?.resource);
-      const hasValidTotalNumber: boolean = typeof parsed?.total === 'number';
-      const hasValidTotalPageNumber: boolean =
-        typeof parsed?.totalPage === 'number';
-
-      const isJsonValid: boolean =
-        hasValidResourceList && hasValidTotalNumber && hasValidTotalPageNumber;
-
+      const isJsonValid: boolean = this.validateCachedPayloadStructure(parsed);
       return isJsonValid;
     } catch {
       return false;
@@ -77,6 +83,86 @@ export const databaseDownloadService = {
   // 호환성을 위한 alias
   async isPageDownloaded(table: TDataTable, page: number): Promise<boolean> {
     return this.isPageDataCached(table, page);
+  },
+
+  // 수신된 임시 JSON 파일의 AES-256 암호화 변환 및 데이터 파싱 검증
+  async processAndEncryptDownloadedPayload(
+    filePath: string,
+    table: TDataTable,
+    page: number,
+  ): Promise<ICachedPageData> {
+    await databaseEncryptionService.encryptFile(filePath);
+
+    const content =
+      await databaseEncryptionService.readAndDecryptFile(filePath);
+    const parsed = JSON.parse(content) as ICachedPageData;
+
+    const isPayloadValid: boolean = this.validateCachedPayloadStructure(parsed);
+    if (!isPayloadValid) {
+      throw new Error(
+        `Invalid JSON structure in response for ${table} page ${page}`,
+      );
+    }
+
+    return parsed;
+  },
+
+  // 다운로드 시도 실패 시 임시 파일 정리 및 재시도 대기 처리
+  async handleDownloadAttemptError(
+    err: unknown,
+    filePath: string,
+    table: TDataTable,
+    page: number,
+    attempt: number,
+    retries: number,
+  ): Promise<void> {
+    const lastError = err as Error;
+    logger.warn(
+      `[FETCH-RETRY] Attempt ${attempt}/${retries} failed for ${table} p${page}: ${lastError.message}`,
+    );
+
+    try {
+      await FileSystem.deleteAsync(filePath, { idempotent: true });
+    } catch {
+      // ignore
+    }
+
+    const hasRetryAttemptsLeft: boolean = attempt < retries;
+    if (hasRetryAttemptsLeft) {
+      await new Promise((res) => setTimeout(res, RETRY_DELAY_MS * attempt));
+    }
+  },
+
+  // 백그라운드 세션 실패 시 axios 직접 호출을 통한 fallback 수신 및 암호화 저장
+  async executeDirectAxiosFallback(
+    table: TDataTable,
+    page: number,
+    filePath: string,
+  ): Promise<ICachedPageData> {
+    try {
+      logger.warn(
+        `[FETCH-FALLBACK] Attempting direct axios fetch for ${table} p${page}`,
+      );
+      const fallbackResponse =
+        await GoogleCloud.ResourceDataAPI.requestResourceData(table, page);
+      const hasValidFallback: boolean = Boolean(
+        fallbackResponse?.resource && fallbackResponse.totalPage,
+      );
+
+      if (hasValidFallback) {
+        const encrypted = await databaseEncryptionService.encrypt(
+          JSON.stringify(fallbackResponse),
+        );
+        await FileSystem.writeAsStringAsync(filePath, encrypted);
+        return fallbackResponse as ICachedPageData;
+      }
+    } catch (fallbackErr) {
+      logger.error(
+        `[FETCH-FALLBACK] Fallback failed for ${table} p${page}: ${(fallbackErr as Error).message}`,
+      );
+    }
+
+    throw new Error(`Failed to fetch and cache ${table} page ${page}`);
   },
 
   // REST API 응답 JSON을 네이티브 백그라운드 세션으로 파일에 캐싱 (실패 시 지연 재시도)
@@ -104,7 +190,7 @@ export const databaseDownloadService = {
           Authorization: `Bearer ${token}`,
         };
 
-        // 네이티브 백그라운드 세션(iOS NSURLSession / Android OkHttp)을 통해 API 응답 본문을 파일로 직접 수신
+        // 네이티브 백그라운드 세션을 통해 API 응답 본문을 파일로 직접 수신
         const result = await FileSystem.downloadAsync(url, filePath, {
           headers,
           sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
@@ -114,23 +200,11 @@ export const databaseDownloadService = {
           result.status >= 200 && result.status < 300;
 
         if (isHttpSuccess) {
-          const content = await FileSystem.readAsStringAsync(filePath);
-          const parsed = JSON.parse(content) as ICachedPageData;
-
-          const hasValidResource: boolean = Array.isArray(parsed?.resource);
-          const hasValidTotal: boolean = typeof parsed?.total === 'number';
-          const hasValidTotalPage: boolean =
-            typeof parsed?.totalPage === 'number';
-          const isPayloadValid: boolean =
-            hasValidResource && hasValidTotal && hasValidTotalPage;
-
-          if (!isPayloadValid) {
-            throw new Error(
-              `Invalid JSON structure in response for ${table} page ${page}`,
-            );
-          }
-
-          return parsed;
+          return await this.processAndEncryptDownloadedPayload(
+            filePath,
+            table,
+            page,
+          );
         }
 
         throw new Error(
@@ -138,51 +212,23 @@ export const databaseDownloadService = {
         );
       } catch (err) {
         lastError = err as Error;
-        logger.warn(
-          `[FETCH-RETRY] Attempt ${attempt}/${retries} failed for ${table} p${page}: ${lastError.message}`,
-        );
-
-        // 손상된 임시 파일 정리
-        try {
-          await FileSystem.deleteAsync(filePath, { idempotent: true });
-        } catch {
-          // ignore
-        }
-
-        const hasRetryAttemptsLeft: boolean = attempt < retries;
-        if (hasRetryAttemptsLeft) {
-          await new Promise((res) => setTimeout(res, RETRY_DELAY_MS * attempt));
-        }
-      }
-    }
-
-    // fallback: axios 직접 호출 후 파일 기록 시도
-    try {
-      logger.warn(
-        `[FETCH-FALLBACK] Attempting direct axios fetch for ${table} p${page}`,
-      );
-      const fallbackResponse =
-        await GoogleCloud.ResourceDataAPI.requestResourceData(table, page);
-      const hasValidFallback: boolean = Boolean(
-        fallbackResponse?.resource && fallbackResponse.totalPage,
-      );
-
-      if (hasValidFallback) {
-        await FileSystem.writeAsStringAsync(
+        await this.handleDownloadAttemptError(
+          err,
           filePath,
-          JSON.stringify(fallbackResponse),
+          table,
+          page,
+          attempt,
+          retries,
         );
-        return fallbackResponse as ICachedPageData;
       }
-    } catch (fallbackErr) {
-      logger.error(
-        `[FETCH-FALLBACK] Fallback failed for ${table} p${page}: ${(fallbackErr as Error).message}`,
-      );
     }
 
-    throw (
-      lastError || new Error(`Failed to fetch and cache ${table} page ${page}`)
-    );
+    return this.executeDirectAxiosFallback(table, page, filePath).catch(() => {
+      throw (
+        lastError ||
+        new Error(`Failed to fetch and cache ${table} page ${page}`)
+      );
+    });
   },
 
   // 호환성을 위한 alias
@@ -194,13 +240,14 @@ export const databaseDownloadService = {
     return this.fetchAndCachePageData(table, page, retries);
   },
 
-  // 캐시된 페이지 JSON 파일 데이터 읽기
+  // 캐시된 페이지 JSON 파일 데이터 복호화 및 읽기
   async readCachedPageData(
     table: TDataTable,
     page: number,
   ): Promise<ICachedPageData> {
     const filePath = this.getPageFilePath(table, page);
-    const content = await FileSystem.readAsStringAsync(filePath);
+    const content =
+      await databaseEncryptionService.readAndDecryptFile(filePath);
     return JSON.parse(content) as ICachedPageData;
   },
 
@@ -234,7 +281,7 @@ export const databaseDownloadService = {
     return this.verifyAllTablePagesCached(table, totalPages);
   },
 
-  // 임시 캐시 파일 전체 삭제
+  // 임시 캐시 파일 및 암호화 키 전체 삭제
   async cleanTempCache(): Promise<void> {
     try {
       const dir = this.getTempDirectory();
@@ -244,6 +291,7 @@ export const databaseDownloadService = {
       if (isDirExisting) {
         await FileSystem.deleteAsync(dir, { idempotent: true });
       }
+      await databaseEncryptionService.clearKey();
     } catch (error) {
       logger.warn(
         `[CLEANUP-TEMP] Failed to delete temp cache directory: ${(error as Error).message}`,

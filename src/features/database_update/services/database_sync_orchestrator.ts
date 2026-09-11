@@ -8,6 +8,90 @@ import {
   ISyncPipelineCallbacks,
 } from '../types';
 
+// 특정 테이블의 첫 번째 페이지 데이터 수신 및 메타데이터/진행상태 영속화
+export const fetchAndPersistFirstPage = async (
+  table: TDataTable,
+  tableNameKr: string,
+  tIdx: number,
+  totalTables: number,
+  tablesToUpdate: IUpdateNeeded[],
+  callbacks: ISyncPipelineCallbacks,
+): Promise<ITableMetadata> => {
+  callbacks.setUpdateCurrentTable(table);
+
+  const firstPageData = await databaseDownloadService.fetchAndCachePageData(
+    table,
+    1,
+  );
+  const totalPages: number = firstPageData.totalPage || 1;
+  const totalItems: number = firstPageData.total || 0;
+  callbacks.setTotalPages(totalPages);
+
+  const initialProgress: number = (tIdx + 1 / totalPages) / totalTables;
+  callbacks.setOverallProgress(initialProgress);
+  callbacks.setUpdateProgress({
+    status: `${tableNameKr} 데이터 수신 중 (${Math.round((1 / totalPages) * 100)}%)`,
+    progress: initialProgress,
+    isUpdating: true,
+  });
+
+  await databaseDownloadService.saveUpdateState({
+    status: 'downloading',
+    tablesToUpdate,
+    currentTableIndex: tIdx,
+    currentTable: table,
+    currentPage: 1,
+    totalPages,
+    overallProgress: initialProgress,
+    completedTables: [],
+    lastUpdated: Date.now(),
+  });
+
+  return { totalPages, totalItems };
+};
+
+// 2페이지부터 마지막 페이지까지 순차 수신 및 상태 갱신
+export const fetchAndPersistRemainingPages = async (
+  table: TDataTable,
+  tableNameKr: string,
+  totalPages: number,
+  tIdx: number,
+  totalTables: number,
+  tablesToUpdate: IUpdateNeeded[],
+  isCancelled: () => boolean,
+  callbacks: ISyncPipelineCallbacks,
+): Promise<void> => {
+  for (let page = 2; page <= totalPages; page++) {
+    const isTaskCancelled: boolean = isCancelled();
+    if (isTaskCancelled) break;
+
+    callbacks.setUpdateCurrentPage(page);
+    await databaseDownloadService.fetchAndCachePageData(table, page);
+
+    const tableProgress: number = page / totalPages;
+    const currentOverall: number = (tIdx + tableProgress) / totalTables;
+
+    callbacks.setOverallProgress(currentOverall);
+    callbacks.setUpdateProgress({
+      status: `${tableNameKr} 데이터 수신 중 (${Math.round(tableProgress * 100)}%)`,
+      progress: currentOverall,
+      isUpdating: true,
+    });
+
+    await databaseDownloadService.saveUpdateState({
+      status: 'downloading',
+      tablesToUpdate,
+      currentTableIndex: tIdx,
+      currentTable: table,
+      currentPage: page,
+      totalPages,
+      overallProgress: currentOverall,
+      completedTables: [],
+      lastUpdated: Date.now(),
+    });
+  }
+};
+
 // 1단계: REST API로부터 페이지 데이터를 백그라운드 세션으로 수신 및 로컬 캐싱
 export const executeFetchPhase = async (
   tablesToUpdate: IUpdateNeeded[],
@@ -27,70 +111,53 @@ export const executeFetchPhase = async (
     const table = updateInfo.table as TDataTable;
     const tableNameKr: string = TABLE_NAME_MAP[table] || table;
 
-    callbacks.setUpdateCurrentTable(table);
-
-    // 1페이지 데이터 수신 (전체 페이지 수 및 아이템 수 확인)
-    const firstPageData = await databaseDownloadService.fetchAndCachePageData(
+    const meta = await fetchAndPersistFirstPage(
       table,
-      1,
-    );
-    const totalPages: number = firstPageData.totalPage || 1;
-    const totalItems: number = firstPageData.total || 0;
-    tableMetadataMap.set(table, { totalPages, totalItems });
-    callbacks.setTotalPages(totalPages);
-
-    const initialProgress: number = (tIdx + 1 / totalPages) / totalTables;
-    callbacks.setOverallProgress(initialProgress);
-    callbacks.setUpdateProgress({
-      status: `${tableNameKr} 데이터 수신 중 (${Math.round((1 / totalPages) * 100)}%)`,
-      progress: initialProgress,
-      isUpdating: true,
-    });
-
-    await databaseDownloadService.saveUpdateState({
-      status: 'downloading',
+      tableNameKr,
+      tIdx,
+      totalTables,
       tablesToUpdate,
-      currentTableIndex: tIdx,
-      currentTable: table,
-      currentPage: 1,
-      totalPages,
-      overallProgress: initialProgress,
-      completedTables: [],
-      lastUpdated: Date.now(),
-    });
+      callbacks,
+    );
+    tableMetadataMap.set(table, meta);
 
-    // 2페이지부터 나머지 페이지들 데이터 수신
-    for (let page = 2; page <= totalPages; page++) {
-      if (isCancelled()) break;
-
-      callbacks.setUpdateCurrentPage(page);
-      await databaseDownloadService.fetchAndCachePageData(table, page);
-
-      const tableProgress: number = page / totalPages;
-      const currentOverall: number = (tIdx + tableProgress) / totalTables;
-
-      callbacks.setOverallProgress(currentOverall);
-      callbacks.setUpdateProgress({
-        status: `${tableNameKr} 데이터 수신 중 (${Math.round(tableProgress * 100)}%)`,
-        progress: currentOverall,
-        isUpdating: true,
-      });
-
-      await databaseDownloadService.saveUpdateState({
-        status: 'downloading',
-        tablesToUpdate,
-        currentTableIndex: tIdx,
-        currentTable: table,
-        currentPage: page,
-        totalPages,
-        overallProgress: currentOverall,
-        completedTables: [],
-        lastUpdated: Date.now(),
-      });
-    }
+    await fetchAndPersistRemainingPages(
+      table,
+      tableNameKr,
+      meta.totalPages,
+      tIdx,
+      totalTables,
+      tablesToUpdate,
+      isCancelled,
+      callbacks,
+    );
   }
 
   return tableMetadataMap;
+};
+
+// 단일 테이블의 캐시 파일 무결성 검증
+export const validateSingleTableCache = async (
+  updateInfo: IUpdateNeeded,
+  tableMetadataMap: Map<string, ITableMetadata>,
+): Promise<void> => {
+  const table = updateInfo.table as TDataTable;
+  const meta = tableMetadataMap.get(table);
+  const hasMetadata: boolean = Boolean(meta);
+
+  if (!hasMetadata) {
+    throw new Error(`Missing metadata for table ${table}`);
+  }
+
+  const isAllCached: boolean =
+    await databaseDownloadService.verifyAllTablePagesCached(
+      table,
+      meta!.totalPages,
+    );
+
+  if (!isAllCached) {
+    throw new Error(`Incomplete cached data files for table ${table}`);
+  }
 };
 
 // 2단계: 수신된 모든 페이지 데이터의 유효성 검증
@@ -106,24 +173,43 @@ export const executeValidationPhase = async (
   });
 
   for (const updateInfo of tablesToUpdate) {
-    const table = updateInfo.table as TDataTable;
-    const meta = tableMetadataMap.get(table);
-    const hasMetadata: boolean = Boolean(meta);
-
-    if (!hasMetadata) {
-      throw new Error(`Missing metadata for table ${table}`);
-    }
-
-    const isAllCached: boolean =
-      await databaseDownloadService.verifyAllTablePagesCached(
-        table,
-        meta!.totalPages,
-      );
-
-    if (!isAllCached) {
-      throw new Error(`Incomplete cached data files for table ${table}`);
-    }
+    await validateSingleTableCache(updateInfo, tableMetadataMap);
   }
+};
+
+// 단일 테이블에 대한 SQLite DB 배치 반영 및 버전 갱신
+export const applySingleTableToDatabase = async (
+  updateInfo: IUpdateNeeded,
+  tableMetadataMap: Map<string, ITableMetadata>,
+  tIdx: number,
+  totalTables: number,
+  callbacks: ISyncPipelineCallbacks,
+): Promise<void> => {
+  const table = updateInfo.table as TDataTable;
+  const tableNameKr: string = TABLE_NAME_MAP[table] || table;
+  const meta = tableMetadataMap.get(table)!;
+
+  callbacks.setUpdateProgress({
+    status: `${tableNameKr} 데이터베이스 적용 중...`,
+    progress: (tIdx + 0.5) / totalTables,
+    isUpdating: true,
+  });
+
+  // 캐시된 JSON 파일들로부터 데이터 일괄 삽입 및 무결성 검증
+  await databaseUpdateService.applyCachedDataToTable(
+    table,
+    meta.totalPages,
+    meta.totalItems,
+  );
+
+  // 버전 정보 업데이트
+  await databaseUpdateService.updateDatabaseVersion(
+    table,
+    updateInfo.schemaVer,
+    updateInfo.dataVer,
+  );
+
+  logger.info(`[SYNC] Completed DB apply for ${table}`);
 };
 
 // 3단계: 로컬 SQLite 데이터베이스에 캐시된 데이터 일괄 반영 (포그라운드)
@@ -140,31 +226,13 @@ export const executeDatabaseApplyPhase = async (
     if (isTaskCancelled) break;
 
     const updateInfo = tablesToUpdate[tIdx];
-    const table = updateInfo.table as TDataTable;
-    const tableNameKr: string = TABLE_NAME_MAP[table] || table;
-    const meta = tableMetadataMap.get(table)!;
-
-    callbacks.setUpdateProgress({
-      status: `${tableNameKr} 데이터베이스 적용 중...`,
-      progress: (tIdx + 0.5) / totalTables,
-      isUpdating: true,
-    });
-
-    // 캐시된 JSON 파일들로부터 데이터 일괄 삽입 및 무결성 검증
-    await databaseUpdateService.applyCachedDataToTable(
-      table,
-      meta.totalPages,
-      meta.totalItems,
+    await applySingleTableToDatabase(
+      updateInfo,
+      tableMetadataMap,
+      tIdx,
+      totalTables,
+      callbacks,
     );
-
-    // 버전 정보 업데이트
-    await databaseUpdateService.updateDatabaseVersion(
-      table,
-      updateInfo.schemaVer,
-      updateInfo.dataVer,
-    );
-
-    logger.info(`[SYNC] Completed DB apply for ${table}`);
   }
 };
 
@@ -172,6 +240,49 @@ export const executeDatabaseApplyPhase = async (
 export const executeCleanupPhase = async (): Promise<void> => {
   await databaseDownloadService.cleanTempCache();
   await databaseDownloadService.clearUpdateState();
+};
+
+// 파이프라인 정상 완료 시 UI 상태 및 스토어 업데이트
+export const handlePipelineSuccess = (
+  callbacks: ISyncPipelineCallbacks,
+): void => {
+  callbacks.setUpdateStatus('completed');
+  callbacks.setStatus('COMPLETED');
+  callbacks.setOverallProgress(1.0);
+  callbacks.setUpdateProgress({
+    status: '업데이트 완료',
+    progress: 1.0,
+    isUpdating: true,
+  });
+
+  setTimeout(() => {
+    callbacks.setIsInitializing(false);
+  }, 500);
+};
+
+// 파이프라인 실패 시 에러 로깅 및 UI 롤백 처리
+export const handlePipelineFailure = (
+  err: unknown,
+  callbacks: ISyncPipelineCallbacks,
+): void => {
+  logger.error(
+    `[SYNC-ERROR] Database update failed: ${(err as Error).stack || err}`,
+  );
+
+  callbacks.setUpdateStatus('failed');
+  callbacks.setStatus('ERROR');
+  callbacks.setErrorMessage((err as Error).message || '데이터 동기화 실패');
+
+  callbacks.setUpdateProgress({
+    status: '업데이트 실패',
+    progress: 0,
+    isUpdating: false,
+  });
+
+  callbacks.showToast({
+    message:
+      '데이터베이스 업데이트 중 문제가 발생했습니다. 앱을 다시 실행해 주세요.',
+  });
 };
 
 // 전체 데이터베이스 동기화 파이프라인 오케스트레이터
@@ -213,38 +324,9 @@ export const databaseSyncOrchestrator = {
 
       // 4단계: 캐시 정리 및 완료 처리
       await executeCleanupPhase();
-
-      callbacks.setUpdateStatus('completed');
-      callbacks.setStatus('COMPLETED');
-      callbacks.setOverallProgress(1.0);
-      callbacks.setUpdateProgress({
-        status: '업데이트 완료',
-        progress: 1.0,
-        isUpdating: true,
-      });
-
-      setTimeout(() => {
-        callbacks.setIsInitializing(false);
-      }, 500);
+      handlePipelineSuccess(callbacks);
     } catch (err) {
-      logger.error(
-        `[SYNC-ERROR] Database update failed: ${(err as Error).stack || err}`,
-      );
-
-      callbacks.setUpdateStatus('failed');
-      callbacks.setStatus('ERROR');
-      callbacks.setErrorMessage((err as Error).message || '데이터 동기화 실패');
-
-      callbacks.setUpdateProgress({
-        status: '업데이트 실패',
-        progress: 0,
-        isUpdating: false,
-      });
-
-      callbacks.showToast({
-        message:
-          '데이터베이스 업데이트 중 문제가 발생했습니다. 앱을 다시 실행해 주세요.',
-      });
+      handlePipelineFailure(err, callbacks);
     }
   },
 };

@@ -4,6 +4,43 @@ import { useAppInitStore } from '../store/app_init_store';
 import { databaseDownloadService } from '../services/database_download_service';
 import logger from '@utils/logger';
 
+import { IPersistedUpdateState } from '../types';
+
+// 영속화된 백그라운드 진행 상태를 Zustand 전역 스토어에 동기화
+export const syncPersistedStateToStore = (
+  persistedState: IPersistedUpdateState,
+  setters: {
+    setUpdateCurrentTable: (table: any) => void;
+    setUpdateCurrentPage: (page: number) => void;
+    setTotalPages: (pages: number) => void;
+    setOverallProgress: (progress: number) => void;
+  },
+): void => {
+  logger.info(
+    `[APP-LIFECYCLE] Resumed in foreground, syncing state: table=${persistedState.currentTable}, progress=${persistedState.overallProgress}`,
+  );
+
+  const hasCurrentTable: boolean = Boolean(persistedState.currentTable);
+  const hasCurrentPage: boolean =
+    typeof persistedState.currentPage === 'number';
+  const hasTotalPages: boolean = typeof persistedState.totalPages === 'number';
+  const hasOverallProgress: boolean =
+    typeof persistedState.overallProgress === 'number';
+
+  if (hasCurrentTable) {
+    setters.setUpdateCurrentTable(persistedState.currentTable);
+  }
+  if (hasCurrentPage) {
+    setters.setUpdateCurrentPage(persistedState.currentPage);
+  }
+  if (hasTotalPages) {
+    setters.setTotalPages(persistedState.totalPages);
+  }
+  if (hasOverallProgress) {
+    setters.setOverallProgress(persistedState.overallProgress);
+  }
+};
+
 // AppState 변화를 감지하여 포그라운드 복귀 시 백그라운드에서 수신된 업데이트 상태를 스토어에 동기화
 export const useAppLifecycle = (
   _currentTableIndexRef?: React.RefObject<number>,
@@ -32,32 +69,12 @@ export const useAppLifecycle = (
           const hasPersistedState: boolean = Boolean(persistedState);
 
           if (hasPersistedState) {
-            logger.info(
-              `[APP-LIFECYCLE] Resumed in foreground, syncing state: table=${persistedState!.currentTable}, progress=${persistedState!.overallProgress}`,
-            );
-
-            const hasCurrentTable: boolean = Boolean(
-              persistedState!.currentTable,
-            );
-            const hasCurrentPage: boolean =
-              typeof persistedState!.currentPage === 'number';
-            const hasTotalPages: boolean =
-              typeof persistedState!.totalPages === 'number';
-            const hasOverallProgress: boolean =
-              typeof persistedState!.overallProgress === 'number';
-
-            if (hasCurrentTable) {
-              setUpdateCurrentTable(persistedState!.currentTable as any);
-            }
-            if (hasCurrentPage) {
-              setUpdateCurrentPage(persistedState!.currentPage);
-            }
-            if (hasTotalPages) {
-              setTotalPages(persistedState!.totalPages);
-            }
-            if (hasOverallProgress) {
-              setOverallProgress(persistedState!.overallProgress);
-            }
+            syncPersistedStateToStore(persistedState!, {
+              setUpdateCurrentTable,
+              setUpdateCurrentPage,
+              setTotalPages,
+              setOverallProgress,
+            });
           }
         }
       },

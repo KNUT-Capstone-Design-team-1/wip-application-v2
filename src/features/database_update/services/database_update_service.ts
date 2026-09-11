@@ -96,6 +96,45 @@ export const databaseUpdateService = {
     }
   },
 
+  // 캐시된 페이지별 JSON 파일 순회하며 SQLite에 배치 INSERT
+  async insertCachedPages(
+    table: TDataTable,
+    totalPages: number,
+    onProgress?: (insertedPages: number, totalPages: number) => void,
+  ): Promise<void> {
+    for (let page = 1; page <= totalPages; page++) {
+      const pageData = await databaseDownloadService.readCachedPageData(
+        table,
+        page,
+      );
+      const hasRowsToInsert: boolean = Boolean(pageData?.resource?.length);
+
+      if (hasRowsToInsert) {
+        await databaseUpdateRepository.insertData(table, pageData.resource);
+      }
+      onProgress?.(page, totalPages);
+    }
+  },
+
+  // 실제 삽입된 레코드 수와 API 총 레코드 수 정합성 검증
+  async verifyInsertedRowCount(
+    table: TDataTable,
+    expectedTotalCount: number,
+  ): Promise<void> {
+    const actualCount = await this.getTableRowCount(table);
+    const isCountMatching: boolean = actualCount === expectedTotalCount;
+
+    if (!isCountMatching) {
+      const errorMsg = `[VERIFICATION_FAILED] ${table} count mismatch (expected: ${expectedTotalCount}, actual: ${actualCount})`;
+      logger.error(errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    logger.info(
+      `[APPLY-DB] Successfully applied and verified ${table} (${actualCount} rows)`,
+    );
+  },
+
   // 로컬에 임시 캐시된 JSON 파일들로부터 SQLite에 데이터를 일괄 반영하고 정합성을 검증
   async applyCachedDataToTable(
     table: TDataTable,
@@ -112,33 +151,12 @@ export const databaseUpdateService = {
       throw new Error(`Failed to init table ${table}`);
     }
 
-    // 2단계: 캐시된 페이지별 JSON 파일 순회하며 SQLite에 배치 INSERT
-    for (let page = 1; page <= totalPages; page++) {
-      const pageData = await databaseDownloadService.readCachedPageData(
-        table,
-        page,
-      );
-      const hasRowsToInsert: boolean = Boolean(pageData?.resource?.length);
+    // 2단계: 캐시된 JSON 데이터 배치 삽입
+    await this.insertCachedPages(table, totalPages, onProgress);
 
-      if (hasRowsToInsert) {
-        await databaseUpdateRepository.insertData(table, pageData.resource);
-      }
-      onProgress?.(page, totalPages);
-    }
+    // 3단계: 정합성 검증
+    await this.verifyInsertedRowCount(table, expectedTotalCount);
 
-    // 3단계: 정합성 검증 (실제 삽입된 행 개수 vs API 전체 개수 비교)
-    const actualCount = await this.getTableRowCount(table);
-    const isCountMatching: boolean = actualCount === expectedTotalCount;
-
-    if (!isCountMatching) {
-      const errorMsg = `[VERIFICATION_FAILED] ${table} count mismatch (expected: ${expectedTotalCount}, actual: ${actualCount})`;
-      logger.error(errorMsg);
-      throw new Error(errorMsg);
-    }
-
-    logger.info(
-      `[APPLY-DB] Successfully applied and verified ${table} (${actualCount} rows)`,
-    );
     return 'OK';
   },
 
