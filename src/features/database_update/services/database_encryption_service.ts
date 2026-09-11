@@ -2,10 +2,8 @@ import forge from 'node-forge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import logger from '@utils/logger';
+import { STORAGE_KEYS, ENCRYPTION_CONFIG } from '../constants';
 
-// AsyncStorage에 보관되는 암호화 키의 저장소 식별자 이름 (비밀번호가 아닌 스토리지 키 라벨)
-const STORAGE_KEY_ENCRYPTION_KEY = '@db_sync_temp_encryption_key';
-const CIPHER_PREFIX = 'AES256:';
 let memoryEncryptionKey: string | null = null;
 
 // 임시 캐시 JSON 데이터의 AES-256 암호화 및 복호화를 전담하는 보안 서비스
@@ -36,7 +34,7 @@ export const databaseEncryptionService = {
     }
 
     try {
-      const storedKey = await AsyncStorage.getItem(STORAGE_KEY_ENCRYPTION_KEY);
+      const storedKey = await AsyncStorage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
       const hasStoredKey: boolean = Boolean(storedKey);
 
       if (hasStoredKey) {
@@ -47,7 +45,7 @@ export const databaseEncryptionService = {
       // 기기에서 매 세션마다 고유하게 생성되는 256비트(32바이트) 무작위 난수 키
       const generatedKey = this.generateSecureRandomKey();
       memoryEncryptionKey = generatedKey;
-      await AsyncStorage.setItem(STORAGE_KEY_ENCRYPTION_KEY, generatedKey);
+      await AsyncStorage.setItem(STORAGE_KEYS.ENCRYPTION_KEY, generatedKey);
       return generatedKey;
     } catch (error) {
       logger.warn(
@@ -86,7 +84,7 @@ export const databaseEncryptionService = {
 
     const ivHex = forge.util.bytesToHex(ivBytes);
     const cipherHex = cipher.output.toHex();
-    return `${CIPHER_PREFIX}${ivHex}:${cipherHex}`;
+    return `${ENCRYPTION_CONFIG.CIPHER_PREFIX}${ivHex}:${cipherHex}`;
   },
 
   // AES-256-CBC 암호화된 문자열을 복호화
@@ -98,7 +96,7 @@ export const databaseEncryptionService = {
     const key = await this.getOrCreateKey();
     const keyBytes = this.getNormalizedKeyBytes(key);
 
-    const payload = cipherText.slice(CIPHER_PREFIX.length);
+    const payload = cipherText.slice(ENCRYPTION_CONFIG.CIPHER_PREFIX.length);
     const colonIndex = payload.indexOf(':');
     if (colonIndex === -1) {
       throw new Error('Invalid encrypted payload format');
@@ -149,7 +147,9 @@ export const databaseEncryptionService = {
 
   // 문자열이 AES 암호화된 형태인지 판별 (AES256: 접두사)
   isEncryptedPayload(content: string): boolean {
-    const isCipherHeaderPresent: boolean = content.startsWith(CIPHER_PREFIX);
+    const isCipherHeaderPresent: boolean = content.startsWith(
+      ENCRYPTION_CONFIG.CIPHER_PREFIX,
+    );
     return isCipherHeaderPresent;
   },
 
@@ -157,7 +157,7 @@ export const databaseEncryptionService = {
   async clearKey(): Promise<void> {
     memoryEncryptionKey = null;
     try {
-      await AsyncStorage.removeItem(STORAGE_KEY_ENCRYPTION_KEY);
+      await AsyncStorage.removeItem(STORAGE_KEYS.ENCRYPTION_KEY);
     } catch (error) {
       logger.warn(
         `[ENCRYPTION] Failed to clear encryption key: ${(error as Error).message}`,

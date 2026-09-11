@@ -7,6 +7,7 @@ import {
   ITableMetadata,
   ISyncPipelineCallbacks,
 } from '../types';
+import { SYNC_PHASE_STATUS } from '../constants';
 
 // 특정 테이블의 첫 번째 페이지 데이터 수신 및 메타데이터/진행상태 영속화
 export const fetchAndPersistFirstPage = async (
@@ -29,7 +30,7 @@ export const fetchAndPersistFirstPage = async (
   const initialProgress: number = (tIdx + 1 / totalPages) / totalTables;
   callbacks.setOverallProgress(initialProgress);
   callbacks.setUpdateProgress({
-    status: '최신 데이터 다운로드 중...',
+    status: SYNC_PHASE_STATUS.DOWNLOADING,
     progress: initialProgress,
     isUpdating: true,
   });
@@ -79,7 +80,7 @@ export const fetchAndPersistRemainingPages = async (
 
       callbacks.setOverallProgress(currentOverall);
       callbacks.setUpdateProgress({
-        status: '최신 데이터 다운로드 중...',
+        status: SYNC_PHASE_STATUS.DOWNLOADING,
         progress: currentOverall,
         isUpdating: true,
       });
@@ -185,7 +186,7 @@ export const executeValidationPhase = async (
   callbacks: ISyncPipelineCallbacks,
 ): Promise<void> => {
   callbacks.setUpdateProgress({
-    status: '데이터 무결성 검증 중...',
+    status: SYNC_PHASE_STATUS.VALIDATING,
     progress: 1.0,
     isUpdating: true,
   });
@@ -207,7 +208,7 @@ export const applySingleTableToDatabase = async (
   const meta = tableMetadataMap.get(table)!;
 
   callbacks.setUpdateProgress({
-    status: '데이터베이스 적용 중...',
+    status: SYNC_PHASE_STATUS.APPLYING,
     progress: (tIdx + 0.5) / totalTables,
     isUpdating: true,
   });
@@ -267,7 +268,7 @@ export const handlePipelineSuccess = (
   callbacks.setStatus('COMPLETED');
   callbacks.setOverallProgress(1.0);
   callbacks.setUpdateProgress({
-    status: '업데이트 완료',
+    status: SYNC_PHASE_STATUS.COMPLETED,
     progress: 1.0,
     isUpdating: true,
   });
@@ -288,10 +289,10 @@ export const handlePipelineFailure = (
 
   callbacks.setUpdateStatus('failed');
   callbacks.setStatus('ERROR');
-  callbacks.setErrorMessage((err as Error).message || '데이터 동기화 실패');
+  callbacks.setErrorMessage((err as Error).message || SYNC_PHASE_STATUS.FAILED);
 
   callbacks.setUpdateProgress({
-    status: '업데이트 실패',
+    status: SYNC_PHASE_STATUS.FAILED,
     progress: 0,
     isUpdating: false,
   });

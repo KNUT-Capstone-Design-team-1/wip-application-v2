@@ -7,9 +7,21 @@ import logger from '@utils/logger';
 import { ICachedPageData, IPersistedUpdateState } from '../types';
 import { databaseEncryptionService } from './database_encryption_service';
 
-const STORAGE_KEY_UPDATE_STATE = '@db_update_persisted_state';
-const MAX_RETRY_COUNT = 3;
-const RETRY_DELAY_MS = 500;
+import { STORAGE_KEYS, DOWNLOAD_CONFIG } from '../constants';
+
+// 타임아웃이 적용된 프로미스 래퍼
+const withTimeout = <T>(
+  promise: Promise<T>,
+  ms: number,
+  errorMessage: string,
+): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(errorMessage)), ms),
+    ),
+  ]);
+};
 
 // REST API로부터 페이지별 JSON 데이터를 백그라운드 세션으로 수신 및 임시 캐싱하는 서비스
 export const databaseDownloadService = {
@@ -129,7 +141,9 @@ export const databaseDownloadService = {
 
     const hasRetryAttemptsLeft: boolean = attempt < retries;
     if (hasRetryAttemptsLeft) {
-      await new Promise((res) => setTimeout(res, RETRY_DELAY_MS * attempt));
+      await new Promise((res) =>
+        setTimeout(res, DOWNLOAD_CONFIG.RETRY_DELAY_MS * attempt),
+      );
     }
   },
 
@@ -169,7 +183,7 @@ export const databaseDownloadService = {
   async fetchAndCachePageData(
     table: TDataTable,
     page: number,
-    retries = MAX_RETRY_COUNT,
+    retries = DOWNLOAD_CONFIG.MAX_RETRY_COUNT,
   ): Promise<ICachedPageData> {
     await this.ensureTempDirectory();
     const filePath = this.getPageFilePath(table, page);
@@ -190,11 +204,17 @@ export const databaseDownloadService = {
           Authorization: `Bearer ${token}`,
         };
 
-        // 네이티브 백그라운드 세션을 통해 API 응답 본문을 파일로 직접 수신
-        const result = await FileSystem.downloadAsync(url, filePath, {
+        // 네이티브 백그라운드 세션을 통해 API 응답 본문을 파일로 직접 수신 (타임아웃 적용)
+        const downloadPromise = FileSystem.downloadAsync(url, filePath, {
           headers,
           sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
         });
+
+        const result = await withTimeout(
+          downloadPromise,
+          DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS,
+          `Download timeout after ${DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS}ms for ${table} p${page}`,
+        );
 
         const isHttpSuccess: boolean =
           result.status >= 200 && result.status < 300;
@@ -257,7 +277,7 @@ export const databaseDownloadService = {
   async downloadPageWithRetry(
     table: TDataTable,
     page: number,
-    retries = MAX_RETRY_COUNT,
+    retries = DOWNLOAD_CONFIG.MAX_RETRY_COUNT,
   ): Promise<ICachedPageData> {
     return this.fetchAndCachePageData(table, page, retries);
   },
@@ -330,7 +350,7 @@ export const databaseDownloadService = {
   async saveUpdateState(state: IPersistedUpdateState): Promise<void> {
     try {
       await AsyncStorage.setItem(
-        STORAGE_KEY_UPDATE_STATE,
+        STORAGE_KEYS.UPDATE_STATE,
         JSON.stringify(state),
       );
     } catch (error) {
@@ -343,7 +363,7 @@ export const databaseDownloadService = {
   // 영속 업데이트 상태 로드
   async loadUpdateState(): Promise<IPersistedUpdateState | null> {
     try {
-      const json = await AsyncStorage.getItem(STORAGE_KEY_UPDATE_STATE);
+      const json = await AsyncStorage.getItem(STORAGE_KEYS.UPDATE_STATE);
       const hasStoredJson: boolean = Boolean(json);
       if (!hasStoredJson) return null;
       return JSON.parse(json!) as IPersistedUpdateState;
@@ -358,7 +378,7 @@ export const databaseDownloadService = {
   // 영속 업데이트 상태 삭제
   async clearUpdateState(): Promise<void> {
     try {
-      await AsyncStorage.removeItem(STORAGE_KEY_UPDATE_STATE);
+      await AsyncStorage.removeItem(STORAGE_KEYS.UPDATE_STATE);
     } catch (error) {
       logger.warn(
         `[CLEAR-STATE] Failed to clear persisted state: ${(error as Error).message}`,
