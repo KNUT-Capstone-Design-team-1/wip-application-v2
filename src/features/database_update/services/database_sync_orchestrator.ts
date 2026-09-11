@@ -11,16 +11,18 @@ import { SYNC_PHASE_STATUS } from '../constants';
 
 let highestProgress: number = 0;
 
-// 특정 테이블의 첫 번째 페이지 데이터 수신 및 메타데이터/진행상태 영속화
-export const fetchAndPersistFirstPage = async (
+// 단일 테이블의 전체 페이지(1페이지부터 마지막 페이지까지)를 수신하고 진행률을 갱신
+export const fetchAndPersistTable = async (
   table: TDataTable,
   tIdx: number,
   totalTables: number,
   tablesToUpdate: IUpdateNeeded[],
+  isCancelled: () => boolean,
   callbacks: ISyncPipelineCallbacks,
 ): Promise<ITableMetadata> => {
   callbacks.setUpdateCurrentTable(table);
 
+  // 1. 1페이지 수신 (메타데이터 확보)
   const firstPageData = await databaseDownloadService.fetchAndCachePageData(
     table,
     1,
@@ -28,88 +30,61 @@ export const fetchAndPersistFirstPage = async (
   const totalPages: number = firstPageData.totalPage || 1;
   const totalItems: number = firstPageData.total || 0;
   callbacks.setTotalPages(totalPages);
+  callbacks.setUpdateCurrentPage(1);
 
   const initialProgress: number = (tIdx + 1 / totalPages) / totalTables;
   highestProgress = Math.max(highestProgress, initialProgress);
-
   callbacks.setOverallProgress(highestProgress);
-
   callbacks.setUpdateProgress({
     status: SYNC_PHASE_STATUS.DOWNLOADING,
     progress: highestProgress,
     isUpdating: true,
   });
 
-  await databaseDownloadService.saveUpdateState({
-    status: 'downloading',
-    tablesToUpdate,
-    currentTableIndex: tIdx,
-    currentTable: table,
-    currentPage: 1,
-    totalPages,
-    overallProgress: highestProgress,
-    completedTables: [],
-    lastUpdated: Date.now(),
-  });
+  // 2. 2페이지 이상이 있는 경우 병렬 다운로드 진행
+  if (totalPages > 1 && !isCancelled()) {
+    let completedCount: number = 1;
+
+    await databaseDownloadService.fetchAndCacheTablePagesInParallel(
+      table,
+      totalPages,
+      2,
+      (page: number) => {
+        if (isCancelled()) return;
+
+        completedCount++;
+        callbacks.setUpdateCurrentPage(page);
+
+        const tableProgress: number = completedCount / totalPages;
+        const targetOverall: number = (tIdx + tableProgress) / totalTables;
+
+        highestProgress = Math.max(highestProgress, targetOverall);
+        callbacks.setOverallProgress(highestProgress);
+        callbacks.setUpdateProgress({
+          status: SYNC_PHASE_STATUS.DOWNLOADING,
+          progress: highestProgress,
+          isUpdating: true,
+        });
+
+        databaseDownloadService.saveUpdateState({
+          status: 'downloading',
+          tablesToUpdate,
+          currentTableIndex: tIdx,
+          currentTable: table,
+          currentPage: page,
+          totalPages,
+          overallProgress: highestProgress,
+          completedTables: [],
+          lastUpdated: Date.now(),
+        });
+      },
+    );
+  }
 
   return { totalPages, totalItems };
 };
 
-// 2페이지부터 마지막 페이지까지 병렬 수신 디스패치 및 진행 상태 갱신
-export const fetchAndPersistRemainingPages = async (
-  table: TDataTable,
-  totalPages: number,
-  tIdx: number,
-  totalTables: number,
-  tablesToUpdate: IUpdateNeeded[],
-  isCancelled: () => boolean,
-  callbacks: ISyncPipelineCallbacks,
-): Promise<void> => {
-  if (totalPages <= 1) return;
-
-  let completedCount: number = 1; // 1페이지는 이미 완료됨
-
-  await databaseDownloadService.fetchAndCacheTablePagesInParallel(
-    table,
-    totalPages,
-    2,
-    (page: number) => {
-      const isTaskCancelled: boolean = isCancelled();
-      if (isTaskCancelled) return;
-
-      completedCount++;
-      callbacks.setUpdateCurrentPage(page);
-
-      const tableProgress: number = completedCount / totalPages;
-
-      const targetOverall: number = (tIdx + tableProgress) / totalTables;
-
-      highestProgress = Math.max(highestProgress, targetOverall);
-
-      callbacks.setOverallProgress(highestProgress);
-
-      callbacks.setUpdateProgress({
-        status: SYNC_PHASE_STATUS.DOWNLOADING,
-        progress: highestProgress,
-        isUpdating: true,
-      });
-
-      databaseDownloadService.saveUpdateState({
-        status: 'downloading',
-        tablesToUpdate,
-        currentTableIndex: tIdx,
-        currentTable: table,
-        currentPage: page,
-        totalPages,
-        overallProgress: highestProgress,
-        completedTables: [],
-        lastUpdated: Date.now(),
-      });
-    },
-  );
-};
-
-// 1단계: REST API로부터 모든 대상 테이블의 메타데이터를 선행 확보하고, 모든 페이지를 네이티브 백그라운드 세션에 일괄 병렬 디스패치
+// 1단계: REST API로부터 모든 대상 테이블을 순차적으로 완전 수신
 export const executeFetchPhase = async (
   tablesToUpdate: IUpdateNeeded[],
   currentTableIndexRef: React.RefObject<number>,
@@ -119,47 +94,23 @@ export const executeFetchPhase = async (
   const totalTables: number = tablesToUpdate.length;
   const tableMetadataMap = new Map<string, ITableMetadata>();
 
-  // 1-1. 전체 대상 테이블의 1페이지(메타데이터) 선행 수신하여 총 페이지 수 확정
   for (let tIdx = 0; tIdx < totalTables; tIdx++) {
-    const isTaskCancelled: boolean = isCancelled();
-    if (isTaskCancelled) break;
+    if (isCancelled()) break;
 
     currentTableIndexRef.current = tIdx;
     const updateInfo = tablesToUpdate[tIdx];
     const table = updateInfo.table as TDataTable;
 
-    const meta = await fetchAndPersistFirstPage(
+    const meta = await fetchAndPersistTable(
       table,
-      tIdx,
-      totalTables,
-      tablesToUpdate,
-      callbacks,
-    );
-    tableMetadataMap.set(table, meta);
-  }
-
-  // 1-2. 모든 테이블의 2페이지부터 끝까지를 일괄 병렬 다운로드 큐에 디스패치
-  const remainingTableTasks = tablesToUpdate.map((updateInfo, tIdx) => {
-    const table = updateInfo.table as TDataTable;
-    const meta = tableMetadataMap.get(table);
-    const hasRemainingPages: boolean = Boolean(meta && meta.totalPages > 1);
-
-    if (!hasRemainingPages) {
-      return Promise.resolve();
-    }
-
-    return fetchAndPersistRemainingPages(
-      table,
-      meta!.totalPages,
       tIdx,
       totalTables,
       tablesToUpdate,
       isCancelled,
       callbacks,
     );
-  });
-
-  await Promise.all(remainingTableTasks);
+    tableMetadataMap.set(table, meta);
+  }
 
   return tableMetadataMap;
 };
