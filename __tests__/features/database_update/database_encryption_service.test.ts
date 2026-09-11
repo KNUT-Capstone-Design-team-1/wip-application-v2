@@ -55,7 +55,7 @@ describe('databaseEncryptionService 단위 테스트', () => {
   describe('encrypt / decrypt', () => {
     it('문자열을 암호화하고 정상적으로 복호화할 수 있어야 한다', async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        'test-encryption-key-123456',
+        '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
       );
 
       const originalText = JSON.stringify({
@@ -75,17 +75,21 @@ describe('databaseEncryptionService 단위 테스트', () => {
     });
 
     it('잘못된 키나 변조된 암호문에 대해 복호화 실패 에러를 발생시켜야 한다', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('valid-key');
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+      );
 
       await expect(
-        databaseEncryptionService.decrypt('invalid-cipher-text'),
+        databaseEncryptionService.decrypt('AES256:invalid:cipher'),
       ).rejects.toThrow();
     });
   });
 
   describe('encryptFile / readAndDecryptFile', () => {
     it('파일을 암호화하여 다시 저장해야 한다', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('test-file-key');
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+      );
       const rawJson = JSON.stringify({ resource: [], total: 0 });
       (FileSystem.readAsStringAsync as jest.Mock).mockResolvedValue(rawJson);
 
@@ -93,7 +97,7 @@ describe('databaseEncryptionService 단위 테스트', () => {
 
       expect(FileSystem.writeAsStringAsync).toHaveBeenCalledWith(
         'file:///path/test.json',
-        expect.stringMatching(/^U2FsdGVkX1/),
+        expect.stringMatching(/^AES256:/),
       );
     });
 
