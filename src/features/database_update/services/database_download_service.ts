@@ -240,26 +240,37 @@ export const databaseDownloadService = {
     });
   },
 
-  // 특정 테이블의 여러 페이지를 병렬로 즉시 네이티브 다운로드 큐에 디스패치하여 수신
+  // 특정 테이블의 여러 페이지를 최적의 동시성 풀(Worker Pool)로 제어하여 수신 (소켓 정체 및 타임아웃 방지)
   async fetchAndCacheTablePagesInParallel(
     table: TDataTable,
     totalPages: number,
     startPage = 2,
     onPageComplete?: (completedPage: number) => void,
   ): Promise<void> {
-    const pagePromises: Promise<ICachedPageData>[] = [];
-
+    const pageNumbers: number[] = [];
     for (let page = startPage; page <= totalPages; page++) {
-      const pagePromise = this.fetchAndCachePageData(table, page).then(
-        (data) => {
-          onPageComplete?.(page);
-          return data;
-        },
-      );
-      pagePromises.push(pagePromise);
+      pageNumbers.push(page);
     }
 
-    await Promise.all(pagePromises);
+    const concurrency: number = DOWNLOAD_CONFIG.MAX_CONCURRENT_DOWNLOADS;
+    let nextIndex: number = 0;
+
+    const worker = async (): Promise<void> => {
+      while (nextIndex < pageNumbers.length) {
+        const currentIndex = nextIndex++;
+        const page = pageNumbers[currentIndex];
+        await this.fetchAndCachePageData(table, page);
+        onPageComplete?.(page);
+      }
+    };
+
+    const workers: Promise<void>[] = [];
+    const activeWorkersCount = Math.min(concurrency, pageNumbers.length);
+    for (let i = 0; i < activeWorkersCount; i++) {
+      workers.push(worker());
+    }
+
+    await Promise.all(workers);
   },
 
   // 호환성을 위한 alias
