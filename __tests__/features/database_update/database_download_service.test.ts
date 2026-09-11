@@ -93,14 +93,11 @@ describe('databaseDownloadService 단위 테스트', () => {
       expect(result).toBe(false);
     });
 
-    it('파일이 존재하지만 JSON 구조가 올바르지 않으면 false를 반환해야 한다', async () => {
+    it('파일이 존재하지만 크기가 0이면 false를 반환해야 한다', async () => {
       (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
         exists: true,
-        size: 100,
+        size: 0,
       });
-      (FileSystem.readAsStringAsync as jest.Mock).mockResolvedValue(
-        JSON.stringify({ invalid: true }),
-      );
 
       const result = await databaseDownloadService.isPageDownloaded(
         'pill_data',

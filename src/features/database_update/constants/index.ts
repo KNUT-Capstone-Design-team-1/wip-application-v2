@@ -9,8 +9,8 @@ export const STORAGE_KEYS = {
 // 네트워크 및 다운로드 정책 상수
 export const DOWNLOAD_CONFIG = {
   MAX_RETRY_COUNT: 3,
-  RETRY_DELAY_MS: 200,
-  DOWNLOAD_TIMEOUT_MS: 7000,
+  RETRY_DELAY_MS: 300,
+  DOWNLOAD_TIMEOUT_MS: 30000,
 } as const;
 
 // 암호화 관련 상수

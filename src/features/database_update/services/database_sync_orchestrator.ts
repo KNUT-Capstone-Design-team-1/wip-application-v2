@@ -9,6 +9,8 @@ import {
 } from '../types';
 import { SYNC_PHASE_STATUS } from '../constants';
 
+let highestProgress: number = 0;
+
 // 특정 테이블의 첫 번째 페이지 데이터 수신 및 메타데이터/진행상태 영속화
 export const fetchAndPersistFirstPage = async (
   table: TDataTable,
@@ -28,10 +30,13 @@ export const fetchAndPersistFirstPage = async (
   callbacks.setTotalPages(totalPages);
 
   const initialProgress: number = (tIdx + 1 / totalPages) / totalTables;
-  callbacks.setOverallProgress(initialProgress);
+  highestProgress = Math.max(highestProgress, initialProgress);
+
+  callbacks.setOverallProgress(highestProgress);
+
   callbacks.setUpdateProgress({
     status: SYNC_PHASE_STATUS.DOWNLOADING,
-    progress: initialProgress,
+    progress: highestProgress,
     isUpdating: true,
   });
 
@@ -42,7 +47,7 @@ export const fetchAndPersistFirstPage = async (
     currentTable: table,
     currentPage: 1,
     totalPages,
-    overallProgress: initialProgress,
+    overallProgress: highestProgress,
     completedTables: [],
     lastUpdated: Date.now(),
   });
@@ -76,12 +81,16 @@ export const fetchAndPersistRemainingPages = async (
       callbacks.setUpdateCurrentPage(page);
 
       const tableProgress: number = completedCount / totalPages;
-      const currentOverall: number = (tIdx + tableProgress) / totalTables;
 
-      callbacks.setOverallProgress(currentOverall);
+      const targetOverall: number = (tIdx + tableProgress) / totalTables;
+
+      highestProgress = Math.max(highestProgress, targetOverall);
+
+      callbacks.setOverallProgress(highestProgress);
+
       callbacks.setUpdateProgress({
         status: SYNC_PHASE_STATUS.DOWNLOADING,
-        progress: currentOverall,
+        progress: highestProgress,
         isUpdating: true,
       });
 
@@ -92,7 +101,7 @@ export const fetchAndPersistRemainingPages = async (
         currentTable: table,
         currentPage: page,
         totalPages,
-        overallProgress: currentOverall,
+        overallProgress: highestProgress,
         completedTables: [],
         lastUpdated: Date.now(),
       });
@@ -312,6 +321,7 @@ export const databaseSyncOrchestrator = {
     callbacks: ISyncPipelineCallbacks,
   ): Promise<void> {
     try {
+      highestProgress = 0;
       // 1단계: API 데이터 백그라운드 수신 및 캐싱
       callbacks.setUpdateStatus('downloading');
       const tableMetadataMap = await executeFetchPhase(

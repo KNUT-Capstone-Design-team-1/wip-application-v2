@@ -65,14 +65,6 @@ const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
   return [...columnSet];
 };
 
-// INSERT SQL 문을 생성한다.
-const createInsertSql = (table: TDataTable, columns: string[]): string => {
-  const escapedColumns = columns.map((column) => `"${column}"`);
-
-  return `INSERT OR REPLACE INTO ${table} (${escapedColumns.join(', ')}) 
-          VALUES (${columns.map(() => '?').join(', ')})`;
-};
-
 // row 데이터를 SQL parameter 배열로 변환한다.
 const createInsertValues = (
   row: Partial<TResourceDataSchemas>,
@@ -83,26 +75,27 @@ const createInsertValues = (
   return columns.map((column) => preparedRow[column] ?? null);
 };
 
-// prepared statement 를 안전하게 종료한다.
-const finalizeStatement = async (
-  statement: Awaited<ReturnType<typeof getDatabase>>['prepareAsync'] extends (
-    ...args: never[]
-  ) => Promise<infer T>
-    ? T | null
-    : never,
-) => {
-  if (!statement) {
-    return;
-  }
+// Multi-row INSERT SQL 문을 생성한다.
+const createMultiRowInsertSql = (
+  table: TDataTable,
+  columns: string[],
+  rowCount: number,
+): string => {
+  const escapedColumns = columns.map((column) => `"${column}"`);
+  const singleRowPlaceholder = `(${columns.map(() => '?').join(', ')})`;
+  const allRowPlaceholders = Array.from(
+    { length: rowCount },
+    () => singleRowPlaceholder,
+  ).join(', ');
 
-  try {
-    await statement.finalizeAsync();
-  } catch (e) {
-    logger.warn(`Failed to finalize statement. ${(e as Error).stack || e}`);
-  }
+  return `INSERT OR REPLACE INTO ${table} (${escapedColumns.join(', ')}) 
+          VALUES ${allRowPlaceholders}`;
 };
 
-// 대량 데이터를 batch 단위 및 단일 트랜잭션으로 빠르게 INSERT 한다.
+// SQLite 파라미터 한도(999개)를 고려한 최적의 벌크 청크 크기 계산 (최대 50행)
+const BULK_CHUNK_ROW_SIZE = 50;
+
+// 대량 데이터를 multi-row bulk 단위 및 단일 트랜잭션으로 초고속 INSERT 한다.
 export const insertData = async (
   table: TDataTable,
   data: Partial<TResourceDataSchemas>[],
@@ -118,22 +111,27 @@ export const insertData = async (
     return;
   }
 
+  // SQLite 최대 변수 한도(999개) 내에서 안전한 청크 크기 결정
+  const maxRowsPerChunk = Math.max(
+    1,
+    Math.min(BULK_CHUNK_ROW_SIZE, Math.floor(900 / columns.length)),
+  );
+
   const db = await getDatabase();
-  const sql = createInsertSql(table, columns);
-  let statement: Awaited<ReturnType<typeof db.prepareAsync>> | null = null;
 
-  try {
-    statement = await db.prepareAsync(sql);
+  await db.withTransactionAsync(async () => {
+    for (let i = 0; i < data.length; i += maxRowsPerChunk) {
+      const chunk = data.slice(i, i + maxRowsPerChunk);
+      const sql = createMultiRowInsertSql(table, columns, chunk.length);
 
-    await db.withTransactionAsync(async () => {
-      for (const row of data) {
-        const values = createInsertValues(row, columns);
-        await statement!.executeAsync(values);
+      const chunkParams: any[] = [];
+      for (const row of chunk) {
+        chunkParams.push(...createInsertValues(row, columns));
       }
-    });
-  } finally {
-    await finalizeStatement(statement);
-  }
+
+      await db.runAsync(sql, chunkParams);
+    }
+  });
 };
 
 // 특정 테이블의 전체 행 개수(Row Count)를 조회한다.

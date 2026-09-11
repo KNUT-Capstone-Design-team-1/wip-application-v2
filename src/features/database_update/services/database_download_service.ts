@@ -71,22 +71,16 @@ export const databaseDownloadService = {
     return isPayloadValid;
   },
 
-  // 해당 페이지의 JSON 데이터가 이미 로컬에 올바르게 캐시되어 있는지 검증
+  // 해당 페이지의 JSON 데이터가 이미 로컬에 올바르게 캐시되어 있는지 검증 (초고속 파일 상태 검증)
   async isPageDataCached(table: TDataTable, page: number): Promise<boolean> {
     const filePath = this.getPageFilePath(table, page);
     try {
       const fileInfo = await FileSystem.getInfoAsync(filePath);
 
-      if (!fileInfo.exists || fileInfo.size === 0) {
-        return false;
-      }
+      const isFileExistingAndNotEmpty: boolean =
+        fileInfo.exists && (fileInfo.size ?? 0) > 0;
 
-      const content =
-        await databaseEncryptionService.readAndDecryptFile(filePath);
-      const parsed = JSON.parse(content) as ICachedPageData;
-
-      const isJsonValid: boolean = this.validateCachedPayloadStructure(parsed);
-      return isJsonValid;
+      return isFileExistingAndNotEmpty;
     } catch {
       return false;
     }
@@ -103,11 +97,8 @@ export const databaseDownloadService = {
     table: TDataTable,
     page: number,
   ): Promise<ICachedPageData> {
-    await databaseEncryptionService.encryptFile(filePath);
-
-    const content =
-      await databaseEncryptionService.readAndDecryptFile(filePath);
-    const parsed = JSON.parse(content) as ICachedPageData;
+    const rawContent = await FileSystem.readAsStringAsync(filePath);
+    const parsed = JSON.parse(rawContent) as ICachedPageData;
 
     const isPayloadValid: boolean = this.validateCachedPayloadStructure(parsed);
     if (!isPayloadValid) {
@@ -116,6 +107,7 @@ export const databaseDownloadService = {
       );
     }
 
+    await databaseEncryptionService.encryptFile(filePath);
     return parsed;
   },
 
