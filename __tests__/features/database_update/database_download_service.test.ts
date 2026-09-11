@@ -217,6 +217,27 @@ describe('databaseDownloadService 단위 테스트', () => {
       expect(FileSystem.writeAsStringAsync).toHaveBeenCalled();
       expect(result.resource[0].ITEM_SEQ).toBe('fallback_1');
     });
+
+    it('여러 페이지를 병렬로 수신하고 콜백을 호출해야 한다', async () => {
+      (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
+        exists: true,
+        size: 100,
+      });
+      (FileSystem.readAsStringAsync as jest.Mock).mockResolvedValue(
+        JSON.stringify({ resource: [], total: 10, totalPage: 3 }),
+      );
+
+      const onPageComplete = jest.fn();
+      await databaseDownloadService.fetchAndCacheTablePagesInParallel(
+        'pill_data',
+        3,
+        2,
+        onPageComplete,
+      );
+
+      expect(onPageComplete).toHaveBeenCalledWith(2);
+      expect(onPageComplete).toHaveBeenCalledWith(3);
+    });
   });
 
   describe('verifyAllTablePagesDownloaded', () => {

@@ -231,6 +231,28 @@ export const databaseDownloadService = {
     });
   },
 
+  // 특정 테이블의 여러 페이지를 병렬로 즉시 네이티브 다운로드 큐에 디스패치하여 수신
+  async fetchAndCacheTablePagesInParallel(
+    table: TDataTable,
+    totalPages: number,
+    startPage = 2,
+    onPageComplete?: (completedPage: number) => void,
+  ): Promise<void> {
+    const pagePromises: Promise<ICachedPageData>[] = [];
+
+    for (let page = startPage; page <= totalPages; page++) {
+      const pagePromise = this.fetchAndCachePageData(table, page).then(
+        (data) => {
+          onPageComplete?.(page);
+          return data;
+        },
+      );
+      pagePromises.push(pagePromise);
+    }
+
+    await Promise.all(pagePromises);
+  },
+
   // 호환성을 위한 alias
   async downloadPageWithRetry(
     table: TDataTable,

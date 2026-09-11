@@ -13,6 +13,14 @@ jest.mock(
   () => ({
     databaseDownloadService: {
       fetchAndCachePageData: jest.fn(),
+      fetchAndCacheTablePagesInParallel: jest.fn(
+        (table, totalPages, startPage, onPageComplete) => {
+          for (let p = startPage; p <= totalPages; p++) {
+            onPageComplete?.(p);
+          }
+          return Promise.resolve();
+        },
+      ),
       saveUpdateState: jest.fn(),
       verifyAllTablePagesCached: jest.fn(),
       cleanTempCache: jest.fn(),
@@ -90,8 +98,8 @@ describe('databaseSyncOrchestrator 단위 테스트', () => {
         databaseDownloadService.fetchAndCachePageData,
       ).toHaveBeenCalledWith('pill_data', 1);
       expect(
-        databaseDownloadService.fetchAndCachePageData,
-      ).toHaveBeenCalledWith('pill_data', 2);
+        databaseDownloadService.fetchAndCacheTablePagesInParallel,
+      ).toHaveBeenCalledWith('pill_data', 2, 2, expect.any(Function));
       expect(metaMap.get('pill_data')).toEqual({
         totalPages: 2,
         totalItems: 10,

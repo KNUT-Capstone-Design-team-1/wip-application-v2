@@ -50,7 +50,7 @@ export const fetchAndPersistFirstPage = async (
   return { totalPages, totalItems };
 };
 
-// 2페이지부터 마지막 페이지까지 순차 수신 및 상태 갱신
+// 2페이지부터 마지막 페이지까지 병렬 수신 디스패치 및 진행 상태 갱신
 export const fetchAndPersistRemainingPages = async (
   table: TDataTable,
   tableNameKr: string,
@@ -61,35 +61,44 @@ export const fetchAndPersistRemainingPages = async (
   isCancelled: () => boolean,
   callbacks: ISyncPipelineCallbacks,
 ): Promise<void> => {
-  for (let page = 2; page <= totalPages; page++) {
-    const isTaskCancelled: boolean = isCancelled();
-    if (isTaskCancelled) break;
+  if (totalPages <= 1) return;
 
-    callbacks.setUpdateCurrentPage(page);
-    await databaseDownloadService.fetchAndCachePageData(table, page);
+  let completedCount: number = 1; // 1페이지는 이미 완료됨
 
-    const tableProgress: number = page / totalPages;
-    const currentOverall: number = (tIdx + tableProgress) / totalTables;
+  await databaseDownloadService.fetchAndCacheTablePagesInParallel(
+    table,
+    totalPages,
+    2,
+    (page: number) => {
+      const isTaskCancelled: boolean = isCancelled();
+      if (isTaskCancelled) return;
 
-    callbacks.setOverallProgress(currentOverall);
-    callbacks.setUpdateProgress({
-      status: `${tableNameKr} 데이터 수신 중 (${Math.round(tableProgress * 100)}%)`,
-      progress: currentOverall,
-      isUpdating: true,
-    });
+      completedCount++;
+      callbacks.setUpdateCurrentPage(page);
 
-    await databaseDownloadService.saveUpdateState({
-      status: 'downloading',
-      tablesToUpdate,
-      currentTableIndex: tIdx,
-      currentTable: table,
-      currentPage: page,
-      totalPages,
-      overallProgress: currentOverall,
-      completedTables: [],
-      lastUpdated: Date.now(),
-    });
-  }
+      const tableProgress: number = completedCount / totalPages;
+      const currentOverall: number = (tIdx + tableProgress) / totalTables;
+
+      callbacks.setOverallProgress(currentOverall);
+      callbacks.setUpdateProgress({
+        status: `${tableNameKr} 데이터 수신 중 (${Math.round(tableProgress * 100)}%)`,
+        progress: currentOverall,
+        isUpdating: true,
+      });
+
+      databaseDownloadService.saveUpdateState({
+        status: 'downloading',
+        tablesToUpdate,
+        currentTableIndex: tIdx,
+        currentTable: table,
+        currentPage: page,
+        totalPages,
+        overallProgress: currentOverall,
+        completedTables: [],
+        lastUpdated: Date.now(),
+      });
+    },
+  );
 };
 
 // 1단계: REST API로부터 페이지 데이터를 백그라운드 세션으로 수신 및 로컬 캐싱
