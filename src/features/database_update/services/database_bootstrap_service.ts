@@ -71,6 +71,7 @@ export const databaseBootstrapService = {
     const hasUpdatesNeeded: boolean = updatesNeeded.length > 0;
 
     if (!hasUpdatesNeeded) {
+      await databaseDownloadService.cleanTempCache();
       return null;
     }
 
@@ -80,6 +81,13 @@ export const databaseBootstrapService = {
 
     const isConfirmedByUser: boolean =
       await this.promptUserForUpdate(updatesNeeded);
-    return isConfirmedByUser ? updatesNeeded : null;
+
+    if (!isConfirmedByUser) {
+      await databaseDownloadService.cleanTempCache();
+      await databaseDownloadService.clearUpdateState();
+      return null;
+    }
+
+    return updatesNeeded;
   },
 };

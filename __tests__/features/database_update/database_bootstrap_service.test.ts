@@ -10,6 +10,8 @@ jest.mock(
   () => ({
     databaseDownloadService: {
       loadUpdateState: jest.fn(),
+      cleanTempCache: jest.fn(),
+      clearUpdateState: jest.fn(),
     },
   }),
 );
