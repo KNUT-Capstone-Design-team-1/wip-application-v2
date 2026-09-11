@@ -1,4 +1,6 @@
+import 'react-native-get-random-values';
 import CryptoJS from 'crypto-js';
+import forge from 'node-forge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import logger from '@utils/logger';
@@ -9,6 +11,24 @@ let memoryEncryptionKey: string | null = null;
 
 // 임시 캐시 JSON 데이터의 AES-256 암호화 및 복호화를 전담하는 보안 서비스
 export const databaseEncryptionService = {
+  // 256비트(32바이트) 암호학적 무작위 난수 키 생성 (네이티브 모듈 의존성 없이 안전하게 생성)
+  generateSecureRandomKey(): string {
+    try {
+      const bytes = forge.random.getBytesSync(32);
+      return forge.util.bytesToHex(bytes);
+    } catch {
+      // fallback: 64자리 16진수 난수 생성
+      const hexChars = '0123456789abcdef';
+      let hexString = '';
+      for (let i = 0; i < 64; i++) {
+        hexString += hexChars.charAt(
+          Math.floor(Math.random() * hexChars.length),
+        );
+      }
+      return hexString;
+    }
+  },
+
   // 기기 내 저장된 세션 키를 조회하거나, 없으면 256비트 암호학적 무작위 난수(CSPRNG) 키를 동적으로 생성
   async getOrCreateKey(): Promise<string> {
     const hasMemoryKey: boolean = Boolean(memoryEncryptionKey);
@@ -26,7 +46,7 @@ export const databaseEncryptionService = {
       }
 
       // 기기에서 매 세션마다 고유하게 생성되는 256비트(32바이트) 무작위 난수 키
-      const generatedKey = CryptoJS.lib.WordArray.random(32).toString();
+      const generatedKey = this.generateSecureRandomKey();
       memoryEncryptionKey = generatedKey;
       await AsyncStorage.setItem(STORAGE_KEY_ENCRYPTION_KEY, generatedKey);
       return generatedKey;
@@ -36,7 +56,7 @@ export const databaseEncryptionService = {
       );
       // 스토리지 접근 실패 시 메모리 전용 256비트 난수 키 생성 후 fallback
       if (!memoryEncryptionKey) {
-        memoryEncryptionKey = CryptoJS.lib.WordArray.random(32).toString();
+        memoryEncryptionKey = this.generateSecureRandomKey();
       }
       return memoryEncryptionKey;
     }
