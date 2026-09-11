@@ -3,6 +3,7 @@ export { default as DatabaseUpdateModal } from './components/DatabaseUpdateModal
 export * from './hooks/useAppInitializer';
 export * from './types';
 export * from './constants';
+export * from './services/background_sync_task';
 export * from './services/database_update_service';
 export * from './services/database_download_service';
 export * from './services/database_sync_orchestrator';

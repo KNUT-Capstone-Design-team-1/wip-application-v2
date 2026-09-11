@@ -9,6 +9,7 @@ import {
   DatabaseUpdateView,
   DatabaseUpdateModal,
 } from '@features/database_update';
+import { backgroundTaskService } from '@services/background';
 import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomSheet';
 import Toast from 'react-native-toast-message';
 import toastConfig from '@components/config/toastConfig';
@@ -32,6 +33,7 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (!isInitializing) {
+      backgroundTaskService.registerTask();
       pillReminderNotificationService.startWatcher();
       return () => {
         pillReminderNotificationService.stopWatcher();

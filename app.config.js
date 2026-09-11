@@ -46,7 +46,12 @@ export default {
         NSLocationWhenInUseUsageDescription:
           '$(PRODUCT_NAME)에서 주변 약국을 찾기 위해 위치 권한이 필요합니다',
 
-        LSApplicationQueriesSchemes: ['mailto'],
+        UIBackgroundModes: ['fetch', 'processing'],
+
+        BGTaskSchedulerPermittedIdentifiers: [
+          'com.mbm.whatispill.database-update',
+          'com.mbm.whatispill.background-sync',
+        ],
 
         ITSAppUsesNonExemptEncryption: false,
       },
@@ -98,6 +103,7 @@ export default {
     plugins: [
       'expo-image',
       'expo-sqlite',
+      'expo-background-task',
       [
         'expo-notifications',
         {
