@@ -75,7 +75,7 @@ describe('databaseDownloadService 단위 테스트', () => {
     it('다운로드 URL을 올바르게 생성해야 한다', () => {
       const pillUrl = databaseDownloadService.getResourceApiUrl('pill_data', 3);
       expect(pillUrl).toBe(
-        'https://api.example.com/resource?table=pill_data&page=3&limit=1000',
+        'https://api.example.com/resource?table=pill_data&page=3&limit=5000',
       );
 
       const cannabisUrl = databaseDownloadService.getResourceApiUrl(

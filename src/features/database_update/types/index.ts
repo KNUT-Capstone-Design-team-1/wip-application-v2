@@ -49,16 +49,6 @@ export interface IUpdateProgress {
   isUpdating?: boolean;
 }
 
-// 개별 테이블 다운로드 진행 상태
-export interface ITableDownloadProgress {
-  table: TDataTable;
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  downloadedItems: number;
-  isCompleted: boolean;
-}
-
 // AsyncStorage에 영속 저장되는 백그라운드 업데이트 상태
 export interface IPersistedUpdateState {
   status: DatabaseUpdateStatus;
@@ -70,19 +60,6 @@ export interface IPersistedUpdateState {
   overallProgress: number;
   completedTables: string[];
   lastUpdated: number;
-}
-
-// 데이터베이스 동기화 상태 모델
-export interface DatabaseUpdateState {
-  status: DatabaseUpdateStatus;
-  version: string | null;
-  progress: number;
-  downloadedBytes: number;
-  totalBytes: number;
-  downloadUri: string | null;
-  startedAt: number | null;
-  completedAt: number | null;
-  error: string | null;
 }
 
 // 동기화 파이프라인 콜백 인터페이스

@@ -46,14 +46,11 @@ export const databaseDownloadService = {
     return `${this.getTempDirectory()}${table}_p${page}.json`;
   },
 
-  // REST API 엔드포인트 URL 생성 (테이블별 최적화된 limit 파라미터 포함)
+  // REST API 엔드포인트 URL 생성 (테이블, 페이지 및 limit 파라미터 포함)
   getResourceApiUrl(table: TDataTable, page: number): string {
     const baseUrl = process.env
       .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_RESOURCE_DATA_URL as string;
-    const limit =
-      DOWNLOAD_CONFIG.TABLE_PAGE_LIMITS[table] ||
-      DOWNLOAD_CONFIG.DEFAULT_PAGE_LIMIT;
-    return `${baseUrl}?table=${encodeURIComponent(table)}&page=${page}&limit=${limit}`;
+    return `${baseUrl}?table=${encodeURIComponent(table)}&page=${page}&limit=${DOWNLOAD_CONFIG.PAGE_LIMIT}`;
   },
 
   // 파싱된 캐시 데이터의 구조 및 필드 유효성 검증
@@ -163,14 +160,11 @@ export const databaseDownloadService = {
       logger.warn(
         `[FETCH-FALLBACK] Attempting direct axios fetch for ${table} p${page}`,
       );
-      const limit =
-        DOWNLOAD_CONFIG.TABLE_PAGE_LIMITS[table] ||
-        DOWNLOAD_CONFIG.DEFAULT_PAGE_LIMIT;
       const fallbackResponse =
         await GoogleCloud.ResourceDataAPI.requestResourceData(
           table,
           page,
-          limit,
+          DOWNLOAD_CONFIG.PAGE_LIMIT,
         );
       const hasValidFallback: boolean = Boolean(
         fallbackResponse?.resource && fallbackResponse.totalPage,
