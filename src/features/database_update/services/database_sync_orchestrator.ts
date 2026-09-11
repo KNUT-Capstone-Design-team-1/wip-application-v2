@@ -1,7 +1,7 @@
 import { databaseUpdateService } from './database_update_service';
 import { databaseDownloadService } from './database_download_service';
 import logger from '@utils/logger';
-import { TABLE_NAME_MAP, TDataTable } from '@services/database/types';
+import { TDataTable } from '@services/database/types';
 import {
   IUpdateNeeded,
   ITableMetadata,
@@ -11,7 +11,6 @@ import {
 // 특정 테이블의 첫 번째 페이지 데이터 수신 및 메타데이터/진행상태 영속화
 export const fetchAndPersistFirstPage = async (
   table: TDataTable,
-  tableNameKr: string,
   tIdx: number,
   totalTables: number,
   tablesToUpdate: IUpdateNeeded[],
@@ -30,7 +29,7 @@ export const fetchAndPersistFirstPage = async (
   const initialProgress: number = (tIdx + 1 / totalPages) / totalTables;
   callbacks.setOverallProgress(initialProgress);
   callbacks.setUpdateProgress({
-    status: `${tableNameKr} 데이터 수신 중 (${Math.round((1 / totalPages) * 100)}%)`,
+    status: '최신 데이터 다운로드 중...',
     progress: initialProgress,
     isUpdating: true,
   });
@@ -53,7 +52,6 @@ export const fetchAndPersistFirstPage = async (
 // 2페이지부터 마지막 페이지까지 병렬 수신 디스패치 및 진행 상태 갱신
 export const fetchAndPersistRemainingPages = async (
   table: TDataTable,
-  tableNameKr: string,
   totalPages: number,
   tIdx: number,
   totalTables: number,
@@ -81,7 +79,7 @@ export const fetchAndPersistRemainingPages = async (
 
       callbacks.setOverallProgress(currentOverall);
       callbacks.setUpdateProgress({
-        status: `${tableNameKr} 데이터 수신 중 (${Math.round(tableProgress * 100)}%)`,
+        status: '최신 데이터 다운로드 중...',
         progress: currentOverall,
         isUpdating: true,
       });
@@ -118,11 +116,9 @@ export const executeFetchPhase = async (
     currentTableIndexRef.current = tIdx;
     const updateInfo = tablesToUpdate[tIdx];
     const table = updateInfo.table as TDataTable;
-    const tableNameKr: string = TABLE_NAME_MAP[table] || table;
 
     const meta = await fetchAndPersistFirstPage(
       table,
-      tableNameKr,
       tIdx,
       totalTables,
       tablesToUpdate,
@@ -132,7 +128,6 @@ export const executeFetchPhase = async (
 
     await fetchAndPersistRemainingPages(
       table,
-      tableNameKr,
       meta.totalPages,
       tIdx,
       totalTables,
@@ -176,7 +171,7 @@ export const executeValidationPhase = async (
   callbacks: ISyncPipelineCallbacks,
 ): Promise<void> => {
   callbacks.setUpdateProgress({
-    status: '데이터 수신 완료, 검증 중...',
+    status: '데이터 무결성 검증 중...',
     progress: 1.0,
     isUpdating: true,
   });
@@ -195,11 +190,10 @@ export const applySingleTableToDatabase = async (
   callbacks: ISyncPipelineCallbacks,
 ): Promise<void> => {
   const table = updateInfo.table as TDataTable;
-  const tableNameKr: string = TABLE_NAME_MAP[table] || table;
   const meta = tableMetadataMap.get(table)!;
 
   callbacks.setUpdateProgress({
-    status: `${tableNameKr} 데이터베이스 적용 중...`,
+    status: '데이터베이스 적용 중...',
     progress: (tIdx + 0.5) / totalTables,
     isUpdating: true,
   });
