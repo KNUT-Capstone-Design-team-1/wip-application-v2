@@ -11,7 +11,16 @@ export const DOWNLOAD_CONFIG = {
   RETRY_DELAY_MS: 300,
   DOWNLOAD_TIMEOUT_MS: 30000,
   MAX_CONCURRENT_DOWNLOADS: 6,
-  PAGE_LIMIT: 5000,
+  DEFAULT_PAGE_LIMIT: 5000,
+  TABLE_PAGE_LIMITS: {
+    pill_data: 1000, // 40개 컬럼을 가진 대용량 데이터이므로 1000개로 타임아웃 및 메모리 초과 방지
+    nearby_pharmacies: 5000,
+    cannabis: 5000,
+    mark_images: 5000,
+    narcotics: 5000,
+    psychotropics: 5000,
+    prohibited_list: 5000,
+  } as Record<string, number>,
 } as const;
 
 // 동기화 단계별 통합 UI 상태 메시지

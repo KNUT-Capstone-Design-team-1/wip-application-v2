@@ -73,9 +73,17 @@ describe('databaseDownloadService 단위 테스트', () => {
     });
 
     it('다운로드 URL을 올바르게 생성해야 한다', () => {
-      const url = databaseDownloadService.getResourceApiUrl('pill_data', 3);
-      expect(url).toBe(
-        'https://api.example.com/resource?table=pill_data&page=3&limit=5000',
+      const pillUrl = databaseDownloadService.getResourceApiUrl('pill_data', 3);
+      expect(pillUrl).toBe(
+        'https://api.example.com/resource?table=pill_data&page=3&limit=1000',
+      );
+
+      const cannabisUrl = databaseDownloadService.getResourceApiUrl(
+        'cannabis',
+        1,
+      );
+      expect(cannabisUrl).toBe(
+        'https://api.example.com/resource?table=cannabis&page=1&limit=5000',
       );
     });
   });
@@ -210,7 +218,7 @@ describe('databaseDownloadService 단위 테스트', () => {
 
       expect(
         GoogleCloud.ResourceDataAPI.requestResourceData,
-      ).toHaveBeenCalledWith('narcotics', 1);
+      ).toHaveBeenCalledWith('narcotics', 1, 5000);
       expect(FileSystem.writeAsStringAsync).toHaveBeenCalled();
       expect(result.resource[0].ITEM_SEQ).toBe('fallback_1');
     });
