@@ -22,6 +22,7 @@ jest.mock(
         },
       ),
       saveUpdateState: jest.fn(),
+      loadUpdateState: jest.fn().mockResolvedValue(null),
       verifyAllTablePagesCached: jest.fn(),
       cleanTempCache: jest.fn(),
       clearUpdateState: jest.fn(),

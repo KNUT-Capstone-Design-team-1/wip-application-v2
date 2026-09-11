@@ -160,12 +160,15 @@ export const databaseDownloadService = {
       logger.warn(
         `[FETCH-FALLBACK] Attempting direct axios fetch for ${table} p${page}`,
       );
-      const fallbackResponse =
-        await GoogleCloud.ResourceDataAPI.requestResourceData(
+      const fallbackResponse = await withTimeout(
+        GoogleCloud.ResourceDataAPI.requestResourceData(
           table,
           page,
           DOWNLOAD_CONFIG.PAGE_LIMIT,
-        );
+        ),
+        DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS,
+        `Axios fallback timeout after ${DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS}ms for ${table} p${page}`,
+      );
       const hasValidFallback: boolean = Boolean(
         fallbackResponse?.resource && fallbackResponse.totalPage,
       );

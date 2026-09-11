@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { useAppInitStore } from '../store/app_init_store';
 import { databaseSyncOrchestrator } from '../services/database_sync_orchestrator';
 import { useToast } from '@hooks/use_toast';
@@ -13,21 +14,12 @@ export const useDatabaseSync = (
   setIsInitializing: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const { showToast } = useToast();
-  const {
-    status,
-    tablesToUpdate,
-    setStatus,
-    setUpdateStatus,
-    setUpdateCurrentTable,
-    setUpdateCurrentPage,
-    setTotalPages,
-    setOverallProgress,
-    setErrorMessage,
-  } = useAppInitStore();
+  const status = useAppInitStore((state) => state.status);
+  const tablesToUpdate = useAppInitStore((state) => state.tablesToUpdate);
 
   const isCancelledRef = useRef(false);
 
-  useEffect(() => {
+  const runSync = useCallback(async () => {
     const isReadyToSync: boolean =
       status === 'RUNNING' && tablesToUpdate.length > 0;
     const shouldSkip: boolean = !isReadyToSync || isSyncRunning;
@@ -39,49 +31,63 @@ export const useDatabaseSync = (
     isCancelledRef.current = false;
     isSyncRunning = true;
 
-    const startSync = async () => {
-      try {
-        await databaseSyncOrchestrator.runPipeline(
-          tablesToUpdate,
-          currentTableIndexRef,
-          () => isCancelledRef.current,
-          {
-            setUpdateProgress,
-            setUpdateCurrentTable,
-            setUpdateCurrentPage,
-            setTotalPages,
-            setOverallProgress,
-            setUpdateStatus,
-            setStatus,
-            setErrorMessage,
-            setIsInitializing,
-            showToast,
-          },
-        );
-      } finally {
-        isSyncRunning = false;
-      }
-    };
+    try {
+      const {
+        setStatus,
+        setUpdateStatus,
+        setUpdateCurrentTable,
+        setUpdateCurrentPage,
+        setTotalPages,
+        setOverallProgress,
+        setErrorMessage,
+      } = useAppInitStore.getState();
 
-    startSync();
-
-    return () => {
-      isCancelledRef.current = true;
+      await databaseSyncOrchestrator.runPipeline(
+        tablesToUpdate,
+        currentTableIndexRef,
+        () => isCancelledRef.current,
+        {
+          setUpdateProgress,
+          setUpdateCurrentTable,
+          setUpdateCurrentPage,
+          setTotalPages,
+          setOverallProgress,
+          setUpdateStatus,
+          setStatus,
+          setErrorMessage,
+          setIsInitializing,
+          showToast,
+        },
+      );
+    } finally {
       isSyncRunning = false;
-    };
+    }
   }, [
     status,
     tablesToUpdate,
-    setStatus,
-    setUpdateStatus,
-    setUpdateCurrentTable,
-    setUpdateCurrentPage,
-    setTotalPages,
-    setOverallProgress,
-    setErrorMessage,
+    currentTableIndexRef,
     setUpdateProgress,
     setIsInitializing,
-    currentTableIndexRef,
     showToast,
   ]);
+
+  useEffect(() => {
+    runSync();
+
+    const subscription = AppState.addEventListener(
+      'change',
+      (nextAppState: AppStateStatus) => {
+        const isEnteringForeground: boolean = nextAppState === 'active';
+        if (isEnteringForeground) {
+          runSync();
+        }
+      },
+    );
+
+    return () => {
+      subscription.remove();
+      isCancelledRef.current = true;
+      isSyncRunning = false;
+    };
+  }, [runSync]);
 };

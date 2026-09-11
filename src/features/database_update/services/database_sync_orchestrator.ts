@@ -284,7 +284,13 @@ export const databaseSyncOrchestrator = {
     callbacks: ISyncPipelineCallbacks,
   ): Promise<void> {
     try {
-      highestProgress = 0;
+      const persistedState = await databaseDownloadService.loadUpdateState();
+      const hasPersistedProgress: boolean =
+        typeof persistedState?.overallProgress === 'number';
+      highestProgress = hasPersistedProgress
+        ? persistedState!.overallProgress
+        : 0;
+
       // 1단계: API 데이터 백그라운드 수신 및 캐싱
       callbacks.setUpdateStatus('downloading');
       const tableMetadataMap = await executeFetchPhase(

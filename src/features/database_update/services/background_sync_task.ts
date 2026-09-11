@@ -17,27 +17,44 @@ export const executeDatabaseBackgroundSync = async (): Promise<void> => {
   );
 
   if (hasPendingState && persistedState) {
-    logger.info(
-      `[BACKGROUND-TASK] Resuming pending download: table=${persistedState.currentTable}, page=${persistedState.currentPage}`,
-    );
+    const tables = persistedState.tablesToUpdate || [];
+    const startIndex = persistedState.currentTableIndex || 0;
+    const totalTables = tables.length || 1;
 
-    const table = persistedState.currentTable as TDataTable;
-    const totalPages: number = persistedState.totalPages || 1;
-    const startPage: number = (persistedState.currentPage || 1) + 1;
+    for (let tIdx = startIndex; tIdx < tables.length; tIdx++) {
+      const updateInfo = tables[tIdx];
+      const table = updateInfo.table as TDataTable;
 
-    if (startPage <= totalPages) {
-      await databaseDownloadService.fetchAndCacheTablePagesInParallel(
+      const firstPageData = await databaseDownloadService.fetchAndCachePageData(
         table,
-        totalPages,
-        startPage,
-        (page: number) => {
-          databaseDownloadService.saveUpdateState({
-            ...persistedState,
-            currentPage: page,
-            lastUpdated: Date.now(),
-          });
-        },
+        1,
       );
+      const totalPages: number = firstPageData.totalPage || 1;
+      const hasMultiplePages: boolean = totalPages > 1;
+
+      if (hasMultiplePages) {
+        let completedCount: number = 1;
+        await databaseDownloadService.fetchAndCacheTablePagesInParallel(
+          table,
+          totalPages,
+          2,
+          (page: number) => {
+            completedCount++;
+            const tableProgress: number = completedCount / totalPages;
+            const targetOverall: number = (tIdx + tableProgress) / totalTables;
+
+            databaseDownloadService.saveUpdateState({
+              ...persistedState,
+              currentTableIndex: tIdx,
+              currentTable: table,
+              currentPage: page,
+              totalPages,
+              overallProgress: targetOverall,
+              lastUpdated: Date.now(),
+            });
+          },
+        );
+      }
     }
     return;
   }
