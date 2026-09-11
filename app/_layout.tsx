@@ -32,8 +32,11 @@ const RootLayout = () => {
   const { isInitializing, updateProgress } = useAppInitializer();
 
   useEffect(() => {
+    backgroundTaskService.registerTask();
+  }, []);
+
+  useEffect(() => {
     if (!isInitializing) {
-      backgroundTaskService.registerTask();
       pillReminderNotificationService.startWatcher();
       return () => {
         pillReminderNotificationService.stopWatcher();

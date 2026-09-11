@@ -41,6 +41,18 @@ export const fetchAndPersistTable = async (
     isUpdating: true,
   });
 
+  databaseDownloadService.saveUpdateState({
+    status: 'downloading',
+    tablesToUpdate,
+    currentTableIndex: tIdx,
+    currentTable: table,
+    currentPage: 1,
+    totalPages,
+    overallProgress: highestProgress,
+    completedTables: [],
+    lastUpdated: Date.now(),
+  });
+
   // 2. 2페이지 이상이 있는 경우 병렬 다운로드 진행
   if (totalPages > 1 && !isCancelled()) {
     let completedCount: number = 1;
