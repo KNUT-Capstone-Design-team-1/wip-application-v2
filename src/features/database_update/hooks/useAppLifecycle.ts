@@ -41,9 +41,10 @@ export const syncPersistedStateToStore = (
   }
 };
 
-// AppState 변화를 감지하여 포그라운드 복귀 시 백그라운드에서 수신된 업데이트 상태를 스토어에 동기화
+// AppState 변화를 감지하여 포그라운드 복귀 시 백그라운드에서 수신된 업데이트 상태를 스토어 및 UI에 동기화
 export const useAppLifecycle = (
   _currentTableIndexRef?: React.RefObject<number>,
+  setUpdateProgress?: React.Dispatch<React.SetStateAction<any>>,
 ) => {
   const {
     status,
@@ -68,13 +69,27 @@ export const useAppLifecycle = (
             await databaseDownloadService.loadUpdateState();
           const hasPersistedState: boolean = Boolean(persistedState);
 
-          if (hasPersistedState) {
-            syncPersistedStateToStore(persistedState!, {
+          if (hasPersistedState && persistedState) {
+            syncPersistedStateToStore(persistedState, {
               setUpdateCurrentTable,
               setUpdateCurrentPage,
               setTotalPages,
               setOverallProgress,
             });
+
+            const hasValidOverallProgress: boolean =
+              typeof persistedState.overallProgress === 'number';
+
+            const shouldUpdateLocalProgress: boolean =
+              Boolean(setUpdateProgress) && hasValidOverallProgress;
+
+            if (shouldUpdateLocalProgress && setUpdateProgress) {
+              setUpdateProgress({
+                status: '최신 데이터 다운로드 중...',
+                progress: persistedState.overallProgress,
+                isUpdating: true,
+              });
+            }
           }
         }
       },
@@ -88,5 +103,6 @@ export const useAppLifecycle = (
     setUpdateCurrentTable,
     setUpdateCurrentPage,
     setTotalPages,
+    setUpdateProgress,
   ]);
 };
