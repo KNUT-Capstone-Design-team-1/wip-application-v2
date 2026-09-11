@@ -18,14 +18,4 @@ export const databaseUpdateRemoteDataSource = {
   ): Promise<{ columns: ITableColumnSchema[] }> {
     return GoogleCloud.TableSchemaAPI.requestTableSchema(table);
   },
-
-  // 서버에서 페이지 단위 원천 데이터를 조회한다.
-  getResourceData(
-    table: TDataTable,
-    page: number,
-  ): Promise<
-    GoogleCloud.ResourceDataAPI.IResourceDataResponse<TResourceDataSchemas>
-  > {
-    return GoogleCloud.ResourceDataAPI.requestResourceData(table, page);
-  },
 };

@@ -14,7 +14,6 @@ jest.mock(
       insertData: jest.fn(),
       getTableRowCount: jest.fn(),
       updateConfigs: jest.fn(),
-      getResourceData: jest.fn(),
     },
   }),
 );
@@ -24,7 +23,6 @@ jest.mock(
   () => ({
     databaseDownloadService: {
       readCachedPageData: jest.fn(),
-      readDownloadedPage: jest.fn(),
     },
   }),
 );
@@ -144,7 +142,7 @@ describe('databaseUpdateService 단위 테스트', () => {
     });
   });
 
-  describe('installTableFromFiles', () => {
+  describe('applyCachedDataToTable', () => {
     it('다운로드된 모든 페이지를 정상적으로 SQLite에 삽입하고 검증해야 한다', async () => {
       (databaseUpdateRepository.getTableSchema as jest.Mock).mockResolvedValue({
         columns: [
@@ -201,7 +199,7 @@ describe('databaseUpdateService 단위 테스트', () => {
       ).mockResolvedValue(1); // 기대값은 2인데 실제값 1
 
       await expect(
-        databaseUpdateService.installTableFromFiles('pill_data', 1, 2),
+        databaseUpdateService.applyCachedDataToTable('pill_data', 1, 2),
       ).rejects.toThrow(/\[VERIFICATION_FAILED\]/);
     });
   });

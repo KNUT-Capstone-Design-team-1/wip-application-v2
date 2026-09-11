@@ -73,20 +73,20 @@ describe('databaseDownloadService 단위 테스트', () => {
     });
 
     it('다운로드 URL을 올바르게 생성해야 한다', () => {
-      const url = databaseDownloadService.getDownloadUrl('pill_data', 3);
+      const url = databaseDownloadService.getResourceApiUrl('pill_data', 3);
       expect(url).toBe(
         'https://api.example.com/resource?table=pill_data&page=3&limit=5000',
       );
     });
   });
 
-  describe('isPageDownloaded', () => {
+  describe('isPageDataCached', () => {
     it('파일이 존재하지 않으면 false를 반환해야 한다', async () => {
       (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
         exists: false,
       });
 
-      const result = await databaseDownloadService.isPageDownloaded(
+      const result = await databaseDownloadService.isPageDataCached(
         'pill_data',
         1,
       );
@@ -99,7 +99,7 @@ describe('databaseDownloadService 단위 테스트', () => {
         size: 0,
       });
 
-      const result = await databaseDownloadService.isPageDownloaded(
+      const result = await databaseDownloadService.isPageDataCached(
         'pill_data',
         1,
       );
@@ -120,7 +120,7 @@ describe('databaseDownloadService 단위 테스트', () => {
         }),
       );
 
-      const result = await databaseDownloadService.isPageDownloaded(
+      const result = await databaseDownloadService.isPageDataCached(
         'pill_data',
         1,
       );
@@ -128,7 +128,7 @@ describe('databaseDownloadService 단위 테스트', () => {
     });
   });
 
-  describe('downloadPageWithRetry', () => {
+  describe('fetchAndCachePageData', () => {
     it('이미 캐시된 유효 파일이 있으면 다운로드 없이 캐시를 반환해야 한다', async () => {
       (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
         exists: true,
@@ -143,7 +143,7 @@ describe('databaseDownloadService 단위 테스트', () => {
         }),
       );
 
-      const result = await databaseDownloadService.downloadPageWithRetry(
+      const result = await databaseDownloadService.fetchAndCachePageData(
         'pill_data',
         1,
       );
@@ -170,7 +170,7 @@ describe('databaseDownloadService 단위 테스트', () => {
         }),
       );
 
-      const result = await databaseDownloadService.downloadPageWithRetry(
+      const result = await databaseDownloadService.fetchAndCachePageData(
         'cannabis',
         1,
       );
@@ -202,7 +202,7 @@ describe('databaseDownloadService 단위 테스트', () => {
         current: 1,
       });
 
-      const result = await databaseDownloadService.downloadPageWithRetry(
+      const result = await databaseDownloadService.fetchAndCachePageData(
         'narcotics',
         1,
         1,
@@ -237,7 +237,7 @@ describe('databaseDownloadService 단위 테스트', () => {
     });
   });
 
-  describe('verifyAllTablePagesDownloaded', () => {
+  describe('verifyAllTablePagesCached', () => {
     it('모든 페이지가 존재하면 true를 반환해야 한다', async () => {
       (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({
         exists: true,
@@ -247,11 +247,10 @@ describe('databaseDownloadService 단위 테스트', () => {
         JSON.stringify({ resource: [], total: 10, totalPage: 2 }),
       );
 
-      const isValid =
-        await databaseDownloadService.verifyAllTablePagesDownloaded(
-          'pill_data',
-          2,
-        );
+      const isValid = await databaseDownloadService.verifyAllTablePagesCached(
+        'pill_data',
+        2,
+      );
       expect(isValid).toBe(true);
     });
 
@@ -263,11 +262,10 @@ describe('databaseDownloadService 단위 테스트', () => {
         JSON.stringify({ resource: [], total: 10, totalPage: 2 }),
       );
 
-      const isValid =
-        await databaseDownloadService.verifyAllTablePagesDownloaded(
-          'pill_data',
-          2,
-        );
+      const isValid = await databaseDownloadService.verifyAllTablePagesCached(
+        'pill_data',
+        2,
+      );
       expect(isValid).toBe(false);
     });
   });
@@ -278,7 +276,7 @@ describe('databaseDownloadService 단위 테스트', () => {
         exists: true,
       });
 
-      await databaseDownloadService.cleanTempFiles();
+      await databaseDownloadService.cleanTempCache();
       expect(FileSystem.deleteAsync).toHaveBeenCalledWith(
         'file:///data/user/0/com.mbm.whatispill/files/db_updates/',
         { idempotent: true },

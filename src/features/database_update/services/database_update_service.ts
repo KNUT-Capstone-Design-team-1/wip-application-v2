@@ -160,69 +160,6 @@ export const databaseUpdateService = {
     return 'OK';
   },
 
-  // 호환성을 위한 alias
-  async installTableFromFiles(
-    table: TDataTable,
-    totalPages: number,
-    expectedTotalCount: number,
-    onProgress?: (insertedPages: number, totalPages: number) => void,
-  ): Promise<'OK' | 'ERROR'> {
-    return this.applyCachedDataToTable(
-      table,
-      totalPages,
-      expectedTotalCount,
-      onProgress,
-    );
-  },
-
-  // 페이지 단위 데이터를 조회하여 로컬 테이블에 직접 삽입 (직접 호출 시)
-  async insertData(currentPage: number, table: TDataTable) {
-    let response: Awaited<
-      ReturnType<(typeof databaseUpdateRepository)['getResourceData']>
-    >;
-
-    try {
-      response = await databaseUpdateRepository.getResourceData(
-        table,
-        currentPage,
-      );
-      const hasValidResponse: boolean = Boolean(
-        response?.resource?.length && response?.totalPage,
-      );
-
-      if (!hasValidResponse) {
-        return {
-          code: 'ERROR-NO-RESOURCE-DATA' as const,
-          totalPage: 0,
-          total: 0,
-        };
-      }
-    } catch (error) {
-      logger.error(
-        `[INSERT-DATA] Failed to update ${table} table. ${(error as Error).stack || error}`,
-      );
-      return { code: 'ERROR-GET-RESOURCE' as const, totalPage: 0, total: 0 };
-    }
-
-    try {
-      await databaseUpdateRepository.insertData(table, response.resource);
-      return {
-        code: 'OK' as const,
-        totalPage: response.totalPage,
-        total: response.total,
-      };
-    } catch (error) {
-      logger.error(
-        `[INSERT-DATA] Failed to insert ${table} table. ${(error as Error).stack || error}`,
-      );
-      return {
-        code: 'ERROR-INSERT-TABLE' as const,
-        totalPage: response.totalPage,
-        total: response.total,
-      };
-    }
-  },
-
   // 특정 테이블의 전체 행 개수 조회
   getTableRowCount(table: TDataTable) {
     return databaseUpdateRepository.getTableRowCount(table);

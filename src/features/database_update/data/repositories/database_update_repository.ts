@@ -23,16 +23,6 @@ export const databaseUpdateRepository = {
     return databaseUpdateRemoteDataSource.getTableSchema(table);
   },
 
-  // 원격 데이터소스에서 페이지 데이터를 가져온다.
-  getResourceData(
-    table: TDataTable,
-    page: number,
-  ): Promise<
-    GoogleCloud.ResourceDataAPI.IResourceDataResponse<TResourceDataSchemas>
-  > {
-    return databaseUpdateRemoteDataSource.getResourceData(table, page);
-  },
-
   // SQLite 데이터소스에서 로컬 버전을 가져온다.
   getConfigs(keys: TConfigKey[]): Promise<IConfig[]> {
     return databaseUpdateSqliteDataSource.getConfigs(keys);

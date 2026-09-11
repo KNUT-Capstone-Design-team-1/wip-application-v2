@@ -53,11 +53,6 @@ export const databaseDownloadService = {
     return `${baseUrl}?table=${encodeURIComponent(table)}&page=${page}&limit=${DOWNLOAD_CONFIG.PAGE_LIMIT}`;
   },
 
-  // 호환성을 위한 alias
-  getDownloadUrl(table: TDataTable, page: number): string {
-    return this.getResourceApiUrl(table, page);
-  },
-
   // 파싱된 캐시 데이터의 구조 및 필드 유효성 검증
   validateCachedPayloadStructure(parsed: any): boolean {
     const hasValidResource: boolean = Array.isArray(parsed?.resource);
@@ -103,13 +98,8 @@ export const databaseDownloadService = {
     }
   },
 
-  // 호환성을 위한 alias
-  async isPageDownloaded(table: TDataTable, page: number): Promise<boolean> {
-    return this.isPageDataCached(table, page);
-  },
-
   // 수신된 임시 JSON 파일의 데이터 구조 및 필드 유효성 검증
-  async processAndEncryptDownloadedPayload(
+  async processDownloadedPayload(
     filePath: string,
     table: TDataTable,
     page: number,
@@ -233,11 +223,7 @@ export const databaseDownloadService = {
           result.status >= 200 && result.status < 300;
 
         if (isHttpSuccess) {
-          return await this.processAndEncryptDownloadedPayload(
-            filePath,
-            table,
-            page,
-          );
+          return await this.processDownloadedPayload(filePath, table, page);
         }
 
         throw new Error(
@@ -297,15 +283,6 @@ export const databaseDownloadService = {
     await Promise.all(workers);
   },
 
-  // 호환성을 위한 alias
-  async downloadPageWithRetry(
-    table: TDataTable,
-    page: number,
-    retries = DOWNLOAD_CONFIG.MAX_RETRY_COUNT,
-  ): Promise<ICachedPageData> {
-    return this.fetchAndCachePageData(table, page, retries);
-  },
-
   // 캐시된 페이지 JSON 파일 데이터 읽기 (손상 시 자동 재수신 복구)
   async readCachedPageData(
     table: TDataTable,
@@ -333,14 +310,6 @@ export const databaseDownloadService = {
     return this.fetchAndCachePageData(table, page);
   },
 
-  // 호환성을 위한 alias
-  async readDownloadedPage(
-    table: TDataTable,
-    page: number,
-  ): Promise<ICachedPageData> {
-    return this.readCachedPageData(table, page);
-  },
-
   // 테이블의 모든 페이지 데이터가 정상적으로 캐시되었는지 검증
   async verifyAllTablePagesCached(
     table: TDataTable,
@@ -353,14 +322,6 @@ export const databaseDownloadService = {
       }
     }
     return true;
-  },
-
-  // 호환성을 위한 alias
-  async verifyAllTablePagesDownloaded(
-    table: TDataTable,
-    totalPages: number,
-  ): Promise<boolean> {
-    return this.verifyAllTablePagesCached(table, totalPages);
   },
 
   // 임시 캐시 파일 디렉토리 전체 삭제
@@ -378,11 +339,6 @@ export const databaseDownloadService = {
         `[CLEANUP-TEMP] Failed to delete temp cache directory: ${(error as Error).message}`,
       );
     }
-  },
-
-  // 호환성을 위한 alias
-  async cleanTempFiles(): Promise<void> {
-    return this.cleanTempCache();
   },
 
   // 영속 업데이트 상태 저장
