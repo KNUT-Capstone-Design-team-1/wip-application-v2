@@ -26,6 +26,10 @@ export const databaseBootstrapService = {
       isUpdating: false,
     });
 
+    // 앱 재실행 시 이전 중단된 임시 캐시 및 상태 정리 (처음부터 깨끗하게 다시 받기)
+    await databaseDownloadService.cleanTempCache();
+    await databaseDownloadService.clearUpdateState();
+
     await initDatabase();
   },
 
@@ -36,7 +40,7 @@ export const databaseBootstrapService = {
     });
   },
 
-  // DB 업데이트 필요 여부 검사 및 중단된 이전 상태 복구
+  // DB 업데이트 필요 여부 검사
   async checkAndPromptUpdates(
     setUpdateProgress: React.Dispatch<React.SetStateAction<IUpdateProgress>>,
   ): Promise<IUpdateNeeded[] | null> {
@@ -45,27 +49,6 @@ export const databaseBootstrapService = {
       progress: 0,
       isUpdating: false,
     });
-
-    // 이전에 중단된 백그라운드 수신 상태가 있는지 확인
-    const persistedState = await databaseDownloadService.loadUpdateState();
-    const hasPersistedState: boolean = Boolean(persistedState);
-    const hasTablesToUpdate: boolean = Boolean(
-      persistedState?.tablesToUpdate &&
-      persistedState.tablesToUpdate.length > 0,
-    );
-    const isStateInProgress: boolean =
-      persistedState?.status !== 'completed' &&
-      persistedState?.status !== 'failed';
-
-    const canResumeFromStorage: boolean =
-      hasPersistedState && hasTablesToUpdate && isStateInProgress;
-
-    if (canResumeFromStorage) {
-      logger.info(
-        `[BOOT] Restoring interrupted background update: ${persistedState!.tablesToUpdate.length} tables`,
-      );
-      return persistedState!.tablesToUpdate;
-    }
 
     const { updatesNeeded, isForceUpdate } = await getRequiredDatabaseUpdates();
     const hasUpdatesNeeded: boolean = updatesNeeded.length > 0;

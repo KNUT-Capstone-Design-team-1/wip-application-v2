@@ -69,17 +69,36 @@ export const databaseDownloadService = {
     return isPayloadValid;
   },
 
-  // 해당 페이지의 JSON 데이터가 이미 로컬에 올바르게 캐시되어 있는지 검증 (초고속 파일 상태 검증)
+  // 해당 페이지의 JSON 데이터가 이미 로컬에 올바르게 캐시되어 있는지 검증 (손상/불완전 파일 자동 감지 및 정리)
   async isPageDataCached(table: TDataTable, page: number): Promise<boolean> {
     const filePath = this.getPageFilePath(table, page);
     try {
       const fileInfo = await FileSystem.getInfoAsync(filePath);
-
       const isFileExistingAndNotEmpty: boolean =
         fileInfo.exists && (fileInfo.size ?? 0) > 0;
 
-      return isFileExistingAndNotEmpty;
+      if (!isFileExistingAndNotEmpty) {
+        return false;
+      }
+
+      // JSON 무결성 및 구조 유효성 검사 (깨진 파일 자동 감지)
+      const content = await FileSystem.readAsStringAsync(filePath);
+      const parsed = JSON.parse(content);
+      const isPayloadValid: boolean =
+        this.validateCachedPayloadStructure(parsed);
+
+      if (!isPayloadValid) {
+        await FileSystem.deleteAsync(filePath, { idempotent: true });
+        return false;
+      }
+
+      return true;
     } catch {
+      try {
+        await FileSystem.deleteAsync(filePath, { idempotent: true });
+      } catch {
+        // ignore
+      }
       return false;
     }
   },
@@ -100,6 +119,11 @@ export const databaseDownloadService = {
 
     const isPayloadValid: boolean = this.validateCachedPayloadStructure(parsed);
     if (!isPayloadValid) {
+      try {
+        await FileSystem.deleteAsync(filePath, { idempotent: true });
+      } catch {
+        // ignore
+      }
       throw new Error(
         `Invalid JSON structure in response for ${table} page ${page}`,
       );
@@ -282,14 +306,31 @@ export const databaseDownloadService = {
     return this.fetchAndCachePageData(table, page, retries);
   },
 
-  // 캐시된 페이지 JSON 파일 데이터 읽기 (초고속 직접 파싱)
+  // 캐시된 페이지 JSON 파일 데이터 읽기 (손상 시 자동 재수신 복구)
   async readCachedPageData(
     table: TDataTable,
     page: number,
   ): Promise<ICachedPageData> {
     const filePath = this.getPageFilePath(table, page);
-    const content = await FileSystem.readAsStringAsync(filePath);
-    return JSON.parse(content) as ICachedPageData;
+    try {
+      const content = await FileSystem.readAsStringAsync(filePath);
+      const parsed = JSON.parse(content) as ICachedPageData;
+      const isPayloadValid: boolean =
+        this.validateCachedPayloadStructure(parsed);
+
+      if (isPayloadValid) {
+        return parsed;
+      }
+    } catch {
+      // 파일 손상 시 삭제 후 재수신
+      try {
+        await FileSystem.deleteAsync(filePath, { idempotent: true });
+      } catch {
+        // ignore
+      }
+    }
+
+    return this.fetchAndCachePageData(table, page);
   },
 
   // 호환성을 위한 alias

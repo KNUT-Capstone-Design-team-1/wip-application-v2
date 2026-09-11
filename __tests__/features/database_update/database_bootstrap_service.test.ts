@@ -51,12 +51,14 @@ describe('databaseBootstrapService 단위 테스트', () => {
   });
 
   describe('executeInitialSetup', () => {
-    it('외부 설정 로드 및 데이터베이스 초기화를 순차적으로 실행해야 한다', async () => {
+    it('외부 설정 로드, 임시 캐시 정리 및 데이터베이스 초기화를 순차적으로 실행해야 한다', async () => {
       const setUpdateProgress = jest.fn();
 
       await databaseBootstrapService.executeInitialSetup(setUpdateProgress);
 
       expect(AppConfigService.loadExternalConfig).toHaveBeenCalled();
+      expect(databaseDownloadService.cleanTempCache).toHaveBeenCalled();
+      expect(databaseDownloadService.clearUpdateState).toHaveBeenCalled();
       expect(initDatabase).toHaveBeenCalled();
       expect(setUpdateProgress).toHaveBeenCalledWith(
         expect.objectContaining({ status: '서버 연결 중' }),
@@ -68,12 +70,12 @@ describe('databaseBootstrapService 단위 테스트', () => {
   });
 
   describe('checkAndPromptUpdates', () => {
-    it('중단된 영속 업데이트 상태가 있으면 해당 목록을 반환해야 한다', async () => {
-      (databaseDownloadService.loadUpdateState as jest.Mock).mockResolvedValue({
-        status: 'downloading',
-        tablesToUpdate: [
+    it('업데이트 필요 시 최신 서버 목록을 확인하고 반환해야 한다', async () => {
+      (getRequiredDatabaseUpdates as jest.Mock).mockResolvedValue({
+        updatesNeeded: [
           { table: 'pill_data', schemaVer: 2, dataVer: 20260101 },
         ],
+        isForceUpdate: true,
       });
 
       const setUpdateProgress = jest.fn();
