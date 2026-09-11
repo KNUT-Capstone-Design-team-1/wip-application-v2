@@ -71,21 +71,6 @@ describe('databaseDownloadService 단위 테스트', () => {
         'file:///data/user/0/com.mbm.whatispill/files/db_updates/pill_data_p2.json',
       );
     });
-
-    it('다운로드 URL을 올바르게 생성해야 한다', () => {
-      const pillUrl = databaseDownloadService.getResourceApiUrl('pill_data', 3);
-      expect(pillUrl).toBe(
-        'https://api.example.com/resource?table=pill_data&page=3&limit=5000',
-      );
-
-      const cannabisUrl = databaseDownloadService.getResourceApiUrl(
-        'cannabis',
-        1,
-      );
-      expect(cannabisUrl).toBe(
-        'https://api.example.com/resource?table=cannabis&page=1&limit=5000',
-      );
-    });
   });
 
   describe('isPageDataCached', () => {

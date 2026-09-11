@@ -4,13 +4,14 @@ import { useAppInitStore } from '../store/app_init_store';
 import { databaseDownloadService } from '../services/database_download_service';
 import logger from '@utils/logger';
 
-import { IPersistedUpdateState } from '../types';
+import { IPersistedUpdateState, IUpdateProgress } from '../types';
+import { TDataTable } from '@services/database/types';
 
 // 영속화된 백그라운드 진행 상태를 Zustand 전역 스토어에 동기화
 export const syncPersistedStateToStore = (
   persistedState: IPersistedUpdateState,
   setters: {
-    setUpdateCurrentTable: (table: any) => void;
+    setUpdateCurrentTable: (table: TDataTable | null) => void;
     setUpdateCurrentPage: (page: number) => void;
     setTotalPages: (pages: number) => void;
     setOverallProgress: (progress: number) => void;
@@ -28,7 +29,7 @@ export const syncPersistedStateToStore = (
     typeof persistedState.overallProgress === 'number';
 
   if (hasCurrentTable) {
-    setters.setUpdateCurrentTable(persistedState.currentTable);
+    setters.setUpdateCurrentTable(persistedState.currentTable as TDataTable);
   }
   if (hasCurrentPage) {
     setters.setUpdateCurrentPage(persistedState.currentPage);
@@ -44,7 +45,7 @@ export const syncPersistedStateToStore = (
 // AppState 변화를 감지하여 포그라운드 복귀 시 백그라운드에서 수신된 업데이트 상태를 스토어 및 UI에 동기화
 export const useAppLifecycle = (
   _currentTableIndexRef?: React.RefObject<number>,
-  setUpdateProgress?: React.Dispatch<React.SetStateAction<any>>,
+  setUpdateProgress?: React.Dispatch<React.SetStateAction<IUpdateProgress>>,
 ) => {
   const {
     status,

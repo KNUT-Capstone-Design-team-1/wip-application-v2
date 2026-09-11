@@ -181,7 +181,7 @@ export const applySingleTableToDatabase = async (
 
   callbacks.setUpdateProgress({
     status: SYNC_PHASE_STATUS.APPLYING,
-    progress: (tIdx + 0.5) / totalTables,
+    progress: 1.0,
     isUpdating: true,
   });
 
@@ -271,8 +271,12 @@ export const handlePipelineFailure = (
 
   callbacks.showToast({
     message:
-      '데이터베이스 업데이트 중 문제가 발생했습니다. 앱을 다시 실행해 주세요.',
+      '데이터베이스 업데이트 중 문제가 발생했습니다. 기존 데이터로 앱을 실행합니다.',
   });
+
+  setTimeout(() => {
+    callbacks.setIsInitializing(false);
+  }, 1500);
 };
 
 // 전체 데이터베이스 동기화 파이프라인 오케스트레이터

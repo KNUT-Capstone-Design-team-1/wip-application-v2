@@ -54,6 +54,17 @@ export const executeDatabaseBackgroundSync = async (): Promise<void> => {
             });
           },
         );
+      } else {
+        const targetOverall: number = (tIdx + 1) / totalTables;
+        databaseDownloadService.saveUpdateState({
+          ...persistedState,
+          currentTableIndex: tIdx,
+          currentTable: table,
+          currentPage: 1,
+          totalPages: 1,
+          overallProgress: targetOverall,
+          lastUpdated: Date.now(),
+        });
       }
     }
     return;

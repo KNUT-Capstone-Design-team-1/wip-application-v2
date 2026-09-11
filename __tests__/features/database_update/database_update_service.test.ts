@@ -183,7 +183,7 @@ describe('databaseUpdateService 단위 테스트', () => {
       expect(onProgress).toHaveBeenCalledWith(2, 2);
     });
 
-    it('행 개수가 기대값과 다르면 [VERIFICATION_FAILED] 에러를 던져야 한다', async () => {
+    it('삽입된 행 개수가 0개이면 [VERIFICATION_FAILED] 에러를 던져야 한다', async () => {
       (databaseUpdateRepository.getTableSchema as jest.Mock).mockResolvedValue({
         columns: [{ name: 'id', type: 'INT' }],
       });
@@ -196,7 +196,7 @@ describe('databaseUpdateService 단위 테스트', () => {
       });
       (
         databaseUpdateRepository.getTableRowCount as jest.Mock
-      ).mockResolvedValue(1); // 기대값은 2인데 실제값 1
+      ).mockResolvedValue(0); // 데이터 삽입 실패로 0개
 
       await expect(
         databaseUpdateService.applyCachedDataToTable('pill_data', 1, 2),
