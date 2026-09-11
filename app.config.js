@@ -49,7 +49,6 @@ export default {
         UIBackgroundModes: ['fetch', 'processing'],
 
         BGTaskSchedulerPermittedIdentifiers: [
-          'com.mbm.whatispill.database-update',
           'com.mbm.whatispill.background-sync',
         ],
 
