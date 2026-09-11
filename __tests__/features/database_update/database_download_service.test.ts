@@ -75,7 +75,7 @@ describe('databaseDownloadService 단위 테스트', () => {
     it('다운로드 URL을 올바르게 생성해야 한다', () => {
       const url = databaseDownloadService.getDownloadUrl('pill_data', 3);
       expect(url).toBe(
-        'https://api.example.com/resource?table=pill_data&page=3',
+        'https://api.example.com/resource?table=pill_data&page=3&limit=5000',
       );
     });
   });
@@ -176,7 +176,7 @@ describe('databaseDownloadService 단위 테스트', () => {
       );
 
       expect(FileSystem.downloadAsync).toHaveBeenCalledWith(
-        'https://api.example.com/resource?table=cannabis&page=1',
+        'https://api.example.com/resource?table=cannabis&page=1&limit=5000',
         'file:///data/user/0/com.mbm.whatispill/files/db_updates/cannabis_p1.json',
         expect.objectContaining({
           sessionType: FileSystem.FileSystemSessionType.BACKGROUND,

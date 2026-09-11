@@ -18,6 +18,7 @@ export interface IResourceDataResponse<T extends TResourceDataSchemas> {
 export async function requestResourceData<T extends TResourceDataSchemas>(
   table: TDataTable,
   page: number,
+  limit: number = 5000,
 ) {
   const serviceURL = process.env
     .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_RESOURCE_DATA_URL as string;
@@ -25,7 +26,7 @@ export async function requestResourceData<T extends TResourceDataSchemas>(
   const token = getToken();
 
   const result = await axios.get<IResourceDataResponse<T>>(serviceURL, {
-    params: { table, page },
+    params: { table, page, limit },
     headers: { Authorization: `Bearer ${token}` },
   });
 

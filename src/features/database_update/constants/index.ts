@@ -11,6 +11,7 @@ export const DOWNLOAD_CONFIG = {
   RETRY_DELAY_MS: 300,
   DOWNLOAD_TIMEOUT_MS: 30000,
   MAX_CONCURRENT_DOWNLOADS: 6,
+  PAGE_LIMIT: 5000,
 } as const;
 
 // 동기화 단계별 통합 UI 상태 메시지

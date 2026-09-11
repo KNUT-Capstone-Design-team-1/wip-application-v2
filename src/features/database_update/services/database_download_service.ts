@@ -46,11 +46,11 @@ export const databaseDownloadService = {
     return `${this.getTempDirectory()}${table}_p${page}.json`;
   },
 
-  // REST API 엔드포인트 URL 생성 (테이블 및 페이지 파라미터 포함)
+  // REST API 엔드포인트 URL 생성 (테이블, 페이지 및 5000개 limit 파라미터 포함)
   getResourceApiUrl(table: TDataTable, page: number): string {
     const baseUrl = process.env
       .EXPO_PUBLIC_GOOGLE_CLOUD_PLATFORM_WIP_RESOURCE_DATA_URL as string;
-    return `${baseUrl}?table=${encodeURIComponent(table)}&page=${page}`;
+    return `${baseUrl}?table=${encodeURIComponent(table)}&page=${page}&limit=${DOWNLOAD_CONFIG.PAGE_LIMIT}`;
   },
 
   // 호환성을 위한 alias
