@@ -14,6 +14,7 @@ export interface IDatabaseVersionResponse {
   narcotics: IDatabaseVersion;
   psychotropics: IDatabaseVersion;
   prohibited_list: IDatabaseVersion;
+  // functional_food_nutrients?: IDatabaseVersion; // UI 미구현으로 인해 제외 (추후 UI 구현 시 주석 해제)
 }
 
 /**

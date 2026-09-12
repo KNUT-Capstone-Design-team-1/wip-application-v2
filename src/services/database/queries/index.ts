@@ -7,3 +7,4 @@ export * as CannabisQuery from './cannabis';
 export * as NarcoticsQuery from './narcotics';
 export * as PsychotropicsQuery from './psychotropics';
 export * as ProhibitedListQuery from './prohibited_list';
+export * as FunctionalFoodNutrientsQuery from './functional_food_nutrients';

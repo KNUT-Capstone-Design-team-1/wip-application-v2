@@ -21,6 +21,8 @@ const DEFAULT_CONFIG: IConfig[] = [
   { key: 'psychotropicsDataVersion', value: 0 },
   { key: 'prohibitedListSchemaVersion', value: 0 },
   { key: 'prohibitedListDataVersion', value: 0 },
+  // { key: 'functionalFoodNutrientsSchemaVersion', value: 0 }, // UI 미구현으로 인해 제외
+  // { key: 'functionalFoodNutrientsDataVersion', value: 0 }, // UI 미구현으로 인해 제외
 ] as const;
 
 /**

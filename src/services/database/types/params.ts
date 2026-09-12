@@ -1,5 +1,6 @@
 import {
   ICannabis,
+  IFunctionalFoodNutrients,
   IMarkImages,
   INarcotics,
   INearbyPharmacies,
@@ -89,3 +90,21 @@ export type TPsychotropicsSearchParam = Pick<
 
 // 병용 금기 데이터 검색을 위한 파라미터 타입
 export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'>;
+
+// 건강기능식품 영양성분 데이터 검색을 위한 파라미터 타입
+export type TFunctionalFoodNutrientsSearchParam = Partial<
+  Pick<
+    IFunctionalFoodNutrients,
+    | 'foodCode'
+    | 'foodName'
+    | 'foodMajorCategoryName'
+    | 'representativeFoodName'
+    | 'foodMediumCategoryName'
+    | 'itemReportNumber'
+    | 'manufacturerName'
+    | 'importerName'
+    | 'distributorName'
+  >
+> & {
+  keyword?: string; // 통합 검색어
+};
