@@ -23,13 +23,19 @@ export const databaseStateStorage = {
   async loadUpdateState(): Promise<IPersistedUpdateState | null> {
     try {
       const json = await AsyncStorage.getItem(STORAGE_KEYS.UPDATE_STATE);
+
       const hasStoredJson: boolean = Boolean(json);
-      if (!hasStoredJson) return null;
+
+      if (!hasStoredJson) {
+        return null;
+      }
+
       return JSON.parse(json!) as IPersistedUpdateState;
     } catch (error) {
       logger.warn(
         `[LOAD-STATE] Failed to load persisted state: ${(error as Error).message}`,
       );
+
       return null;
     }
   },

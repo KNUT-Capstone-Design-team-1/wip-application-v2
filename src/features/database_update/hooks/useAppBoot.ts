@@ -68,7 +68,9 @@ export const useAppBoot = (
 
   useEffect(() => {
     const isAlreadyBooted: boolean = isBootedRef.current;
-    if (isAlreadyBooted) return;
+    if (isAlreadyBooted) {
+      return;
+    }
     isBootedRef.current = true;
 
     const boot = async () => {

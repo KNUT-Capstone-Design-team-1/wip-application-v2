@@ -9,7 +9,6 @@ import {
   DatabaseUpdateView,
   DatabaseUpdateModal,
 } from '@features/database_update';
-import { backgroundTaskService } from '@services/background';
 import MainNoticeBottomSheet from '@features/notice/components/MainNoticeBottomSheet';
 import Toast from 'react-native-toast-message';
 import toastConfig from '@components/config/toastConfig';
@@ -30,10 +29,6 @@ initAdMob();
  */
 const RootLayout = () => {
   const { isInitializing, updateProgress } = useAppInitializer();
-
-  useEffect(() => {
-    backgroundTaskService.registerTask();
-  }, []);
 
   useEffect(() => {
     if (!isInitializing) {
