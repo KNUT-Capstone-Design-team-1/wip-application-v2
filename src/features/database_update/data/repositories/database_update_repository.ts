@@ -8,7 +8,6 @@ import {
   TResourceDataSchemas,
 } from '@services/database/types';
 import { IDatabaseVersionResponse } from '@services/apis/google_cloud/wip_database_version';
-import { GoogleCloud } from '@services/apis';
 
 export const databaseUpdateRepository = {
   // 원격 데이터소스에서 서버 버전을 가져온다.

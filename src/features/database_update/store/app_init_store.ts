@@ -8,8 +8,6 @@ const initialState = {
   updateCurrentPage: 1,
   totalPages: 1,
   overallProgress: 0,
-  downloadedBytes: 0,
-  totalBytes: 0,
   errorMessage: null,
   updateModalData: null,
   updateModalResolve: null,
@@ -24,8 +22,6 @@ export const useAppInitStore = create<AppInitState>((set) => ({
   setUpdateCurrentPage: (page) => set({ updateCurrentPage: page }),
   setTotalPages: (pages) => set({ totalPages: pages }),
   setOverallProgress: (progress) => set({ overallProgress: progress }),
-  setDownloadedBytes: (downloadedBytes) => set({ downloadedBytes }),
-  setTotalBytes: (totalBytes) => set({ totalBytes }),
   setErrorMessage: (errorMessage) => set({ errorMessage }),
   setUpdateModal: (data, resolve) =>
     set({ updateModalData: data, updateModalResolve: resolve }),

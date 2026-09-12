@@ -10,8 +10,6 @@ export interface AppInitState {
   updateCurrentPage: number;
   totalPages: number;
   overallProgress: number;
-  downloadedBytes: number;
-  totalBytes: number;
   errorMessage: string | null;
   updateModalData: IUpdateNeeded[] | null;
   updateModalResolve: ((result: boolean) => void) | null;
@@ -23,8 +21,6 @@ export interface AppInitState {
   setUpdateCurrentPage: (page: number) => void;
   setTotalPages: (pages: number) => void;
   setOverallProgress: (progress: number) => void;
-  setDownloadedBytes: (bytes: number) => void;
-  setTotalBytes: (bytes: number) => void;
   setErrorMessage: (error: string | null) => void;
   setUpdateModal: (
     data: IUpdateNeeded[] | null,

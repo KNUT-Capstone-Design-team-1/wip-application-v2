@@ -116,5 +116,27 @@ describe('databaseBootstrapService 단위 테스트', () => {
       expect(result).toHaveLength(1);
       expect(result![0].table).toBe('cannabis');
     });
+
+    it('업데이트 도중 앱이 종료되어 진행 중인 상태가 남아있으면 확인 모달 없이 강제 업데이트를 진행해야 한다', async () => {
+      (databaseDownloadService.loadUpdateState as jest.Mock).mockResolvedValue({
+        status: 'downloading',
+        currentTableIndex: 0,
+        currentTable: 'cannabis',
+        currentPage: 2,
+        totalPages: 5,
+        overallProgress: 0.4,
+      });
+      (getRequiredDatabaseUpdates as jest.Mock).mockResolvedValue({
+        updatesNeeded: [{ table: 'cannabis', schemaVer: 1, dataVer: 20260101 }],
+        isForceUpdate: false,
+      });
+
+      const setUpdateProgress = jest.fn();
+      const result =
+        await databaseBootstrapService.checkAndPromptUpdates(setUpdateProgress);
+
+      expect(result).toHaveLength(1);
+      expect(result![0].table).toBe('cannabis');
+    });
   });
 });

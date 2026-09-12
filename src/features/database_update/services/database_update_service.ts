@@ -11,6 +11,20 @@ import { databaseDownloadService } from './database_download_service';
 
 let databaseVersionOnServer: IDatabaseVersionResponse | undefined;
 
+// 로컬 DB 버전 추출 헬퍼
+const extractLocalVersions = (
+  configs: { key: string; value: string | number }[],
+) => {
+  const schemaVer = configs.find((v) => v.key.endsWith('SchemaVersion'))?.value;
+  const dataVer = configs.find((v) => v.key.endsWith('DataVersion'))?.value;
+
+  return {
+    schemaVersion: schemaVer != null ? Number(schemaVer) : null,
+    dataVersion: dataVer != null ? Number(dataVer) : null,
+  };
+};
+
+// SQLite 데이터베이스 테이블 초기화, 데이터 적용 및 버전 관리 서비스
 export const databaseUpdateService = {
   // 캐시된 서버 버전 정보 초기화
   clearVersionCache(): void {
@@ -23,20 +37,15 @@ export const databaseUpdateService = {
       await databaseUpdateRepository.getDatabaseVersion();
     const { schemaVersion: newSchemaVersion, dataVersion: newDataVersion } =
       databaseVersionOnServer[table];
-    const currentVersion = await databaseUpdateRepository.getConfigs(
+
+    const currentConfigs = await databaseUpdateRepository.getConfigs(
       TABLE_CONFIG_KEYS_MAP[table],
     );
-    const currentSchemaVersion = currentVersion.find((v) =>
-      v.key.endsWith('SchemaVersion'),
-    )?.value;
-    const currentDataVersion = currentVersion.find((v) =>
-      v.key.endsWith('DataVersion'),
-    )?.value;
+    const { schemaVersion: oldSchemaVersion, dataVersion: oldDataVersion } =
+      extractLocalVersions(currentConfigs);
 
-    const hasMissingLocalVersion: boolean =
-      currentSchemaVersion == null || currentDataVersion == null;
-
-    if (hasMissingLocalVersion) {
+    // 로컬 버전 정보가 없는 경우 기본값으로 업데이트 필요 반환
+    if (oldSchemaVersion == null || oldDataVersion == null) {
       return {
         code: 'REQUIRE-UPDATE' as const,
         newSchemaVersion,
@@ -45,9 +54,6 @@ export const databaseUpdateService = {
         oldDataVersion: 0,
       };
     }
-
-    const oldSchemaVersion = Number(currentSchemaVersion);
-    const oldDataVersion = Number(currentDataVersion);
 
     const isSchemaUpdateRequired: boolean =
       oldSchemaVersion < Number(newSchemaVersion);
@@ -116,7 +122,7 @@ export const databaseUpdateService = {
     }
   },
 
-  // 실제 삽입된 레코드 수와 정합성 검증 (중복 키 교체 허용)
+  // 실제 삽입된 레코드 수와 정합성 검증
   async verifyInsertedRowCount(
     table: TDataTable,
     expectedTotalCount: number,

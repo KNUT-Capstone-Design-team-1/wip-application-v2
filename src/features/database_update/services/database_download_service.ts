@@ -1,12 +1,13 @@
 import * as FileSystem from 'expo-file-system/legacy';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TDataTable } from '@services/database/types';
 import { GoogleCloud } from '@services/apis';
 import logger from '@utils/logger';
 import { ICachedPageData, IPersistedUpdateState } from '../types';
-import { STORAGE_KEYS, DOWNLOAD_CONFIG } from '../constants';
+import { DOWNLOAD_CONFIG } from '../constants';
+import { databaseFileCache } from './download/database_file_cache';
+import { databaseStateStorage } from './download/database_state_storage';
 
-// 타임아웃이 적용된 프로미스 래퍼
+// 타임아웃 래퍼 유틸
 const withTimeout = <T>(
   promise: Promise<T>,
   ms: number,
@@ -20,101 +21,67 @@ const withTimeout = <T>(
   ]);
 };
 
-// REST API로부터 페이지별 JSON 데이터를 백그라운드 세션으로 수신 및 임시 캐싱하는 서비스
+// REST API 데이터 수신, 파일 캐싱 및 상태 영속화 통합 서비스
 export const databaseDownloadService = {
-  // 임시 캐시 디렉토리 경로 반환
+  // === 파일 시스템 캐시 위임 메서드 ===
   getTempDirectory(): string {
-    const baseDir = FileSystem.documentDirectory || FileSystem.cacheDirectory;
-    return `${baseDir}db_updates/`;
+    return databaseFileCache.getTempDirectory();
   },
 
-  // 임시 캐시 디렉토리 생성 및 준비
-  async ensureTempDirectory(): Promise<string> {
-    const dir = this.getTempDirectory();
-    const dirInfo = await FileSystem.getInfoAsync(dir);
-    const isDirectoryExisting: boolean = dirInfo.exists;
-
-    if (!isDirectoryExisting) {
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-    }
-    return dir;
+  ensureTempDirectory(): Promise<string> {
+    return databaseFileCache.ensureTempDirectory();
   },
 
-  // 테이블 및 페이지별 임시 JSON 파일 경로 반환
   getPageFilePath(table: TDataTable, page: number): string {
-    return `${this.getTempDirectory()}${table}_p${page}.json`;
+    return databaseFileCache.getPageFilePath(table, page);
   },
 
-  // 파싱된 캐시 데이터의 구조 및 필드 유효성 검증
-  validateCachedPayloadStructure(parsed: any): boolean {
-    const hasValidResource: boolean = Array.isArray(parsed?.resource);
-    const hasValidTotal: boolean = typeof parsed?.total === 'number';
-    const hasValidTotalPage: boolean = typeof parsed?.totalPage === 'number';
-    const isPayloadValid: boolean =
-      hasValidResource && hasValidTotal && hasValidTotalPage;
-
-    return isPayloadValid;
+  validateCachedPayloadStructure(parsed: unknown): boolean {
+    return databaseFileCache.validatePayloadStructure(parsed);
   },
 
-  // 해당 페이지의 JSON 데이터가 이미 로컬에 올바르게 캐시되어 있는지 검증 (손상/불완전 파일 자동 감지 및 정리)
-  async isPageDataCached(table: TDataTable, page: number): Promise<boolean> {
-    const filePath = this.getPageFilePath(table, page);
-    try {
-      const fileInfo = await FileSystem.getInfoAsync(filePath);
-      const isFileExistingAndNotEmpty: boolean =
-        fileInfo.exists && (fileInfo.size ?? 0) > 0;
-
-      if (!isFileExistingAndNotEmpty) {
-        return false;
-      }
-
-      // JSON 무결성 및 구조 유효성 검사 (깨진 파일 자동 감지)
-      const content = await FileSystem.readAsStringAsync(filePath);
-      const parsed = JSON.parse(content);
-      const isPayloadValid: boolean =
-        this.validateCachedPayloadStructure(parsed);
-
-      if (!isPayloadValid) {
-        await FileSystem.deleteAsync(filePath, { idempotent: true });
-        return false;
-      }
-
-      return true;
-    } catch {
-      try {
-        await FileSystem.deleteAsync(filePath, { idempotent: true });
-      } catch {
-        // ignore
-      }
-      return false;
-    }
+  isPageDataCached(table: TDataTable, page: number): Promise<boolean> {
+    return databaseFileCache.isPageDataCached(table, page);
   },
 
-  // 수신된 임시 JSON 파일의 데이터 구조 및 필드 유효성 검증
-  async processDownloadedPayload(
-    filePath: string,
+  async readCachedPageData(
     table: TDataTable,
     page: number,
   ): Promise<ICachedPageData> {
-    const rawContent = await FileSystem.readAsStringAsync(filePath);
-    const parsed = JSON.parse(rawContent) as ICachedPageData;
-
-    const isPayloadValid: boolean = this.validateCachedPayloadStructure(parsed);
-    if (!isPayloadValid) {
-      try {
-        await FileSystem.deleteAsync(filePath, { idempotent: true });
-      } catch {
-        // ignore
-      }
-      throw new Error(
-        `Invalid JSON structure in response for ${table} page ${page}`,
-      );
+    const cached = await databaseFileCache.readCachedPageData(table, page);
+    if (cached) {
+      return cached;
     }
-
-    return parsed;
+    return this.fetchAndCachePageData(table, page);
   },
 
-  // 다운로드 시도 실패 시 임시 파일 정리 및 재시도 대기 처리
+  verifyAllTablePagesCached(
+    table: TDataTable,
+    totalPages: number,
+  ): Promise<boolean> {
+    return databaseFileCache.verifyAllTablePagesCached(table, totalPages);
+  },
+
+  cleanTempCache(): Promise<void> {
+    return databaseFileCache.cleanTempCache();
+  },
+
+  // === 상태 영속화(AsyncStorage) 위임 메서드 ===
+  saveUpdateState(state: IPersistedUpdateState): Promise<void> {
+    return databaseStateStorage.saveUpdateState(state);
+  },
+
+  loadUpdateState(): Promise<IPersistedUpdateState | null> {
+    return databaseStateStorage.loadUpdateState();
+  },
+
+  clearUpdateState(): Promise<void> {
+    return databaseStateStorage.clearUpdateState();
+  },
+
+  // === 네트워크 다운로드 및 워커 풀 로직 ===
+
+  // 다운로드 실패 시 재시도 핸들러
   async handleDownloadAttemptError(
     err: unknown,
     filePath: string,
@@ -142,7 +109,7 @@ export const databaseDownloadService = {
     }
   },
 
-  // REST API 응답 JSON 데이터를 수신하여 임시 파일로 캐싱 (실패 시 지연 재시도)
+  // 단일 페이지 데이터 수신 및 로컬 캐싱 (실패 시 지연 재시도)
   async fetchAndCachePageData(
     table: TDataTable,
     page: number,
@@ -151,7 +118,7 @@ export const databaseDownloadService = {
     await this.ensureTempDirectory();
     const filePath = this.getPageFilePath(table, page);
 
-    // 이미 유효한 캐시 파일이 존재하면 네트워크 요청 생략
+    // 이미 유효한 캐시 파일이 있으면 네트워크 요청 생략
     const isCacheValid: boolean = await this.isPageDataCached(table, page);
     if (isCacheValid) {
       return this.readCachedPageData(table, page);
@@ -203,7 +170,7 @@ export const databaseDownloadService = {
     );
   },
 
-  // 특정 테이블의 여러 페이지를 최적의 동시성 풀(Worker Pool)로 제어하여 수신 (소켓 정체 및 타임아웃 방지)
+  // 워커 풀(Worker Pool)을 이용한 여러 페이지 병렬 다운로드
   async fetchAndCacheTablePagesInParallel(
     table: TDataTable,
     totalPages: number,
@@ -234,103 +201,5 @@ export const databaseDownloadService = {
     }
 
     await Promise.all(workers);
-  },
-
-  // 캐시된 페이지 JSON 파일 데이터 읽기 (손상 시 자동 재수신 복구)
-  async readCachedPageData(
-    table: TDataTable,
-    page: number,
-  ): Promise<ICachedPageData> {
-    const filePath = this.getPageFilePath(table, page);
-    try {
-      const content = await FileSystem.readAsStringAsync(filePath);
-      const parsed = JSON.parse(content) as ICachedPageData;
-      const isPayloadValid: boolean =
-        this.validateCachedPayloadStructure(parsed);
-
-      if (isPayloadValid) {
-        return parsed;
-      }
-    } catch {
-      // 파일 손상 시 삭제 후 재수신
-      try {
-        await FileSystem.deleteAsync(filePath, { idempotent: true });
-      } catch {
-        // ignore
-      }
-    }
-
-    return this.fetchAndCachePageData(table, page);
-  },
-
-  // 테이블의 모든 페이지 데이터가 정상적으로 캐시되었는지 검증
-  async verifyAllTablePagesCached(
-    table: TDataTable,
-    totalPages: number,
-  ): Promise<boolean> {
-    for (let page = 1; page <= totalPages; page++) {
-      const isPageValid: boolean = await this.isPageDataCached(table, page);
-      if (!isPageValid) {
-        return false;
-      }
-    }
-    return true;
-  },
-
-  // 임시 캐시 파일 디렉토리 전체 삭제
-  async cleanTempCache(): Promise<void> {
-    try {
-      const dir = this.getTempDirectory();
-      const dirInfo = await FileSystem.getInfoAsync(dir);
-      const isDirExisting: boolean = dirInfo.exists;
-
-      if (isDirExisting) {
-        await FileSystem.deleteAsync(dir, { idempotent: true });
-      }
-    } catch (error) {
-      logger.warn(
-        `[CLEANUP-TEMP] Failed to delete temp cache directory: ${(error as Error).message}`,
-      );
-    }
-  },
-
-  // 영속 업데이트 상태 저장
-  async saveUpdateState(state: IPersistedUpdateState): Promise<void> {
-    try {
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.UPDATE_STATE,
-        JSON.stringify(state),
-      );
-    } catch (error) {
-      logger.warn(
-        `[SAVE-STATE] Failed to persist state: ${(error as Error).message}`,
-      );
-    }
-  },
-
-  // 영속 업데이트 상태 로드
-  async loadUpdateState(): Promise<IPersistedUpdateState | null> {
-    try {
-      const json = await AsyncStorage.getItem(STORAGE_KEYS.UPDATE_STATE);
-      const hasStoredJson: boolean = Boolean(json);
-      if (!hasStoredJson) return null;
-      return JSON.parse(json!) as IPersistedUpdateState;
-    } catch (error) {
-      logger.warn(
-        `[LOAD-STATE] Failed to load persisted state: ${(error as Error).message}`,
-      );
-      return null;
-    }
-  },
-
-  // 영속 업데이트 상태 삭제
-  async clearUpdateState(): Promise<void> {
-    try {
-      await AsyncStorage.removeItem(STORAGE_KEYS.UPDATE_STATE);
-    } catch (error) {
-      logger.warn(
-        `[CLEAR-STATE] Failed to clear persisted state: ${(error as Error).message}`,
-      );
-    }
   },
 };

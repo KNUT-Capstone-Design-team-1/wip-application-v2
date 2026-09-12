@@ -45,7 +45,6 @@ export const syncPersistedStateToStore = (
 
 // AppState 변화를 감지하여 포그라운드 복귀 시 백그라운드에서 수신된 업데이트 상태를 스토어 및 UI에 동기화
 export const useAppLifecycle = (
-  _currentTableIndexRef?: React.RefObject<number>,
   setUpdateProgress?: React.Dispatch<React.SetStateAction<IUpdateProgress>>,
 ) => {
   const {

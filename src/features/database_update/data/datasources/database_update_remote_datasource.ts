@@ -1,10 +1,6 @@
 import { GoogleCloud } from '@services/apis';
 import { IDatabaseVersionResponse } from '@services/apis/google_cloud/wip_database_version';
-import {
-  ITableColumnSchema,
-  TDataTable,
-  TResourceDataSchemas,
-} from '@services/database/types';
+import { ITableColumnSchema, TDataTable } from '@services/database/types';
 
 export const databaseUpdateRemoteDataSource = {
   // 서버에서 데이터베이스 버전을 조회한다.

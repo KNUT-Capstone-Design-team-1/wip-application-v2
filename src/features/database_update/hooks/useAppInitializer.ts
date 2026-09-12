@@ -15,8 +15,8 @@ export const useAppInitializer = () => {
 
   const currentTableIndexRef = useRef(0);
 
-  useAppLifecycle(currentTableIndexRef, setUpdateProgress);
-  useAppBoot(currentTableIndexRef, setUpdateProgress, setIsInitializing);
+  useAppLifecycle(setUpdateProgress);
+  useAppBoot(setUpdateProgress, setIsInitializing);
   useDatabaseSync(currentTableIndexRef, setUpdateProgress, setIsInitializing);
 
   return { isInitializing, updateProgress };

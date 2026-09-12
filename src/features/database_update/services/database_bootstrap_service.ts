@@ -51,11 +51,21 @@ export const databaseBootstrapService = {
 
     if (!hasUpdatesNeeded) {
       await databaseDownloadService.cleanTempCache();
+      await databaseDownloadService.clearUpdateState();
       return null;
     }
 
-    if (isForceUpdate) {
-      return updatesNeeded; // 필수 업데이트의 경우 확인 없이 자동 진행
+    // 이전에 업데이트 진행 도중 앱이 종료되었는지 확인 (중단된 경우 재실행 시 자동 강제 업데이트)
+    const persistedState = await databaseDownloadService.loadUpdateState();
+    const hasInterruptedUpdate: boolean = Boolean(
+      persistedState &&
+      ['downloading', 'download_completed', 'installing'].includes(
+        persistedState.status,
+      ),
+    );
+
+    if (isForceUpdate || hasInterruptedUpdate) {
+      return updatesNeeded; // 필수 업데이트이거나 중단된 업데이트인 경우 확인 없이 자동 진행
     }
 
     const isConfirmedByUser: boolean =

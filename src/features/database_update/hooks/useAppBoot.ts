@@ -60,7 +60,6 @@ export const handleBootFailure = (
 
 // 앱 초기화 및 데이터베이스 동기화 부트스트랩 훅
 export const useAppBoot = (
-  _currentTableIndexRef: React.RefObject<number>,
   setUpdateProgress: React.Dispatch<React.SetStateAction<IUpdateProgress>>,
   setIsInitializing: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
