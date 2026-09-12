@@ -76,8 +76,8 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
               entering={FadeIn.duration(ANI_DURATION)}
               style={styles.noticeContainer}
             >
-              <BaseText weight={'medium'} size={16} style={styles.noticeText}>
-                {`데이터베이스를 업데이트하고 있습니다.\n홈 화면으로 나가거나 다른 앱을 사용하셔도\n백그라운드에서 다운로드가 계속 진행됩니다.`}
+              <BaseText weight={'medium'} size={15} style={styles.noticeText}>
+                {`데이터를 안전하게 업데이트하고 있습니다.\n홈 화면으로 나가셔도 백그라운드에서 다운로드가 진행됩니다.\n진행이 멈춰있을 경우 앱을 실행한 상태로 잠시 유지해주세요.`}
               </BaseText>
             </Animated.View>
 

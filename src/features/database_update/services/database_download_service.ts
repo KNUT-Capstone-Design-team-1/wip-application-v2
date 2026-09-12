@@ -4,7 +4,7 @@ import { TDataTable } from '@services/database/types';
 import { GoogleCloud } from '@services/apis';
 import logger from '@utils/logger';
 import { ICachedPageData, IPersistedUpdateState } from '../types';
-import { STORAGE_KEYS, DOWNLOAD_CONFIG } from '../constants';
+import { STORAGE_KEYS, DOWNLOAD_CONFIG, getTablePageLimit } from '../constants';
 
 // 타임아웃이 적용된 프로미스 래퍼
 const withTimeout = <T>(
@@ -165,7 +165,7 @@ export const databaseDownloadService = {
           GoogleCloud.ResourceDataAPI.requestResourceData(
             table,
             page,
-            DOWNLOAD_CONFIG.PAGE_LIMIT,
+            getTablePageLimit(table),
           ),
           DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS,
           `Request timeout after ${DOWNLOAD_CONFIG.DOWNLOAD_TIMEOUT_MS}ms for ${table} p${page}`,

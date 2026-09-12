@@ -5,6 +5,7 @@ import { databaseDownloadService } from '../services/database_download_service';
 import logger from '@utils/logger';
 
 import { IPersistedUpdateState, IUpdateProgress } from '../types';
+import { SYNC_PHASE_STATUS } from '../constants';
 import { TDataTable } from '@services/database/types';
 
 // 영속화된 백그라운드 진행 상태를 Zustand 전역 스토어에 동기화
@@ -86,7 +87,7 @@ export const useAppLifecycle = (
 
             if (shouldUpdateLocalProgress && setUpdateProgress) {
               setUpdateProgress({
-                status: '최신 데이터 다운로드 중...',
+                status: SYNC_PHASE_STATUS.DOWNLOADING,
                 progress: persistedState.overallProgress,
                 isUpdating: true,
               });
