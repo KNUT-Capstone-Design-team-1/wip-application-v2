@@ -53,7 +53,9 @@ export const executeDatabaseApplyPhase = async (
 
   for (let tIdx = 0; tIdx < totalTables; tIdx++) {
     const isTaskCancelled: boolean = isCancelled();
-    if (isTaskCancelled) break;
+    if (isTaskCancelled) {
+      break;
+    }
 
     const updateInfo = tablesToUpdate[tIdx];
     await applySingleTableToDatabase(

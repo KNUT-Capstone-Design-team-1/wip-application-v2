@@ -14,6 +14,12 @@ export const DOWNLOAD_CONFIG = {
   PAGE_LIMIT: 5000,
 } as const;
 
+// 파이프라인 재시도 정책 상수
+export const PIPELINE_RETRY_CONFIG = {
+  RETRY_DELAY_MS: 3000,
+  RETRY_INTERVAL_MS: 100,
+} as const;
+
 // 동기화 단계별 통합 UI 상태 메시지
 export const SYNC_PHASE_STATUS = {
   PREPARING: '데이터 동기화 준비 중',

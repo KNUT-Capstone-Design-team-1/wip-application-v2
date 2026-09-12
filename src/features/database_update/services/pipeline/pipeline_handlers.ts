@@ -27,7 +27,7 @@ export const handlePipelineSuccess = (
   }, 500);
 };
 
-// 파이프라인 실패 시 에러 로깅 및 UI 롤백 처리
+// 파이프라인 실패 시 에러 로깅 및 UI 상태 처리
 export const handlePipelineFailure = (
   err: unknown,
   callbacks: ISyncPipelineCallbacks,
@@ -37,21 +37,17 @@ export const handlePipelineFailure = (
   );
 
   callbacks.setUpdateStatus('failed');
-  callbacks.setStatus('ERROR');
+  callbacks.setStatus('RUNNING');
   callbacks.setErrorMessage((err as Error).message || SYNC_PHASE_STATUS.FAILED);
 
   callbacks.setUpdateProgress({
     status: SYNC_PHASE_STATUS.FAILED,
     progress: 0,
-    isUpdating: false,
+    isUpdating: true,
   });
 
   callbacks.showToast({
     message:
-      '데이터베이스 업데이트 중 문제가 발생했습니다. 기존 데이터로 앱을 실행합니다.',
+      '데이터베이스 업데이트를 완료하지 못했습니다.\n잠시 후 처음부터 다시 시도합니다.',
   });
-
-  setTimeout(() => {
-    callbacks.setIsInitializing(false);
-  }, 1500);
 };

@@ -229,5 +229,49 @@ describe('databaseSyncOrchestrator 단위 테스트', () => {
       expect(mockCallbacks.setUpdateStatus).toHaveBeenCalledWith('completed');
       expect(mockCallbacks.setStatus).toHaveBeenCalledWith('COMPLETED');
     });
+
+    it('실패 시 handlePipelineFailure를 호출하고 성공할 때까지 재시도해야 한다', async () => {
+      let callCount = 0;
+      (
+        databaseDownloadService.fetchAndCachePageData as jest.Mock
+      ).mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) {
+          return Promise.reject(new Error('네트워크 연결 끊김'));
+        }
+        return Promise.resolve({
+          resource: [{ ITEM_SEQ: '1' }],
+          total: 10,
+          totalPage: 1,
+          current: 1,
+        });
+      });
+      (
+        databaseDownloadService.verifyAllTablePagesCached as jest.Mock
+      ).mockResolvedValue(true);
+      (
+        databaseUpdateService.applyCachedDataToTable as jest.Mock
+      ).mockResolvedValue('OK');
+      (
+        databaseUpdateService.updateDatabaseVersion as jest.Mock
+      ).mockResolvedValue('OK');
+
+      const currentTableIndexRef = { current: 0 };
+      const tablesToUpdate = [
+        { table: 'pill_data', schemaVer: 2, dataVer: 20260101 },
+      ];
+
+      await databaseSyncOrchestrator.runPipeline(
+        tablesToUpdate,
+        currentTableIndexRef,
+        () => false,
+        mockCallbacks,
+      );
+
+      expect(mockCallbacks.setUpdateStatus).toHaveBeenCalledWith('failed');
+      expect(mockCallbacks.setUpdateStatus).toHaveBeenCalledWith('completed');
+      expect(mockCallbacks.setStatus).toHaveBeenCalledWith('COMPLETED');
+      expect(callCount).toBe(2);
+    });
   });
 });

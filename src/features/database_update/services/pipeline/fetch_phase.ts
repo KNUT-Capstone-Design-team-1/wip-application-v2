@@ -64,7 +64,9 @@ export const fetchAndPersistTable = async (
       totalPages,
       2,
       (page: number) => {
-        if (isCancelled()) return;
+        if (isCancelled()) {
+          return;
+        }
 
         completedCount++;
         callbacks.setUpdateCurrentPage(page);
@@ -109,7 +111,9 @@ export const executeFetchPhase = async (
   const tableMetadataMap = new Map<string, ITableMetadata>();
 
   for (let tIdx = 0; tIdx < totalTables; tIdx++) {
-    if (isCancelled()) break;
+    if (isCancelled()) {
+      break;
+    }
 
     currentTableIndexRef.current = tIdx;
     const updateInfo = tablesToUpdate[tIdx];
