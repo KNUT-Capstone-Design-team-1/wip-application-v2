@@ -15,6 +15,8 @@ export const useUnifiedSearch = () => {
     setIsLoading,
     setSearchParam,
     setTotalDataCount,
+    setNextCursor,
+    setHasMore,
   } = useSearchResultListStore();
   const { addRecentKeyword } = useRecentKeywordStore();
 
@@ -48,7 +50,7 @@ export const useUnifiedSearch = () => {
       try {
         const searchResult = await unifiedSearchService.executeUnifiedSearch(
           trimmedKeyword,
-          50,
+          100,
         );
 
         if (!searchResult.success) {
@@ -74,7 +76,8 @@ export const useUnifiedSearch = () => {
         setSearchParam({ KEYWORD: trimmedKeyword });
         setTotalDataCount(searchResult.totalDataCount);
         setSearchResultData(searchResult.results);
-        useSearchResultListStore.setState({ hasMore: false }); // 통합검색 시 최대 검색 결과만 보여주게 처리
+        setNextCursor(searchResult.nextCursor);
+        setHasMore(searchResult.hasMore);
         useAppTrackStore.getState().increaseCoreActionCount('unified_search');
 
         // 작업 완료 검색 결과 페이지로 이동
@@ -90,7 +93,10 @@ export const useUnifiedSearch = () => {
       setSearchParam,
       setSearchResultData,
       setTotalDataCount,
+      setNextCursor,
+      setHasMore,
       showToast,
+      addRecentKeyword,
     ],
   );
 
