@@ -22,7 +22,6 @@ export const useUnifiedSearch = () => {
   const pathname = usePathname();
 
   const handleNavigation = useCallback(() => {
-    // 홈 화면('/')에서 검색하면 결과 화면으로 이동
     if (pathname === '/unified-search') {
       router.push('/pill-search-result-list');
       return;

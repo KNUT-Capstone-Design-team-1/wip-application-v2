@@ -31,6 +31,13 @@ const Layout = () => {
           animation: 'none',
         }}
       />
+      <Stack.Screen
+        name="pill-search-result-list/index"
+        options={{
+          headerShown: true,
+          header: () => <SearchHeader />,
+        }}
+      />
     </Stack>
   );
 };

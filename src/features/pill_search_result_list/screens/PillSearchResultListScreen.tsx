@@ -5,20 +5,12 @@ import { styles } from '@features/pill_search_result_list/styles/PillSearchResul
 import SearchResultList from '@features/pill_search_result_list/components/organisms/SearchResultList';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import HealthKrFloatingButton from '@features/pill_search_result_list/components/atoms/HealthKrFloatingButton';
-import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
 import SearchConditionTags from '@features/pill_search_result_list/components/molecules/SearchConditionTags';
 import { useFetchMarkImages } from '@features/pill_search_result_list/hooks/use_fetch_mark_images';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLOR } from '@constants/color';
 import { useRouter } from 'expo-router';
 import { useSyncSearchIdStore } from '@features/pill_search_result_list/hooks/useSyncSearchIdStore';
-
-//  상단 검색바 섹션
-const SearchBarSection = () => (
-  <View style={styles.searchBarWrapper}>
-    <UnifiedSearchBar />
-  </View>
-);
 
 //  검색 결과 정보 섹션 (태그 및 건수)
 const ResultInfoSection = ({
@@ -86,8 +78,6 @@ const PillSearchResultListScreen = () => {
         { paddingBottom: insets.bottom },
       ]}
     >
-      <SearchBarSection />
-
       <ResultInfoSection
         count={totalDataCount}
         markImages={markImages}

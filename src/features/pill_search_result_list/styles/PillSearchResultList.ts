@@ -13,12 +13,6 @@ export const styles = StyleSheet.create({
     textAlignVertical: 'center',
     marginLeft: px(2),
   },
-  searchBarWrapper: {
-    marginBottom: px(10),
-    backgroundColor: COLOR_BG['surface'],
-    zIndex: 10,
-    paddingHorizontal: px(20),
-  },
   searchResultInfoWrapper: {
     paddingHorizontal: px(20),
     gap: px(2),
