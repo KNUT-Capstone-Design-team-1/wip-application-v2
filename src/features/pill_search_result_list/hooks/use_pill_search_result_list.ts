@@ -5,6 +5,7 @@ import { IPillData, TPillDataSearchParam } from '@services/database/types';
 import logger from '@utils/logger';
 import { pillSearchResultListService } from '../services/pill_search_result_list_service';
 import { unifiedSearchService } from '@features/unified_search/services/unifiedSearchService';
+import { useToast } from '@hooks/use_toast';
 
 /**
  * 알약 검색(InputText) Hook
@@ -15,6 +16,7 @@ import { unifiedSearchService } from '@features/unified_search/services/unifiedS
 
 export const usePillSearchResultList = () => {
   const router = useRouter();
+  const { showToast } = useToast();
   const {
     setSearchParam,
     setSearchResultData,
@@ -38,100 +40,6 @@ export const usePillSearchResultList = () => {
   const keyExtractor = useCallback((item: IPillData, index: number) => {
     return item.ITEM_SEQ || `pill-${item.ITEM_NAME}-${index}`;
   }, []);
-
-  //  텍스트 기반 검색 실행 로직
-  const executeSearchByText = useCallback(
-    async (searchText: string, currentParam: Partial<TPillDataSearchParam>) => {
-      const searchParam = { ...currentParam, ITEM_NAME: searchText.trim() };
-
-      setSearchParam(searchParam);
-
-      const results = await pillSearchResultListService.getPills(searchParam, {
-        page: 1,
-        limit: 30,
-      });
-      const totalDataCount =
-        await pillSearchResultListService.countPills(searchParam);
-
-      setSearchResultData(results);
-      setTotalDataCount(totalDataCount);
-    },
-    [setSearchParam, setSearchResultData, setTotalDataCount],
-  );
-
-  //  검색 결과 내 재검색 버튼 클릭 핸들러
-  const searchResultButtonClickHandler = useCallback(
-    async (searchText: string) => {
-      if (!searchText.trim()) {
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-
-        const currentParam =
-          useSearchResultListStore.getState().searchParam || {};
-
-        await executeSearchByText(searchText, currentParam);
-      } catch (e) {
-        logger.error(`Failed to execute search by text: ${e.stack || e}`);
-
-        setSearchResultData([]);
-        setIsLoading(false);
-      }
-    },
-    [setIsLoading, executeSearchByText, setSearchResultData],
-  );
-
-  //  기존 식별 검색 조건으로 복원 로직
-  const executeRestoreSearch = useCallback(
-    async (currentParam: Partial<TPillDataSearchParam>) => {
-      const { ITEM_NAME, ...restParams } = currentParam;
-
-      if (Object.keys(restParams).length === 0) {
-        setSearchResultData([]);
-
-        setIsLoading(false);
-        return;
-      }
-
-      setSearchParam(restParams);
-
-      const results = await pillSearchResultListService.getPills(restParams, {
-        page: 1,
-        limit: 30,
-      });
-      const totalDataCount =
-        await pillSearchResultListService.countPills(restParams);
-
-      setSearchResultData(results);
-      setTotalDataCount(totalDataCount);
-    },
-    [setSearchParam, setSearchResultData, setTotalDataCount, setIsLoading],
-  );
-
-  //  검색어 초기화 및 이전 검색 결과 복원 핸들러
-  const clearSearchAndRestore = useCallback(async () => {
-    try {
-      setIsLoading(true);
-
-      const currentParam = useSearchResultListStore.getState().searchParam;
-
-      if (!currentParam) {
-        setSearchResultData([]);
-
-        setIsLoading(false);
-        return;
-      }
-
-      await executeRestoreSearch(currentParam);
-    } catch (e) {
-      logger.error(`Failed to restore search: ${e.stack || e}`);
-
-      setSearchResultData([]);
-      setIsLoading(false);
-    }
-  }, [setIsLoading, executeRestoreSearch, setSearchResultData]);
 
   // 다음 페이지 로드 (무한 스크롤)
   const loadMorePills = useCallback(async () => {
@@ -187,6 +95,11 @@ export const usePillSearchResultList = () => {
         logger.error(
           `Failed to load more unified search pills: ${e.stack || e}`,
         );
+        // 추가 데이터 로드 중 에러 발생 시 에러 토스트 표시
+        showToast({
+          type: 'error',
+          message: '데이터를 불러오던 중 에러가 발생했습니다',
+        });
       } finally {
         setIsLoading(false);
       }
@@ -230,8 +143,6 @@ export const usePillSearchResultList = () => {
   return {
     keyExtractor,
     searchItemClickHandler,
-    searchResultButtonClickHandler,
-    clearSearchAndRestore,
     loadMorePills,
   };
 };

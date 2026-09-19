@@ -8,6 +8,5 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: px(22),
-    marginTop: px(60),
   },
 });

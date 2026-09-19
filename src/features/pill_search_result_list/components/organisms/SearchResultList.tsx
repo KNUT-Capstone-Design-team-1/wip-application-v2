@@ -8,6 +8,8 @@ import { ISearchResultData } from '@features/pill_search_result_list/types/pill_
 import NotItem from '@components/common/NotItem';
 import { IPillData } from '@services/database/types';
 
+// TODO: 다음 페이지 로드 중 에러 발생 시 재로드 대응 필요 (트리거 방식 또는 재실행)
+
 // 검색 결과가 없을 때 표시할 컴포넌트
 const EmptyResult = () => (
   <NotItem

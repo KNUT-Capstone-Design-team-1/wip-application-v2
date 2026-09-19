@@ -4,7 +4,6 @@ import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   guideWrapper: {
-    flex: 1,
     width: '100%',
     minHeight: px(57),
     alignItems: 'center',

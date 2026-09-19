@@ -426,5 +426,10 @@ export const getPillDatasByItemSeq = async (itemSeqs: string[]) => {
 
   const result = await db.getAllAsync<IPillData>(sql, itemSeqs);
 
-  return result;
+  // 서버의 BM25 정렬 순서
+  const pillMap = new Map(result.map((pill) => [pill.ITEM_SEQ, pill]));
+
+  return itemSeqs
+    .map((seq) => pillMap.get(seq))
+    .filter((pill): pill is IPillData => Boolean(pill));
 };
