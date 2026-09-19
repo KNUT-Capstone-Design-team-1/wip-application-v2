@@ -18,11 +18,14 @@ export interface ISearchResultListStore {
   currentPage: number;
   hasMore: boolean;
   totalDataCount: number;
+  nextCursor: string | null;
 
   setSearchParam: (param: Partial<TPillDataSearchParam> | null) => void;
   setMarkImages: (images: { code: string; base64: string }[]) => void;
   setSearchResultData: (resultData: IPillData[]) => void;
   setTotalDataCount: (totalDataCount: number) => void;
+  setNextCursor: (nextCursor: string | null) => void;
+  setHasMore: (hasMore: boolean) => void;
   appendSearchResultData: (newData: IPillData[]) => void;
   setIsLoading: (loading: boolean) => void;
   getSearchResultData: () => IPillData[];
