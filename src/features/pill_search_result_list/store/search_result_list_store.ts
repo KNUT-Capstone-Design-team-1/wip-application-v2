@@ -12,6 +12,7 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
     currentPage: 1, // 현재 로드된 페이지 번호
     hasMore: true, // 추가 로드 가능한 데이터 존재 여부
     totalDataCount: 0, // 총 검색 결과 데이터 수
+    nextCursor: null, // 다음 페이지 조회를 위한 커서 토큰
 
     //  새로운 검색 파라미터 설정 및 페이지네이션 정보 초기화
     setSearchParam: (param: Partial<TPillDataSearchParam> | null) =>
@@ -19,6 +20,7 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
         searchParam: param,
         currentPage: 1,
         hasMore: true,
+        nextCursor: null,
       }),
 
     //  식별 마크 이미지 리스트 업데이트
@@ -41,6 +43,18 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
     setTotalDataCount: (totalDataCount: number) =>
       set({
         totalDataCount,
+      }),
+
+    // 다음 페이지 조회를 위한 커서 토큰 설정
+    setNextCursor: (nextCursor: string | null) =>
+      set({
+        nextCursor,
+      }),
+
+    // 추가 로드 가능 여부 설정
+    setHasMore: (hasMore: boolean) =>
+      set({
+        hasMore,
       }),
 
     //  기존 검색 결과에 새로운 데이터 추가 (무한 스크롤용)

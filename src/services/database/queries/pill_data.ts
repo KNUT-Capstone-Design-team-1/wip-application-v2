@@ -426,27 +426,10 @@ export const getPillDatasByItemSeq = async (itemSeqs: string[]) => {
 
   const result = await db.getAllAsync<IPillData>(sql, itemSeqs);
 
-  return result;
-};
+  // 서버의 BM25 정렬 순서
+  const pillMap = new Map(result.map((pill) => [pill.ITEM_SEQ, pill]));
 
-/**
- * ID 값인 ITEM_SEQ를 기준으로 알약 데이터 개수 조회
- * @param itemSeq ITEM_SEQ 배열
- * @returns
- */
-export const getPillDataCountByItemSeq = async (itemSeqs: string[]) => {
-  if (itemSeqs.length === 0) {
-    return 0;
-  }
-
-  const db = await getDatabase();
-
-  const sql = `
-    SELECT COUNT(*) as COUNT FROM pill_data 
-    WHERE ITEM_SEQ IN (${itemSeqs.map(() => '?').join(', ')})
-  `;
-
-  const result = await db.getFirstAsync<{ COUNT: number }>(sql, itemSeqs);
-
-  return result?.COUNT ?? 0;
+  return itemSeqs
+    .map((seq) => pillMap.get(seq))
+    .filter((pill): pill is IPillData => Boolean(pill));
 };

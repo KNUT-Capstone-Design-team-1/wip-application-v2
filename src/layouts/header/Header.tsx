@@ -1,8 +1,7 @@
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { px } from '@utils/responsive';
 import { styles } from './styles';
-import UnifiedSearchBar from '@features/unified_search/components/UnifiedSearchBar';
+import UnifiedSearchNavigateBar from '@features/unified_search/components/UnifiedSearchNavigateBar';
 
 const Header = () => {
   return (
@@ -18,7 +17,9 @@ const Header = () => {
             이게뭐약
           </BaseText>
         </View>
-        <UnifiedSearchBar containerStyle={{ marginLeft: px(32), flex: 1 }} />
+        <UnifiedSearchNavigateBar
+          containerStyle={styles.navigateBarContainer}
+        />
       </View>
     </View>
   );

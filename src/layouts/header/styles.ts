@@ -9,6 +9,10 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR['white'],
     paddingHorizontal: px(8),
   },
+  navigateBarContainer: {
+    marginLeft: px(32),
+    flex: 1,
+  },
   HeaderContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -21,6 +25,14 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: HEADER_MIN_HEIGHT,
+  },
+  searchHeaderContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: HEADER_MIN_HEIGHT,
+    paddingRight: px(12),
+    gap: px(4),
   },
   logoWrapper: {
     justifyContent: 'center',

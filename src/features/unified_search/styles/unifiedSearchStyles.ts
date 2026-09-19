@@ -1,14 +1,33 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_TEXT } from '@constants/color';
+import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px, fontPx } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    flexGrow: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLOR['white'],
     borderRadius: px(16),
+    paddingHorizontal: px(16),
+    height: px(34),
+    borderWidth: px(1),
+    // 그림자 추가 (iOS)
+    shadowColor: COLOR['shadow'],
+    shadowOffset: { width: 0, height: px(1) },
+    shadowOpacity: 0.1,
+    shadowRadius: px(2),
+    // 그림자 추가 (Android)
+    elevation: px(2),
+  },
+  navigateContainer: {
+    flexGrow: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLOR['white'],
+    borderRadius: px(16),
+    borderColor: COLOR_LINE['border'],
     paddingHorizontal: px(16),
     height: px(34),
     borderWidth: px(1),
@@ -31,6 +50,9 @@ export const styles = StyleSheet.create({
   },
   clearButton: {
     paddingVertical: px(5),
+  },
+  navigateText: {
+    color: COLOR_TEXT['disabled'],
   },
 });
 
