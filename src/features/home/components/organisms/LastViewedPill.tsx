@@ -3,12 +3,17 @@ import { View, ScrollView } from 'react-native';
 import Tag from '../atoms/Tag';
 import { styles } from '../../styles/organisms/LastViewedPill';
 import { router } from 'expo-router';
-import { useRecentViewedPills } from '../../hooks/useRecentViewedPills';
 import { BaseText } from '@components/common/BaseText';
+import { useRecentViewedPillStore } from '@store/recent_viewed_pill_store';
+import { useRecentHistory } from '@features/unified_search/hooks/useRecentHistory';
 
 const LastViewedPill = () => {
-  const { recentViewedPills, loadRecentViewedPills, deleteRecentViewedPill } =
-    useRecentViewedPills();
+  const recentViewedPills = useRecentViewedPillStore(
+    (state) => state.recentViewedPills,
+  );
+
+  const { loadRecentViewedPills, handlePressRemoveRecentViewedPill } =
+    useRecentHistory();
 
   useEffect(() => {
     loadRecentViewedPills();
@@ -50,7 +55,7 @@ const LastViewedPill = () => {
                 key={index}
                 onPressHandler={() => tagPressHandler(pill.ITEM_SEQ || '')}
                 onDeleteHandler={() =>
-                  deleteRecentViewedPill(pill.ITEM_SEQ || '')
+                  handlePressRemoveRecentViewedPill(pill.ITEM_SEQ || '')
                 }
                 showDelete={true}
               />

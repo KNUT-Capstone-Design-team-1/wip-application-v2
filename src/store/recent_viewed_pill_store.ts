@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { IPillDetail } from '../features/pill_search_result_detail/types/pill_detail_type';
 import logger from '../utils/logger';
 import { TRecentViewedPill } from '@common_types/recent_viewed_pill';
 import { recentViewedPillService } from '@features/home/services/recent_viewed_pill_service';
@@ -13,7 +12,7 @@ interface IRecentViewedPillStore {
 }
 
 export const useRecentViewedPillStore = create<IRecentViewedPillStore>(
-  (set, get) => ({
+  (set) => ({
     recentViewedPills: [],
     getRecentViewedPills: async () => {
       try {

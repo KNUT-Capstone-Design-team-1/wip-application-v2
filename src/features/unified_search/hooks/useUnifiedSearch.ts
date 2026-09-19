@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
 import { useAppTrackStore } from '@store/app_track_store';
 import { useFullLoadingStore } from '@store/full_loading_store';
+import { useRecentKeywordStore } from '@store/recent_keyword_store';
 
 export const useUnifiedSearch = () => {
   const { showToast } = useToast();
@@ -15,13 +16,14 @@ export const useUnifiedSearch = () => {
     setSearchParam,
     setTotalDataCount,
   } = useSearchResultListStore();
+  const { addRecentKeyword } = useRecentKeywordStore();
 
   const router = useRouter();
   const pathname = usePathname();
 
   const handleNavigation = useCallback(() => {
     // 홈 화면('/')에서 검색하면 결과 화면으로 이동
-    if (pathname === '/') {
+    if (pathname === '/unified-search') {
       router.push('/pill-search-result-list');
       return;
     }
@@ -69,6 +71,7 @@ export const useUnifiedSearch = () => {
         }
 
         // 검색 조건 및 결과 저장
+        addRecentKeyword(trimmedKeyword);
         setSearchParam({ KEYWORD: trimmedKeyword });
         setTotalDataCount(searchResult.totalDataCount);
         setSearchResultData(searchResult.results);

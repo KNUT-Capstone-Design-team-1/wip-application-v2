@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import GlobalHeader from './header/GlobalHeader';
+import SearchHeader from './header/SearchHeader';
 
 const Layout = () => {
   const insets = useSafeAreaInsets();
@@ -20,6 +21,14 @@ const Layout = () => {
           headerShown: false,
           contentStyle: { paddingTop: 0 },
           animation: 'slide_from_bottom',
+        }}
+      />
+      <Stack.Screen
+        name="unified-search/index"
+        options={{
+          headerShown: true,
+          header: () => <SearchHeader />,
+          animation: 'none',
         }}
       />
     </Stack>

@@ -1,7 +1,7 @@
 import { recentViewedPillRepository } from '@features/home/data/repositories/recent_viewed_pill_repository';
 import { TRecentViewedPill } from '@common_types/recent_viewed_pill';
 
-const MAX_RECENT_VIEWED_PILLS = 7;
+const MAX_RECENT_VIEWED_PILLS = 50;
 
 export const recentViewedPillService = {
   async getRecentViewedPills(): Promise<TRecentViewedPill[]> {

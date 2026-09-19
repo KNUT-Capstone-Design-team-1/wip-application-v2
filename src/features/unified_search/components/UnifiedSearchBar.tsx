@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useEffect, useRef } from 'react';
 import {
   View,
   TextInput,
@@ -14,11 +14,16 @@ import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/index';
 
 interface IUnifiedSearchBarProps {
   containerStyle?: StyleProp<ViewStyle>;
+  focus?: boolean;
 }
 
-const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
+const UnifiedSearchBar = ({
+  containerStyle,
+  focus = false,
+}: IUnifiedSearchBarProps) => {
   const [keyword, setKeyword] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<TextInput>(null);
   const { search } = useUnifiedSearch();
 
   const handleSearch = useCallback(
@@ -53,6 +58,17 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
     [handleSearch],
   );
 
+  useEffect(() => {
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      inputRef.current?.blur();
+      setIsFocused(false);
+    });
+
+    return () => {
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <View
       style={[
@@ -62,6 +78,7 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
       ]}
     >
       <TextInput
+        ref={inputRef}
         maxLength={50}
         style={styles.input}
         placeholder="검색어를 입력하세요"
@@ -71,6 +88,7 @@ const UnifiedSearchBar = ({ containerStyle }: IUnifiedSearchBarProps) => {
         returnKeyType="search"
         placeholderTextColor={COLOR_TEXT['disabled']}
         multiline={false}
+        autoFocus={focus}
         autoCorrect={false}
         autoCapitalize="none"
         onFocus={() => setIsFocused(true)}
