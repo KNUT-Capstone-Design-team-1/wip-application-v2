@@ -15,20 +15,31 @@ import { useSyncSearchIdStore } from '@features/pill_search_result_list/hooks/us
 //  검색 결과 정보 섹션 (태그 및 건수)
 const ResultInfoSection = ({
   count,
+  hasMore,
+  isUnifiedSearch,
   markImages,
   onTagPress,
 }: {
   count: number;
+  hasMore: boolean;
+  isUnifiedSearch: boolean;
   markImages: { code: string; base64: string }[];
   onTagPress: () => void;
-}) => (
-  <View style={styles.searchResultInfoWrapper}>
-    <SearchConditionTags markImages={markImages} onPress={onTagPress} />
-    <BaseText style={styles.searchCountLabel} weight="medium" size={12}>
-      검색 결과 {count}건
-    </BaseText>
-  </View>
-);
+}) => {
+  const countText =
+    isUnifiedSearch && hasMore
+      ? `검색 결과 ${count}건 이상`
+      : `검색 결과 ${count}건`;
+
+  return (
+    <View style={styles.searchResultInfoWrapper}>
+      <SearchConditionTags markImages={markImages} onPress={onTagPress} />
+      <BaseText style={styles.searchCountLabel} weight="medium" size={12}>
+        {countText}
+      </BaseText>
+    </View>
+  );
+};
 
 //  초기 로딩 화면
 const InitialLoadingView = () => (
@@ -48,6 +59,7 @@ const PillSearchResultListScreen = () => {
     markImages,
     totalDataCount,
     searchParam,
+    hasMore,
   } = useSearchResultListStore();
 
   const { syncToSearchIdStore } = useSyncSearchIdStore();
@@ -70,6 +82,7 @@ const PillSearchResultListScreen = () => {
   }, [syncToSearchIdStore, router, searchParam]);
 
   const isInitialLoading = isLoading && searchResultData.length === 0;
+  const isUnifiedSearch = Boolean(searchParam?.KEYWORD);
 
   return (
     <View
@@ -80,6 +93,8 @@ const PillSearchResultListScreen = () => {
     >
       <ResultInfoSection
         count={totalDataCount}
+        hasMore={hasMore}
+        isUnifiedSearch={isUnifiedSearch}
         markImages={markImages}
         onTagPress={handleTagPress}
       />
