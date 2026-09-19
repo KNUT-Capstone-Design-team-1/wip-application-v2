@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
-import { IPillData, TPillDataSearchParam } from '@services/database/types';
+import { IPillData } from '@services/database/types';
 import logger from '@utils/logger';
 import { pillSearchResultListService } from '../services/pill_search_result_list_service';
 import { unifiedSearchService } from '@features/unified_search/services/unifiedSearchService';
@@ -17,13 +17,8 @@ import { useToast } from '@hooks/use_toast';
 export const usePillSearchResultList = () => {
   const router = useRouter();
   const { showToast } = useToast();
-  const {
-    setSearchParam,
-    setSearchResultData,
-    setTotalDataCount,
-    setIsLoading,
-    appendSearchResultData,
-  } = useSearchResultListStore();
+  const { setTotalDataCount, setIsLoading, appendSearchResultData } =
+    useSearchResultListStore();
 
   // 아이템 클릭 시 상세 페이지로 이동
   const searchItemClickHandler = useCallback(
@@ -135,10 +130,15 @@ export const usePillSearchResultList = () => {
       });
     } catch (e) {
       logger.error(`Failed to load more pills. ${e.stack || e}`);
+      // 추가 데이터 로드 중 에러 발생 시 에러 토스트 표시
+      showToast({
+        type: 'error',
+        message: '데이터를 불러오던 중 에러가 발생했습니다',
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, appendSearchResultData, setTotalDataCount]);
+  }, [setIsLoading, appendSearchResultData, setTotalDataCount, showToast]);
 
   return {
     keyExtractor,

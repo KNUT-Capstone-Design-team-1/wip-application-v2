@@ -1,29 +1,45 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Image } from '@components/common/CustomImage';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
+import { normalizeImageUri } from '@features/pill_search_result_list/utils/pill_image_util';
+
+interface IPillThumbnail {
+  imageUri?: string | null;
+  itemSeq: string;
+}
 
 // 알약 썸네일 이미지 컴포넌트
-const PillThumbnail = ({ imageUri }: { imageUri: string }) => (
-  <View style={styles.searchItemImage}>
-    {imageUri ? (
-      <Image
-        source={{ uri: imageUri }}
-        style={styles.image}
-        contentFit="cover"
-      />
-    ) : (
-      <View style={styles.fallbackImageContainer}>
-        <BaseText style={styles.fallbackImageText} weight="semiBold" size={14}>
-          이미지 없음
-        </BaseText>
-      </View>
-    )}
-  </View>
-);
+const PillThumbnail = ({ imageUri, itemSeq }: IPillThumbnail) => {
+  const normalizedUri = useMemo(() => normalizeImageUri(imageUri), [imageUri]);
+  return (
+    <View style={styles.searchItemImage}>
+      {normalizedUri ? (
+        <Image
+          source={{ uri: normalizedUri }}
+          style={styles.image}
+          contentFit="cover"
+          recyclingKey={itemSeq}
+          cachePolicy={'memory-disk'}
+          priority={'low'}
+        />
+      ) : (
+        <View style={styles.fallbackImageContainer}>
+          <BaseText
+            style={styles.fallbackImageText}
+            weight="semiBold"
+            size={14}
+          >
+            이미지 없음
+          </BaseText>
+        </View>
+      )}
+    </View>
+  );
+};
 
 // 알약 상세 정보 텍스트 컴포넌트
 const PillInfo = ({ pill }: { pill: IPillData }) => {
@@ -94,7 +110,10 @@ const SearchResultItem = ({
       }
       activeOpacity={0.7}
     >
-      <PillThumbnail imageUri={resultItem.ITEM_IMAGE} />
+      <PillThumbnail
+        imageUri={resultItem.ITEM_IMAGE}
+        itemSeq={resultItem.ITEM_SEQ}
+      />
       <PillInfo pill={resultItem} />
     </TouchableOpacity>
   );
