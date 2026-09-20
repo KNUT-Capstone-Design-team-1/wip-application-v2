@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
     borderColor: COLOR_LINE['border'],
     borderRadius: px(10),
     overflow: 'hidden', // 이미지가 borderRadius 밖으로 나가지 않도록
+    backgroundColor: COLOR_BG['base'],
   },
   searchItemContents: {
     flex: 1,

@@ -1,30 +1,52 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { Image } from '@components/common/CustomImage';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
-import { normalizeImageUri } from '@features/pill_search_result_list/utils/pill_image_util';
+import {
+  normalizeImageUri,
+  DEFAULT_PILL_BLURHASH,
+} from '@features/pill_search_result_list/utils/pill_image_util';
 
 interface IPillThumbnail {
   imageUri?: string | null;
   itemSeq: string;
+  shouldLoadImage?: boolean;
+  onImageLoad?: (itemSeq: string) => void;
 }
 
 // 알약 썸네일 이미지 컴포넌트
-const PillThumbnail = ({ imageUri, itemSeq }: IPillThumbnail) => {
+const PillThumbnail = ({
+  imageUri,
+  itemSeq,
+  shouldLoadImage = true,
+  onImageLoad,
+}: IPillThumbnail) => {
   const normalizedUri = useMemo(() => normalizeImageUri(imageUri), [imageUri]);
+
+  // FlashList 재활용 및 스크롤 중 깜빡임 방지를 위한 동기적 래치 (useEffect/useState 제거로 2차 렌더링 방지)
+  const loadedSeqRef = useRef<string | null>(shouldLoadImage ? itemSeq : null);
+  if (shouldLoadImage) {
+    loadedSeqRef.current = itemSeq;
+  }
+  const isImageActive = shouldLoadImage || loadedSeqRef.current === itemSeq;
+
   return (
     <View style={styles.searchItemImage}>
       {normalizedUri ? (
         <Image
-          source={{ uri: normalizedUri }}
+          source={isImageActive ? { uri: normalizedUri } : undefined}
+          placeholder={{ blurhash: DEFAULT_PILL_BLURHASH }}
+          placeholderContentFit="cover"
+          transition={200}
           style={styles.image}
           contentFit="cover"
           recyclingKey={itemSeq}
           cachePolicy={'memory-disk'}
           priority={'low'}
+          onLoad={() => onImageLoad?.(itemSeq)}
         />
       ) : (
         <View style={styles.fallbackImageContainer}>
@@ -101,6 +123,8 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
 const SearchResultItem = ({
   resultItem,
   itemClickHandler,
+  shouldLoadImage = true,
+  onImageLoad,
 }: IResultItemProps) => {
   return (
     <TouchableOpacity
@@ -111,8 +135,11 @@ const SearchResultItem = ({
       activeOpacity={0.7}
     >
       <PillThumbnail
+        key={resultItem.ITEM_SEQ}
         imageUri={resultItem.ITEM_IMAGE}
         itemSeq={resultItem.ITEM_SEQ}
+        shouldLoadImage={shouldLoadImage}
+        onImageLoad={onImageLoad}
       />
       <PillInfo pill={resultItem} />
     </TouchableOpacity>

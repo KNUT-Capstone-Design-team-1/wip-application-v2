@@ -8,6 +8,8 @@ export interface ISearchResultData {
 export interface IResultItemProps {
   resultItem: IPillData;
   itemClickHandler: (seq: string, itemImage: string) => void;
+  shouldLoadImage?: boolean;
+  onImageLoad?: (itemSeq: string) => void;
 }
 
 export interface ISearchResultListStore {

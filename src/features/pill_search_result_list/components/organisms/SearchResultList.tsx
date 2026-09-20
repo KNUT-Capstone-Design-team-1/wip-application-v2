@@ -1,4 +1,4 @@
-import { useCallback, memo } from 'react';
+import { useCallback, memo, useState, useRef, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import SearchResultItem from '@features/pill_search_result_list/components/molecules/SearchResultItem';
@@ -33,11 +33,59 @@ const ResultFlashList = ({
   keyExtractor: (item: IPillData, index: number) => string;
   isLoadingMore: boolean;
 }) => {
+  const isScrollingRef = useRef(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadedImageSeqs = useRef(new Set<string>());
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleScrollBegin = useCallback(() => {
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
+    }
+    if (!isScrollingRef.current) {
+      isScrollingRef.current = true;
+      setIsScrolling(true);
+    }
+  }, []);
+
+  const handleScrollEnd = useCallback(() => {
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+    }
+    scrollTimerRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+      setIsScrolling(false);
+    }, 100);
+  }, []);
+
+  const handleImageLoad = useCallback((itemSeq: string) => {
+    loadedImageSeqs.current.add(itemSeq);
+  }, []);
+
   const renderItem: ListRenderItem<IPillData> = useCallback(
-    ({ item }) => (
-      <SearchResultItem resultItem={item} itemClickHandler={onItemClick} />
-    ),
-    [onItemClick],
+    ({ item }) => {
+      const isLoaded = loadedImageSeqs.current.has(item.ITEM_SEQ);
+      const shouldLoadImage = isLoaded || !isScrolling;
+
+      return (
+        <SearchResultItem
+          resultItem={item}
+          itemClickHandler={onItemClick}
+          shouldLoadImage={shouldLoadImage}
+          onImageLoad={handleImageLoad}
+        />
+      );
+    },
+    [onItemClick, isScrolling, handleImageLoad],
   );
 
   const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
@@ -57,6 +105,7 @@ const ResultFlashList = ({
       style={styles.searchResultListWrapper}
       contentContainerStyle={styles.searchResultListContentContainer}
       data={data}
+      extraData={isScrolling}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       ItemSeparatorComponent={renderSeparator}
@@ -64,6 +113,10 @@ const ResultFlashList = ({
       showsVerticalScrollIndicator={true}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.3}
+      onScrollBeginDrag={handleScrollBegin}
+      onMomentumScrollBegin={handleScrollBegin}
+      onScrollEndDrag={handleScrollEnd}
+      onMomentumScrollEnd={handleScrollEnd}
     />
   );
 };
