@@ -14,6 +14,7 @@ export const useSelectedSearchId = () => {
   const { resetSelectedMark } = useMarkStore();
 
   const {
+    resetSearchResults,
     setSearchResultData,
     setIsLoading,
     setSearchParam,
@@ -154,7 +155,7 @@ export const useSelectedSearchId = () => {
     try {
       const rawParam = getSelectedSearchId();
 
-      setIsLoading(true);
+      resetSearchResults();
 
       const isNotInResultScreen = pathname !== '/pill-search-result-list';
 
@@ -180,13 +181,14 @@ export const useSelectedSearchId = () => {
         `[PILL-IDENTIFICATION-SEARCH-HOOK] Failed to search pill datas: ${e}`,
       );
 
-      setIsLoading(false);
-
       return [];
+    } finally {
+      setIsLoading(false);
     }
   }, [
     getSelectedSearchId,
     pathname,
+    resetSearchResults,
     setIsLoading,
     setSearchParam,
     setSearchResultData,

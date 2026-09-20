@@ -33,7 +33,17 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
     setSearchResultData: (resultData: IPillData[]) =>
       set({
         searchResultData: resultData,
-        isLoading: false, // 데이터 설정 완료 시 로딩 종료
+      }),
+
+    //  새로운 검색 시작 시 이전 결과/카운트/페이지네이션 초기화 및 로딩 시작
+    resetSearchResults: () =>
+      set({
+        searchResultData: [],
+        totalDataCount: 0,
+        currentPage: 1,
+        hasMore: true,
+        nextCursor: null,
+        isLoading: true,
       }),
 
     /**

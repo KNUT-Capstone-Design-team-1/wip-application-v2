@@ -11,6 +11,7 @@ export const useUnifiedSearch = () => {
   const { showToast } = useToast();
 
   const {
+    resetSearchResults,
     setSearchResultData,
     setIsLoading,
     setSearchParam,
@@ -42,10 +43,13 @@ export const useUnifiedSearch = () => {
         return;
       }
 
-      setIsLoading(true);
+      resetSearchResults();
 
       const { setShow, setHide } = useFullLoadingStore.getState();
-      setShow();
+      const isNotInResultScreen = pathname !== '/pill-search-result-list';
+      if (isNotInResultScreen) {
+        setShow();
+      }
 
       try {
         const searchResult = await unifiedSearchService.executeUnifiedSearch(
@@ -92,11 +96,13 @@ export const useUnifiedSearch = () => {
       setIsLoading,
       setSearchParam,
       setSearchResultData,
+      resetSearchResults,
       setTotalDataCount,
       setNextCursor,
       setHasMore,
       showToast,
       addRecentKeyword,
+      pathname,
     ],
   );
 

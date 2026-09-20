@@ -50,6 +50,9 @@ export const usePillImageActions = () => {
   const setSearchResultData = useSearchResultListStore(
     (state) => state.setSearchResultData,
   );
+  const resetSearchResults = useSearchResultListStore(
+    (state) => state.resetSearchResults,
+  );
   const setIsLoading = useSearchResultListStore((state) => state.setIsLoading);
   const setSearchParam = useSearchResultListStore(
     (state) => state.setSearchParam,
@@ -231,6 +234,7 @@ export const usePillImageActions = () => {
     }
     const { setShow, setHide } = useFullLoadingStore.getState();
     setShow('이미지를 분석하여 알약을 찾는 중입니다...');
+    resetSearchResults();
     setIsSearching(true);
     let apiError: any = null;
 
@@ -295,6 +299,7 @@ export const usePillImageActions = () => {
     setIsSearching,
     setIsLoading,
     setSearchResultData,
+    resetSearchResults,
     setSearchParam,
     setTotalDataCount,
     showInterstitial,

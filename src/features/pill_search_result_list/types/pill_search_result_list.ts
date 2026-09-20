@@ -23,6 +23,7 @@ export interface ISearchResultListStore {
   setSearchParam: (param: Partial<TPillDataSearchParam> | null) => void;
   setMarkImages: (images: { code: string; base64: string }[]) => void;
   setSearchResultData: (resultData: IPillData[]) => void;
+  resetSearchResults: () => void;
   setTotalDataCount: (totalDataCount: number) => void;
   setNextCursor: (nextCursor: string | null) => void;
   setHasMore: (hasMore: boolean) => void;
