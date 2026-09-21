@@ -28,10 +28,6 @@ export interface IPillData {
   ETC_OTC_CODE: string; // 전문일반구분
   ITEM_PERMIT_DATE: string; // 품목허가일자
   FORM_CODE: string; // 제형코드명
-  DRUG_SHAPE_FRONT: string; // 표기내용앞
-  DRUG_SHAPE_BACK: string; // 표기내용뒤
-  MARK_IMAGE_FRONT: string; // 표기이미지앞
-  MARK_IMAGE_BACK: string; // 표기이미지뒤
   MARK_CODE_FRONT: string; // 표기코드앞
   MARK_CODE_BACK: string; // 표기코드뒤
   CHANGE_DATE: string; // 변경일자
@@ -45,9 +41,7 @@ export interface IPillData {
   PACK_UNIT: string; // 포장단위
   INSURANCE_CODE: string; // 보험코드
   DRUG_CLASS: string; // 마약류분류
-  FINISH_MATERIAL_YN: string; // 완제원료구분
   NEW_DRUG_YN: string; // 신약여부
-  INDUTY_CODE: string; // 업종구분
   CHANGE_CONTENT: string; // 변경내용
   TOTAL_CONTENT: string; // 총량
   MAIN_ITEM_INGR: string; // 주성분명

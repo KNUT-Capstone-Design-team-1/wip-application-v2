@@ -201,22 +201,6 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `CLASS_NO = ?`,
       values: (val: string) => [val],
     },
-    DRUG_SHAPE_FRONT: {
-      query: `DRUG_SHAPE_FRONT LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    DRUG_SHAPE_BACK: {
-      query: `DRUG_SHAPE_BACK LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    MARK_IMAGE_FRONT: {
-      query: `MARK_IMAGE_FRONT LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
-    MARK_IMAGE_BACK: {
-      query: `MARK_IMAGE_BACK LIKE ?`,
-      values: (val: string) => [`%${val}%`],
-    },
     CHANGE_DATE: {
       query: `CHANGE_DATE = ?`,
       values: (val: string) => [val],
@@ -249,16 +233,8 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
       query: `DRUG_CLASS = ?`,
       values: (val: string) => [val],
     },
-    FINISH_MATERIAL_YN: {
-      query: `FINISH_MATERIAL_YN = ?`,
-      values: (val: string) => [val],
-    },
     NEW_DRUG_YN: {
       query: `NEW_DRUG_YN = ?`,
-      values: (val: string) => [val],
-    },
-    INDUTY_CODE: {
-      query: `INDUTY_CODE = ?`,
       values: (val: string) => [val],
     },
     CHANGE_CONTENT: {
