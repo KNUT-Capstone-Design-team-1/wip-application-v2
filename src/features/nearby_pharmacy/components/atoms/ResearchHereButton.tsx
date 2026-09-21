@@ -6,11 +6,7 @@ import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from '../../styles/ResearchHereButton';
-
-interface IResearchHereButtonProps {
-  loading: boolean;
-  onPress: () => void;
-}
+import { IResearchHereButtonProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 /**
  * 지도 중심이 마지막 검색 지점에서 크게 벗어났을 때 표시되는

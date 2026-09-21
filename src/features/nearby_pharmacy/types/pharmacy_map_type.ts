@@ -65,6 +65,12 @@ export interface IPharmacyMarkerProps {
   onPress: (pharmacy: INearbyPharmacies) => void;
 }
 
+export interface IPharmacyClusterMarkerProps {
+  coordinate: LatLng;
+  count: number;
+  onPress: () => void;
+}
+
 export interface IPharmacyMapProps {
   mapRef: RefObject<MapView | null>;
   initialRegion: Region;

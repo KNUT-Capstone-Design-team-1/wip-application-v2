@@ -63,6 +63,8 @@ export interface INearbyPharmacies {
   name: string; // 요양기관명
   address: string; // 주소
   telephone: string; // 전화번호
+  openTime: string; // 영업 시작 시간
+  closeTime: string; // 영업 종료 시간
   X: string; // X 좌표
   Y: string; // Y 좌표
   distance?: number; // 사용자 위치 기반 계산된 거리 (m)

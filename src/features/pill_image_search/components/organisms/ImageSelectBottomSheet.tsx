@@ -1,4 +1,4 @@
-import BaseBottomSheet from '@components/common/BaseBottomSheet';
+import { BaseBottomSheet } from '@components/common/BaseBottomSheet';
 import { BaseText } from '@components/common/BaseText';
 import { useImageSelectBottomSheetActions } from '@features/pill_image_search/hooks/useImageSelectBottomSheetActions';
 import { useImageSearchBottomSheetStore } from '@features/pill_image_search/store/image_search_bottom_sheet_store';

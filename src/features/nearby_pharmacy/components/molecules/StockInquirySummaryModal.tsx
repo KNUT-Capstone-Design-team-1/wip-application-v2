@@ -10,14 +10,7 @@ import { IStockInquiryPillContext } from '@features/nearby_pharmacy/hooks/use_st
 import { pharmacyActionService } from '@features/nearby_pharmacy/services/pharmacy_action_service';
 import { useToast } from '@hooks/use_toast';
 import { styles } from '@features/nearby_pharmacy/styles/StockInquirySummaryModal';
-
-interface IStockInquirySummaryModalProps {
-  isVisible: boolean;
-  pharmacy: INearbyPharmacies | null;
-  pillContext: IStockInquiryPillContext;
-  onClose: () => void;
-  onCall: (telephone: string) => void;
-}
+import { IStockInquirySummaryModalProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 재고 문의 시 약 정보 요약 및 추천 멘트, 원터치 전화 걸기를 제공하는 모달 (Presentation Layer)
 const StockInquirySummaryModal = ({

@@ -5,10 +5,7 @@ import { BaseText } from '@components/common/BaseText';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { styles } from '@features/nearby_pharmacy/styles/StockInquiryCallButton';
-
-interface IStockInquiryCallButtonProps {
-  onPress: () => void;
-}
+import { IStockInquiryCallButtonProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 재고 문의 풀 버튼
 const StockInquiryCallButton = ({ onPress }: IStockInquiryCallButtonProps) => {

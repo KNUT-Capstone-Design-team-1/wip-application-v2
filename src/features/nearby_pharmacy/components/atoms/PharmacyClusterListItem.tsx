@@ -3,13 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { INearbyPharmacies } from '@services/database/types';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterList';
-
-interface IPharmacyClusterListItemProps {
-  pharmacy: INearbyPharmacies;
-  isLast: boolean;
-  distanceText: string;
-  onPress: (pharmacy: INearbyPharmacies) => void;
-}
+import { IPharmacyClusterListItemProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 클러스터 마커 클릭 시 나타나는 리스트 내의 개별 약국 아이템 렌더링 컴포넌트
 const PharmacyClusterListItem = ({

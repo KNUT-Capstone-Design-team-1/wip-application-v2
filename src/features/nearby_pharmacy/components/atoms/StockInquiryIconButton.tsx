@@ -3,12 +3,7 @@ import { TouchableOpacity, GestureResponderEvent } from 'react-native';
 import { Hospital } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-
-interface IStockInquiryIconButtonProps {
-  onPress: (e?: GestureResponderEvent) => void;
-  size?: number;
-  color?: string;
-}
+import { IStockInquiryIconButtonProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 재고 문의 아이콘 버튼
 const StockInquiryIconButton = ({

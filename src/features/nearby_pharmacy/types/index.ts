@@ -9,3 +9,6 @@ export * from './pharmacy_ui_type';
 
 // 디바이스 액션 결과 타입
 export * from './pharmacy_action_type';
+
+// 영업시간 및 상세 정보 바텀시트 타입
+export * from './business_hours_type';

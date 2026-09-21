@@ -5,17 +5,17 @@ import { px } from '@utils/responsive';
 export const styles = StyleSheet.create({
   clusterListContainer: {
     marginHorizontal: px(20),
-    marginBottom: px(22),
+    marginBottom: px(8),
     backgroundColor: COLOR_BG['surface'],
-    borderRadius: px(15),
+    borderRadius: px(16),
     paddingTop: px(10),
     paddingBottom: px(8),
     maxHeight: px(320),
     elevation: 10,
     shadowColor: COLOR['shadow'],
-    shadowOffset: { width: 0, height: px(5) },
-    shadowOpacity: 0.3,
-    shadowRadius: 6.68,
+    shadowOffset: { width: 0, height: px(4) },
+    shadowOpacity: 0.15,
+    shadowRadius: px(8),
   },
   clusterListHeader: {
     flexDirection: 'row',

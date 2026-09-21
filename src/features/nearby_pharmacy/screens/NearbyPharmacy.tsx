@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Region } from 'react-native-maps';
 import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_pharmacy';
@@ -6,18 +6,17 @@ import { usePharmacyClusters } from '@features/nearby_pharmacy/hooks/use_pharmac
 import { useClusterSelection } from '@features/nearby_pharmacy/hooks/use_cluster_selection';
 import { useResearchPharmacy } from '@features/nearby_pharmacy/hooks/use_research_pharmacy';
 import { useStockInquiry } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
+import { usePharmacyOpenFilter } from '@features/nearby_pharmacy/hooks/use_pharmacy_open_filter';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { COLOR } from '@constants/color';
-import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
-import PharmacyClusterList from '@features/nearby_pharmacy/components/molecules/PharmacyClusterList';
+import { bottomTabSize } from '@constants/size';
 import ResearchHereButton from '@features/nearby_pharmacy/components/atoms/ResearchHereButton';
-import PharmacyLocateButton from '@features/nearby_pharmacy/components/atoms/PharmacyLocateButton';
 import PharmacyMap from '@features/nearby_pharmacy/components/organisms/PharmacyMap';
+import PharmacyMapBottomOverlay from '@features/nearby_pharmacy/components/organisms/PharmacyMapBottomOverlay';
+import StockInquirySummaryModal from '@features/nearby_pharmacy/components/molecules/StockInquirySummaryModal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import StockInquirySummaryModal from '@features/nearby_pharmacy/components/molecules/StockInquirySummaryModal';
-
-// 주변 약국 지도 화면
+// 주변 약국 지도 화면 컴포넌트
 const NearbyPharmacyScreen = () => {
   // 약국 데이터 및 위치 관련 전역 훅
   const {
@@ -52,15 +51,19 @@ const NearbyPharmacyScreen = () => {
   // 현재 지도 화면의 위경도 및 줌(Delta) 상태
   const [region, setRegion] = useState<Region>(initialRegion);
 
-  // 약국 데이터를 기반으로 클러스터(묶음) 생성
+  // 지금 열려있는 약국 필터 상태 및 필터링된 약국 목록 훅
+  const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
+    usePharmacyOpenFilter(pharmacies, selectedPharmacy, handleCloseInfoCard);
+
+  // 필터링된 약국 데이터를 기반으로 클러스터(묶음) 생성
   const { clusters, getClusterPharmacyIds } = usePharmacyClusters(
-    pharmacies,
+    displayedPharmacies,
     region,
   );
 
   // 클러스터 마커 선택 시 하단 리스트를 띄우고 줌인하는 로직
   const { pharmaciesById, handleClusterPress } = useClusterSelection({
-    pharmacies,
+    pharmacies: displayedPharmacies,
     mapRef,
     region,
     getClusterPharmacyIds,
@@ -73,6 +76,16 @@ const NearbyPharmacyScreen = () => {
     lastFetchedCenter,
     fetchPharmacies,
   );
+
+  // 재고 문의 모달 열기 핸들러
+  const handleOpenInquiryModal = useCallback(() => {
+    setInquiryModalVisible(true);
+  }, []);
+
+  // 재고 문의 모달 닫기 핸들러
+  const handleCloseInquiryModal = useCallback(() => {
+    setInquiryModalVisible(false);
+  }, []);
 
   // 초기 로딩 중이며 위치 정보가 아직 없을 때만 로딩 스피너 표시
   const shouldShowLoading = loading && !location;
@@ -105,41 +118,30 @@ const NearbyPharmacyScreen = () => {
         <ResearchHereButton loading={loading} onPress={handleResearchHere} />
       )}
 
-      {/* 하단 약국 상세 정보 또는 클러스터(묶음) 목록 오버레이 (재고 문의 모달 열림 시 숨김) */}
+      {/* 하단 플로팅 컨트롤 및 약국 정보 오버레이 (재고 문의 모달 열림 시 숨김) */}
       {!inquiryModalVisible && (
-        <View style={styles.bottomOverlay}>
-          {clusterPharmacies ? (
-            <PharmacyClusterList
-              pharmacies={clusterPharmacies}
-              onPharmacyPress={handleClusterPharmacySelect}
-              onClosePress={closeClusterList}
-            />
-          ) : (
-            selectedPharmacy && (
-              <PharmacyInfoCard
-                pharmacy={selectedPharmacy}
-                onCopyPress={handleCopy}
-                onClosePress={handleCloseInfoCard}
-                onStockInquiryPress={
-                  isStockInquiryMode
-                    ? () => setInquiryModalVisible(true)
-                    : undefined
-                }
-              />
-            )
-          )}
-        </View>
+        <PharmacyMapBottomOverlay
+          bottomInset={bottomTabSize.height + insets.bottom}
+          isOpenOnly={isOpenOnly}
+          onToggleOpenOnly={handleToggleOpenOnly}
+          onLocate={handleLocate}
+          clusterPharmacies={clusterPharmacies}
+          selectedPharmacy={selectedPharmacy}
+          onClusterPharmacySelect={handleClusterPharmacySelect}
+          onCloseClusterList={closeClusterList}
+          onCopyPharmacyInfo={handleCopy}
+          onClosePharmacyCard={handleCloseInfoCard}
+          isStockInquiryMode={isStockInquiryMode}
+          onOpenInquiryModal={handleOpenInquiryModal}
+        />
       )}
-
-      {/* 현재 내 위치(GPS)로 카메라를 이동시키는 버튼 */}
-      <PharmacyLocateButton onPress={handleLocate} insets={insets} />
 
       {/* 재고 문의 요약 및 원터치 전화 모달 */}
       <StockInquirySummaryModal
         isVisible={inquiryModalVisible}
         pharmacy={selectedPharmacy}
         pillContext={pillContext}
-        onClose={() => setInquiryModalVisible(false)}
+        onClose={handleCloseInquiryModal}
         onCall={handleStockInquiryCall}
       />
     </View>

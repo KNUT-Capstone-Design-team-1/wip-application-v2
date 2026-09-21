@@ -5,11 +5,7 @@ import { COLOR_TEXT } from '@constants/color';
 import { BaseText } from '@components/common/BaseText';
 import { fontPx } from '@utils/responsive';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterList';
-
-interface IPharmacyClusterListHeaderProps {
-  count: number;
-  onClosePress: () => void;
-}
+import { IPharmacyClusterListHeaderProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 약국 클러스터 리스트 상단의 개수 및 닫기 버튼을 렌더링하는 헤더 컴포넌트
 const PharmacyClusterListHeader = ({

@@ -6,53 +6,80 @@ import { px } from '@utils/responsive';
 export const styles = StyleSheet.create({
   infoContainer: {
     marginHorizontal: px(20),
-    marginBottom: px(22),
+    marginBottom: px(8),
     backgroundColor: COLOR_BG.surface,
-    borderRadius: px(15),
-    paddingVertical: px(12),
+    borderRadius: px(16),
+    paddingTop: px(16),
+    paddingBottom: px(14),
     paddingHorizontal: px(16),
+    elevation: 10,
+    shadowColor: COLOR.shadow,
+    shadowOffset: { width: 0, height: px(4) },
+    shadowOpacity: 0.15,
+    shadowRadius: px(8),
+  },
+
+  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 10,
-    shadowColor: COLOR.shadow,
-    shadowOffset: { width: 0, height: px(5) },
-    shadowOpacity: 0.3,
-    shadowRadius: 6.68,
+    marginBottom: px(8),
   },
-  infoContent: {
-    flex: 1,
-  },
-  copyButton: {
+
+  nameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: px(4),
-    marginBottom: px(5),
+    flex: 1,
+    marginRight: px(8),
   },
+
   pharmacyName: {
     color: COLOR_TEXT.title,
   },
+
+  pharmacyDistance: {
+    color: COLOR.primary,
+    marginLeft: px(6),
+  },
+
+  closeButton: {
+    padding: px(4),
+  },
+
+  infoContent: {
+    gap: px(6),
+  },
+
+  copyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
   pharmacyPhone: {
     color: COLOR_TEXT.subTitle,
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
+
   pharmacyPhoneDisabled: {
     color: COLOR_TEXT.disabled,
   },
+
   pharmacyAddress: {
     color: COLOR_TEXT.body,
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
-  pharmacyDistance: {
-    color: COLOR.primary,
-    marginLeft: px(8),
+
+  pharmacyHoursRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(4),
   },
-  closeButton: {
-    position: 'absolute',
-    top: px(8),
-    right: px(8),
-    padding: px(4),
+
+  pharmacyHoursText: {
+    color: COLOR_TEXT.body,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 });

@@ -3,12 +3,7 @@ import { View, Text } from 'react-native';
 import { Marker, LatLng } from 'react-native-maps';
 import { px } from '@utils/responsive';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterMarker';
-
-interface IPharmacyClusterMarkerProps {
-  coordinate: LatLng;
-  count: number;
-  onPress: () => void;
-}
+import { IPharmacyClusterMarkerProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 
 // 여러 약국 마커를 하나로 묶어 표시하는 클러스터 마커.
 const PharmacyClusterMarker = ({

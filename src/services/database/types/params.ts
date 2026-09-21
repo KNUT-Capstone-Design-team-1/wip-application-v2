@@ -56,7 +56,7 @@ export type TMarkImagesSearchParam = Omit<IMarkImages, 'base64'>;
 // 주변 약국 검색을 위한 파라미터 타입
 export type TNearbyPharmaciesSearchParam = Omit<
   INearbyPharmacies,
-  'telephone' | 'X' | 'Y'
+  'openTime' | 'closeTime' | 'telephone' | 'X' | 'Y'
 > & {
   coordinate: { x: number; y: number };
 };

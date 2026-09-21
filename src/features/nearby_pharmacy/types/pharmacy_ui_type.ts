@@ -1,4 +1,7 @@
+import { ReactNode } from 'react';
+import { StyleProp, TextStyle, GestureResponderEvent } from 'react-native';
 import { INearbyPharmacies } from '@services/database/types';
+import { IStockInquiryPillContext } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
 
 // 약국 정보 상세 카드 Props 인터페이스
 export interface IPharmacyInfoCardProps {
@@ -13,4 +16,82 @@ export interface IPharmacyInfoCardProps {
 
   // 재고 문의 전화 걸기 핸들러
   onStockInquiryPress?: (telephone: string) => void;
+}
+
+// 개별 약국 정보 텍스트 행 Props
+export interface IPharmacyInfoRowProps {
+  text: string;
+  onPress: () => void;
+  disabled?: boolean;
+  weight: 'bold' | 'semiBold' | 'medium' | 'regular';
+  size: number;
+  textStyle?: StyleProp<TextStyle>;
+  rightElement?: ReactNode;
+}
+
+// 내 위치 이동 버튼 Props
+export interface IPharmacyLocateButtonProps {
+  onPress: () => void;
+}
+
+// 현재 위치에서 재검색 버튼 Props
+export interface IResearchHereButtonProps {
+  loading: boolean;
+  onPress: () => void;
+}
+
+// 재고 문의 전화 풀 버튼 Props
+export interface IStockInquiryCallButtonProps {
+  onPress: () => void;
+}
+
+// 재고 문의 아이콘 버튼 Props
+export interface IStockInquiryIconButtonProps {
+  onPress: (e?: GestureResponderEvent) => void;
+  size?: number;
+  color?: string;
+}
+
+// 클러스터 약국 리스트 상단 헤더 Props
+export interface IPharmacyClusterListHeaderProps {
+  count: number;
+  onClosePress: () => void;
+}
+
+// 클러스터 약국 리스트 개별 아이템 Props
+export interface IPharmacyClusterListItemProps {
+  pharmacy: INearbyPharmacies;
+  isLast: boolean;
+  distanceText: string;
+  onPress: (pharmacy: INearbyPharmacies) => void;
+}
+
+// 약국 마커 아이콘 Props
+export interface IPharmacyMarkerIconProps {
+  selected: boolean;
+}
+
+// 지도 하단 오버레이 컴포넌트 Props
+export interface IPharmacyMapBottomOverlayProps {
+  bottomInset: number;
+  isOpenOnly: boolean;
+  onToggleOpenOnly: () => void;
+  onLocate: () => void;
+  clusterPharmacies: INearbyPharmacies[] | null;
+  selectedPharmacy: INearbyPharmacies | null;
+  onClusterPharmacySelect: (pharmacy: INearbyPharmacies) => void;
+  onCloseClusterList: () => void;
+  onCopyPharmacyInfo: (text: string) => void;
+  onClosePharmacyCard: () => void;
+  isStockInquiryMode: boolean;
+  onOpenInquiryModal: () => void;
+}
+
+// 재고 문의 요약 모달 Props
+export interface IStockInquirySummaryModalProps {
+  isVisible: boolean;
+  pharmacy: INearbyPharmacies | null;
+  pillContext: IStockInquiryPillContext;
+  onClose: () => void;
+  onCall: (telephone: string) => void;
 }

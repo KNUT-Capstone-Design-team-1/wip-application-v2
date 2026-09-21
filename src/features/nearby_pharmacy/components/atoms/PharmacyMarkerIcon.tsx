@@ -6,10 +6,7 @@ import {
   styles,
   getSelectedIconSize,
 } from '@features/nearby_pharmacy/styles/PharmacyMarkerIcon';
-
-interface IPharmacyMarkerIconProps {
-  selected: boolean;
-}
+import { IPharmacyMarkerIconProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 개별 약국 마커의 아이콘(선택 여부에 따라 디자인 변경)을 렌더링하는 컴포넌트
 const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
