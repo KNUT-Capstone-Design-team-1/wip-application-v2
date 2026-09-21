@@ -67,6 +67,9 @@ export const useUnifiedSearch = () => {
           return;
         }
 
+        addRecentKeyword(trimmedKeyword); // 최근 검색어 추가
+        setSearchParam({ KEYWORD: trimmedKeyword }); // 키워드 태그 추가
+
         if (searchResult.results.length === 0) {
           showToast({
             type: 'default',
@@ -76,8 +79,6 @@ export const useUnifiedSearch = () => {
         }
 
         // 검색 조건 및 결과 저장
-        addRecentKeyword(trimmedKeyword);
-        setSearchParam({ KEYWORD: trimmedKeyword });
         setTotalDataCount(searchResult.totalDataCount);
         setSearchResultData(searchResult.results);
         setNextCursor(searchResult.nextCursor);
