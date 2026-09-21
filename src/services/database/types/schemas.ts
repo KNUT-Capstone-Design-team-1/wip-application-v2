@@ -61,13 +61,8 @@ export interface IMarkImages {
 export interface INearbyPharmacies {
   id: string; // 암호화요양기호
   name: string; // 요양기관명
-  states: string; // 시도코드명
-  region: string; // 시군구코드명
-  district: string; // 읍면동
-  postalCode: string; // 우편번호
   address: string; // 주소
   telephone: string; // 전화번호
-  openData: number; // 개설일자
   X: string; // X 좌표
   Y: string; // Y 좌표
   distance?: number; // 사용자 위치 기반 계산된 거리 (m)

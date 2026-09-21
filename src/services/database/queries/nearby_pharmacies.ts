@@ -25,18 +25,6 @@ const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
       query: `name LIKE ?`,
       values: (name: string) => [`%${name}%`],
     },
-    states: {
-      query: `states = ?`,
-      values: (states: string) => [states],
-    },
-    region: {
-      query: `region LIKE ?`,
-      values: (region: string) => [`%${region}%`],
-    },
-    district: {
-      query: `district LIKE ?`,
-      values: (district: string) => [`%${district}%`],
-    },
     address: {
       query: `address LIKE ?`,
       values: (address: string) => [`%${address}%`],
