@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import { LayoutAnimation } from 'react-native';
 import * as Location from 'expo-location';
 import { usePharmacyToast } from '@features/nearby_pharmacy/hooks/use_pharmacy_toast';
 import { INearbyPharmacies } from '@services/database/types';
@@ -99,7 +98,6 @@ export const useNearbyPharmacy = () => {
 
   // 마커 선택 시 해당 약국 선택 핸들러
   const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setClusterPharmacies(null);
     setSelectedPharmacy(pharmacy);
     useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
@@ -107,30 +105,26 @@ export const useNearbyPharmacy = () => {
 
   // 정보 카드 닫기 핸들러
   const handleCloseInfoCard = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setSelectedPharmacy(null);
   }, []);
 
   // 클러스터 약국 목록 열기 핸들러
   const openClusterList = useCallback((list: INearbyPharmacies[]) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setClusterPharmacies(list);
     setSelectedPharmacy(null);
   }, []);
 
   // 클러스터 약국 목록 닫기 핸들러
   const closeClusterList = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setClusterPharmacies(null);
   }, []);
 
-  // 클러스터 목록 내 특정 약국 선택 핸들러 (해당 약국 위치로 줌인 및 infocard 노출)
+  // 클러스터 목록 내 특정 약국 선택 핸들러
   const handleClusterPharmacySelect = useCallback(
     (pharmacy: INearbyPharmacies) => {
       const lat = parseFloat(pharmacy.Y);
       const lng = parseFloat(pharmacy.X);
 
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setClusterPharmacies(null);
       setSelectedPharmacy(pharmacy);
 
