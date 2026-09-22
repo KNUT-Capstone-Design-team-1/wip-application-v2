@@ -27,7 +27,7 @@ export interface IPharmacyBusinessHourItem {
 
 // 오늘 영업시간 요약 인터페이스
 export interface IPharmacyBusinessHourSummary {
-  // 라벨 (예: '오늘 영업')
+  // 라벨 (예: '월요일', '화요일')
   label: string;
 
   // 표시 텍스트 (예: '09:00 ~ 18:00' 또는 '정보 없음')
@@ -39,7 +39,7 @@ export interface IPharmacyBusinessHourSummary {
 
 // 약국 영업시간 요약 클릭 행 Props
 export interface IPharmacyHoursHeaderRowProps {
-  // 라벨 (예: '오늘 영업')
+  // 라벨 (예: '월요일', '화요일')
   label: string;
 
   // 표시 텍스트
@@ -70,7 +70,7 @@ export interface IPharmacyDataSourceFooterProps {
   sourceText?: string;
 }
 
-// 지금 열려있는 약국만 보기 체크박스 컴포넌트 Props
+// 영업중인 약국만 표시 체크박스 컴포넌트 Props
 export interface IPharmacyOpenOnlyCheckboxProps {
   // 체크 여부
   checked: boolean;
