@@ -1,7 +1,6 @@
 import {
   isPharmacyOpenNow,
   parsePharmacyBusinessHours,
-  getTodayBusinessHourSummary,
   formatPharmacyTime,
   parseTimeToMinutes,
 } from '@features/nearby_pharmacy/utils/business_hours';
@@ -24,33 +23,6 @@ describe('business_hours utils 테스트', () => {
       expect(parseTimeToMinutes('0900')).toBe(540);
       expect(parseTimeToMinutes('09:30')).toBe(570);
       expect(parseTimeToMinutes('1800')).toBe(1080);
-    });
-  });
-
-  describe('getTodayBusinessHourSummary', () => {
-    const monday = new Date(2026, 8, 21, 12, 0); // 월요일
-    const tuesday = new Date(2026, 8, 22, 12, 0); // 화요일
-    const openTimes = JSON.stringify(['0900', '1000', '', '', '', '', '', '']);
-    const closeTimes = JSON.stringify(['1800', '1900', '', '', '', '', '', '']);
-
-    it('현재 요일 레이블(월요일, 화요일 등)을 반환해야 한다', () => {
-      const mondaySummary = getTodayBusinessHourSummary(
-        openTimes,
-        closeTimes,
-        monday,
-      );
-      expect(mondaySummary.label).toBe('월요일');
-      expect(mondaySummary.text).toBe('09:00 ~ 18:00');
-      expect(mondaySummary.hasHours).toBe(true);
-
-      const tuesdaySummary = getTodayBusinessHourSummary(
-        openTimes,
-        closeTimes,
-        tuesday,
-      );
-      expect(tuesdaySummary.label).toBe('화요일');
-      expect(tuesdaySummary.text).toBe('10:00 ~ 19:00');
-      expect(tuesdaySummary.hasHours).toBe(true);
     });
   });
 

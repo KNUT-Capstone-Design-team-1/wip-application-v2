@@ -28,7 +28,7 @@ const PharmacyMapBottomOverlay = ({
       style={[styles.bottomOverlay, { bottom: bottomInset }]}
       pointerEvents="box-none"
     >
-      {/* 우측 하단 플로팅 컨트롤: 영업중인 약국만 표시 체크박스 & 내 위치 이동 버튼 */}
+      {/* 우측 하단 플로팅 컨트롤: 지금 열려있는 약국 체크박스 & 내 위치 이동 버튼 */}
       <View style={styles.floatingControlsContainer} pointerEvents="box-none">
         <PharmacyOpenOnlyCheckbox
           checked={isOpenOnly}
