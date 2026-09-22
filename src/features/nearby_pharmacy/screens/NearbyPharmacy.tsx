@@ -53,7 +53,7 @@ const NearbyPharmacyScreen = () => {
 
   // 영업중인 약국만 표시 필터 상태 및 필터링된 약국 목록 훅
   const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
-    usePharmacyOpenFilter(pharmacies, handleCloseInfoCard);
+    usePharmacyOpenFilter(pharmacies, selectedPharmacy, handleCloseInfoCard);
 
   // 필터링된 약국 데이터를 기반으로 클러스터(묶음) 생성
   const { clusters, getClusterPharmacyIds } = usePharmacyClusters(
