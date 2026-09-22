@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import * as Location from 'expo-location';
-import { usePharmacyToast } from '@features/nearby_pharmacy/hooks/use_pharmacy_toast';
+import { useToast } from '@hooks/use_toast';
 import { INearbyPharmacies } from '@services/database/types';
 import logger from '@utils/logger';
 import { useFocusEffect } from 'expo-router';
@@ -26,7 +26,7 @@ import {
 
 // 주변 약국 지도 및 위치 기반 검색 프레젠테이션 커스텀 훅
 export const useNearbyPharmacy = () => {
-  const { showToast } = usePharmacyToast();
+  const { showToast } = useToast();
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );

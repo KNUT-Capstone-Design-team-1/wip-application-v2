@@ -168,7 +168,7 @@ export const getTodayIndex = (targetDate: Date = new Date()): number => {
   return day - 1;
 };
 
-// 현재 시각 기준으로 해당 약국이 지금 영업 중인지 판별
+// 현재 시각 기준으로 해당 약국이 지금 열려있는지(영업 중인지) 판별
 export const isPharmacyOpenNow = (
   openTimeJson?: string | null,
   closeTimeJson?: string | null,
@@ -285,12 +285,11 @@ export const createBusinessHourItem = (
 export const parsePharmacyBusinessHours = (
   openTimeJson?: string | null,
   closeTimeJson?: string | null,
-  targetDate: Date = new Date(),
 ): IPharmacyBusinessHourItem[] => {
   const openTimes = parseTimeJsonArray(openTimeJson);
   const closeTimes = parseTimeJsonArray(closeTimeJson);
 
-  const todayIndex = getTodayIndex(targetDate);
+  const todayIndex = getTodayIndex();
 
   return PHARMACY_DAY_LABELS.map((dayLabel, dayIndex) => {
     const rawOpen = openTimes[dayIndex] ?? '';
@@ -310,20 +309,13 @@ export const parsePharmacyBusinessHours = (
 export const getTodayBusinessHourSummary = (
   openTimeJson?: string | null,
   closeTimeJson?: string | null,
-  targetDate: Date = new Date(),
 ): IPharmacyBusinessHourSummary => {
-  const hours = parsePharmacyBusinessHours(
-    openTimeJson,
-    closeTimeJson,
-    targetDate,
-  );
-  const todayIndex = getTodayIndex(targetDate);
-  const todayLabel = PHARMACY_DAY_LABELS[todayIndex] ?? '월요일';
+  const hours = parsePharmacyBusinessHours(openTimeJson, closeTimeJson);
   const today = hours.find((h) => h.isToday);
 
   if (!today) {
     return {
-      label: todayLabel,
+      label: '오늘 영업',
       text: '정보 없음',
       hasHours: false,
     };
@@ -331,14 +323,14 @@ export const getTodayBusinessHourSummary = (
 
   if (today.timeText === '정보 없음') {
     return {
-      label: todayLabel,
+      label: '오늘 영업',
       text: '정보 없음',
       hasHours: false,
     };
   }
 
   return {
-    label: todayLabel,
+    label: '오늘 영업',
     text: today.timeText,
     hasHours: true,
   };

@@ -51,7 +51,7 @@ const NearbyPharmacyScreen = () => {
   // 현재 지도 화면의 위경도 및 줌(Delta) 상태
   const [region, setRegion] = useState<Region>(initialRegion);
 
-  // 영업중인 약국만 표시 필터 상태 및 필터링된 약국 목록 훅
+  // 지금 열려있는 약국 필터 상태 및 필터링된 약국 목록 훅
   const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
     usePharmacyOpenFilter(pharmacies, selectedPharmacy, handleCloseInfoCard);
 
