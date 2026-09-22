@@ -46,6 +46,26 @@ export const styles = StyleSheet.create({
     padding: px(4),
   },
 
+  headerRightArea: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(10),
+    flexShrink: 0,
+  },
+
+  pharmacyStatus: {
+    includeFontPadding: false,
+    flexShrink: 0,
+  },
+
+  statusOpen: {
+    color: COLOR.normal,
+  },
+
+  statusClosed: {
+    color: COLOR_TEXT.sub,
+  },
+
   infoContent: {
     gap: px(6),
   },

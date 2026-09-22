@@ -20,6 +20,7 @@ import { getFormattedDistance } from '@utils/location';
 import {
   getTodayBusinessHourSummary,
   parsePharmacyBusinessHours,
+  isPharmacyOpenNow,
 } from '@features/nearby_pharmacy/utils/business_hours';
 import { usePharmacyCurrentTime } from '@features/nearby_pharmacy/hooks/use_pharmacy_current_time';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyInfoCard';
@@ -116,19 +117,30 @@ const PharmacyInfoCard = ({
     [pharmacy.openTime, pharmacy.closeTime, currentTime],
   );
 
+  // 현재 시각 기준 영업 중 여부 계산 (시간 경과 시 실시간 재계산)
+  const isOpen = useMemo(
+    () => isPharmacyOpenNow(pharmacy.openTime, pharmacy.closeTime, currentTime),
+    [pharmacy.openTime, pharmacy.closeTime, currentTime],
+  );
+
   const hasTelephone = Boolean(pharmacy.telephone);
   const showStockInquiryBtn = Boolean(onStockInquiryPress) && hasTelephone;
 
   return (
     <View style={styles.infoContainer}>
-      {/* 카드 상단 헤더: 약국명 & 거리 & 닫기 버튼 */}
+      {/* 카드 상단 헤더: 약국명 & 거리 & 우측 상단 영업 상태 및 닫기 버튼 */}
       <View style={styles.headerRow}>
         <TouchableOpacity
           style={styles.nameContainer}
           onPress={handleCopyName}
           activeOpacity={0.7}
         >
-          <BaseText weight="bold" size={18} style={styles.pharmacyName}>
+          <BaseText
+            weight="bold"
+            size={18}
+            style={styles.pharmacyName}
+            numberOfLines={1}
+          >
             {pharmacy.name}
           </BaseText>
           {!!distanceText && (
@@ -138,14 +150,28 @@ const PharmacyInfoCard = ({
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={onClosePress}
-          activeOpacity={0.7}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <X size={fontPx(16)} color={COLOR_TEXT.sub} strokeWidth={2.5} />
-        </TouchableOpacity>
+        {/* 우측 상단: 영업 상태 뱃지 & 닫기 버튼 */}
+        <View style={styles.headerRightArea}>
+          <BaseText
+            weight="bold"
+            size={13}
+            style={[
+              styles.pharmacyStatus,
+              isOpen ? styles.statusOpen : styles.statusClosed,
+            ]}
+          >
+            {isOpen ? '영업중' : '영업 종료'}
+          </BaseText>
+
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={onClosePress}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <X size={fontPx(16)} color={COLOR_TEXT.sub} strokeWidth={2.5} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* 카드 본문: 전화번호, 주소, 영업시간 */}
