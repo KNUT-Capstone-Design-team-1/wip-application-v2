@@ -55,7 +55,7 @@ const PharmacyClusterMarker = ({
       anchor={{ x: 0.5, y: 0.5 }}
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={tracksViewChanges}
-      zIndex={1}
+      zIndex={10}
     >
       <View
         collapsable={false}

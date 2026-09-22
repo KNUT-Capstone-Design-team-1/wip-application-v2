@@ -100,9 +100,23 @@ export const useNearbyPharmacy = () => {
 
   // 마커 선택 시 해당 약국 선택 핸들러
   const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setSelectedPharmacy((prev) => {
+      const isSamePharmacy = prev?.id === pharmacy.id;
+
+      if (isSamePharmacy) {
+        return prev;
+      }
+
+      const isFirstOpen = !prev;
+
+      if (isFirstOpen) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      }
+
+      return pharmacy;
+    });
+
     setClusterPharmacies(null);
-    setSelectedPharmacy(pharmacy);
     useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
   }, []);
 
