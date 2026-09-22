@@ -9,6 +9,7 @@ import {
   parseTimeToMinutes,
   isBlankOrZeroTime,
 } from '@features/nearby_pharmacy/utils/time_parser';
+import { isKoreanPublicHoliday } from '@features/nearby_pharmacy/utils/korean_holidays';
 
 // 현재 분(currentMinutes)이 영업 시간(open~close) 범위 내에 있는지 판별
 export const isMinutesWithinBusinessHours = (
@@ -44,8 +45,13 @@ export const isMinutesWithinBusinessHours = (
   return false;
 };
 
-// 현재 요일의 인덱스 계산 (0: 월요일 ~ 6: 일요일)
+// 현재 날짜의 영업시간 인덱스 계산 (0: 월요일 ~ 6: 일요일, 7: 공휴일)
 export const getTodayIndex = (targetDate: Date = new Date()): number => {
+  // 대한민국 법정 공휴일 및 대체공휴일인 경우 공휴일 인덱스(7) 반환
+  if (isKoreanPublicHoliday(targetDate)) {
+    return 7;
+  }
+
   const day = targetDate.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
 
   if (day === 0) {
@@ -101,8 +107,13 @@ export const isPharmacyOpenNow = (
     return false;
   }
 
-  // 전날 심야영업 연장 여부 확인
-  const yesterdayIndex = (todayIndex + 6) % 7;
+  // 전날 심야영업 연장 여부 확인 (전날의 실제 요일/공휴일 인덱스 산출)
+  const yesterday = new Date(targetDate);
+
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const yesterdayIndex = getTodayIndex(yesterday);
+
   const yestOpen = openTimes[yesterdayIndex]?.trim();
   const yestClose = closeTimes[yesterdayIndex]?.trim();
 

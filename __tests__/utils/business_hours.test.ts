@@ -150,11 +150,11 @@ describe('business_hours utils 테스트', () => {
     });
 
     it('금요일 당일 심야 영업(20:00~익일 02:00)의 경우 금요일 새벽(01:30)에는 영업중이 아니어야 한다 (당일 새벽 오판별 방지)', () => {
-      // 2026-09-25는 금요일
-      const fridayDawn = new Date(2026, 8, 25, 1, 30); // 금요일 01:30
-      const fridayBeforeOpen = new Date(2026, 8, 25, 19, 59); // 금요일 19:59
-      const fridayOpen = new Date(2026, 8, 25, 20, 0); // 금요일 20:00
-      const fridayLateNight = new Date(2026, 8, 25, 23, 59); // 금요일 23:59
+      // 2026-09-18은 평일 금요일 (2026-09-25는 추석 공휴일)
+      const fridayDawn = new Date(2026, 8, 18, 1, 30); // 금요일 01:30
+      const fridayBeforeOpen = new Date(2026, 8, 18, 19, 59); // 금요일 19:59
+      const fridayOpen = new Date(2026, 8, 18, 20, 0); // 금요일 20:00
+      const fridayLateNight = new Date(2026, 8, 18, 23, 59); // 금요일 23:59
 
       // 금요일(인덱스 4)만 20:00 ~ 02:00 심야 영업, 목요일(인덱스 3)은 일반 영업(09:00~18:00)
       const fridayNightOpen = JSON.stringify([
@@ -197,11 +197,11 @@ describe('business_hours utils 테스트', () => {
     });
 
     it('전날(목요일) 심야 영업(20:00~익일 02:00)은 금요일 새벽에 정상 승계되어 영업중이어야 한다', () => {
-      // 2026-09-25는 금요일
-      const fridayDawn30 = new Date(2026, 8, 25, 0, 30); // 금요일 00:30
-      const fridayDawn90 = new Date(2026, 8, 25, 1, 30); // 금요일 01:30
-      const fridayDawnClose = new Date(2026, 8, 25, 2, 0); // 금요일 02:00
-      const fridayDawnAfterClose = new Date(2026, 8, 25, 2, 1); // 금요일 02:01
+      // 2026-09-18은 평일 금요일
+      const fridayDawn30 = new Date(2026, 8, 18, 0, 30); // 금요일 00:30
+      const fridayDawn90 = new Date(2026, 8, 18, 1, 30); // 금요일 01:30
+      const fridayDawnClose = new Date(2026, 8, 18, 2, 0); // 금요일 02:00
+      const fridayDawnAfterClose = new Date(2026, 8, 18, 2, 1); // 금요일 02:01
 
       // 목요일(인덱스 3) 20:00 ~ 02:00 심야 영업, 금요일(인덱스 4)은 휴무
       const thursdayOvernightOpen = JSON.stringify([

@@ -6467,6 +6467,11 @@ kleur@^3.0.3:
   resolved "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
+korean-lunar-calendar@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/korean-lunar-calendar/-/korean-lunar-calendar-0.4.0.tgz#9be00ef21e60f969e4bfc7957da70ec92e2c8a0d"
+  integrity sha512-kJXyH3sI/butJxCBtsLXlMJsl5qqNKNjduf1Na0s7XXwP+D/Wdlx0R0/S5ygxPVFSXf/JZ3bBKaCP6bGWhgZ0w==
+
 lan-network@^0.2.1:
   version "0.2.1"
   resolved "https://registry.npmjs.org/lan-network/-/lan-network-0.2.1.tgz#e4764a0d17f6bd1f2794c838fa219526a1b756f8"
