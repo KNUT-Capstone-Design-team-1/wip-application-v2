@@ -30,9 +30,21 @@ export const usePharmacyClusters = (
     [clusterIndex],
   );
 
+  // 특정 클러스터가 개별 마커로 분리되는 줌 레벨 반환 함수
+  const getClusterExpansionZoom = useCallback(
+    (clusterId: number): number => {
+      return pharmacyClusterService.getClusterExpansionZoom(
+        clusterIndex,
+        clusterId,
+      );
+    },
+    [clusterIndex],
+  );
+
   return {
     clusters,
     clusterIndex,
     getClusterPharmacyIds,
+    getClusterExpansionZoom,
   };
 };

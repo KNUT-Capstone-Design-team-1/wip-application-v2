@@ -6,6 +6,7 @@ import { ICoordinate } from './pharmacy_map_type';
 import {
   ILastFetchedCenter,
   IPharmacySearchCoordinates,
+  IStockInquiryPillContext,
 } from './pharmacy_domain_type';
 
 // 위치 관리 훅 반환 타입
@@ -44,6 +45,12 @@ export interface IUsePharmacySearchReturn {
   fetchPharmacies: (coords: IPharmacySearchCoordinates) => Promise<void>;
 }
 
+// 약국 및 클러스터 선택 통합 상태 타입 (상호 배타적 단일 상태)
+export type TPharmacySelectionState =
+  | { type: 'pharmacy'; pharmacy: INearbyPharmacies }
+  | { type: 'cluster'; pharmacies: INearbyPharmacies[] }
+  | null;
+
 // 약국 선택 및 클러스터 인터랙션 훅 반환 타입
 export interface IUsePharmacySelectionReturn {
   // 현재 선택된 약국 정보
@@ -74,8 +81,32 @@ export interface IUsePharmacySelectionReturn {
 // 클러스터 선택 훅 매개변수 인터페이스
 export interface IUseClusterSelectionParams {
   pharmacies: INearbyPharmacies[];
-  mapRef: RefObject<MapView | null>;
-  region: Region;
   getClusterPharmacyIds: (clusterId: number) => string[];
   openClusterList: (list: INearbyPharmacies[]) => void;
+}
+
+// 클러스터 선택 훅 반환 타입
+export interface IUseClusterSelectionReturn {
+  pharmaciesById: Map<string, INearbyPharmacies>;
+  handleClusterPress: (clusterId: number) => void;
+}
+
+// 영업중 필터 훅 반환 타입
+export interface IUsePharmacyOpenFilterReturn {
+  isOpenOnly: boolean;
+  displayedPharmacies: INearbyPharmacies[];
+  handleToggleOpenOnly: () => void;
+}
+
+// 지도 이동 시 재검색 훅 반환 타입
+export interface IUseResearchPharmacyReturn {
+  shouldResearch: boolean;
+  handleResearchHere: () => void;
+}
+
+// 재고 문의 훅 반환 타입
+export interface IUseStockInquiryReturn {
+  isStockInquiryMode: boolean;
+  pillContext: IStockInquiryPillContext;
+  handleStockInquiryCall: (telephone: string) => void;
 }

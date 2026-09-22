@@ -1,27 +1,30 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useRef } from 'react';
 import { View, Text } from 'react-native';
-import { Marker } from 'react-native-maps';
-import { px } from '@utils/responsive';
+import { Marker, MapMarker } from 'react-native-maps';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterMarker';
 import { IPharmacyClusterMarkerProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
-import { MARKER_TRACKS_CHANGES_TIMEOUT_MS } from '@features/nearby_pharmacy/constants/search';
+import {
+  MARKER_CLUSTER_SIZE,
+  MARKER_ANCHOR_UNSELECTED,
+  MARKER_TRACKS_CHANGES_TIMEOUT_MS,
+} from '@features/nearby_pharmacy/constants/map';
 
-// 여러 약국 마커를 하나로 묶어 표시하는 클러스터 마커.
+// 클러스터 마커 컴포넌트
 const PharmacyClusterMarker = ({
   coordinate,
   count,
   onPress,
 }: IPharmacyClusterMarkerProps) => {
+  const markerRef = useRef<MapMarker>(null);
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
 
-  // 클러스터 마커 크기
-  const size = Math.round(px(32));
-
-  // count가 변경될 때마다 캡처를 활성화하고, 일정 시간 후 중단하여 성능 확보
+  // count 변경 시 스냅샷 재캡처
   useEffect(() => {
     setTracksViewChanges(true);
+    markerRef.current?.redraw();
 
     const timer = setTimeout(() => {
+      markerRef.current?.redraw();
       setTracksViewChanges(false);
     }, MARKER_TRACKS_CHANGES_TIMEOUT_MS);
 
@@ -30,17 +33,27 @@ const PharmacyClusterMarker = ({
 
   return (
     <Marker
+      ref={markerRef}
       coordinate={coordinate}
-      onPress={onPress}
-      anchor={{ x: 0.5, y: 0.5 }}
+      stopPropagation={true}
+      onPress={(e) => {
+        e?.stopPropagation?.();
+        onPress();
+      }}
+      anchor={MARKER_ANCHOR_UNSELECTED}
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={tracksViewChanges}
+      zIndex={10}
     >
       <View
         collapsable={false}
         style={[
           styles.markerWrapper,
-          { width: size, height: size, borderRadius: size / 2 },
+          {
+            width: MARKER_CLUSTER_SIZE,
+            height: MARKER_CLUSTER_SIZE,
+            borderRadius: MARKER_CLUSTER_SIZE / 2,
+          },
         ]}
       >
         <Text style={styles.clusterCount}>{count}</Text>

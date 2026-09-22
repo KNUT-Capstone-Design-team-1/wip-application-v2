@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { IPharmacyOpenOnlyCheckboxProps } from '@features/nearby_pharmacy/types/business_hours_type';
+import { IPharmacyOpenOnlyCheckboxProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyOpenOnlyCheckbox';
 
 // 영업중인 약국만 필터링하는 토글 체크박스 컴포넌트

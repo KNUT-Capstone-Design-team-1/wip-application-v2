@@ -4,7 +4,7 @@ import { usePharmacyToast } from '@features/nearby_pharmacy/hooks/use_pharmacy_t
 import { usePharmacySearch } from '@features/nearby_pharmacy/hooks/use_pharmacy_search';
 import { usePharmacyLocation } from '@features/nearby_pharmacy/hooks/use_pharmacy_location';
 import { usePharmacySelection } from '@features/nearby_pharmacy/hooks/use_pharmacy_selection';
-import { NEARBY_PHARMACY_RADIUS_KM } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
+import { NEARBY_PHARMACY_RADIUS_KM } from '@features/nearby_pharmacy/constants/search';
 
 // 주변 약국 화면의 상태와 로직을 조율하는 통합 커스텀 훅 (Facade)
 export const useNearbyPharmacy = () => {

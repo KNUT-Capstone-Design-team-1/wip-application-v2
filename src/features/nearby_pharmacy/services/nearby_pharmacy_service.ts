@@ -6,7 +6,7 @@ import {
   KM_PER_LON_DEGREE,
   RESEARCH_DISPLACEMENT_RATIO,
   RESEARCH_MAX_DISPLACEMENT_KM,
-} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
+} from '@features/nearby_pharmacy/constants/search';
 import { ICoordinate } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 import {
   ILastFetchedCenter,

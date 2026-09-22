@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { IPharmacyDataSourceFooterProps } from '@features/nearby_pharmacy/types/business_hours_type';
-import { PHARMACY_DATA_SOURCE_TEXT } from '@features/nearby_pharmacy/constants/business_hours';
+import { IPharmacyDataSourceFooterProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
+import { PHARMACY_DATA_SOURCE_TEXT } from '@features/nearby_pharmacy/constants/ui';
 import { pharmacyBusinessHoursStyles as styles } from '@features/nearby_pharmacy/styles/PharmacyBusinessHours';
 
 // 약국 데이터 출처 안내 푸터 컴포넌트

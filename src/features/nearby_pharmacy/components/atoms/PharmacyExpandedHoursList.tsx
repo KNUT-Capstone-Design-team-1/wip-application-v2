@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { View } from 'react-native';
 import PharmacyBusinessHourRow from '@features/nearby_pharmacy/components/atoms/PharmacyBusinessHourRow';
 import PharmacyDataSourceFooter from '@features/nearby_pharmacy/components/atoms/PharmacyDataSourceFooter';
-import { IPharmacyExpandedHoursListProps } from '@features/nearby_pharmacy/types/business_hours_type';
+import { IPharmacyExpandedHoursListProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { pharmacyBusinessHoursStyles as styles } from '@features/nearby_pharmacy/styles/PharmacyBusinessHours';
 
 // 펼쳐진 전체 요일 영업시간 목록 및 출처 문구 컴포넌트

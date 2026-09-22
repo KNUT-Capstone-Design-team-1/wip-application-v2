@@ -5,15 +5,17 @@ import {
   CLUSTER_MAX_ZOOM,
   CLUSTER_MIN_POINTS,
   CLUSTER_RADIUS_PX,
-} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
-import { CLUSTER_LEAF_LIMIT } from '@features/nearby_pharmacy/constants/search';
+  CLUSTER_LEAF_LIMIT,
+} from '@features/nearby_pharmacy/constants/map';
 import {
   IPharmacyPointProps,
   TPharmacyClusterItem,
   TPharmacyPointFeature,
 } from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import { isValidCoordinate } from '@features/nearby_pharmacy/utils/map_marker';
 
 export const pharmacyClusterService = {
+  // 약국 좌표 목록으로 Supercluster 인덱스 생성
   createIndex(
     pharmacies: INearbyPharmacies[],
   ): Supercluster<IPharmacyPointProps> | null {
@@ -33,15 +35,8 @@ export const pharmacyClusterService = {
     for (const pharmacy of pharmacies) {
       const longitude = Number.parseFloat(pharmacy.X);
       const latitude = Number.parseFloat(pharmacy.Y);
-      const isInvalidCoordinate =
-        !Number.isFinite(longitude) ||
-        !Number.isFinite(latitude) ||
-        longitude < -180 ||
-        longitude > 180 ||
-        latitude < -90 ||
-        latitude > 90;
 
-      if (isInvalidCoordinate) {
+      if (!isValidCoordinate(latitude, longitude)) {
         continue;
       }
 
@@ -65,6 +60,7 @@ export const pharmacyClusterService = {
     return index;
   },
 
+  // 현재 지도 뷰포트 영역의 클러스터 및 마커 목록 조회
   getClusters(
     index: Supercluster<IPharmacyPointProps> | null,
     region: Region | null,
@@ -98,6 +94,7 @@ export const pharmacyClusterService = {
     return index.getClusters(bbox, clampedZoom);
   },
 
+  // 클러스터에 포함된 약국 ID 목록 반환
   getClusterPharmacyIds(
     index: Supercluster<IPharmacyPointProps> | null,
     clusterId: number,
@@ -112,5 +109,23 @@ export const pharmacyClusterService = {
     return index
       .getLeaves(clusterId, limit)
       .map((leaf) => leaf.properties.pharmacyId);
+  },
+
+  // 클러스터가 개별 마커로 분리되는 줌 레벨 반환
+  getClusterExpansionZoom(
+    index: Supercluster<IPharmacyPointProps> | null,
+    clusterId: number,
+  ): number {
+    const hasNoIndex = !index;
+
+    if (hasNoIndex) {
+      return CLUSTER_MAX_ZOOM;
+    }
+
+    try {
+      return index.getClusterExpansionZoom(clusterId);
+    } catch {
+      return CLUSTER_MAX_ZOOM;
+    }
   },
 };

@@ -28,36 +28,6 @@ export type TPharmacyPointFeature = PointFeature<IPharmacyPointProps>;
 export type TPharmacyClusterItem =
   PointFeature<IPharmacyPointProps> | ClusterFeature<AnyProps>;
 
-// 약국 지도 마커 렌더링 Props 인터페이스
-export interface IPharmacyMarkersProps {
-  // 클러스터 아이템 목록
-  clusters: TPharmacyClusterItem[];
-
-  // ID로 인덱싱된 약국 맵
-  pharmaciesById: Map<string, INearbyPharmacies>;
-
-  // 현재 선택된 약국 ID
-  selectedPharmacyId?: string;
-
-  // 약국 마커 클릭 핸들러
-  onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
-
-  // 클러스터 마커 클릭 핸들러
-  onClusterPress: (clusterId: number) => void;
-}
-
-// 약국 클러스터 모달 목록 Props 인터페이스
-export interface IPharmacyClusterListProps {
-  // 클러스터에 포함된 약국 목록
-  pharmacies: INearbyPharmacies[];
-
-  // 약국 선택 핸들러
-  onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
-
-  // 닫기 핸들러
-  onClosePress: () => void;
-}
-
 export interface IPharmacyMarkerProps {
   coordinate: LatLng;
   pharmacy: INearbyPharmacies;
@@ -78,7 +48,21 @@ export interface IPharmacyMapProps {
   insets: EdgeInsets;
   clusters: TPharmacyClusterItem[];
   pharmaciesById: Map<string, INearbyPharmacies>;
+  selectedPharmacy?: INearbyPharmacies | null;
   selectedPharmacyId?: string;
+  getClusterPharmacyIds?: (clusterId: number) => string[];
+  onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
+  onClusterPress: (clusterId: number) => void;
+}
+
+// MapView 직속 마커 렌더링 매개변수 인터페이스
+export interface IRenderPharmacyMarkersParams {
+  validItems: TPharmacyClusterItem[];
+  pharmaciesById: Map<string, INearbyPharmacies>;
+  selectedPharmacy?: INearbyPharmacies | null;
+  selectedPharmacyId?: string;
+  selectedCoordinate: LatLng | null;
+  getClusterPharmacyIds?: (clusterId: number) => string[];
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
   onClusterPress: (clusterId: number) => void;
 }

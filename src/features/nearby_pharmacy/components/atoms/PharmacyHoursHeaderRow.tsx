@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import { IPharmacyHoursHeaderRowProps } from '@features/nearby_pharmacy/types/business_hours_type';
+import { IPharmacyHoursHeaderRowProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyInfoCard';
 
 // 영업시간 요약 정보 표시 및 펼치기/접기 토글 행 컴포넌트

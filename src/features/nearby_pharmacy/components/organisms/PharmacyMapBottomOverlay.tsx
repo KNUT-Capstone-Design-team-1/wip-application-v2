@@ -7,7 +7,7 @@ import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/Pha
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { IPharmacyMapBottomOverlayProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
-// 지도 하단 플로팅 컨트롤(필터/위치 버튼) 및 약국 상세 정보 카드/클러스터 리스트 오버레이
+// 지도 하단 플로팅 컨트롤 및 상세 카드/클러스터 목록 오버레이
 const PharmacyMapBottomOverlay = ({
   bottomInset,
   isOpenOnly,

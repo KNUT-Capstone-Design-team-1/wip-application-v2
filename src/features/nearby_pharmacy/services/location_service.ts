@@ -5,8 +5,8 @@ import {
   BALANCED_TIMEOUT_MS,
   LOW_TIMEOUT_MS,
   LOCATION_CACHE_MAX_AGE_MS,
-} from '@features/nearby_pharmacy/constants/location';
-import { TLocationCheckResult } from '@features/nearby_pharmacy/types/location_type';
+} from '@features/nearby_pharmacy/constants/search';
+import { TLocationCheckResult } from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 위치 관련 비즈니스 로직 서비스
 export const locationService = {

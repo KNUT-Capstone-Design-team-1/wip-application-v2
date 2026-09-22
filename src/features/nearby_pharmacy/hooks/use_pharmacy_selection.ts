@@ -3,24 +3,33 @@ import MapView from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
 import { usePharmacyToast } from '@features/nearby_pharmacy/hooks/use_pharmacy_toast';
 import { pharmacyActionService } from '@features/nearby_pharmacy/services/pharmacy_action_service';
-import { IUsePharmacySelectionReturn } from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
+import {
+  IUsePharmacySelectionReturn,
+  TPharmacySelectionState,
+} from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
+import { getPharmacyCoordinate } from '@features/nearby_pharmacy/utils/map_marker';
+import {
+  DETAIL_LATITUDE_DELTA,
+  DETAIL_LONGITUDE_DELTA,
+} from '@features/nearby_pharmacy/constants/map';
 import { useAppTrackStore } from '@store/app_track_store';
 
-// 약국 마커 선택 및 클러스터 팝업 상호작용을 전담하는 커스텀 훅
+// 약국 마커 선택 및 클러스터 팝업 상호작용 전담 훅
 export const usePharmacySelection = (
   mapRef: RefObject<MapView | null>,
 ): IUsePharmacySelectionReturn => {
-  // 토스트 메시지 훅
   const { showToast } = usePharmacyToast();
 
-  // 현재 지도에서 선택된 개별 약국
-  const [selectedPharmacy, setSelectedPharmacy] =
-    useState<INearbyPharmacies | null>(null);
+  // 단일 선택 상태 (개별 약국 또는 클러스터 목록 중 단 하나만 활성화)
+  const [selection, setSelection] = useState<TPharmacySelectionState>(null);
 
-  // 클러스터 클릭 시 모달/바텀시트에 노출할 약국 목록
-  const [clusterPharmacies, setClusterPharmacies] = useState<
-    INearbyPharmacies[] | null
-  >(null);
+  // 파생 상태: 선택된 약국 정보
+  const selectedPharmacy =
+    selection?.type === 'pharmacy' ? selection.pharmacy : null;
+
+  // 파생 상태: 클러스터 약국 목록
+  const clusterPharmacies =
+    selection?.type === 'cluster' ? selection.pharmacies : null;
 
   // 약국 정보 클립보드 복사 핸들러
   const handleCopy = useCallback(
@@ -36,70 +45,61 @@ export const usePharmacySelection = (
     [showToast],
   );
 
-  // 지도 위의 개별 약국 마커 터치 시 선택 처리
+  // 개별 약국 마커 터치 시 선택 처리
   const handleMarkerPress = useCallback((pharmacy: INearbyPharmacies) => {
-    setClusterPharmacies(null);
-
-    setSelectedPharmacy(pharmacy);
+    setSelection({
+      type: 'pharmacy',
+      pharmacy,
+    });
 
     useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
   }, []);
 
   // 선택된 약국 정보 카드 닫기
   const handleCloseInfoCard = useCallback(() => {
-    setSelectedPharmacy(null);
+    setSelection(null);
   }, []);
 
   // 클러스터 마커 터치 시 약국 목록 열기
   const openClusterList = useCallback((list: INearbyPharmacies[]) => {
-    setClusterPharmacies(list);
-
-    setSelectedPharmacy(null);
+    setSelection({
+      type: 'cluster',
+      pharmacies: list,
+    });
   }, []);
 
   // 클러스터 약국 목록 닫기
   const closeClusterList = useCallback(() => {
-    setClusterPharmacies(null);
+    setSelection(null);
   }, []);
 
-  // 클러스터 목록에서 특정 약국을 탭했을 때 카메라 이동 및 선택
+  // 클러스터 목록에서 특정 약국 선택 시 카메라 이동 및 카드 활성화
   const handleClusterPharmacySelect = useCallback(
     (pharmacy: INearbyPharmacies) => {
-      const lat = parseFloat(pharmacy.Y);
-      const lng = parseFloat(pharmacy.X);
-
       // 클러스터 목록 닫고 해당 약국 카드 활성화
-      setClusterPharmacies(null);
-
-      setSelectedPharmacy(pharmacy);
+      setSelection({
+        type: 'pharmacy',
+        pharmacy,
+      });
 
       useAppTrackStore.getState().increaseSubActionCount('nearby_pharmacy');
 
-      // 좌표 유효성 검증
-      const isValidCoords =
-        Number.isFinite(lat) &&
-        Number.isFinite(lng) &&
-        lat >= -90 &&
-        lat <= 90 &&
-        lng >= -180 &&
-        lng <= 180;
+      const coordinate = getPharmacyCoordinate(pharmacy);
 
-      // 비정상 좌표는 카메라 이동 건너뛰기 (early return)
-      if (!isValidCoords) {
+      // 비정상 좌표는 카메라 이동 건너뜀
+      if (!coordinate) {
         return;
       }
 
-      const latitudeDelta = 0.005;
-      const longitudeDelta = 0.005;
-      const latOffset = latitudeDelta * 0.15;
+      // 하단 카드에 가려지지 않도록 오프셋 적용하여 상세 줌 레벨로 이동
+      const latOffset = DETAIL_LATITUDE_DELTA * 0.18;
 
-      // 선택된 약국 위치로 카메라 줌인 애니메이션
       mapRef.current?.animateToRegion(
         {
-          latitude: lat - latOffset,
-          longitude: lng,
-          latitudeDelta,
-          longitudeDelta,
+          latitude: coordinate.latitude - latOffset,
+          longitude: coordinate.longitude,
+          latitudeDelta: DETAIL_LATITUDE_DELTA,
+          longitudeDelta: DETAIL_LONGITUDE_DELTA,
         },
         400,
       );

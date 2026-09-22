@@ -1,16 +1,16 @@
 import { useCallback, useMemo } from 'react';
 import { INearbyPharmacies } from '@services/database/types';
-import { nearbyPharmacyService } from '@features/nearby_pharmacy/services/nearby_pharmacy_service';
-import { IUseClusterSelectionParams } from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
+import {
+  IUseClusterSelectionParams,
+  IUseClusterSelectionReturn,
+} from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
 
-// 클러스터 마커 선택 및 지도 포커스/목록 표시 커스텀 훅 (Presentation Layer)
+// 클러스터 마커 선택 및 목록 노출 처리 훅
 export const useClusterSelection = ({
   pharmacies,
-  mapRef,
-  region,
   getClusterPharmacyIds,
   openClusterList,
-}: IUseClusterSelectionParams) => {
+}: IUseClusterSelectionParams): IUseClusterSelectionReturn => {
   // 약국 ID 기반 빠른 조회를 위한 Map 생성
   const pharmaciesById = useMemo(() => {
     const map = new Map<string, INearbyPharmacies>();
@@ -20,10 +20,11 @@ export const useClusterSelection = ({
     return map;
   }, [pharmacies]);
 
-  // 클러스터 마커 클릭 핸들러
+  // 클러스터 마커 클릭 핸들러 (확대 없이 하단 목록만 노출)
   const handleClusterPress = useCallback(
     (clusterId: number) => {
       const ids = getClusterPharmacyIds(clusterId);
+
       const list = ids
         .map((id) => pharmaciesById.get(id))
         .filter((p): p is INearbyPharmacies => !!p);
@@ -34,30 +35,10 @@ export const useClusterSelection = ({
         return;
       }
 
-      const center = nearbyPharmacyService.calculateCenterCoordinate(list);
-
-      if (center) {
-        // 현재 줌에서 2배 확대 (델타 절반), 최대 확대 제한
-        const newLatDelta = Math.max(region.latitudeDelta / 2, 0.002);
-        const newLngDelta = Math.max(region.longitudeDelta / 2, 0.002);
-
-        // 리스트가 하단을 가리므로 마커가 중앙보다 살짝 위쪽에 보이도록 보정
-        const latOffset = newLatDelta * 0.15;
-
-        mapRef.current?.animateToRegion(
-          {
-            latitude: center.latitude - latOffset,
-            longitude: center.longitude,
-            latitudeDelta: newLatDelta,
-            longitudeDelta: newLngDelta,
-          },
-          400,
-        );
-      }
-
+      // 지도 확대 없이 하단 약국 목록만 열기
       openClusterList(list);
     },
-    [getClusterPharmacyIds, pharmaciesById, openClusterList, mapRef, region],
+    [getClusterPharmacyIds, pharmaciesById, openClusterList],
   );
 
   return { pharmaciesById, handleClusterPress };

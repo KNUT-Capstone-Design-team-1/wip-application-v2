@@ -5,8 +5,9 @@ import { useCommonModalStore } from '@store/common_modal_store';
 import {
   STOCK_INQUIRY_ROUTE,
   STOCK_INQUIRY_MODAL,
-} from '@features/nearby_pharmacy/constants/stock_inquiry';
+} from '@features/nearby_pharmacy/constants/ui';
 import { IStockInquiryPillContext } from '@features/nearby_pharmacy/types/pharmacy_domain_type';
+import { IUseStockInquiryReturn } from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
 
 // 재고 문의 안내 공통 모달 팝업 실행 함수
 export const openStockInquiryModal = (
@@ -32,7 +33,7 @@ export const openStockInquiryModal = (
 };
 
 // 재고 문의 모드 제어 및 전화 연결 커스텀 훅 (Presentation Layer)
-export const useStockInquiry = () => {
+export const useStockInquiry = (): IUseStockInquiryReturn => {
   const params = useLocalSearchParams<{
     stockInquiry?: string;
     pillSeq?: string;

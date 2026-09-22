@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { IPharmacyBusinessHourRowProps } from '@features/nearby_pharmacy/types/business_hours_type';
+import { IPharmacyBusinessHourRowProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { pharmacyBusinessHoursStyles as styles } from '@features/nearby_pharmacy/styles/PharmacyBusinessHours';
 
 // 요일별 영업시간 개별 항목 행 컴포넌트

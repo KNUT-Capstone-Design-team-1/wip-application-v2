@@ -53,7 +53,7 @@ const NearbyPharmacyScreen = () => {
 
   // 영업중인 약국만 표시 필터 상태 및 필터링된 약국 목록 훅
   const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
-    usePharmacyOpenFilter(pharmacies, selectedPharmacy, handleCloseInfoCard);
+    usePharmacyOpenFilter(pharmacies, handleCloseInfoCard);
 
   // 필터링된 약국 데이터를 기반으로 클러스터(묶음) 생성
   const { clusters, getClusterPharmacyIds } = usePharmacyClusters(
@@ -61,11 +61,9 @@ const NearbyPharmacyScreen = () => {
     region,
   );
 
-  // 클러스터 마커 선택 시 하단 리스트를 띄우고 줌인하는 로직
+  // 클러스터 마커 선택 시 하단 리스트 노출 로직
   const { pharmaciesById, handleClusterPress } = useClusterSelection({
     pharmacies: displayedPharmacies,
-    mapRef,
-    region,
     getClusterPharmacyIds,
     openClusterList,
   });
@@ -75,6 +73,7 @@ const NearbyPharmacyScreen = () => {
     region,
     lastFetchedCenter,
     fetchPharmacies,
+    handleCloseInfoCard,
   );
 
   // 재고 문의 모달 열기 핸들러
@@ -108,7 +107,9 @@ const NearbyPharmacyScreen = () => {
         insets={insets}
         clusters={clusters}
         pharmaciesById={pharmaciesById}
+        selectedPharmacy={selectedPharmacy}
         selectedPharmacyId={selectedPharmacy?.id}
+        getClusterPharmacyIds={getClusterPharmacyIds}
         onPharmacyPress={handleMarkerPress}
         onClusterPress={handleClusterPress}
       />

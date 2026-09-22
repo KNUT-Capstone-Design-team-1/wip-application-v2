@@ -15,11 +15,9 @@ import {
   DEFAULT_LONGITUDE_DELTA,
   FALLBACK_LATITUDE_DELTA,
   FALLBACK_LONGITUDE_DELTA,
-} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
-import {
-  LOCATION_REFRESH_MIN_DISTANCE_M,
   MAP_CAMERA_ANIMATE_DURATION_MS,
-} from '@features/nearby_pharmacy/constants/location';
+} from '@features/nearby_pharmacy/constants/map';
+import { LOCATION_REFRESH_MIN_DISTANCE_M } from '@features/nearby_pharmacy/constants/search';
 
 // 지도 및 사용자 위치 제어를 전담하는 커스텀 훅
 export const usePharmacyLocation = (

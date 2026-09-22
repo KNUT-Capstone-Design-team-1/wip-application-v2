@@ -1,11 +1,15 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import MapView from 'react-native-maps';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { bottomTabSize } from '@constants/size';
-import PharmacyMarkers from '@features/nearby_pharmacy/components/molecules/PharmacyMarkers';
 import { IPharmacyMapProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import {
+  filterValidClusterItems,
+  getPharmacyCoordinate,
+} from '@features/nearby_pharmacy/utils/map_marker';
+import { renderPharmacyMarkers } from '@features/nearby_pharmacy/components/organisms/render_pharmacy_markers';
 
-// react-native-maps의 MapView를 감싸고 마커 및 클러스터 렌더링을 담당하는 지도 컴포넌트
+// MapView를 감싸고 지도 뷰포트 및 렌더링을 담당하는 컴포넌트
 const PharmacyMap = ({
   mapRef,
   initialRegion,
@@ -13,10 +17,24 @@ const PharmacyMap = ({
   insets,
   clusters,
   pharmaciesById,
+  selectedPharmacy,
   selectedPharmacyId,
+  getClusterPharmacyIds,
   onPharmacyPress,
   onClusterPress,
 }: IPharmacyMapProps) => {
+  // 렌더링 전 유효한 마커 필터링
+  const validItems = useMemo(
+    () => filterValidClusterItems(clusters, pharmaciesById),
+    [clusters, pharmaciesById],
+  );
+
+  // 선택된 약국의 좌표 계산 및 검증
+  const selectedCoordinate = useMemo(
+    () => getPharmacyCoordinate(selectedPharmacy),
+    [selectedPharmacy],
+  );
+
   return (
     <MapView
       ref={mapRef}
@@ -27,7 +45,6 @@ const PharmacyMap = ({
       showsMyLocationButton={false}
       toolbarEnabled={false}
       userInterfaceStyle="light"
-      // Android용 확대/축소 제한 (iOS에서는 deprecated 되었지만 Android에서는 사용)
       minZoomLevel={6}
       maxZoomLevel={19}
       cameraZoomRange={{
@@ -42,13 +59,17 @@ const PharmacyMap = ({
         right: 0,
       }}
     >
-      <PharmacyMarkers
-        clusters={clusters}
-        pharmaciesById={pharmaciesById}
-        selectedPharmacyId={selectedPharmacyId}
-        onPharmacyPress={onPharmacyPress}
-        onClusterPress={onClusterPress}
-      />
+      {/* Fabric New Architecture 직속 자식 마커 렌더링 */}
+      {renderPharmacyMarkers({
+        validItems,
+        pharmaciesById,
+        selectedPharmacy,
+        selectedPharmacyId,
+        selectedCoordinate,
+        getClusterPharmacyIds,
+        onPharmacyPress,
+        onClusterPress,
+      })}
     </MapView>
   );
 };

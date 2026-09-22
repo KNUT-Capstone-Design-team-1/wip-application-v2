@@ -2,7 +2,7 @@ import {
   IPharmacyBusinessHourItem,
   IPharmacyBusinessHourSummary,
 } from '@features/nearby_pharmacy/types/business_hours_type';
-import { PHARMACY_DAY_LABELS } from '@features/nearby_pharmacy/constants/business_hours';
+import { PHARMACY_DAY_LABELS } from '@features/nearby_pharmacy/constants/ui';
 
 // JSON 문자열, 작은따옴표 배열, 콤마 구분 문자열 등을 안전하게 문자열 배열로 파싱하는 함수
 export const parseTimeJsonArray = (jsonStr?: string | null | any): string[] => {

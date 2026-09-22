@@ -6,7 +6,7 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
-import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
+import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { X } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';

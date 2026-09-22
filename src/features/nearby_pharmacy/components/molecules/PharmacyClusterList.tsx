@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { View, ScrollView } from 'react-native';
-import { IPharmacyClusterListProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
+import { IPharmacyClusterListProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import PharmacyClusterListHeader from '@features/nearby_pharmacy/components/atoms/PharmacyClusterListHeader';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterList';
 import PharmacyClusterListItem from '@features/nearby_pharmacy/components/atoms/PharmacyClusterListItem';

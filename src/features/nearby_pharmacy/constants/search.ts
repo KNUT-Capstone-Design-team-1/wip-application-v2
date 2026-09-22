@@ -1,16 +1,21 @@
-// 약국 검색 및 클러스터링 관련 수치 상수
+// 위도 1도 ≒ 111km, 경도 1도 ≒ 88km (한국 위도 기준)
+export const KM_PER_LAT_DEGREE = 111;
+export const KM_PER_LON_DEGREE = 88;
 
-// 기본 검색 반경 (km)
+// 기본 약국 검색 반경 (고정 3km)
+export const NEARBY_PHARMACY_RADIUS_KM = 3;
 export const DEFAULT_SEARCH_RADIUS_KM = 3;
 
-// Bounding Box 기준 1차 후보군 최대 조회 건수
+// 검색 건수 제한 (후보군 최대 조회 건수 및 페이지당 기본 건수)
 export const CANDIDATE_SEARCH_LIMIT = 300;
-
-// 페이지당 기본 약국 표시 건수
 export const DEFAULT_PAGE_SIZE_LIMIT = 50;
 
-// 클러스터 펼침 시 한 번에 가져올 최대 약국 수
-export const CLUSTER_LEAF_LIMIT = 100;
+// 위치 센서 / GPS 캐시 및 타임아웃 정책
+export const BALANCED_TIMEOUT_MS = 6000;
+export const LOW_TIMEOUT_MS = 4000;
+export const LOCATION_CACHE_MAX_AGE_MS = 5 * 60 * 1000;
 
-// 마커 렌더링 후 tracksViewChanges 비활성화 딜레이 (ms)
-export const MARKER_TRACKS_CHANGES_TIMEOUT_MS = 100;
+// 지도 이동 시 재검색 트리거 임계값
+export const RESEARCH_DISPLACEMENT_RATIO = 0.2;
+export const RESEARCH_MAX_DISPLACEMENT_KM = 1;
+export const LOCATION_REFRESH_MIN_DISTANCE_M = 100;

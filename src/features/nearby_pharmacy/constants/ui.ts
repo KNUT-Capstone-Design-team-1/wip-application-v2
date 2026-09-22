@@ -1,0 +1,38 @@
+import { Dimensions } from 'react-native';
+import { px } from '@utils/responsive';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+// 클러스터 약국 리스트 최대 높이 (화면 높이 38%와 320px 중 작은 값)
+export const CLUSTER_LIST_MAX_HEIGHT = Math.min(
+  Math.round(SCREEN_HEIGHT * 0.38),
+  Math.round(px(320)),
+);
+
+// 요일 레이블 상수 (0: 월요일 ~ 7: 공휴일)
+export const PHARMACY_DAY_LABELS = [
+  '월요일',
+  '화요일',
+  '수요일',
+  '목요일',
+  '금요일',
+  '토요일',
+  '일요일',
+  '공휴일',
+] as const;
+
+// 약국 데이터 출처 안내 문구
+export const PHARMACY_DATA_SOURCE_TEXT =
+  '출처: 약국 오픈 API Data (생활안전정보)';
+
+// 재고 문의 라우트
+export const STOCK_INQUIRY_ROUTE = '/nearby-pharmacy-inquiry' as const;
+
+// 재고 문의 모달 안내 문구
+export const STOCK_INQUIRY_MODAL = {
+  title: '약국 재고 문의',
+  message:
+    '약국에 재고를 문의하시겠습니까?\n\n확인을 누르면 주변 약국을 탐색하고 전화를 통해 재고를 문의하실 수 있습니다.',
+  confirmText: '확인',
+  cancelText: '취소',
+} as const;

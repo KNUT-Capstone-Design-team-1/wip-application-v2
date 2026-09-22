@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG, COLOR_TEXT, COLOR_LINE } from '@constants/color';
 import { px } from '@utils/responsive';
+import { CLUSTER_LIST_MAX_HEIGHT } from '@features/nearby_pharmacy/constants/ui';
 
 // 클러스터 약국 리스트 및 개별 항목 스타일
 export const styles = StyleSheet.create({
@@ -12,7 +13,7 @@ export const styles = StyleSheet.create({
     borderRadius: px(16),
     paddingTop: px(10),
     paddingBottom: px(8),
-    maxHeight: px(320),
+    maxHeight: CLUSTER_LIST_MAX_HEIGHT,
     elevation: 10,
     shadowColor: COLOR['shadow'],
     shadowOffset: { width: 0, height: px(4) },

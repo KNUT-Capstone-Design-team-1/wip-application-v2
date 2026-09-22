@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { StyleProp, TextStyle, GestureResponderEvent } from 'react-native';
 import { INearbyPharmacies } from '@services/database/types';
 import { IStockInquiryPillContext } from './pharmacy_domain_type';
+import { IPharmacyBusinessHourItem } from './business_hours_type';
 
 // 주변 약국 토스트 매개변수 타입 정의
 export type TPharmacyToastProps = {
@@ -64,6 +65,18 @@ export interface IStockInquiryIconButtonProps {
   color?: string;
 }
 
+// 클러스터 약국 모달 목록 Props 인터페이스
+export interface IPharmacyClusterListProps {
+  // 클러스터에 포함된 약국 목록
+  pharmacies: INearbyPharmacies[];
+
+  // 약국 선택 핸들러
+  onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
+
+  // 닫기 핸들러
+  onClosePress: () => void;
+}
+
 // 클러스터 약국 리스트 상단 헤더 Props
 export interface IPharmacyClusterListHeaderProps {
   count: number;
@@ -78,9 +91,33 @@ export interface IPharmacyClusterListItemProps {
   onPress: (pharmacy: INearbyPharmacies) => void;
 }
 
-// 약국 마커 아이콘 Props
-export interface IPharmacyMarkerIconProps {
-  selected: boolean;
+// 약국 영업시간 요약 클릭 행 Props
+export interface IPharmacyHoursHeaderRowProps {
+  label: string;
+  text: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+}
+
+// 약국 확장 영업시간 리스트 Props
+export interface IPharmacyExpandedHoursListProps {
+  businessHours: IPharmacyBusinessHourItem[];
+}
+
+// 약국 영업시간 개별 행 컴포넌트 Props
+export interface IPharmacyBusinessHourRowProps {
+  item: IPharmacyBusinessHourItem;
+}
+
+// 약국 데이터 출처 푸터 컴포넌트 Props
+export interface IPharmacyDataSourceFooterProps {
+  sourceText?: string;
+}
+
+// 영업중인 약국만 표시 체크박스 컴포넌트 Props
+export interface IPharmacyOpenOnlyCheckboxProps {
+  checked: boolean;
+  onToggle: () => void;
 }
 
 // 지도 하단 오버레이 컴포넌트 Props
