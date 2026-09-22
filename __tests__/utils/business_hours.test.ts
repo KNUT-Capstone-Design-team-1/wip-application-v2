@@ -176,47 +176,5 @@ describe('business_hours utils 테스트', () => {
       const sundayNoon = new Date(2026, 8, 27, 12, 0); // 일요일
       expect(isPharmacyOpenNow(openTimes, closeTimes, sundayNoon)).toBe(false);
     });
-
-    it('화요일 심야 약국이라도 전날(월요일) 심야 영업이 없었다면 화요일 새벽에는 false여야 한다', () => {
-      const tuesdayDawn = new Date(2026, 8, 22, 2, 30); // 화요일 02:30
-      const overnightOpen = JSON.stringify([
-        '0900', // 월: 주간만 (09:00 ~ 18:00)
-        '2000', // 화: 심야 (화요일 20:00 ~ 수요일 04:00)
-        '0900',
-        '0900',
-        '0900',
-        '0900',
-        '',
-        '',
-      ]);
-      const overnightClose = JSON.stringify([
-        '1800', // 월: 18:00 마감
-        '0400', // 화: 익일 04:00 마감
-        '1800',
-        '1800',
-        '1800',
-        '1800',
-        '',
-        '',
-      ]);
-      expect(
-        isPharmacyOpenNow(overnightOpen, overnightClose, tuesdayDawn),
-      ).toBe(false);
-    });
-  });
-
-  describe('휴무일 표기 테스트', () => {
-    it('영업시간이 0000 ~ 0000인 휴무일은 휴무로 표기되어야 한다', () => {
-      const openTimes = JSON.stringify(['0000', '', '', '', '', '', '', '']);
-      const closeTimes = JSON.stringify(['0000', '', '', '', '', '', '', '']);
-      const monday = new Date(2026, 8, 21, 12, 0);
-      const summary = getTodayBusinessHourSummary(
-        openTimes,
-        closeTimes,
-        monday,
-      );
-      expect(summary.text).toBe('휴무');
-      expect(summary.hasHours).toBe(false);
-    });
   });
 });

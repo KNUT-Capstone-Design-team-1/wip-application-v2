@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { Marker, LatLng } from 'react-native-maps';
 import { px } from '@utils/responsive';
@@ -16,33 +16,16 @@ const PharmacyClusterMarker = ({
   // 클러스터 마커 크기
   const size = Math.round(px(32));
 
-  // count가 변경될 때마다 캡처를 활성화하고, 충분한 시간(500ms) 후 중단하여 안정적인 비트맵 확보
+  // count가 변경될 때마다 캡처를 활성화하고, 일정 시간 후 중단하여 성능 확보
   useEffect(() => {
-    setTracksViewChanges(true);
-
-    let isMounted = true;
-    const timer = setTimeout(() => {
-      if (isMounted) {
-        setTracksViewChanges(false);
-      }
-    }, 500);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
-  }, [count]);
-
-  // 마커 뷰 레이아웃 완료 시 안정적인 스냅샷 갱신 처리
-  const handleLayout = useCallback(() => {
     setTracksViewChanges(true);
 
     const timer = setTimeout(() => {
       setTracksViewChanges(false);
-    }, 300);
+    }, 150); // 150ms: 성능과 안정성의 최적 타협점
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [count]);
 
   return (
     <Marker
@@ -55,11 +38,9 @@ const PharmacyClusterMarker = ({
       anchor={{ x: 0.5, y: 0.5 }}
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={tracksViewChanges}
-      zIndex={1}
     >
       <View
         collapsable={false}
-        onLayout={handleLayout}
         style={[
           styles.markerWrapper,
           { width: size, height: size, borderRadius: size / 2 },
@@ -71,11 +52,4 @@ const PharmacyClusterMarker = ({
   );
 };
 
-// 불필요한 전수 리렌더링을 방지하기 위한 커스텀 비교 함수
-export default memo(PharmacyClusterMarker, (prevProps, nextProps) => {
-  return (
-    prevProps.count === nextProps.count &&
-    prevProps.coordinate.latitude === nextProps.coordinate.latitude &&
-    prevProps.coordinate.longitude === nextProps.coordinate.longitude
-  );
-});
+export default memo(PharmacyClusterMarker);

@@ -9,7 +9,6 @@ import MapView from 'react-native-maps';
 import { useAppTrackStore } from '@store/app_track_store';
 import {
   NEARBY_PHARMACY_RADIUS_KM,
-  NEARBY_PHARMACY_SEARCH_LIMIT,
   DEFAULT_MAP_LATITUDE,
   DEFAULT_MAP_LONGITUDE,
   DEFAULT_LATITUDE_DELTA,
@@ -112,13 +111,6 @@ export const useNearbyPharmacy = () => {
     setSelectedPharmacy(null);
   }, []);
 
-  // 마커 및 바텀시트 전체 닫기 / 선택 해제 핸들러
-  const handleDeselectAll = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setSelectedPharmacy(null);
-    setClusterPharmacies(null);
-  }, []);
-
   // 클러스터 약국 목록 열기 핸들러
   const openClusterList = useCallback((list: INearbyPharmacies[]) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -179,7 +171,7 @@ export const useNearbyPharmacy = () => {
 
         const result = await nearbyPharmacyService.searchNearbyPharmacies(
           coords,
-          { page: 1, limit: NEARBY_PHARMACY_SEARCH_LIMIT },
+          { page: 1, limit: 50 },
         );
 
         setPharmacies(result);
@@ -314,7 +306,6 @@ export const useNearbyPharmacy = () => {
     handleCopy,
     handleMarkerPress,
     handleCloseInfoCard,
-    handleDeselectAll,
     openClusterList,
     closeClusterList,
     handleClusterPharmacySelect,
