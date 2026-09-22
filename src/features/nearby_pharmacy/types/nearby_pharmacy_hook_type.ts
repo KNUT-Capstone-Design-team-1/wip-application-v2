@@ -2,7 +2,7 @@ import { RefObject } from 'react';
 import * as Location from 'expo-location';
 import MapView, { Region } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
-import { ICoordinate } from './pharmacy_map_type';
+import { ICoordinate, TPharmacyClusterItem } from './pharmacy_map_type';
 import {
   ILastFetchedCenter,
   IPharmacySearchCoordinates,
@@ -109,4 +109,10 @@ export interface IUseStockInquiryReturn {
   isStockInquiryMode: boolean;
   pillContext: IStockInquiryPillContext;
   handleStockInquiryCall: (telephone: string) => void;
+}
+
+// 클러스터 연산 훅 반환 타입
+export interface IUsePharmacyClustersReturn {
+  clusters: TPharmacyClusterItem[];
+  getClusterPharmacyIds: (clusterId: number) => string[];
 }

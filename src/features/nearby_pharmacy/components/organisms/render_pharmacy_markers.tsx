@@ -8,13 +8,13 @@ export const renderPharmacyMarkers = ({
   validItems,
   pharmaciesById,
   selectedPharmacy,
-  selectedPharmacyId,
   selectedCoordinate,
   getClusterPharmacyIds,
   onPharmacyPress,
   onClusterPress,
 }: IRenderPharmacyMarkersParams): ReactNode[] => {
   const markerNodes: ReactNode[] = [];
+  const selectedPharmacyId = selectedPharmacy?.id;
   let isSelectedInCluster = false;
 
   for (const item of validItems) {
@@ -28,7 +28,7 @@ export const renderPharmacyMarkers = ({
       const pointCount = item.properties.point_count as number;
 
       // 선택된 약국이 해당 클러스터에 포함되어 있는지 확인
-      if (selectedPharmacyId && getClusterPharmacyIds) {
+      if (!isSelectedInCluster && selectedPharmacyId && getClusterPharmacyIds) {
         const clusterPharmacyIds = getClusterPharmacyIds(clusterId);
         if (clusterPharmacyIds.includes(selectedPharmacyId)) {
           isSelectedInCluster = true;

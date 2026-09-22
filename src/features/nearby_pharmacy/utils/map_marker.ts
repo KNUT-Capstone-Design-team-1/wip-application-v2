@@ -1,4 +1,4 @@
-import { LatLng, Region } from 'react-native-maps';
+import { LatLng } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
 import { TPharmacyClusterItem } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 
@@ -57,23 +57,4 @@ export const filterValidClusterItems = (
 
     return Boolean(pharmaciesById.get(pharmacyId));
   });
-};
-
-// 클러스터 분리 줌 레벨 기반 카메라 이동 영역 및 하단 오프셋 계산 (최대 줌 19로 분리 보장)
-export const calculateClusterExpansionRegion = (
-  center: LatLng,
-  _expansionZoom?: number,
-  maxZoom: number = 19,
-): Region => {
-  // 클러스터를 개별 마커로 완전히 분리하기 위해 지도 최대 줌 레벨 적용
-  const targetZoom = maxZoom;
-  const targetDelta = 360 / Math.pow(2, targetZoom);
-  const latOffset = targetDelta * 0.18;
-
-  return {
-    latitude: center.latitude - latOffset,
-    longitude: center.longitude,
-    latitudeDelta: targetDelta,
-    longitudeDelta: targetDelta,
-  };
 };

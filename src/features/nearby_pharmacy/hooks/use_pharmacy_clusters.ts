@@ -1,21 +1,21 @@
 import { useMemo, useCallback } from 'react';
 import { Region } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
-import { TPharmacyClusterItem } from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import { IUsePharmacyClustersReturn } from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
 import { pharmacyClusterService } from '@features/nearby_pharmacy/services/pharmacy_cluster_service';
 
 // 약국 좌표 목록을 바탕으로 지도 영역별 클러스터링을 연산하는 커스텀 훅 (Presentation Layer)
 export const usePharmacyClusters = (
   pharmacies: INearbyPharmacies[],
   region: Region | null,
-) => {
+): IUsePharmacyClustersReturn => {
   // Supercluster 인덱스 생성 및 약국 좌표 로드
   const clusterIndex = useMemo(() => {
     return pharmacyClusterService.createIndex(pharmacies);
   }, [pharmacies]);
 
   // 지도 영역 변경 시 화면에 표시할 클러스터 및 마커 계산
-  const clusters = useMemo((): TPharmacyClusterItem[] => {
+  const clusters = useMemo(() => {
     return pharmacyClusterService.getClusters(clusterIndex, region);
   }, [clusterIndex, region]);
 
@@ -30,21 +30,8 @@ export const usePharmacyClusters = (
     [clusterIndex],
   );
 
-  // 특정 클러스터가 개별 마커로 분리되는 줌 레벨 반환 함수
-  const getClusterExpansionZoom = useCallback(
-    (clusterId: number): number => {
-      return pharmacyClusterService.getClusterExpansionZoom(
-        clusterIndex,
-        clusterId,
-      );
-    },
-    [clusterIndex],
-  );
-
   return {
     clusters,
-    clusterIndex,
     getClusterPharmacyIds,
-    getClusterExpansionZoom,
   };
 };

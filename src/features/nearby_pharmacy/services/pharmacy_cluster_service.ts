@@ -110,22 +110,4 @@ export const pharmacyClusterService = {
       .getLeaves(clusterId, limit)
       .map((leaf) => leaf.properties.pharmacyId);
   },
-
-  // 클러스터가 개별 마커로 분리되는 줌 레벨 반환
-  getClusterExpansionZoom(
-    index: Supercluster<IPharmacyPointProps> | null,
-    clusterId: number,
-  ): number {
-    const hasNoIndex = !index;
-
-    if (hasNoIndex) {
-      return CLUSTER_MAX_ZOOM;
-    }
-
-    try {
-      return index.getClusterExpansionZoom(clusterId);
-    } catch {
-      return CLUSTER_MAX_ZOOM;
-    }
-  },
 };

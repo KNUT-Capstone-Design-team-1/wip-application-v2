@@ -6,6 +6,7 @@ import { IPharmacyClusterMarkerProps } from '@features/nearby_pharmacy/types/pha
 import {
   MARKER_CLUSTER_SIZE,
   MARKER_ANCHOR_UNSELECTED,
+  MARKER_Z_INDEX_CLUSTER,
   MARKER_TRACKS_CHANGES_TIMEOUT_MS,
 } from '@features/nearby_pharmacy/constants/map';
 
@@ -43,7 +44,7 @@ const PharmacyClusterMarker = ({
       anchor={MARKER_ANCHOR_UNSELECTED}
       centerOffset={{ x: 0, y: 0 }}
       tracksViewChanges={tracksViewChanges}
-      zIndex={10}
+      zIndex={MARKER_Z_INDEX_CLUSTER}
     >
       <View
         collapsable={false}

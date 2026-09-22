@@ -108,7 +108,6 @@ const NearbyPharmacyScreen = () => {
         clusters={clusters}
         pharmaciesById={pharmaciesById}
         selectedPharmacy={selectedPharmacy}
-        selectedPharmacyId={selectedPharmacy?.id}
         getClusterPharmacyIds={getClusterPharmacyIds}
         onPharmacyPress={handleMarkerPress}
         onClusterPress={handleClusterPress}

@@ -49,7 +49,6 @@ export interface IPharmacyMapProps {
   clusters: TPharmacyClusterItem[];
   pharmaciesById: Map<string, INearbyPharmacies>;
   selectedPharmacy?: INearbyPharmacies | null;
-  selectedPharmacyId?: string;
   getClusterPharmacyIds?: (clusterId: number) => string[];
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
   onClusterPress: (clusterId: number) => void;
@@ -60,7 +59,6 @@ export interface IRenderPharmacyMarkersParams {
   validItems: TPharmacyClusterItem[];
   pharmaciesById: Map<string, INearbyPharmacies>;
   selectedPharmacy?: INearbyPharmacies | null;
-  selectedPharmacyId?: string;
   selectedCoordinate: LatLng | null;
   getClusterPharmacyIds?: (clusterId: number) => string[];
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;

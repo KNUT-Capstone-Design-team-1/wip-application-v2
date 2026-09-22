@@ -28,6 +28,7 @@ export const MARKER_CLUSTER_SIZE = Math.round(px(32));
 export const MARKER_ANCHOR_UNSELECTED = { x: 0.5, y: 0.5 } as const;
 export const MARKER_ANCHOR_SELECTED = { x: 0.5, y: 1 } as const;
 export const MARKER_Z_INDEX_SELECTED = 999;
+export const MARKER_Z_INDEX_CLUSTER = 10;
 export const MARKER_Z_INDEX_UNSELECTED = 1;
 export const MARKER_TRACKS_CHANGES_TIMEOUT_MS = 250;
 
