@@ -15,7 +15,6 @@ const PharmacyMap = ({
   pharmaciesById,
   selectedPharmacyId,
   getClusterPharmacyIds,
-  isOpenOnly,
   onPharmacyPress,
   onClusterPress,
 }: IPharmacyMapProps) => {
@@ -44,13 +43,7 @@ const PharmacyMap = ({
         right: 0,
       }}
     >
-      {/*
-       * isOpenOnly가 변경될 때 key가 바뀌어 PharmacyMarkers 전체를 언마운트/재마운트한다.
-       * React Native Maps 네이티브 마커 레이어가 tracksViewChanges=false 상태에서
-       * 언마운트 신호를 즉시 반영하지 못하는 플랫폼 버그를 완전히 우회하는 방법이다.
-       */}
       <PharmacyMarkers
-        key={`markers-${String(isOpenOnly)}`}
         clusters={clusters}
         pharmaciesById={pharmaciesById}
         selectedPharmacyId={selectedPharmacyId}

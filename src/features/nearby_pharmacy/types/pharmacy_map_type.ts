@@ -83,8 +83,6 @@ export interface IPharmacyMapProps {
   pharmaciesById: Map<string, INearbyPharmacies>;
   selectedPharmacyId?: string;
   getClusterPharmacyIds?: (clusterId: number) => string[];
-  // '영업중인 약국만 표시' 필터 활성화 여부 (변경 시 마커 레이어 강제 재생성에 사용)
-  isOpenOnly: boolean;
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
   onClusterPress: (clusterId: number) => void;
 }
