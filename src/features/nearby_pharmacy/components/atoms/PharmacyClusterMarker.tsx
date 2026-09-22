@@ -22,7 +22,7 @@ const PharmacyClusterMarker = ({
 
     const timer = setTimeout(() => {
       setTracksViewChanges(false);
-    }, 150); // 150ms: 성능과 안정성의 최적 타협점
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [count]);

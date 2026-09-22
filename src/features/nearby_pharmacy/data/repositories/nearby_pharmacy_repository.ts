@@ -14,10 +14,12 @@ export const nearbyPharmacyRepository = {
   ): Promise<INearbyPharmacies[]> {
     const page = queryOption.page ?? 1;
     const limit = queryOption.limit ?? 50;
+    const maxRadiusKm = queryOption.maxRadiusKm;
 
     return await pharmacySqliteDataSource.getNearbyPharmacies(params, {
       page,
       limit,
+      maxRadiusKm,
     });
   },
 };

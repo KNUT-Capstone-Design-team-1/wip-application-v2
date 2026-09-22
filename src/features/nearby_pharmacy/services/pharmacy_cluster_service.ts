@@ -100,6 +100,7 @@ export const pharmacyClusterService = {
   getClusterPharmacyIds(
     index: Supercluster<IPharmacyPointProps> | null,
     clusterId: number,
+    limit: number = 100,
   ): string[] {
     const hasNoIndex = !index;
 
@@ -108,7 +109,7 @@ export const pharmacyClusterService = {
     }
 
     return index
-      .getLeaves(clusterId, Infinity)
+      .getLeaves(clusterId, limit)
       .map((leaf) => leaf.properties.pharmacyId);
   },
 };

@@ -55,7 +55,7 @@ const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
  */
 export const getNearbyPharmacies = async (
   params: Partial<TNearbyPharmaciesSearchParam>,
-  queryOption: { page: number; limit: number },
+  queryOption: { page: number; limit: number; maxRadiusKm?: number },
 ) => {
   const { whereClause, whereValues } = buildWhereClause(
     getNearbyPharmaciesWhereQuery,
@@ -63,35 +63,55 @@ export const getNearbyPharmacies = async (
   );
 
   const db = await getDatabase();
-
-  const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
-               LIMIT ?, ?`;
-
-  const { page = 1, limit = 30 } = queryOption;
-  const offset = (page - 1) * limit;
-
-  let result = await db.getAllAsync<INearbyPharmacies>(sql, [
-    ...whereValues,
-    offset,
-    limit,
-  ]);
+  const { page = 1, limit = 30, maxRadiusKm = 3 } = queryOption;
 
   if (params.coordinate) {
     const { x, y } = params.coordinate;
 
-    // DB에서 꺼내올 때 거리를 계산하여 매핑하고 가까운 순으로 정렬
-    result = result
-      .map((pharmacy) => {
-        const dist = getDistance(
-          y,
-          x,
-          parseFloat(pharmacy.Y),
-          parseFloat(pharmacy.X),
-        );
-        return { ...pharmacy, distance: dist };
-      })
-      .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+    // Bounding Box 영역의 약국 후보군을 충분히 조회 (밀집 지역 고려 최대 300개)
+    const candidateLimit = 300;
+    const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
+                 LIMIT ?`;
+
+    const candidates = await db.getAllAsync<INearbyPharmacies>(sql, [
+      ...whereValues,
+      candidateLimit,
+    ]);
+
+    // 1. 실제 거리 계산 (단위: m)
+    const withDistance = candidates.map((pharmacy) => {
+      const dist = getDistance(
+        y,
+        x,
+        parseFloat(pharmacy.Y),
+        parseFloat(pharmacy.X),
+      );
+      return { ...pharmacy, distance: dist };
+    });
+
+    // 2. 최대 반경(기본 3km) 이내 필터링
+    const maxRadiusM = maxRadiusKm * 1000;
+    const filtered = withDistance.filter(
+      (item) => item.distance !== undefined && item.distance <= maxRadiusM,
+    );
+
+    // 3. 거리순 정렬
+    filtered.sort(
+      (a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity),
+    );
+
+    // 4. 페이징 적용
+    const offset = (page - 1) * limit;
+    return filtered.slice(offset, offset + limit);
   }
 
-  return result;
+  const offset = (page - 1) * limit;
+  const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
+               LIMIT ?, ?`;
+
+  return await db.getAllAsync<INearbyPharmacies>(sql, [
+    ...whereValues,
+    offset,
+    limit,
+  ]);
 };

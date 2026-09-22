@@ -44,6 +44,7 @@ export interface IPharmacySearchCoordinates {
 export interface IPharmacySearchOptions {
   page?: number;
   limit?: number;
+  maxRadiusKm?: number;
 }
 
 // 마지막 약국 조회 중심 좌표 타입

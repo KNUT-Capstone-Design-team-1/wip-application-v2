@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import * as Location from 'expo-location';
 import { usePharmacyToast } from '@features/nearby_pharmacy/hooks/use_pharmacy_toast';
 import { INearbyPharmacies } from '@services/database/types';
@@ -23,6 +23,7 @@ import {
   ILastFetchedCenter,
   IPharmacySearchCoordinates,
 } from '@features/nearby_pharmacy/types/pharmacy_domain_type';
+import { getDistance } from '@utils/location';
 
 // 주변 약국 지도 및 위치 기반 검색 프레젠테이션 커스텀 훅
 export const useNearbyPharmacy = () => {
@@ -47,6 +48,11 @@ export const useNearbyPharmacy = () => {
 
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<MapView | null>(null);
+
+  // 비동기 약국 검색 Race Condition 방지용 ID Ref
+  const searchRequestIdRef = useRef(0);
+  // 최초 진입 시 위치 초기화 완료 여부 추적
+  const isInitializedRef = useRef(false);
 
   // 약국 정보 클립보드 복사 핸들러
   const handleCopy = useCallback(
@@ -157,9 +163,11 @@ export const useNearbyPharmacy = () => {
     [],
   );
 
-  // 주어진 좌표 기준 약국 목록 비동기 조회
+  // 주어진 좌표 기준 약국 목록 비동기 조회 (Race Condition 방어)
   const fetchPharmacies = useCallback(
     async (coords: IPharmacySearchCoordinates) => {
+      const currentRequestId = ++searchRequestIdRef.current;
+
       try {
         setLoading(true);
 
@@ -168,17 +176,26 @@ export const useNearbyPharmacy = () => {
           { page: 1, limit: 50 },
         );
 
+        // 최신 요청이 아니면 취소
+        if (currentRequestId !== searchRequestIdRef.current) {
+          return;
+        }
+
         setPharmacies(result);
         setLastFetchedCenter({ lat: coords.y, lng: coords.x });
       } catch (e) {
-        logger.error(`Failed to fetch pharmacies: ${e}`);
+        if (currentRequestId === searchRequestIdRef.current) {
+          logger.error(`Failed to fetch pharmacies: ${e}`);
 
-        showToast({
-          type: 'error',
-          message: '약국 정보를 가져오는 데 실패했습니다.',
-        });
+          showToast({
+            type: 'error',
+            message: '약국 정보를 가져오는 데 실패했습니다.',
+          });
+        }
       } finally {
-        setLoading(false);
+        if (currentRequestId === searchRequestIdRef.current) {
+          setLoading(false);
+        }
       }
     },
     [showToast],
@@ -224,7 +241,7 @@ export const useNearbyPharmacy = () => {
     return true;
   }, [showToast]);
 
-  // 위치 기반 서비스 초기화
+  // 위치 기반 서비스 초기화 (중복 조회 방지 및 단일 파이프라인)
   const initializeLocation = useCallback(async () => {
     let hasLocation = false;
 
@@ -235,24 +252,58 @@ export const useNearbyPharmacy = () => {
       const isNotAllowed = !isAllowed;
 
       if (isNotAllowed) {
+        setLoading(false);
         return;
       }
 
-      // 마지막 위치 즉시 렌더링 시도
+      // 1. 마지막 위치 확인 및 즉시 지도/데이터 렌더링
       const lastLocation = await locationService.getLastKnownLocation();
+      let activeCoords: ICoordinate | null = null;
+
       if (lastLocation) {
         setLocation(lastLocation);
         centerMapOn(lastLocation.coords);
         hasLocation = true;
+        activeCoords = lastLocation.coords;
+
+        // 캐시 위치 기준 즉시 1차 검색 실행
+        await fetchPharmacies({
+          x: lastLocation.coords.longitude,
+          y: lastLocation.coords.latitude,
+        });
       }
 
-      // 최신 GPS 탐색
+      // 2. 캐시된 위치가 5분 이내로 신선하다면 무거운 GPS 재조회 생략
+      if (lastLocation && locationService.isLocationFresh(lastLocation)) {
+        setLoading(false);
+        return;
+      }
+
+      // 3. 최신 GPS 탐색 (타임아웃 단축 적용)
       const currentLocation =
         await locationService.getCurrentPositionWithFallback();
+
       if (currentLocation) {
         setLocation(currentLocation);
-        centerMapOn(currentLocation.coords);
         hasLocation = true;
+
+        // 이전 캐시 위치와 100m 이상 유의미한 차이가 있을 때만 재검색
+        const shouldRefresh =
+          !activeCoords ||
+          getDistance(
+            activeCoords.latitude,
+            activeCoords.longitude,
+            currentLocation.coords.latitude,
+            currentLocation.coords.longitude,
+          ) > 100;
+
+        if (shouldRefresh) {
+          centerMapOn(currentLocation.coords);
+          await fetchPharmacies({
+            x: currentLocation.coords.longitude,
+            y: currentLocation.coords.latitude,
+          });
+        }
       }
     } catch (e) {
       logger.error(`Failed to initialize location: ${e}`);
@@ -266,25 +317,18 @@ export const useNearbyPharmacy = () => {
     } finally {
       setLoading(false);
     }
-  }, [checkPermissionsAndServices, centerMapOn, showToast]);
+  }, [checkPermissionsAndServices, centerMapOn, fetchPharmacies, showToast]);
 
-  // 위치 상태 변경 시 약국 목록 갱신
-  useEffect(() => {
-    if (location) {
-      fetchPharmacies({
-        x: location.coords.longitude,
-        y: location.coords.latitude,
-      });
-    }
-  }, [location, fetchPharmacies]);
-
-  // 화면 포커스 시 위치 초기화 및 안내 토스트 표시
+  // 화면 진입 시 1회만 자동 초기화, 탭 복귀 시 불필요한 GPS/DB 재조회 방지
   useFocusEffect(
     useCallback(() => {
-      initializeLocation();
-      showToast({
-        message: `${NEARBY_PHARMACY_RADIUS_KM}km 이내 약국만 표시됩니다`,
-      });
+      if (!isInitializedRef.current) {
+        isInitializedRef.current = true;
+        initializeLocation();
+        showToast({
+          message: `${NEARBY_PHARMACY_RADIUS_KM}km 이내 약국만 표시됩니다`,
+        });
+      }
     }, [initializeLocation, showToast]),
   );
 

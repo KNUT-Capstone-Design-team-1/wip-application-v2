@@ -31,7 +31,7 @@ const PharmacyMarker = ({
 
     const timer = setTimeout(() => {
       setTracksViewChanges(false);
-    }, 200);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [selected]);
