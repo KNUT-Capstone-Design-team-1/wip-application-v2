@@ -63,14 +63,13 @@ const PharmacyMarkers = ({
         // 개별 약국
         const pharmacyId = item.properties.pharmacyId as string;
         const pharmacy = pharmaciesById.get(pharmacyId)!;
-        const isSelected = selectedPharmacyId === pharmacyId;
 
         return (
           <PharmacyMarker
-            key={`pharmacy-${pharmacyId}-${isSelected ? 'selected' : 'unselected'}`}
+            key={`pharmacy-${pharmacyId}`}
             coordinate={coordinate}
             pharmacy={pharmacy}
-            selected={isSelected}
+            selected={selectedPharmacyId === pharmacyId}
             onPress={onPharmacyPress}
           />
         );
