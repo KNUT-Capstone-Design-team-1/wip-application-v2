@@ -11,8 +11,8 @@ export const NEARBY_PHARMACY_SEARCH_LIMIT = 200;
 // 클러스터 병합 반경 (px). 값이 클수록 더 넓게 묶임
 export const CLUSTER_RADIUS_PX = 60;
 
-// 이 zoom level 이상에선 클러스터 해제 (개별 마커 표시). zoom 17까지 클러스터링하여 마커 겹침 방지
-export const CLUSTER_MAX_ZOOM = 17;
+// 이 zoom level 이상에선 클러스터 해제 (개별 마커 표시)
+export const CLUSTER_MAX_ZOOM = 16;
 
 // 지도 최대 허용 줌 레벨 (클러스터 해제 후 줌 허용 범위)
 export const MAX_MAP_ZOOM = 20;
