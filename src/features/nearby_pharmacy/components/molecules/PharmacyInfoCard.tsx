@@ -1,10 +1,11 @@
-import React, { memo, useState, useMemo, useEffect } from 'react';
+import React, { memo, useState, useMemo, useEffect, useRef } from 'react';
 import {
   View,
   TouchableOpacity,
   LayoutAnimation,
   Platform,
   UIManager,
+  ScrollView,
 } from 'react-native';
 import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/nearby_pharmacy';
 import { X } from 'lucide-react-native';
@@ -46,19 +47,23 @@ const PharmacyInfoCard = ({
   onStockInquiryPress,
 }: IPharmacyInfoCardProps) => {
   const { callPharmacy } = usePharmacyCall();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // 영업시간 리스트 확장(펼침) 상태
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 선택된 약국 변경 시 펼침 상태 초기화
+  // 선택된 약국 변경 시 펼침 상태 초기화 및 스크롤 상단 이동
   useEffect(() => {
     setIsExpanded(false);
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false });
   }, [pharmacy.id]);
 
   // 전화 걸기 핸들러
   const handlePhonePress = () => {
-    if (onStockInquiryPress) {
-      onStockInquiryPress(pharmacy.telephone);
+    const hasStockInquiry = Boolean(onStockInquiryPress);
+
+    if (hasStockInquiry) {
+      onStockInquiryPress?.(pharmacy.telephone);
       return;
     }
 
@@ -68,7 +73,15 @@ const PharmacyInfoCard = ({
   // 영업시간 확장/축소 애니메이션 토글 핸들러
   const handleToggleExpand = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setIsExpanded((prev) => !prev);
+    setIsExpanded((prev) => {
+      const willCollapse = prev;
+
+      if (willCollapse) {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+      }
+
+      return !prev;
+    });
   };
 
   // 약국명 복사 핸들러
@@ -134,8 +147,16 @@ const PharmacyInfoCard = ({
         </TouchableOpacity>
       </View>
 
-      {/* 카드 본문: 전화번호, 주소, 영업시간 */}
-      <View style={styles.infoContent}>
+      {/* 카드 본문 스크롤 영역: 전화번호, 주소, 영업시간 */}
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.infoContent}
+        showsVerticalScrollIndicator={true}
+        keyboardShouldPersistTaps="handled"
+        bounces={false}
+        nestedScrollEnabled={true}
+      >
         {/* 전화번호 정보 행 */}
         <PharmacyInfoRow
           text={pharmacy.telephone || '전화번호 없음'}
@@ -178,7 +199,7 @@ const PharmacyInfoCard = ({
             onPress={() => onStockInquiryPress?.(pharmacy.telephone)}
           />
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };

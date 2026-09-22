@@ -12,11 +12,17 @@ export const styles = StyleSheet.create({
     paddingTop: px(16),
     paddingBottom: px(14),
     paddingHorizontal: px(16),
+    maxHeight: px(240),
     elevation: 10,
     shadowColor: COLOR.shadow,
     shadowOffset: { width: 0, height: px(4) },
     shadowOpacity: 0.15,
     shadowRadius: px(8),
+  },
+
+  scrollContainer: {
+    flexGrow: 0,
+    flexShrink: 1,
   },
 
   headerRow: {
