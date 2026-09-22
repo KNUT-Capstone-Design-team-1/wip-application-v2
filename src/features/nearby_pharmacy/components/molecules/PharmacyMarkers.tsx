@@ -52,7 +52,7 @@ const PharmacyMarkers = ({
 
           return (
             <PharmacyClusterMarker
-              key={`cluster-${clusterId}-${pointCount}`}
+              key={`cluster-${clusterId}`}
               coordinate={coordinate}
               count={pointCount}
               onPress={() => onClusterPress(clusterId)}

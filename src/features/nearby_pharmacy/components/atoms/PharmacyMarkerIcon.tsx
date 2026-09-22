@@ -14,9 +14,11 @@ const PharmacyMarkerIcon = ({ selected }: IPharmacyMarkerIconProps) => {
 
   if (isUnselected) {
     return (
-      <View style={styles.unselectedOuter}>
-        <View style={styles.unselectedMiddle}>
-          <View style={styles.unselectedInner} />
+      <View style={styles.unselectedContainer}>
+        <View style={styles.unselectedOuter}>
+          <View style={styles.unselectedMiddle}>
+            <View style={styles.unselectedInner} />
+          </View>
         </View>
       </View>
     );

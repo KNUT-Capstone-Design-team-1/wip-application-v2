@@ -64,7 +64,18 @@ export const getNearbyPharmacies = async (
 
   const db = await getDatabase();
 
+  let orderByClause = '';
+  const orderValues: number[] = [];
+  const hasCoordinate = Boolean(params.coordinate);
+
+  if (hasCoordinate) {
+    const { x, y } = params.coordinate!;
+    orderByClause = `ORDER BY ((X - ?) * (X - ?) + (Y - ?) * (Y - ?)) ASC`;
+    orderValues.push(x, x, y, y);
+  }
+
   const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
+               ${orderByClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;
@@ -72,12 +83,13 @@ export const getNearbyPharmacies = async (
 
   let result = await db.getAllAsync<INearbyPharmacies>(sql, [
     ...whereValues,
+    ...orderValues,
     offset,
     limit,
   ]);
 
-  if (params.coordinate) {
-    const { x, y } = params.coordinate;
+  if (hasCoordinate) {
+    const { x, y } = params.coordinate!;
 
     // DB에서 꺼내올 때 거리를 계산하여 매핑하고 가까운 순으로 정렬
     result = result

@@ -1,4 +1,5 @@
 import Supercluster from 'supercluster';
+import { Dimensions } from 'react-native';
 import { Region } from 'react-native-maps';
 import { INearbyPharmacies } from '@services/database/types';
 import {
@@ -91,7 +92,12 @@ export const pharmacyClusterService = {
       longitude + longitudeDelta / 2,
       latitude + latitudeDelta / 2,
     ];
-    const zoom = Math.round(Math.log2(360 / latitudeDelta));
+
+    const { height: windowHeight } = Dimensions.get('window');
+    // Web Mercator 타일(256px) 기준 뷰포트 높이를 반영한 정확한 줌 레벨 계산
+    const zoom = Math.round(
+      Math.log2((360 * (windowHeight / 256)) / latitudeDelta),
+    );
     const clampedZoom = Math.min(Math.max(zoom, 0), CLUSTER_MAX_ZOOM);
 
     return index.getClusters(bbox, clampedZoom);

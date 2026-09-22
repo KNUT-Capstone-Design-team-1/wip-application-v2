@@ -7,6 +7,11 @@ const SELECTED_SIZE = Math.round(px(38));
 const SELECTED_ICON_SIZE = SELECTED_SIZE - 2;
 
 export const styles = StyleSheet.create({
+  unselectedContainer: {
+    padding: px(6),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   unselectedOuter: {
     width: UNSELECTED_SIZE,
     height: UNSELECTED_SIZE,

@@ -5,6 +5,9 @@ export const KM_PER_LON_DEGREE = 88;
 // 검색 반경 (고정 3km)
 export const NEARBY_PHARMACY_RADIUS_KM = 3;
 
+// 주변 약국 검색 최대 조회 개수 (반경 3km 내 야간/휴일 영업 약국 누락 방지)
+export const NEARBY_PHARMACY_SEARCH_LIMIT = 200;
+
 // 클러스터 병합 반경 (px). 값이 클수록 더 넓게 묶임
 export const CLUSTER_RADIUS_PX = 60;
 // 이 zoom level 이상에선 클러스터 해제 (개별 마커 표시)

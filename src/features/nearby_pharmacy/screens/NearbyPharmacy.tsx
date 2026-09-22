@@ -31,6 +31,7 @@ const NearbyPharmacyScreen = () => {
     handleCopy,
     handleMarkerPress,
     handleCloseInfoCard,
+    handleDeselectAll,
     openClusterList,
     closeClusterList,
     handleClusterPharmacySelect,
@@ -53,13 +54,12 @@ const NearbyPharmacyScreen = () => {
 
   // 영업중인 약국만 표시 필터 상태 및 필터링된 약국 목록 훅
   const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
-    usePharmacyOpenFilter(pharmacies, handleCloseInfoCard);
+    usePharmacyOpenFilter(pharmacies, handleDeselectAll);
 
-  // 영업중인 약국 표시(isOpenOnly) 변경 시 마커 선택 해제 및 하단 카드/클러스터 목록 닫기
+  // 영업중인 약국 표시(isOpenOnly) 변경 시 마커 선택 해제 및 하단 카드/클러스터 목록 전체 닫기
   useEffect(() => {
-    handleCloseInfoCard();
-    closeClusterList();
-  }, [isOpenOnly, handleCloseInfoCard, closeClusterList]);
+    handleDeselectAll();
+  }, [isOpenOnly, handleDeselectAll]);
 
   // 필터링된 약국 데이터를 기반으로 클러스터(묶음) 생성
   const { clusters, getClusterPharmacyIds } = usePharmacyClusters(

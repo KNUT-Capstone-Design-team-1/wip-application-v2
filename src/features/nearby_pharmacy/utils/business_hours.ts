@@ -150,8 +150,10 @@ export const isMinutesWithinBusinessHours = (
   }
 
   // 3. 당일 야간부터 익일 새벽까지 영업하는 심야 영업 (예: 20:00 ~ 02:00)
+  // 당일 기준으로는 openMinutes 이후만 당일 영업 세션에 해당합니다.
+  // 익일 새벽(00:00 ~ closeMinutes)은 다음날 시점에서 전날(yesterdayIndex) 영업 연장으로 판별됩니다.
   if (openMinutes > closeMinutes) {
-    return currentMinutes >= openMinutes || currentMinutes <= closeMinutes;
+    return currentMinutes >= openMinutes;
   }
 
   return false;
@@ -209,12 +211,7 @@ export const isPharmacyOpenNow = (
     }
   }
 
-  // 2. 자정 넘은 새벽 시간대(00:00 ~ 08:00)가 아니면 종료
-  if (currentMinutes >= 480) {
-    return false;
-  }
-
-  // 전날 심야영업 연장 여부 확인
+  // 2. 전날 심야영업 연장 여부 확인 (예: 전날 20:00 ~ 당일 02:00)
   const yesterdayIndex = (todayIndex + 6) % 7;
   const yestOpen = openTimes[yesterdayIndex]?.trim();
   const yestClose = closeTimes[yesterdayIndex]?.trim();
@@ -238,6 +235,22 @@ export const isPharmacyOpenNow = (
 
 // 시작 및 종료 시간 문자열을 기반으로 UI 표시용 영업시간 텍스트 생성
 export const buildTimeText = (openTime: string, closeTime: string): string => {
+  const hasNoTimes = !openTime && !closeTime;
+
+  if (hasNoTimes) {
+    return '정보 없음';
+  }
+
+  // 시작 시간과 종료 시간이 '00:00'이거나 동일한 경우 휴무로 판별
+  const isOffDay =
+    (openTime === '00:00' && closeTime === '00:00') ||
+    (openTime === '0000' && closeTime === '0000') ||
+    (Boolean(openTime) && Boolean(closeTime) && openTime === closeTime);
+
+  if (isOffDay) {
+    return '휴무';
+  }
+
   if (openTime && closeTime) {
     return `${openTime} ~ ${closeTime}`;
   }
@@ -329,10 +342,12 @@ export const getTodayBusinessHourSummary = (
     };
   }
 
-  if (today.timeText === '정보 없음') {
+  const isNoHours = today.timeText === '정보 없음' || today.timeText === '휴무';
+
+  if (isNoHours) {
     return {
       label: todayLabel,
-      text: '정보 없음',
+      text: today.timeText,
       hasHours: false,
     };
   }
