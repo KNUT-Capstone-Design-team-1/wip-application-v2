@@ -6,7 +6,6 @@ import {
   CLUSTER_MAX_ZOOM,
   CLUSTER_MIN_POINTS,
   CLUSTER_RADIUS_PX,
-  MAX_MAP_ZOOM,
 } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
 import {
   IPharmacyPointProps,
@@ -94,15 +93,12 @@ export const pharmacyClusterService = {
       latitude + latitudeDelta / 2,
     ];
 
-    const { width: windowWidth } = Dimensions.get('window');
-
-    // Web Mercator 기준 뷰포트 가로폭과 경도 Delta를 반영한 표준 줌 레벨 계산
-    const delta = longitudeDelta > 0 ? longitudeDelta : latitudeDelta;
-
-    const zoom = Math.round(Math.log2((360 * (windowWidth / 256)) / delta));
-
-    // Web Mercator 기준 줌 레벨을 0 ~ MAX_MAP_ZOOM 범위로 클램핑 (CLUSTER_MAX_ZOOM 초과 시 개별 마커로 정상 해제되도록 허용)
-    const clampedZoom = Math.min(Math.max(zoom, 0), MAX_MAP_ZOOM);
+    const { height: windowHeight } = Dimensions.get('window');
+    // Web Mercator 타일(256px) 기준 뷰포트 높이를 반영한 정확한 줌 레벨 계산
+    const zoom = Math.round(
+      Math.log2((360 * (windowHeight / 256)) / latitudeDelta),
+    );
+    const clampedZoom = Math.min(Math.max(zoom, 0), CLUSTER_MAX_ZOOM);
 
     return index.getClusters(bbox, clampedZoom);
   },

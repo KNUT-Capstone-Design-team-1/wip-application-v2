@@ -15,11 +15,6 @@ import PharmacyMap from '@features/nearby_pharmacy/components/organisms/Pharmacy
 import PharmacyMapBottomOverlay from '@features/nearby_pharmacy/components/organisms/PharmacyMapBottomOverlay';
 import StockInquirySummaryModal from '@features/nearby_pharmacy/components/molecules/StockInquirySummaryModal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { INearbyPharmacies } from '@services/database/types';
-import {
-  DEFAULT_LATITUDE_DELTA,
-  DEFAULT_LONGITUDE_DELTA,
-} from '@features/nearby_pharmacy/constants/nearby_pharmacy';
 
 // 주변 약국 지도 화면 컴포넌트
 const NearbyPharmacyScreen = () => {
@@ -96,53 +91,6 @@ const NearbyPharmacyScreen = () => {
     setInquiryModalVisible(false);
   }, []);
 
-  // 클러스터 약국 선택 핸들러 (선택 즉시 해당 약국 위치로 줌인 및 region 상태 즉시 동기화)
-  const handleSelectClusterPharmacy = useCallback(
-    (pharmacy: INearbyPharmacies) => {
-      const lat = parseFloat(pharmacy.Y);
-      const lng = parseFloat(pharmacy.X);
-
-      const isValidCoords =
-        Number.isFinite(lat) &&
-        Number.isFinite(lng) &&
-        lat >= -90 &&
-        lat <= 90 &&
-        lng >= -180 &&
-        lng <= 180;
-
-      if (isValidCoords) {
-        const latitudeDelta = 0.0035;
-        const longitudeDelta = 0.0035;
-        const latOffset = latitudeDelta * 0.15;
-
-        // 안드로이드 MapView animateToRegion 비동기 시 onRegionChangeComplete 미호출 대비 즉시 동기화
-        setRegion({
-          latitude: lat - latOffset,
-          longitude: lng,
-          latitudeDelta,
-          longitudeDelta,
-        });
-      }
-
-      handleClusterPharmacySelect(pharmacy);
-    },
-    [handleClusterPharmacySelect],
-  );
-
-  // 현재 위치 버튼 클릭 시 지도 이동 및 region 상태 동기화
-  const handleLocateWithRegion = useCallback(() => {
-    handleLocate();
-
-    if (location) {
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: DEFAULT_LATITUDE_DELTA,
-        longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-      });
-    }
-  }, [handleLocate, location]);
-
   // 초기 로딩 중이며 위치 정보가 아직 없을 때만 로딩 스피너 표시
   const shouldShowLoading = loading && !location;
 
@@ -165,7 +113,6 @@ const NearbyPharmacyScreen = () => {
         clusters={clusters}
         pharmaciesById={pharmaciesById}
         selectedPharmacyId={selectedPharmacy?.id}
-        getClusterPharmacyIds={getClusterPharmacyIds}
         onPharmacyPress={handleMarkerPress}
         onClusterPress={handleClusterPress}
       />
@@ -181,10 +128,10 @@ const NearbyPharmacyScreen = () => {
           bottomInset={bottomTabSize.height + insets.bottom}
           isOpenOnly={isOpenOnly}
           onToggleOpenOnly={handleToggleOpenOnly}
-          onLocate={handleLocateWithRegion}
+          onLocate={handleLocate}
           clusterPharmacies={clusterPharmacies}
           selectedPharmacy={selectedPharmacy}
-          onClusterPharmacySelect={handleSelectClusterPharmacy}
+          onClusterPharmacySelect={handleClusterPharmacySelect}
           onCloseClusterList={closeClusterList}
           onCopyPharmacyInfo={handleCopy}
           onClosePharmacyCard={handleCloseInfoCard}

@@ -165,9 +165,8 @@ export const useNearbyPharmacy = () => {
         lng <= 180;
 
       if (isValidCoords) {
-        // 상세 확인에 적합한 스트리트 뷰 레벨(zoom 17 이상)로 줌인하여 클러스터를 완전히 해제
-        const latitudeDelta = 0.0035;
-        const longitudeDelta = 0.0035;
+        const latitudeDelta = 0.005;
+        const longitudeDelta = 0.005;
         const latOffset = latitudeDelta * 0.15;
 
         mapRef.current?.animateToRegion(

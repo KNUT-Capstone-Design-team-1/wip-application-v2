@@ -1,19 +1,19 @@
-import React, { memo, useCallback } from 'react';
-import { Marker } from 'react-native-maps';
+import React, { memo, useEffect, useState, useCallback, useRef } from 'react';
+import { View } from 'react-native';
+import { Marker, MapMarker } from 'react-native-maps';
+import PharmacyMarkerIcon from '@features/nearby_pharmacy/components/atoms/PharmacyMarkerIcon';
 import { IPharmacyMarkerProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
 
-// 네이티브 이미지 마커 애셋 (정적 비트맵으로 렌더링되어 뷰 스냅샷 오버헤드와 깜빡임 완전 제거)
-const PHARMACY_MARKER_IMAGE = require('@assets/images/pharmacy_marker.png');
-
-// 미선택 상태 앵커 상수 (원형 도트 중앙: 0.5, 0.5)
+// 미선택/선택 상태별 앵커 상수 (원형 도트 중앙: 0.5, 0.5 / 핀 아이콘 하단 끝: 0.5, 1.0)
 const UNSELECTED_ANCHOR = { x: 0.5, y: 0.5 };
+const SELECTED_ANCHOR = { x: 0.5, y: 1.0 };
 
 /**
- * 개별 약국 네이티브 이미지 마커
+ * 개별 약국 마커
  *
- * NOTE: 개별 약국은 네이티브 image prop을 사용하는 단일 마커로 렌더링하여 뷰 계층 렌더링 비용을 0으로 만듭니다.
- * 선택된 약국은 최상단 전용 오버레이 마커(SelectedPharmacyMarker)가 별도로 렌더링하므로,
- * 개별 마커는 미선택 상태일 때만 네이티브 비트맵으로 표시됩니다.
+ * NOTE: custom Marker View는 플랫폼 네이티브 지도에서 bitmap snapshot으로
+ * 렌더링된다. 마커를 언마운트하지 않고 상태를 교체할 때 네이티브 bitmap을
+ * 즉시 갱신(redraw)하여 마커 깜빡임(flicker)과 잔상(stale)을 동시에 방지한다.
  */
 const PharmacyMarker = ({
   coordinate,
@@ -21,25 +21,60 @@ const PharmacyMarker = ({
   selected,
   onPress,
 }: IPharmacyMarkerProps) => {
-  const handlePress = useCallback(() => {
-    onPress(pharmacy);
-  }, [onPress, pharmacy]);
+  const markerRef = useRef<MapMarker>(null);
+  const [tracksViewChanges, setTracksViewChanges] = useState(true);
 
-  // 선택된 상태에서는 상단 SelectedPharmacyMarker가 렌더링되므로 이미지 마커는 렌더링하지 않음
-  if (selected) {
-    return null;
-  }
+  useEffect(() => {
+    // 선택 상태 변경 시 뷰 변경 추적 활성화
+    setTracksViewChanges(true);
+
+    // 뷰 레이아웃 변경 직후 네이티브 비트맵을 즉시 다시 그려 깜빡임 없이 아이콘 교체
+    const frame1 = setTimeout(() => {
+      markerRef.current?.redraw();
+    }, 16);
+
+    // 스냅샷 안정화 후 CPU 점유를 막기 위해 추적 신속 종료 (빠른 교차 탭 지원)
+    const finishTimer = setTimeout(() => {
+      markerRef.current?.redraw();
+      setTracksViewChanges(false);
+    }, 120);
+
+    return () => {
+      clearTimeout(frame1);
+      clearTimeout(finishTimer);
+    };
+  }, [selected]);
+
+  // 마커 뷰 레이아웃 완료 시 안정적인 스냅샷 갱신 처리
+  const handleLayout = useCallback(() => {
+    setTracksViewChanges(true);
+
+    const timer = setTimeout(() => {
+      markerRef.current?.redraw();
+      setTracksViewChanges(false);
+    }, 120);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <Marker
+      ref={markerRef}
       coordinate={coordinate}
-      image={PHARMACY_MARKER_IMAGE}
-      anchor={UNSELECTED_ANCHOR}
-      zIndex={1}
-      tracksViewChanges={false}
       stopPropagation={true}
-      onPress={handlePress}
-    />
+      onPress={(e) => {
+        e?.stopPropagation?.();
+        onPress(pharmacy);
+      }}
+      tracksViewChanges={tracksViewChanges}
+      anchor={selected ? SELECTED_ANCHOR : UNSELECTED_ANCHOR}
+      centerOffset={{ x: 0, y: 0 }}
+      zIndex={1}
+    >
+      <View collapsable={false} onLayout={handleLayout}>
+        <PharmacyMarkerIcon selected={selected} />
+      </View>
+    </Marker>
   );
 };
 
