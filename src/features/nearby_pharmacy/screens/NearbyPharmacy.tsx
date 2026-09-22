@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Region } from 'react-native-maps';
 import { useNearbyPharmacy } from '@features/nearby_pharmacy/hooks/use_nearby_pharmacy';
@@ -55,17 +55,21 @@ const NearbyPharmacyScreen = () => {
   const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
     usePharmacyOpenFilter(pharmacies, handleCloseInfoCard);
 
+  // 영업중인 약국 표시(isOpenOnly) 변경 시 마커 선택 해제 및 하단 카드/클러스터 목록 닫기
+  useEffect(() => {
+    handleCloseInfoCard();
+    closeClusterList();
+  }, [isOpenOnly, handleCloseInfoCard, closeClusterList]);
+
   // 필터링된 약국 데이터를 기반으로 클러스터(묶음) 생성
   const { clusters, getClusterPharmacyIds } = usePharmacyClusters(
     displayedPharmacies,
     region,
   );
 
-  // 클러스터 마커 선택 시 하단 리스트를 띄우고 줌인하는 로직
+  // 클러스터 마커 선택 시 하단 리스트를 띄우는 로직 (줌 없음)
   const { pharmaciesById, handleClusterPress } = useClusterSelection({
     pharmacies: displayedPharmacies,
-    mapRef,
-    region,
     getClusterPharmacyIds,
     openClusterList,
   });
