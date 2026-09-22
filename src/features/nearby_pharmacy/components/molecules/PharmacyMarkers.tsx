@@ -67,7 +67,7 @@ const PharmacyMarkers = ({
 
         return (
           <PharmacyMarker
-            key={pharmacyId}
+            key={`pharmacy-${pharmacyId}-${isSelected ? 'selected' : 'unselected'}`}
             coordinate={coordinate}
             pharmacy={pharmacy}
             selected={isSelected}
