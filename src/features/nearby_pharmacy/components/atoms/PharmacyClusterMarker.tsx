@@ -16,7 +16,7 @@ const PharmacyClusterMarker = ({
   // 클러스터 마커 크기
   const size = Math.round(px(32));
 
-  // count가 변경될 때마다 캡처를 활성화하고, 충분한 시간(500ms) 후 중단하여 안정적인 비트맵 확보
+  // count가 변경될 때마다 캡처를 활성화하고, 안정화 후 중단하여 비트맵 확보
   useEffect(() => {
     setTracksViewChanges(true);
 
@@ -25,7 +25,7 @@ const PharmacyClusterMarker = ({
       if (isMounted) {
         setTracksViewChanges(false);
       }
-    }, 500);
+    }, 150);
 
     return () => {
       isMounted = false;
@@ -33,15 +33,9 @@ const PharmacyClusterMarker = ({
     };
   }, [count]);
 
-  // 마커 뷰 레이아웃 완료 시 안정적인 스냅샷 갱신 처리
+  // 마커 뷰 레이아웃 완료 시 트래킹 종료 처리
   const handleLayout = useCallback(() => {
-    setTracksViewChanges(true);
-
-    const timer = setTimeout(() => {
-      setTracksViewChanges(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
+    setTracksViewChanges(false);
   }, []);
 
   return (

@@ -14,6 +14,7 @@ const PharmacyMap = ({
   clusters,
   pharmaciesById,
   selectedPharmacyId,
+  getClusterPharmacyIds,
   onPharmacyPress,
   onClusterPress,
 }: IPharmacyMapProps) => {
@@ -46,6 +47,7 @@ const PharmacyMap = ({
         clusters={clusters}
         pharmaciesById={pharmaciesById}
         selectedPharmacyId={selectedPharmacyId}
+        getClusterPharmacyIds={getClusterPharmacyIds}
         onPharmacyPress={onPharmacyPress}
         onClusterPress={onClusterPress}
       />

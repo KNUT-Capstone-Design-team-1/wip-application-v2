@@ -39,6 +39,9 @@ export interface IPharmacyMarkersProps {
   // 현재 선택된 약국 ID
   selectedPharmacyId?: string;
 
+  // 특정 클러스터에 속한 모든 약국 ID 목록 반환 함수
+  getClusterPharmacyIds?: (clusterId: number) => string[];
+
   // 약국 마커 클릭 핸들러
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
 
@@ -79,6 +82,7 @@ export interface IPharmacyMapProps {
   clusters: TPharmacyClusterItem[];
   pharmaciesById: Map<string, INearbyPharmacies>;
   selectedPharmacyId?: string;
+  getClusterPharmacyIds?: (clusterId: number) => string[];
   onPharmacyPress: (pharmacy: INearbyPharmacies) => void;
   onClusterPress: (clusterId: number) => void;
 }
