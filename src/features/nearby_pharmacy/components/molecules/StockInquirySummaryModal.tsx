@@ -5,8 +5,6 @@ import { Image } from '@components/common/CustomImage';
 import { Phone, Copy, X } from 'lucide-react-native';
 import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import { INearbyPharmacies } from '@services/database/types';
-import { IStockInquiryPillContext } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
 import { pharmacyActionService } from '@features/nearby_pharmacy/services/pharmacy_action_service';
 import { useToast } from '@hooks/use_toast';
 import { styles } from '@features/nearby_pharmacy/styles/StockInquirySummaryModal';

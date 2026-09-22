@@ -3,18 +3,7 @@ import Toast from 'react-native-toast-message';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { bottomTabSize } from '@constants/size';
 import { px } from '@utils/responsive';
-
-// 주변 약국 토스트 매개변수 타입 정의
-export type TPharmacyToastProps = {
-  // 토스트 종류 ('success' | 'error' | 'default')
-  type?: 'success' | 'error' | 'default';
-
-  // 노출할 메시지 본문
-  message: string;
-
-  // 노출 지속 시간 (ms, 기본값: 2000)
-  duration?: number;
-};
+import { TPharmacyToastProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 
 // 주변 약국 화면 전용 토스트 위치를 관리하는 커스텀 훅
 export const usePharmacyToast = () => {

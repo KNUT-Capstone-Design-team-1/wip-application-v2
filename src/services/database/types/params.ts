@@ -61,6 +61,13 @@ export type TNearbyPharmaciesSearchParam = Omit<
   coordinate: { x: number; y: number };
 };
 
+// 주변 약국 쿼리 옵션 타입
+export interface INearbyPharmaciesQueryOption {
+  page: number;
+  limit: number;
+  maxRadiusKm?: number;
+}
+
 // 대마초 데이터 검색을 위한 파라미터 타입
 export type TCannabisSearchParam = Pick<
   ICannabis,

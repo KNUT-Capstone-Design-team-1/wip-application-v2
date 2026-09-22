@@ -6,6 +6,7 @@ import {
   CLUSTER_MIN_POINTS,
   CLUSTER_RADIUS_PX,
 } from '@features/nearby_pharmacy/constants/nearby_pharmacy';
+import { CLUSTER_LEAF_LIMIT } from '@features/nearby_pharmacy/constants/search';
 import {
   IPharmacyPointProps,
   TPharmacyClusterItem,
@@ -100,7 +101,7 @@ export const pharmacyClusterService = {
   getClusterPharmacyIds(
     index: Supercluster<IPharmacyPointProps> | null,
     clusterId: number,
-    limit: number = 100,
+    limit: number = CLUSTER_LEAF_LIMIT,
   ): string[] {
     const hasNoIndex = !index;
 

@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { TouchableOpacity, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { Hospital } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';

@@ -6,14 +6,7 @@ import {
   STOCK_INQUIRY_ROUTE,
   STOCK_INQUIRY_MODAL,
 } from '@features/nearby_pharmacy/constants/stock_inquiry';
-
-export interface IStockInquiryPillContext {
-  seq?: string;
-  name?: string;
-  entpName?: string;
-  className?: string;
-  image?: string;
-}
+import { IStockInquiryPillContext } from '@features/nearby_pharmacy/types/pharmacy_domain_type';
 
 // 재고 문의 안내 공통 모달 팝업 실행 함수
 export const openStockInquiryModal = (

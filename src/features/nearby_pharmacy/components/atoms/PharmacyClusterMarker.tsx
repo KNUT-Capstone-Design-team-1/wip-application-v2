@@ -1,9 +1,10 @@
 import React, { memo, useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import { Marker, LatLng } from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 import { px } from '@utils/responsive';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyClusterMarker';
 import { IPharmacyClusterMarkerProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import { MARKER_TRACKS_CHANGES_TIMEOUT_MS } from '@features/nearby_pharmacy/constants/search';
 
 // 여러 약국 마커를 하나로 묶어 표시하는 클러스터 마커.
 const PharmacyClusterMarker = ({
@@ -22,7 +23,7 @@ const PharmacyClusterMarker = ({
 
     const timer = setTimeout(() => {
       setTracksViewChanges(false);
-    }, 100);
+    }, MARKER_TRACKS_CHANGES_TIMEOUT_MS);
 
     return () => clearTimeout(timer);
   }, [count]);

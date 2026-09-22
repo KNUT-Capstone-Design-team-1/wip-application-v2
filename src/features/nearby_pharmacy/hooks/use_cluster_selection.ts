@@ -1,16 +1,7 @@
-import { RefObject, useCallback, useMemo } from 'react';
-import MapView, { Region } from 'react-native-maps';
+import { useCallback, useMemo } from 'react';
 import { INearbyPharmacies } from '@services/database/types';
 import { nearbyPharmacyService } from '@features/nearby_pharmacy/services/nearby_pharmacy_service';
-
-// 클러스터 선택 훅 매개변수 인터페이스
-interface IUseClusterSelectionParams {
-  pharmacies: INearbyPharmacies[];
-  mapRef: RefObject<MapView | null>;
-  region: Region;
-  getClusterPharmacyIds: (clusterId: number) => string[];
-  openClusterList: (list: INearbyPharmacies[]) => void;
-}
+import { IUseClusterSelectionParams } from '@features/nearby_pharmacy/types/nearby_pharmacy_hook_type';
 
 // 클러스터 마커 선택 및 지도 포커스/목록 표시 커스텀 훅 (Presentation Layer)
 export const useClusterSelection = ({

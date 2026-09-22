@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { Marker } from 'react-native-maps';
 import PharmacyMarkerIcon from '@features/nearby_pharmacy/components/atoms/PharmacyMarkerIcon';
 import { IPharmacyMarkerProps } from '@features/nearby_pharmacy/types/pharmacy_map_type';
+import { MARKER_TRACKS_CHANGES_TIMEOUT_MS } from '@features/nearby_pharmacy/constants/search';
 
 /**
  * 개별 약국 마커
@@ -31,7 +32,7 @@ const PharmacyMarker = ({
 
     const timer = setTimeout(() => {
       setTracksViewChanges(false);
-    }, 100);
+    }, MARKER_TRACKS_CHANGES_TIMEOUT_MS);
 
     return () => clearTimeout(timer);
   }, [selected]);

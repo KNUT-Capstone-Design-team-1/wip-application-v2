@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import { bottomTabSize } from '@constants/size';
 import { px } from '@utils/responsive';
 
 // 주변 약국 화면 스타일

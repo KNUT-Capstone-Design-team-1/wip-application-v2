@@ -52,3 +52,12 @@ export interface ILastFetchedCenter {
   lat: number;
   lng: number;
 }
+
+// 재고 문의를 위한 대상 알약 컨텍스트 모델
+export interface IStockInquiryPillContext {
+  seq?: string;
+  name?: string;
+  entpName?: string;
+  className?: string;
+  image?: string;
+}

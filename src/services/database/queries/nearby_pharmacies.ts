@@ -1,6 +1,7 @@
 import { getDatabase } from '../sqlite';
 import {
   INearbyPharmacies,
+  INearbyPharmaciesQueryOption,
   TNearbyPharmaciesSearchParam,
   TQuerySearchParamResult,
   TWhereQueryClauseFunc,
@@ -21,23 +22,23 @@ const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
       query: `id = ?`,
       values: (id: string) => [id],
     },
+
     name: {
       query: `name LIKE ?`,
       values: (name: string) => [`%${name}%`],
     },
+
     address: {
       query: `address LIKE ?`,
       values: (address: string) => [`%${address}%`],
     },
+
     coordinate: {
       query: `(Y BETWEEN ? AND ?) AND (X BETWEEN ? AND ?)`,
       values: (coordinate: { x: number; y: number }) => {
         const { x, y } = coordinate;
-        /**
-         * 약 3km 반경을 위경도로 변환 (근사치)
-         * 위도 1도 ≒ 111km -> 3km ≒ 0.027도
-         * 경도 1도 ≒ 88km (한국 위도 기준) -> 3km ≒ 0.034도
-         */
+
+        // 약 3km 반경을 위경도 델타로 근사 변환
         const latDelta = 0.027;
         const lonDelta = 0.034;
 
@@ -55,63 +56,79 @@ const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
  */
 export const getNearbyPharmacies = async (
   params: Partial<TNearbyPharmaciesSearchParam>,
-  queryOption: { page: number; limit: number; maxRadiusKm?: number },
-) => {
+  queryOption: Partial<INearbyPharmaciesQueryOption> = {},
+): Promise<INearbyPharmacies[]> => {
   const { whereClause, whereValues } = buildWhereClause(
     getNearbyPharmaciesWhereQuery,
     params,
   );
 
   const db = await getDatabase();
+
   const { page = 1, limit = 30, maxRadiusKm = 3 } = queryOption;
 
-  if (params.coordinate) {
-    const { x, y } = params.coordinate;
-
-    // Bounding Box 영역의 약국 후보군을 충분히 조회 (밀집 지역 고려 최대 300개)
-    const candidateLimit = 300;
-    const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
-                 LIMIT ?`;
-
-    const candidates = await db.getAllAsync<INearbyPharmacies>(sql, [
-      ...whereValues,
-      candidateLimit,
-    ]);
-
-    // 1. 실제 거리 계산 (단위: m)
-    const withDistance = candidates.map((pharmacy) => {
-      const dist = getDistance(
-        y,
-        x,
-        parseFloat(pharmacy.Y),
-        parseFloat(pharmacy.X),
-      );
-      return { ...pharmacy, distance: dist };
-    });
-
-    // 2. 최대 반경(기본 3km) 이내 필터링
-    const maxRadiusM = maxRadiusKm * 1000;
-    const filtered = withDistance.filter(
-      (item) => item.distance !== undefined && item.distance <= maxRadiusM,
-    );
-
-    // 3. 거리순 정렬
-    filtered.sort(
-      (a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity),
-    );
-
-    // 4. 페이징 적용
+  // 1. 좌표 조건이 없는 경우 기본 페이징 쿼리 후 early return
+  if (!params.coordinate) {
     const offset = (page - 1) * limit;
-    return filtered.slice(offset, offset + limit);
+
+    const defaultSql = `SELECT * FROM nearby_pharmacies ${whereClause}
+                        LIMIT ?, ?`;
+
+    return await db.getAllAsync<INearbyPharmacies>(defaultSql, [
+      ...whereValues,
+      offset,
+      limit,
+    ]);
   }
 
-  const offset = (page - 1) * limit;
-  const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
-               LIMIT ?, ?`;
+  // 2. Bounding Box 후보군 추출 (중심점 가까운 약국 누락 방지를 위해 최대 300개 조회)
+  const candidateLimit = 300;
 
-  return await db.getAllAsync<INearbyPharmacies>(sql, [
+  const candidateSql = `SELECT * FROM nearby_pharmacies ${whereClause}
+                        LIMIT ?`;
+
+  const candidates = await db.getAllAsync<INearbyPharmacies>(candidateSql, [
     ...whereValues,
-    offset,
-    limit,
+    candidateLimit,
   ]);
+
+  // 후보군이 비어 있으면 즉시 early return
+  if (candidates.length === 0) {
+    return [];
+  }
+
+  // 3. 단일 루프에서 거리 계산과 반경 필터링을 동시 수행 (불필요한 중간 배열 생성 및 객체 복사 제거)
+  const { x, y } = params.coordinate;
+
+  const maxRadiusM = maxRadiusKm * 1000;
+
+  const filteredPharmacies: INearbyPharmacies[] = [];
+
+  for (const pharmacy of candidates) {
+    const pharmacyLat = Number(pharmacy.Y);
+    const pharmacyLng = Number(pharmacy.X);
+
+    // 유효하지 않은 좌표는 건너뜀
+    if (Number.isNaN(pharmacyLat) || Number.isNaN(pharmacyLng)) {
+      continue;
+    }
+
+    const dist = getDistance(y, x, pharmacyLat, pharmacyLng);
+
+    // 반경 3km(maxRadiusM) 이내 약국만 추가
+    if (dist <= maxRadiusM) {
+      filteredPharmacies.push({
+        ...pharmacy,
+        distance: dist,
+      });
+    }
+  }
+
+  // 4. 거리순 오름차순 정렬 (이미 distance가 검증되었으므로 직관적인 a.distance - b.distance)
+  filteredPharmacies.sort((a, b) => a.distance! - b.distance!);
+
+  // 5. 요청된 페이지 및 개수만큼 슬라이스 반환
+  const offset = (page - 1) * limit;
+
+  return filteredPharmacies.slice(offset, offset + limit);
 };

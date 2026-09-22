@@ -4,7 +4,6 @@ import PharmacyOpenOnlyCheckbox from '@features/nearby_pharmacy/components/atoms
 import PharmacyLocateButton from '@features/nearby_pharmacy/components/atoms/PharmacyLocateButton';
 import PharmacyClusterList from '@features/nearby_pharmacy/components/molecules/PharmacyClusterList';
 import PharmacyInfoCard from '@features/nearby_pharmacy/components/molecules/PharmacyInfoCard';
-import { INearbyPharmacies } from '@services/database/types';
 import { styles } from '@features/nearby_pharmacy/styles/NearbyPharmacyScreen';
 import { IPharmacyMapBottomOverlayProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 

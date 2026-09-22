@@ -1,7 +1,19 @@
 import { ReactNode } from 'react';
 import { StyleProp, TextStyle, GestureResponderEvent } from 'react-native';
 import { INearbyPharmacies } from '@services/database/types';
-import { IStockInquiryPillContext } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
+import { IStockInquiryPillContext } from './pharmacy_domain_type';
+
+// 주변 약국 토스트 매개변수 타입 정의
+export type TPharmacyToastProps = {
+  // 토스트 종류 ('success' | 'error' | 'default')
+  type?: 'success' | 'error' | 'default';
+
+  // 노출할 메시지 본문
+  message: string;
+
+  // 노출 지속 시간 (ms, 기본값: 2000)
+  duration?: number;
+};
 
 // 약국 정보 상세 카드 Props 인터페이스
 export interface IPharmacyInfoCardProps {
