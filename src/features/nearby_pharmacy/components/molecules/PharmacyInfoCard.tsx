@@ -21,6 +21,7 @@ import {
   getTodayBusinessHourSummary,
   parsePharmacyBusinessHours,
 } from '@features/nearby_pharmacy/utils/business_hours';
+import { usePharmacyCurrentTime } from '@features/nearby_pharmacy/hooks/use_pharmacy_current_time';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyInfoCard';
 
 // Android LayoutAnimation 활성화 설정
@@ -90,16 +91,29 @@ const PharmacyInfoCard = ({
     return getFormattedDistance(pharmacy.distance);
   }, [pharmacy.distance]);
 
+  // 1분 단위 및 포커스 복귀 시 갱신되는 현재 시각 구독
+  const currentTime = usePharmacyCurrentTime();
+
   // 오늘 요일 영업시간 요약 정보 계산
   const todayHours = useMemo(
-    () => getTodayBusinessHourSummary(pharmacy.openTime, pharmacy.closeTime),
-    [pharmacy.openTime, pharmacy.closeTime],
+    () =>
+      getTodayBusinessHourSummary(
+        pharmacy.openTime,
+        pharmacy.closeTime,
+        currentTime,
+      ),
+    [pharmacy.openTime, pharmacy.closeTime, currentTime],
   );
 
   // 전체 요일(월~공휴일) 영업시간 목록 계산
   const businessHours = useMemo(
-    () => parsePharmacyBusinessHours(pharmacy.openTime, pharmacy.closeTime),
-    [pharmacy.openTime, pharmacy.closeTime],
+    () =>
+      parsePharmacyBusinessHours(
+        pharmacy.openTime,
+        pharmacy.closeTime,
+        currentTime,
+      ),
+    [pharmacy.openTime, pharmacy.closeTime, currentTime],
   );
 
   const hasTelephone = Boolean(pharmacy.telephone);

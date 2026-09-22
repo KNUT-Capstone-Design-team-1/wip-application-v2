@@ -87,6 +87,7 @@ export interface IPharmacyClusterListHeaderProps {
 export interface IPharmacyClusterListItemProps {
   pharmacy: INearbyPharmacies;
   isLast: boolean;
+  isOpen: boolean;
   distanceText: string;
   onPress: (pharmacy: INearbyPharmacies) => void;
 }
