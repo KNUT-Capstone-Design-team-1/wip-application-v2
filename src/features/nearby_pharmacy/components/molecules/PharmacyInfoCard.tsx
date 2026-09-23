@@ -1,12 +1,5 @@
 import React, { memo, useState, useMemo, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  LayoutAnimation,
-  Platform,
-  UIManager,
-} from 'react-native';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { IPharmacyInfoCardProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { X } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
@@ -25,21 +18,6 @@ import {
 } from '@features/nearby_pharmacy/utils/business_hours';
 import { usePharmacyCurrentTime } from '@features/nearby_pharmacy/hooks/use_pharmacy_current_time';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyInfoCard';
-
-// Android LayoutAnimation 활성화 설정
-const enableAndroidLayoutAnimation = () => {
-  if (Platform.OS !== 'android') {
-    return;
-  }
-
-  if (!UIManager.setLayoutAnimationEnabledExperimental) {
-    return;
-  }
-
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-};
-
-enableAndroidLayoutAnimation();
 
 // 지도에서 단일 약국 마커를 선택했을 때 하단에 나타나는 상세 정보 카드
 const PharmacyInfoCard = ({
@@ -68,9 +46,8 @@ const PharmacyInfoCard = ({
     callPharmacy(pharmacy.telephone);
   };
 
-  // 영업시간 확장/축소 애니메이션 토글 핸들러
+  // 영업시간 확장/축소 토글 핸들러
   const handleToggleExpand = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsExpanded((prev) => !prev);
   };
 

@@ -1,5 +1,9 @@
 import React, { memo } from 'react';
-import { View } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from 'react-native-reanimated';
 import PharmacyBusinessHourRow from '@features/nearby_pharmacy/components/atoms/PharmacyBusinessHourRow';
 import PharmacyDataSourceFooter from '@features/nearby_pharmacy/components/atoms/PharmacyDataSourceFooter';
 import { IPharmacyExpandedHoursListProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
@@ -10,7 +14,12 @@ const PharmacyExpandedHoursList = ({
   businessHours,
 }: IPharmacyExpandedHoursListProps) => {
   return (
-    <View style={styles.hoursListContainer}>
+    <Animated.View
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(150)}
+      layout={LinearTransition.duration(200)}
+      style={styles.hoursListContainer}
+    >
       {/* 월요일~공휴일 영업시간 행 리스트 */}
       {businessHours.map((item) => (
         <PharmacyBusinessHourRow key={item.dayLabel} item={item} />
@@ -18,7 +27,7 @@ const PharmacyExpandedHoursList = ({
 
       {/* 우측 하단 데이터 출처 문구 */}
       <PharmacyDataSourceFooter />
-    </View>
+    </Animated.View>
   );
 };
 
