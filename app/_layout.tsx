@@ -19,6 +19,8 @@ import CommonModal from '@components/common/CommonModal';
 import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
 import CameraGuideModal from '@features/pill_image_search/components/organisms/CameraGuideModal';
 import ImageSelectBottomSheet from '@features/pill_image_search/components/organisms/ImageSelectBottomSheet';
+import { preloadKoreanHolidays } from '@utils/korean_holidays';
+import { logger } from '@utils/index';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -32,7 +34,12 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (!isInitializing) {
+      preloadKoreanHolidays().catch((e) => {
+        logger.error(`korean holidays preload fail : ${e?.stack || e}`);
+      });
+
       pillReminderNotificationService.startWatcher();
+
       return () => {
         pillReminderNotificationService.stopWatcher();
       };

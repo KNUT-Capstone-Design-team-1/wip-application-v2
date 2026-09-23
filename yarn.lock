@@ -1662,6 +1662,11 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/retry/-/retry-0.4.3.tgz#c2b9d2e374ee62c586d3adbea87199b1d7a7a6ba"
   integrity sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==
 
+"@hyunbinseo/holidays-kr@^5.2027.2":
+  version "5.2027.2"
+  resolved "https://registry.yarnpkg.com/@hyunbinseo/holidays-kr/-/holidays-kr-5.2027.2.tgz#8247ba3986bc3221137a75e4ef00246a976aa127"
+  integrity sha512-woNzPkDU1YGlSt0o/Kigd6iuiS+SNTq49+UhFFuVGTDLiUIBWwuIFvQKRS8l+cmJvX9yX55yjBrH2J6GN2lOYg==
+
 "@iabtcf/core@^1.5.3":
   version "1.5.6"
   resolved "https://registry.npmjs.org/@iabtcf/core/-/core-1.5.6.tgz#92568d89252fbf205aa65836703cb0a52e812382"
@@ -6466,11 +6471,6 @@ kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
-
-korean-lunar-calendar@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/korean-lunar-calendar/-/korean-lunar-calendar-0.4.0.tgz#9be00ef21e60f969e4bfc7957da70ec92e2c8a0d"
-  integrity sha512-kJXyH3sI/butJxCBtsLXlMJsl5qqNKNjduf1Na0s7XXwP+D/Wdlx0R0/S5ygxPVFSXf/JZ3bBKaCP6bGWhgZ0w==
 
 lan-network@^0.2.1:
   version "0.2.1"

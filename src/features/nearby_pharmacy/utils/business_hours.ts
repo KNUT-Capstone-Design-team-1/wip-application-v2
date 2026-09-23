@@ -9,7 +9,7 @@ import {
   parseTimeToMinutes,
   isBlankOrZeroTime,
 } from '@features/nearby_pharmacy/utils/time_parser';
-import { isKoreanPublicHoliday } from '@features/nearby_pharmacy/utils/korean_holidays';
+import { isKoreanPublicHoliday } from '@utils/korean_holidays';
 
 // 현재 분(currentMinutes)이 영업 시간(open~close) 범위 내에 있는지 판별
 export const isMinutesWithinBusinessHours = (
