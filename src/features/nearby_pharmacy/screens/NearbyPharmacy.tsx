@@ -51,7 +51,7 @@ const NearbyPharmacyScreen = () => {
   // 현재 지도 화면의 위경도 및 줌(Delta) 상태
   const [region, setRegion] = useState<Region>(initialRegion);
 
-  // 영업중인 약국만 표시 필터 상태 및 필터링된 약국 목록 훅
+  // 영업 중인 약국만 표시 필터 상태 및 필터링된 약국 목록 훅
   const { isOpenOnly, displayedPharmacies, handleToggleOpenOnly } =
     usePharmacyOpenFilter(pharmacies, handleCloseInfoCard);
 
@@ -68,12 +68,13 @@ const NearbyPharmacyScreen = () => {
     openClusterList,
   });
 
-  // 사용자가 지도를 일정 거리 이상 이동했을 때 "현재 위치에서 검색" 버튼 표시 로직
+  // 사용자가 지도를 일정 거리 이상 이동했을 때 "현재 지도에서 검색" 버튼 표시 로직
   const { shouldResearch, handleResearchHere } = useResearchPharmacy(
     region,
     lastFetchedCenter,
     fetchPharmacies,
     handleCloseInfoCard,
+    isOpenOnly,
   );
 
   // 재고 문의 모달 열기 핸들러

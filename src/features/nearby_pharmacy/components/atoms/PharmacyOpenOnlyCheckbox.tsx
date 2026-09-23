@@ -4,7 +4,7 @@ import { BaseText } from '@components/common/BaseText';
 import { IPharmacyOpenOnlyCheckboxProps } from '@features/nearby_pharmacy/types/pharmacy_ui_type';
 import { styles } from '@features/nearby_pharmacy/styles/PharmacyOpenOnlyCheckbox';
 
-// 영업중인 약국만 필터링하는 토글 체크박스 컴포넌트
+// 영업 중인 약국만 필터링하는 토글 체크박스 컴포넌트
 const PharmacyOpenOnlyCheckbox = ({
   checked,
   onToggle,
@@ -19,7 +19,7 @@ const PharmacyOpenOnlyCheckbox = ({
     >
       {/* 필터 라벨 텍스트 ('현재 지도에서 검색'과 동일한 스타일 적용) */}
       <BaseText weight="bold" size={13} style={styles.label}>
-        영업중인 약국만 표시
+        영업 중인 약국만 표시
       </BaseText>
 
       {/* 우측 체크박스 아이콘 박스 */}

@@ -49,7 +49,7 @@ const PharmacyClusterListItem = ({
             )}
           </View>
 
-          {/* 우측 끝: 영업 상태 뱃지 텍스트 (영업중 / 영업 종료) */}
+          {/* 우측 끝: 영업 상태 뱃지 텍스트 (영업 중 / 영업 종료) */}
           <BaseText
             weight="bold"
             size={13}
@@ -58,7 +58,7 @@ const PharmacyClusterListItem = ({
               isOpen ? styles.statusOpen : styles.statusClosed,
             ]}
           >
-            {isOpen ? '영업중' : '영업 종료'}
+            {isOpen ? '영업 중' : '영업 종료'}
           </BaseText>
         </View>
 

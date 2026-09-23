@@ -36,3 +36,11 @@ export const STOCK_INQUIRY_MODAL = {
   confirmText: '확인',
   cancelText: '취소',
 } as const;
+
+// 약국 관련 토스트 안내 문구
+export const PHARMACY_TOAST_MESSAGES = {
+  NO_OPEN_PHARMACY: '현재 영업 중인 주변 약국이 없습니다.',
+  OPEN_PHARMACY_COUNT: (count: number) =>
+    `영업 중인 약국 ${count}곳을 표시합니다.`,
+  ALL_PHARMACIES: '전체 약국을 표시합니다.',
+} as const;

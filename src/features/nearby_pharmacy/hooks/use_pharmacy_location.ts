@@ -21,7 +21,7 @@ import { LOCATION_REFRESH_MIN_DISTANCE_M } from '@features/nearby_pharmacy/const
 
 // 지도 및 사용자 위치 제어를 전담하는 커스텀 훅
 export const usePharmacyLocation = (
-  onLocationResolved: (coords: IPharmacySearchCoordinates) => Promise<void>,
+  onLocationResolved: (coords: IPharmacySearchCoordinates) => Promise<unknown>,
 ): IUsePharmacyLocationReturn => {
   // 토스트 메시지 훅
   const { showToast } = usePharmacyToast();

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 
-// '영업중인 약국만 표시' 필터 체크박스 컴포넌트 스타일
+// '영업 중인 약국만 표시' 필터 체크박스 컴포넌트 스타일
 export const styles = StyleSheet.create({
   // 전체 버튼 컨테이너 스타일 (우측 배치, 둥근 모서리, 그림자)
   container: {

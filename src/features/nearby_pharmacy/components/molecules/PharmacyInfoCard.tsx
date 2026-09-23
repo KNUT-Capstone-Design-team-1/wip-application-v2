@@ -160,7 +160,7 @@ const PharmacyInfoCard = ({
               isOpen ? styles.statusOpen : styles.statusClosed,
             ]}
           >
-            {isOpen ? '영업중' : '영업 종료'}
+            {isOpen ? '영업 중' : '영업 종료'}
           </BaseText>
 
           <TouchableOpacity

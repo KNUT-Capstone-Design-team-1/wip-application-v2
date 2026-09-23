@@ -55,6 +55,8 @@ export const usePharmacySearch = (): IUsePharmacySearchReturn => {
           lat: coords.y,
           lng: coords.x,
         });
+
+        return result;
       } catch (e) {
         // 최신 요청이 아닌 에러는 무시 (early return)
         if (currentRequestId !== searchRequestIdRef.current) {

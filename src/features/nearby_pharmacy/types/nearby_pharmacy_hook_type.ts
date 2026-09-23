@@ -42,7 +42,9 @@ export interface IUsePharmacySearchReturn {
   lastFetchedCenter: ILastFetchedCenter | null;
 
   // 특정 좌표 기준 약국 목록 비동기 조회
-  fetchPharmacies: (coords: IPharmacySearchCoordinates) => Promise<void>;
+  fetchPharmacies: (
+    coords: IPharmacySearchCoordinates,
+  ) => Promise<INearbyPharmacies[] | undefined>;
 }
 
 // 약국 및 클러스터 선택 통합 상태 타입 (상호 배타적 단일 상태)
@@ -91,7 +93,7 @@ export interface IUseClusterSelectionReturn {
   handleClusterPress: (clusterId: number) => void;
 }
 
-// 영업중 필터 훅 반환 타입
+// 영업 중 필터 훅 반환 타입
 export interface IUsePharmacyOpenFilterReturn {
   isOpenOnly: boolean;
   displayedPharmacies: INearbyPharmacies[];
@@ -101,7 +103,7 @@ export interface IUsePharmacyOpenFilterReturn {
 // 지도 이동 시 재검색 훅 반환 타입
 export interface IUseResearchPharmacyReturn {
   shouldResearch: boolean;
-  handleResearchHere: () => void;
+  handleResearchHere: () => Promise<void> | void;
 }
 
 // 재고 문의 훅 반환 타입
