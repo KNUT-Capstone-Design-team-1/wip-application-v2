@@ -1,6 +1,7 @@
 import React, { memo, useState, useMemo, useEffect } from 'react';
 import {
   View,
+  ScrollView,
   TouchableOpacity,
   LayoutAnimation,
   Platform,
@@ -175,7 +176,11 @@ const PharmacyInfoCard = ({
       </View>
 
       {/* 카드 본문: 전화번호, 주소, 영업시간 */}
-      <View style={styles.infoContent}>
+      <ScrollView
+        contentContainerStyle={styles.infoContent}
+        showsVerticalScrollIndicator={true}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* 전화번호 정보 행 */}
         <PharmacyInfoRow
           text={pharmacy.telephone || '전화번호 없음'}
@@ -218,7 +223,7 @@ const PharmacyInfoCard = ({
             onPress={() => onStockInquiryPress?.(pharmacy.telephone)}
           />
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };

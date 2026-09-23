@@ -1,13 +1,10 @@
-import { Dimensions } from 'react-native';
 import { px } from '@utils/responsive';
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+// 클러스터 약국 리스트 높이
+export const CLUSTER_LIST_MAX_HEIGHT = px(200);
 
-// 클러스터 약국 리스트 최대 높이 (화면 높이 38%와 320px 중 작은 값)
-export const CLUSTER_LIST_MAX_HEIGHT = Math.min(
-  Math.round(SCREEN_HEIGHT * 0.38),
-  Math.round(px(320)),
-);
+// 약국 상세 정보 카드 높이
+export const PHARMACY_INFO_CARD_MAX_HEIGHT = px(250);
 
 // 요일 레이블 상수 (0: 월요일 ~ 7: 공휴일)
 export const PHARMACY_DAY_LABELS = [

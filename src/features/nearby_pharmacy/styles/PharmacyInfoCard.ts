@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
+import { PHARMACY_INFO_CARD_MAX_HEIGHT } from '@features/nearby_pharmacy/constants/ui';
 
 // 약국 상세 정보 카드 스타일
 export const styles = StyleSheet.create({
@@ -12,6 +13,7 @@ export const styles = StyleSheet.create({
     paddingTop: px(16),
     paddingBottom: px(14),
     paddingHorizontal: px(16),
+    maxHeight: PHARMACY_INFO_CARD_MAX_HEIGHT,
     elevation: 10,
     shadowColor: COLOR.shadow,
     shadowOffset: { width: 0, height: px(4) },
