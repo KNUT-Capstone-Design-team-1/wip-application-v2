@@ -14,7 +14,7 @@ export default {
     slug: 'whatispill',
     scheme: 'whatispill',
     owner: 'mustbemadness',
-    version: '3.3.3',
+    version: '3.3.4',
     orientation: 'portrait',
     icon: './assets/icons/android-adaptive-icon.png',
 
