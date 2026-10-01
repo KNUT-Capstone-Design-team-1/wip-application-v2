@@ -9,6 +9,7 @@ import {
   normalizeImageUri,
   DEFAULT_PILL_BLURHASH,
 } from '@features/pill_search_result_list/utils/pill_image_util';
+import SearchResultAdItem from './SearchResultAdItem';
 
 interface IPillThumbnail {
   imageUri?: string | null;
@@ -36,18 +37,20 @@ const PillThumbnail = ({
   return (
     <View style={styles.searchItemImage}>
       {normalizedUri ? (
-        <Image
-          source={isImageActive ? { uri: normalizedUri } : undefined}
-          placeholder={{ blurhash: DEFAULT_PILL_BLURHASH }}
-          placeholderContentFit="cover"
-          transition={200}
-          style={styles.image}
-          contentFit="cover"
-          recyclingKey={itemSeq}
-          cachePolicy={'memory-disk'}
-          priority={'low'}
-          onLoad={() => onImageLoad?.(itemSeq)}
-        />
+        isImageActive ? (
+          <Image
+            source={{ uri: normalizedUri }}
+            placeholder={{ blurhash: DEFAULT_PILL_BLURHASH }}
+            placeholderContentFit="cover"
+            transition={200}
+            style={styles.image}
+            contentFit="cover"
+            recyclingKey={itemSeq}
+            cachePolicy={'memory-disk'}
+            priority={'low'}
+            onLoad={() => onImageLoad?.(itemSeq)}
+          />
+        ) : null
       ) : (
         <View style={styles.fallbackImageContainer}>
           <BaseText
@@ -121,11 +124,33 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
 };
 
 const SearchResultItem = ({
+  type = 'item',
   resultItem,
   itemClickHandler,
   shouldLoadImage = true,
   onImageLoad,
+  adId,
+  isScrolling = false,
+  isVisible = false,
+  onNoFillAd,
 }: IResultItemProps) => {
+  if (type === 'ads') {
+    if (!adId) return null;
+    return (
+      <SearchResultAdItem
+        key={adId}
+        adId={adId}
+        isScrolling={isScrolling}
+        isVisible={isVisible}
+        onNoFill={onNoFillAd}
+      />
+    );
+  }
+
+  if (!resultItem || !itemClickHandler) {
+    return null;
+  }
+
   return (
     <TouchableOpacity
       style={styles.searchItemWrapper}
@@ -146,4 +171,23 @@ const SearchResultItem = ({
   );
 };
 
-export default memo(SearchResultItem);
+export default memo(SearchResultItem, (prev, next) => {
+  if (prev.type !== next.type) return false;
+
+  // 1. 광고 아이템일 때
+  if (prev.type === 'ads') {
+    return (
+      prev.adId === next.adId &&
+      prev.isScrolling === next.isScrolling &&
+      prev.isVisible === next.isVisible &&
+      prev.onNoFillAd === next.onNoFillAd
+    );
+  }
+
+  // 2. 일반 알약 아이템일 때: 광고 상태 변화로 인한 무차별 리렌더링 완전 차단
+  return (
+    prev.resultItem?.ITEM_SEQ === next.resultItem?.ITEM_SEQ &&
+    prev.shouldLoadImage === next.shouldLoadImage &&
+    prev.itemClickHandler === next.itemClickHandler
+  );
+});

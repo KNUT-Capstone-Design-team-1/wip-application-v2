@@ -1,24 +1,121 @@
 import { useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import { useSearchResultListStore } from '@features/pill_search_result_list/store/search_result_list_store';
 import { IPillData } from '@services/database/types';
+import { TSearchResultListItem } from '@features/pill_search_result_list/types/pill_search_result_list';
 import logger from '@utils/logger';
 import { pillSearchResultListService } from '../services/pill_search_result_list_service';
 import { unifiedSearchService } from '@features/unified_search/services/unifiedSearchService';
 import { useToast } from '@hooks/use_toast';
+
+// 상위 100개 이내에 배치할 광고 위치 (안정적인 고정 오프셋)
+// - 100개 이내에 최대 5개 배치
+// - 1페이지(30개): 8번째, 25번째
+// - 2페이지(30~60개): 45번째
+// - 3페이지(60~90개): 65번째, 85번째
+// - 100개 초과(무한 스크롤 추가 데이터): 광고 배치 중단
+const AD_PLACEMENTS = [8, 25, 45, 65, 85];
+
+const insertAdsIntoList = (
+  items: IPillData[],
+  adPlacements: number[] = AD_PLACEMENTS,
+): TSearchResultListItem[] => {
+  if (!items || items.length === 0) return [];
+
+  const result: TSearchResultListItem[] = [];
+  const placementSet = new Set(adPlacements);
+  let adCount = 0;
+
+  for (let i = 0; i < items.length; i++) {
+    result.push({ type: 'item', data: items[i] });
+
+    // 100개 이내의 지정된 위치에 광고 슬롯 삽입 (단, 전체 데이터의 마지막 아이템 뒤는 제외)
+    // 순번 기반의 고정 슬롯 ID(Stable Slot Key)를 부여하여 재검색 시에도 60초 TTL 이내의 광고를 0ms로 재사용
+    if (placementSet.has(i + 1) && i !== items.length - 1) {
+      result.push({
+        type: 'ads',
+        id: `search-list-ad-slot-${adCount++}`,
+      });
+    }
+  }
+
+  return result;
+};
 
 /**
  * 알약 검색(InputText) Hook
  * - 초기 검색
  * - 무한 스크롤 (페이지네이션 sqlite Limit)
  * - 검색 상태 관리
+ * - 상위 100개 이내 고정 광고 슬롯 선배치 (최대 5개 제한)
  */
-
-export const usePillSearchResultList = () => {
+export const usePillSearchResultList = (rawSearchResultData?: IPillData[]) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const { setTotalDataCount, setIsLoading, appendSearchResultData } =
-    useSearchResultListStore();
+  const appendSearchResultData = useSearchResultListStore(
+    (state) => state.appendSearchResultData,
+  );
+  const setTotalDataCount = useSearchResultListStore(
+    (state) => state.setTotalDataCount,
+  );
+  const setIsLoading = useSearchResultListStore((state) => state.setIsLoading);
+  const searchParam = useSearchResultListStore((state) => state.searchParam);
+  const searchKey = searchParam?.KEYWORD || searchParam?.ITEM_NAME || '';
+
+  // No-Fill 광고 슬롯 추적 및 리스트 완전 축소(Collapse) 상태
+  const [failedSlotIds, setFailedSlotIds] = useState<Set<string>>(new Set());
+
+  // 검색어 변경 시에는 실패한 슬롯 ID만 리셋 (광고 수명 및 메모리는 useNativeAd의 60초 스마트 쿨다운이 자동 관리)
+  useEffect(() => {
+    setFailedSlotIds(new Set());
+  }, [searchKey]);
+
+  const handleNoFillAd = useCallback((adId: string) => {
+    setFailedSlotIds((prev) => new Set(prev).add(adId));
+  }, []);
+
+  // 상위 100개 이내에 최대 5개의 광고 슬롯이 선배치된 리스트 (No-Fill 슬롯은 완전 제거/Collapse)
+  const displayList = useMemo(() => {
+    const rawList = insertAdsIntoList(rawSearchResultData ?? [], AD_PLACEMENTS);
+    if (failedSlotIds.size === 0) return rawList;
+    return rawList.filter(
+      (item) => item.type !== 'ads' || !failedSlotIds.has(item.id),
+    );
+  }, [rawSearchResultData, failedSlotIds]);
+
+  // 스크롤 상태 추적 (이미지 지연 로딩용)
+  const isScrollingRef = useRef(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleScrollBegin = useCallback(() => {
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
+    }
+    if (!isScrollingRef.current) {
+      isScrollingRef.current = true;
+      setIsScrolling(true);
+    }
+  }, []);
+
+  const handleScrollEnd = useCallback(() => {
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+    }
+    scrollTimerRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+      setIsScrolling(false);
+    }, 150);
+  }, []);
 
   // 아이템 클릭 시 상세 페이지로 이동
   const searchItemClickHandler = useCallback(
@@ -31,9 +128,20 @@ export const usePillSearchResultList = () => {
     [router],
   );
 
-  // FlatList의 고유 키 추출
-  const keyExtractor = useCallback((item: IPillData, index: number) => {
-    return item.ITEM_SEQ || `pill-${item.ITEM_NAME}-${index}`;
+  // FlatList/FlashList의 고유 키 추출 (아이템 및 광고 식별)
+  const keyExtractor = useCallback(
+    (item: TSearchResultListItem, index: number) => {
+      if (item.type === 'ads') {
+        return item.id;
+      }
+      return item.data.ITEM_SEQ || `pill-${item.data.ITEM_NAME}-${index}`;
+    },
+    [],
+  );
+
+  // FlashList 뷰홀더 재활용 분리 (일반 알약 vs 네이티브 광고)
+  const getItemType = useCallback((item: TSearchResultListItem) => {
+    return item.type;
   }, []);
 
   // 다음 페이지 로드 (무한 스크롤)
@@ -141,8 +249,14 @@ export const usePillSearchResultList = () => {
   }, [setIsLoading, appendSearchResultData, setTotalDataCount, showToast]);
 
   return {
+    displayList,
     keyExtractor,
+    getItemType,
     searchItemClickHandler,
     loadMorePills,
+    isScrolling,
+    handleScrollBegin,
+    handleScrollEnd,
+    onNoFillAd: handleNoFillAd,
   };
 };

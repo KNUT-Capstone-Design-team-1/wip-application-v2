@@ -39,6 +39,7 @@ export const useSearchResultListStore = create<ISearchResultListStore>(
     resetSearchResults: () =>
       set({
         searchResultData: [],
+        searchParam: null,
         totalDataCount: 0,
         currentPage: 1,
         hasMore: true,
