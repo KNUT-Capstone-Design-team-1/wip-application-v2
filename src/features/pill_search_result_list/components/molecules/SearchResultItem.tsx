@@ -131,19 +131,11 @@ const SearchResultItem = ({
   onImageLoad,
   adId,
   isScrolling = false,
-  isVisible = false,
-  onNoFillAd,
 }: IResultItemProps) => {
   if (type === 'ads') {
     if (!adId) return null;
     return (
-      <SearchResultAdItem
-        key={adId}
-        adId={adId}
-        isScrolling={isScrolling}
-        isVisible={isVisible}
-        onNoFill={onNoFillAd}
-      />
+      <SearchResultAdItem key={adId} adId={adId} isScrolling={isScrolling} />
     );
   }
 
@@ -174,14 +166,9 @@ const SearchResultItem = ({
 export default memo(SearchResultItem, (prev, next) => {
   if (prev.type !== next.type) return false;
 
-  // 1. 광고 아이템일 때
+  // 1. 광고 아이템일 때: 가시성은 Zustand 스토어에서 슬롯별 독립 구독
   if (prev.type === 'ads') {
-    return (
-      prev.adId === next.adId &&
-      prev.isScrolling === next.isScrolling &&
-      prev.isVisible === next.isVisible &&
-      prev.onNoFillAd === next.onNoFillAd
-    );
+    return prev.adId === next.adId && prev.isScrolling === next.isScrolling;
   }
 
   // 2. 일반 알약 아이템일 때: 광고 상태 변화로 인한 무차별 리렌더링 완전 차단

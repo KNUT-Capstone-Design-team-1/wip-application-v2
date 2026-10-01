@@ -8,6 +8,8 @@ import { pillSearchResultListService } from '../services/pill_search_result_list
 import { unifiedSearchService } from '@features/unified_search/services/unifiedSearchService';
 import { useToast } from '@hooks/use_toast';
 
+import { useSearchResultListAdStore } from '@features/pill_search_result_list/store/search_result_list_ad_store';
+
 // 상위 100개 이내에 배치할 광고 위치 (안정적인 고정 오프셋)
 // - 100개 이내에 최대 5개 배치
 // - 1페이지(30개): 8번째, 25번째
@@ -62,26 +64,16 @@ export const usePillSearchResultList = (rawSearchResultData?: IPillData[]) => {
   const searchParam = useSearchResultListStore((state) => state.searchParam);
   const searchKey = searchParam?.KEYWORD || searchParam?.ITEM_NAME || '';
 
-  // No-Fill 광고 슬롯 추적 및 리스트 완전 축소(Collapse) 상태
-  const [failedSlotIds, setFailedSlotIds] = useState<Set<string>>(new Set());
-
-  // 검색어 변경 시에는 실패한 슬롯 ID만 리셋 (광고 수명 및 메모리는 useNativeAd의 60초 스마트 쿨다운이 자동 관리)
+  // 검색어 변경 시 뷰포트 광고 슬롯 리셋 (광고 수명 및 메모리는 useNativeAd의 60초 스마트 쿨다운이 자동 관리)
   useEffect(() => {
-    setFailedSlotIds(new Set());
+    useSearchResultListAdStore.getState().resetAdSlots();
   }, [searchKey]);
 
-  const handleNoFillAd = useCallback((adId: string) => {
-    setFailedSlotIds((prev) => new Set(prev).add(adId));
-  }, []);
-
-  // 상위 100개 이내에 최대 5개의 광고 슬롯이 선배치된 리스트 (No-Fill 슬롯은 완전 제거/Collapse)
-  const displayList = useMemo(() => {
-    const rawList = insertAdsIntoList(rawSearchResultData ?? [], AD_PLACEMENTS);
-    if (failedSlotIds.size === 0) return rawList;
-    return rawList.filter(
-      (item) => item.type !== 'ads' || !failedSlotIds.has(item.id),
-    );
-  }, [rawSearchResultData, failedSlotIds]);
+  // 상위 100개 이내에 최대 5개의 광고 슬롯이 선배치된 리스트 (No-Fill 시 컴포넌트 내부에서 자체 축소)
+  const displayList = useMemo(
+    () => insertAdsIntoList(rawSearchResultData ?? [], AD_PLACEMENTS),
+    [rawSearchResultData],
+  );
 
   // 스크롤 상태 추적 (이미지 지연 로딩용)
   const isScrollingRef = useRef(false);
@@ -257,6 +249,5 @@ export const usePillSearchResultList = (rawSearchResultData?: IPillData[]) => {
     isScrolling,
     handleScrollBegin,
     handleScrollEnd,
-    onNoFillAd: handleNoFillAd,
   };
 };
