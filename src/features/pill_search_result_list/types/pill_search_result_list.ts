@@ -17,8 +17,6 @@ export interface IResultItemProps {
   // 광고 전용 속성
   adId?: string;
   isScrolling?: boolean;
-  isVisible?: boolean;
-  onNoFillAd?: (adId: string) => void;
 }
 
 export interface ISearchResultListStore {

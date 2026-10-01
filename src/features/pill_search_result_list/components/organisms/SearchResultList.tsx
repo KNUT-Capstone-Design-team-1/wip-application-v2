@@ -1,9 +1,10 @@
-import { useCallback, memo, useRef, useState, useMemo } from 'react';
+import { useCallback, memo, useRef } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import SearchResultItem from '@features/pill_search_result_list/components/molecules/SearchResultItem';
 import { styles } from '@features/pill_search_result_list/styles/organisms/SearchResultList';
 import { usePillSearchResultList } from '@features/pill_search_result_list/hooks/use_pill_search_result_list';
+import { useSearchResultListAdStore } from '@features/pill_search_result_list/store/search_result_list_ad_store';
 import {
   ISearchResultData,
   TSearchResultListItem,
@@ -32,7 +33,6 @@ const ResultFlashList = ({
   isScrolling,
   handleScrollBegin,
   handleScrollEnd,
-  onNoFillAd,
 }: {
   data: TSearchResultListItem[];
   onLoadMore: () => void;
@@ -43,19 +43,14 @@ const ResultFlashList = ({
   isScrolling: boolean;
   handleScrollBegin: () => void;
   handleScrollEnd: () => void;
-  onNoFillAd: (adId: string) => void;
 }) => {
   const loadedImageSeqs = useRef(new Set<string>());
-
-  // 뷰포트에 실제로 노출된 광고 슬롯 ID 집합 추적 (오프스크린 미노출 선요청 원천 차단)
-  const [visibleAdSlotIds, setVisibleAdSlotIds] = useState<Set<string>>(
-    new Set(),
-  );
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 30, // 화면에 최소 30% 이상 노출 시
   }).current;
 
+  // 뷰포트 내 광고 슬롯 감지: FlashList의 extraData를 오염시키지 않고 전용 Zustand 스토어에만 업데이트
   const handleViewableItemsChanged = useCallback(
     ({
       viewableItems,
@@ -73,7 +68,9 @@ const ResultFlashList = ({
 
       // 뷰포트에 광고가 없고 이전 상태도 비어있다면 불필요한 Set 생성 및 상태 업데이트 차단
       if (!hasAds) {
-        setVisibleAdSlotIds((prev) => (prev.size === 0 ? prev : new Set()));
+        useSearchResultListAdStore
+          .getState()
+          .setVisibleAdSlotIds((prev) => (prev.size === 0 ? prev : new Set()));
         return;
       }
 
@@ -85,20 +82,7 @@ const ResultFlashList = ({
         }
       }
 
-      // 이전 Set과 크기 및 슬롯 ID가 동일하면 기존 참조를 유지하여 FlashList extraData 변경 및 리렌더링 차단
-      setVisibleAdSlotIds((prev) => {
-        if (prev.size === adKeys.size) {
-          let isSame = true;
-          for (const key of adKeys) {
-            if (!prev.has(key)) {
-              isSame = false;
-              break;
-            }
-          }
-          if (isSame) return prev;
-        }
-        return adKeys;
-      });
+      useSearchResultListAdStore.getState().setVisibleAdSlotIds(adKeys);
     },
     [],
   );
@@ -110,14 +94,11 @@ const ResultFlashList = ({
   const renderItem: ListRenderItem<TSearchResultListItem> = useCallback(
     ({ item }) => {
       if (item.type === 'ads') {
-        const isVisible = visibleAdSlotIds.has(item.id);
         return (
           <SearchResultItem
             type="ads"
             adId={item.id}
             isScrolling={isScrolling}
-            isVisible={isVisible}
-            onNoFillAd={onNoFillAd}
           />
         );
       }
@@ -136,7 +117,7 @@ const ResultFlashList = ({
         />
       );
     },
-    [onItemClick, isScrolling, handleImageLoad, onNoFillAd, visibleAdSlotIds],
+    [onItemClick, isScrolling, handleImageLoad],
   );
 
   const renderSeparator = useCallback(() => <View style={styles.hr} />, []);
@@ -151,17 +132,12 @@ const ResultFlashList = ({
     );
   }, [isLoadingMore]);
 
-  const extraData = useMemo(
-    () => ({ isScrolling, visibleAdSlotIds }),
-    [isScrolling, visibleAdSlotIds],
-  );
-
   return (
     <FlashList
       style={styles.searchResultListWrapper}
       contentContainerStyle={styles.searchResultListContentContainer}
       data={data}
-      extraData={extraData}
+      extraData={isScrolling}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       getItemType={getItemType}
@@ -193,7 +169,6 @@ const SearchResultList = ({
     isScrolling,
     handleScrollBegin,
     handleScrollEnd,
-    onNoFillAd,
   } = usePillSearchResultList(searchResultData);
 
   const isEmpty = searchResultData.length === 0 && !isLoadingMore;
@@ -213,7 +188,6 @@ const SearchResultList = ({
           isScrolling={isScrolling}
           handleScrollBegin={handleScrollBegin}
           handleScrollEnd={handleScrollEnd}
-          onNoFillAd={onNoFillAd}
         />
       )}
     </View>

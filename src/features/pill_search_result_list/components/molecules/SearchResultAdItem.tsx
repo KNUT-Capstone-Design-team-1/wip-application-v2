@@ -15,25 +15,24 @@ import { useNativeAd } from '@features/ads/hooks/useNativeAd';
 
 import SearchResultAdSkeleton from './SearchResultAdSkeleton';
 
+import { useSearchResultListAdStore } from '@features/pill_search_result_list/store/search_result_list_ad_store';
+
 export interface SearchResultAdItemProps {
   adId: string;
   isScrolling: boolean;
-  isVisible?: boolean;
-  onNoFill?: (adId: string) => void;
 }
 
-const SearchResultAdItem = ({
-  adId,
-  isScrolling,
-  isVisible = false,
-  onNoFill,
-}: SearchResultAdItemProps) => {
+const SearchResultAdItem = ({ adId, isScrolling }: SearchResultAdItemProps) => {
+  // 개별 광고 슬롯별 노출 가시성을 Zustand 스토어에서 독립 구독 (전체 리스트 리렌더링 차단)
+  const isVisible = useSearchResultListAdStore((state) =>
+    state.visibleAdSlotIds.has(adId),
+  );
+
   // useNativeAd 단일 훅 사용: 캐싱, keepAlive, On-Demand 제어
   const { nativeAd, status, load } = useNativeAd({
     autoLoad: false,
     cacheKey: adId,
     keepAlive: true,
-    onNoFill: () => onNoFill?.(adId),
   });
 
   // 뷰포트 기반 On-Demand 로드:
