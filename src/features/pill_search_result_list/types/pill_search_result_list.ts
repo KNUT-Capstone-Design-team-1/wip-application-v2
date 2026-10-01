@@ -5,11 +5,20 @@ export interface ISearchResultData {
   isLoadingMore?: boolean;
 }
 
+export type TSearchResultListItem =
+  { type: 'item'; data: IPillData } | { type: 'ads'; id: string };
+
 export interface IResultItemProps {
-  resultItem: IPillData;
-  itemClickHandler: (seq: string, itemImage: string) => void;
+  type?: 'item' | 'ads';
+  resultItem?: IPillData;
+  itemClickHandler?: (seq: string, itemImage: string) => void;
   shouldLoadImage?: boolean;
   onImageLoad?: (itemSeq: string) => void;
+  // 광고 전용 속성
+  adId?: string;
+  isScrolling?: boolean;
+  isVisible?: boolean;
+  onNoFillAd?: (adId: string) => void;
 }
 
 export interface ISearchResultListStore {

@@ -37,7 +37,7 @@ const SettingList = () => {
           />
         ))}
       </View>
-      <GlobalNativeAd />
+      <GlobalNativeAd useFocusLifecycle={true} />
     </View>
   );
 };
