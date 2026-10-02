@@ -4,19 +4,27 @@ import {
   INearbyPharmaciesQueryOption,
   TNearbyPharmaciesSearchParam,
   TQuerySearchParamResult,
-  TWhereQueryClauseFunc,
 } from '../types';
 import { buildWhereClause } from '../util';
 import { getDistance } from '@utils/location';
 
+// 위도 1도 ≒ 111km, 경도 1도 ≒ 88km (한국 위도 기준)
+const KM_PER_LAT_DEGREE = 111.0;
+const KM_PER_LON_DEGREE = 88.0;
+
 /**
  * nearby_pharmacies 테이블 조회를 위한 WHERE param 생성
  * @param params 조회할 데이터
+ * @param maxRadiusKm 최대 검색 반경 (km)
  * @returns
  */
-const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
+const getNearbyPharmaciesWhereQuery = (
   _params: Partial<TNearbyPharmaciesSearchParam>,
+  maxRadiusKm = 3,
 ): TQuerySearchParamResult<TNearbyPharmaciesSearchParam> => {
+  const latDelta = maxRadiusKm / KM_PER_LAT_DEGREE;
+  const lonDelta = maxRadiusKm / KM_PER_LON_DEGREE;
+
   return {
     id: {
       query: `id = ?`,
@@ -38,10 +46,6 @@ const getNearbyPharmaciesWhereQuery: TWhereQueryClauseFunc = (
       values: (coordinate: { x: number; y: number }) => {
         const { x, y } = coordinate;
 
-        // 약 3km 반경을 위경도 델타로 근사 변환
-        const latDelta = 0.027;
-        const lonDelta = 0.034;
-
         return [y - latDelta, y + latDelta, x - lonDelta, x + lonDelta];
       },
     },
@@ -58,19 +62,18 @@ export const getNearbyPharmacies = async (
   params: Partial<TNearbyPharmaciesSearchParam>,
   queryOption: Partial<INearbyPharmaciesQueryOption> = {},
 ): Promise<INearbyPharmacies[]> => {
+  const { page = 1, limit = 30, maxRadiusKm = 3 } = queryOption;
+
   const { whereClause, whereValues } = buildWhereClause(
-    getNearbyPharmaciesWhereQuery,
+    (p) => getNearbyPharmaciesWhereQuery(p, maxRadiusKm),
     params,
   );
 
   const db = await getDatabase();
-
-  const { page = 1, limit = 30, maxRadiusKm = 3 } = queryOption;
+  const offset = (page - 1) * limit;
 
   // 1. 좌표 조건이 없는 경우 기본 페이징 쿼리 후 early return
   if (!params.coordinate) {
-    const offset = (page - 1) * limit;
-
     const defaultSql = `SELECT * FROM nearby_pharmacies ${whereClause}
                         LIMIT ?, ?`;
 
@@ -81,30 +84,35 @@ export const getNearbyPharmacies = async (
     ]);
   }
 
-  // 2. Bounding Box 후보군 추출 (중심점 가까운 약국 누락 방지를 위해 최대 300개 조회)
-  const candidateLimit = 300;
+  // 2. 좌표 기준 거리순 오름차순 정렬 쿼리 (SQLite 레벨 정렬)
+  const { x, y } = params.coordinate;
 
-  const candidateSql = `SELECT * FROM nearby_pharmacies ${whereClause}
-                        LIMIT ?`;
+  const sql = `SELECT * FROM nearby_pharmacies ${whereClause}
+               ORDER BY (
+                 ((CAST(Y AS REAL) - ?) * ${KM_PER_LAT_DEGREE}) * ((CAST(Y AS REAL) - ?) * ${KM_PER_LAT_DEGREE}) +
+                 ((CAST(X AS REAL) - ?) * ${KM_PER_LON_DEGREE}) * ((CAST(X AS REAL) - ?) * ${KM_PER_LON_DEGREE})
+               ) ASC
+               LIMIT ?, ?`;
 
-  const candidates = await db.getAllAsync<INearbyPharmacies>(candidateSql, [
+  const rows = await db.getAllAsync<INearbyPharmacies>(sql, [
     ...whereValues,
-    candidateLimit,
+    y,
+    y,
+    x,
+    x,
+    offset,
+    limit,
   ]);
 
-  // 후보군이 비어 있으면 즉시 early return
-  if (candidates.length === 0) {
+  if (rows.length === 0) {
     return [];
   }
 
-  // 3. 단일 루프에서 거리 계산과 반경 필터링을 동시 수행 (불필요한 중간 배열 생성 및 객체 복사 제거)
-  const { x, y } = params.coordinate;
-
+  // 3. 반경 이내 검증 및 정밀 거리 계산 (Haversine)
   const maxRadiusM = maxRadiusKm * 1000;
-
   const filteredPharmacies: INearbyPharmacies[] = [];
 
-  for (const pharmacy of candidates) {
+  for (const pharmacy of rows) {
     const pharmacyLat = Number(pharmacy.Y);
     const pharmacyLng = Number(pharmacy.X);
 
@@ -115,7 +123,7 @@ export const getNearbyPharmacies = async (
 
     const dist = getDistance(y, x, pharmacyLat, pharmacyLng);
 
-    // 반경 3km(maxRadiusM) 이내 약국만 추가
+    // 반경(maxRadiusM) 이내 약국만 추가
     if (dist <= maxRadiusM) {
       filteredPharmacies.push({
         ...pharmacy,
@@ -124,11 +132,8 @@ export const getNearbyPharmacies = async (
     }
   }
 
-  // 4. 거리순 오름차순 정렬 (이미 distance가 검증되었으므로 직관적인 a.distance - b.distance)
+  // 정밀 거리 기준 정렬 보장
   filteredPharmacies.sort((a, b) => a.distance! - b.distance!);
 
-  // 5. 요청된 페이지 및 개수만큼 슬라이스 반환
-  const offset = (page - 1) * limit;
-
-  return filteredPharmacies.slice(offset, offset + limit);
+  return filteredPharmacies;
 };
