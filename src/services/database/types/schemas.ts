@@ -163,8 +163,8 @@ export type TResourceDataSchemas =
   | ICannabis
   | INarcotics
   | IPsychotropics
-  | IProhibitedList;
-// | IFunctionalFoodNutrients; // UI 미구현으로 인해 DB 업데이트/동기화 대상에서 제외 (추후 UI 구현 시 주석 해제)
+  | IProhibitedList
+  | IFunctionalFoodNutrients;
 
 // 테이블 컬럼의 메타데이터 스키마 정의
 export interface ITableColumnSchema {
