@@ -6,6 +6,7 @@ import NotItem from '@components/common/NotItem';
 import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 import { IFunctionalFoodNutrients } from '@services/database/types';
+import SearchBarHeader from '@features/shared/components/SearchBarHeader';
 import SearchInput from '@features/shared/components/SearchInput';
 import { useFunctionalFoodSearch } from '../hooks/use_functional_food_search';
 import CategoryChipList from '../components/organisms/CategoryChipList';
@@ -72,13 +73,15 @@ const FunctionalFoodSearchScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SearchInput
-        value={keyword}
-        onChangeText={setKeyword}
-        onSubmit={onSubmitSearch}
-        placeholder="제품명 · 제조사로 검색"
-        containerStyle={styles.searchBar}
-      />
+      <SearchBarHeader>
+        <SearchInput
+          value={keyword}
+          onChangeText={setKeyword}
+          onSubmit={onSubmitSearch}
+          placeholder="제품명 · 제조사로 검색"
+          containerStyle={styles.searchBar}
+        />
+      </SearchBarHeader>
 
       <CategoryChipList
         selectedCategory={selectedCategory}
@@ -123,8 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR_BG.surface,
   },
   searchBar: {
-    marginHorizontal: px(16),
-    marginTop: px(12),
+    flexGrow: 1,
   },
   list: {
     flex: 1,
