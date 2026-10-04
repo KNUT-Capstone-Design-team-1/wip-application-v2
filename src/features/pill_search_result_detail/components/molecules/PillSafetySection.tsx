@@ -5,7 +5,7 @@ import { BaseText } from '@components/common/BaseText';
 import { AlertTriangle } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import InfoRow from '../atoms/InfoRow';
+import InfoRow from '@features/shared/components/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import { useExternalUrlStore } from '@store/external_url_store';
