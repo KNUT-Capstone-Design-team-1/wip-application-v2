@@ -1,12 +1,15 @@
+import { useCallback } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { BaseText } from '@components/common/BaseText';
 import NotItem from '@components/common/NotItem';
-import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import InfoRow from '@features/shared/components/InfoRow';
+import { GlobalNativeAd } from '@features/ads/components/GlobalNativeAd';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
+import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 import { useFunctionalFoodDetail } from '../hooks/use_functional_food_detail';
-import { PRODUCT_INFO_FIELDS } from '../constants/nutrients';
-import NutrientTable from '../components/organisms/NutrientTable';
+import { NUTRIENT_FIELDS, PRODUCT_INFO_FIELDS } from '../constants/nutrients';
 
 // 표시할 가치가 없는 값(빈 값, '해당없음')인지 판별
 const isMeaningless = (value: unknown): boolean => {
@@ -17,6 +20,21 @@ const isMeaningless = (value: unknown): boolean => {
 const FunctionalFoodDetailScreen = () => {
   const { foodCode } = useLocalSearchParams<{ foodCode: string }>();
   const { data, isLoading } = useFunctionalFoodDetail(foodCode);
+
+  const { setTitle, resetTitle } = useHeaderTitleStore();
+
+  // 포커스 시 헤더 타이틀을 제품명으로 설정 (알약/공지 상세와 동일한 공용 헤더 방식)
+  useFocusEffect(
+    useCallback(() => {
+      if (data?.foodName) {
+        setTitle(data.foodName);
+      }
+
+      return () => {
+        resetTitle();
+      };
+    }, [data?.foodName, setTitle, resetTitle]),
+  );
 
   if (isLoading) {
     return (
@@ -37,6 +55,9 @@ const FunctionalFoodDetailScreen = () => {
   }
 
   const infoRows = PRODUCT_INFO_FIELDS.filter(
+    (field) => !isMeaningless(data[field.key]),
+  );
+  const nutrientRows = NUTRIENT_FIELDS.filter(
     (field) => !isMeaningless(data[field.key]),
   );
 
@@ -61,35 +82,44 @@ const FunctionalFoodDetailScreen = () => {
       {/* 제품 정보 */}
       {infoRows.length > 0 && (
         <>
-          <BaseText weight="bold" size={15} style={styles.sectionTitle}>
+          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
             제품 정보
           </BaseText>
-          <View style={styles.infoBox}>
-            {infoRows.map((field, index) => (
-              <View
+          <View style={styles.rows}>
+            {infoRows.map((field) => (
+              <InfoRow
                 key={field.key}
-                style={[
-                  styles.infoRow,
-                  index === infoRows.length - 1 && styles.rowLast,
-                ]}
-              >
-                <BaseText weight="medium" size={13} style={styles.infoLabel}>
-                  {field.label}
-                </BaseText>
-                <BaseText weight="medium" size={13} style={styles.infoValue}>
-                  {String(data[field.key])}
-                </BaseText>
-              </View>
+                label={field.label}
+                value={String(data[field.key])}
+                labelWidth={px(128)}
+              />
             ))}
           </View>
         </>
       )}
 
+      {/* Native Ad 표시 위치 (제품 정보 ↔ 영양성분 사이) */}
+      <GlobalNativeAd banner={true} />
+
       {/* 영양성분 */}
-      <BaseText weight="bold" size={15} style={styles.sectionTitle}>
+      <BaseText weight="bold" size={16} style={styles.sectionTitle}>
         영양성분
       </BaseText>
-      <NutrientTable data={data} />
+      {nutrientRows.length > 0 ? (
+        <View style={styles.rows}>
+          {nutrientRows.map((field) => (
+            <InfoRow
+              key={field.key}
+              label={field.label}
+              value={`${data[field.key]} ${field.unit}`}
+            />
+          ))}
+        </View>
+      ) : (
+        <BaseText weight="medium" size={13} style={styles.emptyText}>
+          제공된 영양성분 정보가 없습니다.
+        </BaseText>
+      )}
     </ScrollView>
   );
 };
@@ -97,7 +127,7 @@ const FunctionalFoodDetailScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLOR_BG.base,
+    backgroundColor: COLOR_BG.surface,
   },
   content: {
     paddingBottom: px(40),
@@ -106,12 +136,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLOR_BG.base,
+    backgroundColor: COLOR_BG.surface,
   },
   header: {
     paddingHorizontal: px(16),
     paddingTop: px(20),
-    paddingBottom: px(16),
+    paddingBottom: px(8),
     gap: px(8),
   },
   title: {
@@ -124,35 +154,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: COLOR_TEXT.title,
     marginHorizontal: px(16),
-    marginTop: px(12),
-    marginBottom: px(10),
+    marginTop: px(16),
+    marginBottom: px(4),
   },
-  infoBox: {
-    marginHorizontal: px(16),
-    borderRadius: px(12),
-    borderWidth: 1,
-    borderColor: COLOR_LINE.border,
-    backgroundColor: COLOR_BG.surface,
-    overflow: 'hidden',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  rows: {
     paddingHorizontal: px(16),
-    paddingVertical: px(11),
-    borderBottomWidth: 1,
-    borderBottomColor: COLOR_LINE.separator,
   },
-  rowLast: {
-    borderBottomWidth: 0,
-  },
-  infoLabel: {
-    width: px(120),
+  emptyText: {
+    marginHorizontal: px(16),
+    marginTop: px(8),
     color: COLOR_TEXT.sub,
-  },
-  infoValue: {
-    flex: 1,
-    color: COLOR_TEXT.body,
   },
 });
 
