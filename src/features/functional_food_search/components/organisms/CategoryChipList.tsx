@@ -1,14 +1,16 @@
 import { ScrollView, StyleSheet } from 'react-native';
 import { px } from '@utils/responsive';
-import { CATEGORY_CHIPS } from '../../constants/categories';
+import { ICategoryChip } from '../../types';
 import CategoryChip from '../atoms/CategoryChip';
 
 interface ICategoryChipListProps {
+  chips: ICategoryChip[];
   selectedCategory: string;
   onSelectCategory: (value: string) => void;
 }
 
 const CategoryChipList = ({
+  chips,
   selectedCategory,
   onSelectCategory,
 }: ICategoryChipListProps) => {
@@ -19,7 +21,7 @@ const CategoryChipList = ({
       style={styles.scroll}
       contentContainerStyle={styles.container}
     >
-      {CATEGORY_CHIPS.map((chip) => (
+      {chips.map((chip) => (
         <CategoryChip
           key={chip.value || 'all'}
           label={chip.label}

@@ -9,6 +9,7 @@ import { IFunctionalFoodNutrients } from '@services/database/types';
 import SearchBarHeader from '@features/shared/components/SearchBarHeader';
 import SearchInput from '@features/shared/components/SearchInput';
 import { useFunctionalFoodSearch } from '../hooks/use_functional_food_search';
+import { useFunctionalFoodCategories } from '../hooks/use_functional_food_categories';
 import CategoryChipList from '../components/organisms/CategoryChipList';
 import FunctionalFoodListItem from '../components/molecules/FunctionalFoodListItem';
 
@@ -27,6 +28,8 @@ const FunctionalFoodSearchScreen = () => {
     onSelectCategory,
     loadMore,
   } = useFunctionalFoodSearch();
+
+  const { chips } = useFunctionalFoodCategories();
 
   const handlePressItem = useCallback(
     (foodCode: string) => {
@@ -84,6 +87,7 @@ const FunctionalFoodSearchScreen = () => {
       </SearchBarHeader>
 
       <CategoryChipList
+        chips={chips}
         selectedCategory={selectedCategory}
         onSelectCategory={onSelectCategory}
       />

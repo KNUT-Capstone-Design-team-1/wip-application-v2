@@ -133,3 +133,26 @@ export const getFunctionalFoodNutrientsCount = async (
 
   return result?.[0]?.count || 0;
 };
+
+/**
+ * 중분류(foodMediumCategoryName)를 데이터 수가 많은 순으로 조회 (카테고리 칩 동적 생성용)
+ * @param limit 상위 몇 개를 가져올지
+ * @returns 중분류명 배열 (빈도 내림차순)
+ */
+export const getFunctionalFoodCategories = async (
+  limit: number = 15,
+): Promise<string[]> => {
+  const db = await getDatabase();
+
+  const sql = `SELECT foodMediumCategoryName AS name
+               FROM functional_food_nutrients
+               WHERE foodMediumCategoryName IS NOT NULL
+                 AND foodMediumCategoryName != ''
+               GROUP BY foodMediumCategoryName
+               ORDER BY COUNT(*) DESC
+               LIMIT ?`;
+
+  const rows = await db.getAllAsync<{ name: string }>(sql, [limit]);
+
+  return rows.map((row) => row.name);
+};
