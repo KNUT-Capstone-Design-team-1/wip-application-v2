@@ -36,6 +36,17 @@ const getFunctionalFoodNutrientsWhereQuery: TWhereQueryClauseFunc = (
       query: `foodMediumCategoryName LIKE ?`,
       values: (category: string) => [`%${category}%`],
     },
+    // 카테고리 그룹 필터: 여러 중분류 키워드를 OR-LIKE로 결합
+    // (query를 param 값 기준으로 동적 생성해 키워드 개수만큼 '?'를 만든다)
+    mediumCategoryKeywords: {
+      query: `(${(Array.isArray(_params.mediumCategoryKeywords)
+        ? _params.mediumCategoryKeywords
+        : []
+      )
+        .map(() => `foodMediumCategoryName LIKE ?`)
+        .join(' OR ')})`,
+      values: (keywords: string[]) => keywords.map((k) => `%${k}%`),
+    },
     itemReportNumber: {
       query: `itemReportNumber LIKE ?`,
       values: (reportNumber: string) => [`%${reportNumber}%`],
@@ -52,13 +63,9 @@ const getFunctionalFoodNutrientsWhereQuery: TWhereQueryClauseFunc = (
       query: `distributorName LIKE ?`,
       values: (dist: string) => [`%${dist}%`],
     },
-    keyword: {
-      query: `(foodName LIKE ? OR representativeFoodName LIKE ? OR manufacturerName LIKE ?)`,
-      values: (keyword: string) => [
-        `%${keyword}%`,
-        `%${keyword}%`,
-        `%${keyword}%`,
-      ],
+    nameKeyword: {
+      query: `(foodName LIKE ? OR representativeFoodName LIKE ?)`,
+      values: (keyword: string) => [`%${keyword}%`, `%${keyword}%`],
     },
   };
 };
@@ -135,24 +142,19 @@ export const getFunctionalFoodNutrientsCount = async (
 };
 
 /**
- * 중분류(foodMediumCategoryName)를 데이터 수가 많은 순으로 조회 (카테고리 칩 동적 생성용)
- * @param limit 상위 몇 개를 가져올지
- * @returns 중분류명 배열 (빈도 내림차순)
+ * 중분류(foodMediumCategoryName)의 고유 값 목록 조회 (카테고리 칩 동적 노출용)
+ * - 실제 데이터에 존재하는 중분류만 반환 → 비어있는 그룹 칩이 생기지 않도록 필터링에 사용
+ * @returns 중분류명 배열 (중복 제거)
  */
-export const getFunctionalFoodCategories = async (
-  limit: number = 15,
-): Promise<string[]> => {
+export const getDistinctMediumCategoryNames = async (): Promise<string[]> => {
   const db = await getDatabase();
 
-  const sql = `SELECT foodMediumCategoryName AS name
+  const sql = `SELECT DISTINCT foodMediumCategoryName AS name
                FROM functional_food_nutrients
                WHERE foodMediumCategoryName IS NOT NULL
-                 AND foodMediumCategoryName != ''
-               GROUP BY foodMediumCategoryName
-               ORDER BY COUNT(*) DESC
-               LIMIT ?`;
+                 AND foodMediumCategoryName != ''`;
 
-  const rows = await db.getAllAsync<{ name: string }>(sql, [limit]);
+  const rows = await db.getAllAsync<{ name: string }>(sql);
 
   return rows.map((row) => row.name);
 };

@@ -113,5 +113,8 @@ export type TFunctionalFoodNutrientsSearchParam = Partial<
     | 'distributorName'
   >
 > & {
-  keyword?: string; // 통합 검색어
+  nameKeyword?: string; // 약 이름 검색어 (제품명/대표식품명 통합)
+  // 카테고리 그룹 필터: 중분류(foodMediumCategoryName)에 대해 OR-LIKE로 결합되는 키워드 목록
+  // (한 그룹이 여러 중분류를 포괄하므로 단일 LIKE가 아닌 다중 키워드가 필요)
+  mediumCategoryKeywords?: string[];
 };

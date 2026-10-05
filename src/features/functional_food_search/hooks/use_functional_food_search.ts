@@ -6,7 +6,7 @@ import {
 } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
 import logger from '@utils/logger';
-import { PAGE_LIMIT } from '../constants/categories';
+import { CATEGORY_GROUPS, PAGE_LIMIT } from '../constants/categories';
 
 // 약 이름/제조사/카테고리로부터 검색 파라미터 구성
 const buildParams = (
@@ -27,8 +27,12 @@ const buildParams = (
   }
 
   // 카테고리 '전체'는 value === '' 이므로 필터를 적용하지 않는다
+  // 그 외에는 그룹 key를 match 키워드 목록으로 변환해 OR-LIKE 필터로 전달
   if (category) {
-    params.foodMediumCategoryName = category;
+    const group = CATEGORY_GROUPS.find((g) => g.key === category);
+    if (group && group.match.length) {
+      params.mediumCategoryKeywords = group.match;
+    }
   }
 
   return params;
