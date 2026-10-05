@@ -99,7 +99,7 @@ const FunctionalFoodDetailScreen = () => {
       )}
 
       {/* Native Ad 표시 위치 (제품 정보 ↔ 영양성분 사이) */}
-      <GlobalNativeAd banner={true} />
+      {/*<GlobalNativeAd banner={true} />*/}
 
       {/* 영양성분 */}
       <BaseText weight="bold" size={16} style={styles.sectionTitle}>
