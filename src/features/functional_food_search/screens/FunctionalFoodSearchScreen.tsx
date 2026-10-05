@@ -6,10 +6,9 @@ import NotItem from '@components/common/NotItem';
 import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 import { IFunctionalFoodNutrients } from '@services/database/types';
-import SearchBarHeader from '@features/shared/components/SearchBarHeader';
-import SearchInput from '@features/shared/components/SearchInput';
 import { useFunctionalFoodSearch } from '../hooks/use_functional_food_search';
 import { useFunctionalFoodCategories } from '../hooks/use_functional_food_categories';
+import StackedSearchBar from '../components/organisms/StackedSearchBar';
 import CategoryChipList from '../components/organisms/CategoryChipList';
 import FunctionalFoodListItem from '../components/molecules/FunctionalFoodListItem';
 
@@ -17,8 +16,10 @@ const FunctionalFoodSearchScreen = () => {
   const router = useRouter();
 
   const {
-    keyword,
-    setKeyword,
+    nameKeyword,
+    setNameKeyword,
+    manufacturer,
+    setManufacturer,
     selectedCategory,
     items,
     totalCount,
@@ -76,15 +77,13 @@ const FunctionalFoodSearchScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SearchBarHeader>
-        <SearchInput
-          value={keyword}
-          onChangeText={setKeyword}
-          onSubmit={onSubmitSearch}
-          placeholder="제품명 · 제조사로 검색"
-          containerStyle={styles.searchBar}
-        />
-      </SearchBarHeader>
+      <StackedSearchBar
+        nameKeyword={nameKeyword}
+        onChangeName={setNameKeyword}
+        manufacturer={manufacturer}
+        onChangeManufacturer={setManufacturer}
+        onSubmit={onSubmitSearch}
+      />
 
       <CategoryChipList
         chips={chips}
@@ -128,9 +127,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR_BG.surface,
-  },
-  searchBar: {
-    flexGrow: 1,
   },
   list: {
     flex: 1,

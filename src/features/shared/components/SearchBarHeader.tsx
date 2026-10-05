@@ -14,7 +14,7 @@ interface ISearchBarHeaderProps {
 
 /**
  * 뒤로가기 버튼과 검색 입력을 한 줄에 배치하는 공용 헤더 셸
- * 식별/통합 검색(SearchHeader)과 영양제 검색에서 동일하게 사용한다.
+ * 식별/통합 검색(SearchHeader)에서 사용한다.
  */
 const SearchBarHeader = ({ children, onBack }: ISearchBarHeaderProps) => {
   const router = useRouter();
