@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
     paddingVertical: px(14),
-    paddingHorizontal: px(16),
+    // 카운트·칩과 좌측 정렬 (화면 전체 px(20) 그리드)
+    paddingHorizontal: px(20),
     backgroundColor: COLOR_BG.surface,
     borderBottomWidth: 1,
     borderBottomColor: COLOR_LINE.separator,
