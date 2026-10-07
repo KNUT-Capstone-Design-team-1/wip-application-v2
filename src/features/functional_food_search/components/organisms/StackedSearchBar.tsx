@@ -83,18 +83,20 @@ const StackedSearchBar = ({
 
 const styles = StyleSheet.create({
   // 뒤로가기(박스 밖) + 검색 박스를 한 줄에, 뒤로가기는 상단 정렬
-  // 좌우 여백은 화면 표준(px(20))에 맞춤
+  // 뒤로가기는 앱 표준 헤더(SubHeader)와 동일: paddingLeft 8 + 버튼폭 40 → 아이콘이 끝에서 16px
+  // 검색 박스 우측은 콘텐츠 표준(px(20))에 맞춤
   outer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: px(10),
-    paddingHorizontal: px(20),
+    gap: px(4),
+    paddingLeft: px(8),
+    paddingRight: px(20),
     paddingVertical: px(8),
     backgroundColor: COLOR.white,
   },
-  // 뒤로가기: 첫 입력줄(상단)에 맞춰 세로 중앙
+  // 뒤로가기: 폭/정렬은 표준 헤더와 동일, 높이만 첫 입력줄(상단)에 맞춤
   backButton: {
-    width: px(24),
+    width: px(40),
     height: px(44),
     alignItems: 'center',
     justifyContent: 'center',
