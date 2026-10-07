@@ -87,7 +87,29 @@ export const getFunctionalFoodNutrients = async (
 
   const db = await getDatabase();
 
+  // 페이지네이션 안정성을 위해 반드시 결정적 ORDER BY 사용
+  // (ORDER BY 없으면 SQLite가 페이지마다 순서를 달리 반환해 중복 행 발생)
+  // - 기본: 제품명 가나다순 (동률은 PK(foodCode)로 고정)
+  // - 제품명 검색 시: 이름 일치도 우선 (시작 일치 > 포함) 후 가나다
+  const trimmedName = params.nameKeyword?.trim();
+
+  let orderByClause = `ORDER BY foodName COLLATE NOCASE ASC, foodCode ASC`;
+  const orderByValues: string[] = [];
+
+  if (trimmedName) {
+    orderByClause = `ORDER BY
+                     CASE
+                       WHEN foodName LIKE ? THEN 0
+                       WHEN foodName LIKE ? THEN 1
+                       ELSE 2
+                     END,
+                     foodName COLLATE NOCASE ASC,
+                     foodCode ASC`;
+    orderByValues.push(`${trimmedName}%`, `%${trimmedName}%`);
+  }
+
   const sql = `SELECT * FROM functional_food_nutrients ${whereClause}
+               ${orderByClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;
@@ -95,6 +117,7 @@ export const getFunctionalFoodNutrients = async (
 
   const result = await db.getAllAsync<IFunctionalFoodNutrients>(sql, [
     ...whereValues,
+    ...orderByValues,
     offset,
     limit,
   ]);
