@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import InfoRow from '../atoms/InfoRow';
+import InfoRow from '@features/shared/components/InfoRow';
 import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSpecsSection';
 

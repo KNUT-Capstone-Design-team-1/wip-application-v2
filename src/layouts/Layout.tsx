@@ -38,6 +38,12 @@ const Layout = () => {
           header: () => <SearchHeader />,
         }}
       />
+      <Stack.Screen
+        name="functional-food-search/index"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };

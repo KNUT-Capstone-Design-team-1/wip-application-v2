@@ -1,7 +1,8 @@
 import { memo, useMemo, useRef } from 'react';
 import { Image } from '@components/common/CustomImage';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
+import SearchListRow from '@features/shared/components/SearchListRow';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultItem';
 import { IResultItemProps } from '@features/pill_search_result_list/types/pill_search_result_list';
 import { IPillData } from '@services/database/types';
@@ -144,22 +145,23 @@ const SearchResultItem = ({
   }
 
   return (
-    <TouchableOpacity
+    <SearchListRow
       style={styles.searchItemWrapper}
       onPress={() =>
         itemClickHandler(resultItem.ITEM_SEQ, resultItem.ITEM_IMAGE)
       }
-      activeOpacity={0.7}
+      leading={
+        <PillThumbnail
+          key={resultItem.ITEM_SEQ}
+          imageUri={resultItem.ITEM_IMAGE}
+          itemSeq={resultItem.ITEM_SEQ}
+          shouldLoadImage={shouldLoadImage}
+          onImageLoad={onImageLoad}
+        />
+      }
     >
-      <PillThumbnail
-        key={resultItem.ITEM_SEQ}
-        imageUri={resultItem.ITEM_IMAGE}
-        itemSeq={resultItem.ITEM_SEQ}
-        shouldLoadImage={shouldLoadImage}
-        onImageLoad={onImageLoad}
-      />
       <PillInfo pill={resultItem} />
-    </TouchableOpacity>
+    </SearchListRow>
   );
 };
 
