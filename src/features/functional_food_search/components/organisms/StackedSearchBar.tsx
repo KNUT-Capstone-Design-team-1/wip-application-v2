@@ -83,18 +83,19 @@ const StackedSearchBar = ({
 
 const styles = StyleSheet.create({
   // 뒤로가기(박스 밖) + 검색 박스를 한 줄에, 뒤로가기는 상단 정렬
+  // 좌우 여백은 화면 표준(px(20))에 맞춤
   outer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: px(4),
-    paddingHorizontal: px(12),
+    gap: px(10),
+    paddingHorizontal: px(20),
     paddingVertical: px(8),
     backgroundColor: COLOR.white,
   },
   // 뒤로가기: 첫 입력줄(상단)에 맞춰 세로 중앙
   backButton: {
-    width: px(28),
-    height: px(54),
+    width: px(24),
+    height: px(44),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -103,13 +104,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: px(6),
+    gap: px(12),
     backgroundColor: COLOR.white,
     borderRadius: px(16),
     borderWidth: px(1),
     borderColor: COLOR_LINE.border,
-    paddingHorizontal: px(14),
-    paddingVertical: px(8),
+    paddingHorizontal: px(16),
+    paddingVertical: px(6),
     // 그림자 (iOS)
     shadowColor: COLOR.shadow,
     shadowOffset: { width: 0, height: px(1) },
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     gap: px(4),
   },
   searchButton: {
-    width: px(32),
+    width: px(24),
     alignItems: 'center',
     justifyContent: 'center',
   },

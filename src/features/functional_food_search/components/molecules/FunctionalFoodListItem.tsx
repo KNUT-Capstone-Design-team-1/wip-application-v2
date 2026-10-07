@@ -41,11 +41,14 @@ const FunctionalFoodListItem = ({
 
         <View style={styles.metaRow}>
           {!!item.foodMediumCategoryName && (
-            <View style={styles.categoryTag}>
-              <BaseText weight="medium" size={11} style={styles.categoryText}>
-                {item.foodMediumCategoryName}
-              </BaseText>
-            </View>
+            <BaseText
+              weight="medium"
+              size={12}
+              numberOfLines={1}
+              style={styles.category}
+            >
+              {item.foodMediumCategoryName}
+            </BaseText>
           )}
           {!!manufacturer && (
             <BaseText
@@ -86,13 +89,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
   },
-  categoryTag: {
-    paddingHorizontal: px(8),
-    paddingVertical: px(3),
-    borderRadius: px(6),
-    backgroundColor: COLOR_BG.base,
-  },
-  categoryText: {
+  // 품목(중분류): chip 대신 색/크기로 구분 — subTitle 색(teal)으로 제조사(회색)와 구분
+  category: {
     color: COLOR_TEXT.subTitle,
   },
   manufacturer: {

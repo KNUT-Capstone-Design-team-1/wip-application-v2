@@ -116,6 +116,7 @@ const FunctionalFoodSearchScreen = () => {
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           contentContainerStyle={items.length === 0 && styles.emptyContainer}
         />
       )}
@@ -133,7 +134,8 @@ const styles = StyleSheet.create({
   },
   countRow: {
     paddingHorizontal: px(20),
-    paddingBottom: px(8),
+    paddingTop: px(4),
+    paddingBottom: px(10),
   },
   countText: {
     color: COLOR_TEXT.sub,

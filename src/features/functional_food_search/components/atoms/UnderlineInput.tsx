@@ -47,7 +47,7 @@ const UnderlineInput = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: px(38),
+    height: px(34),
     justifyContent: 'center',
   },
   underline: {
