@@ -1,6 +1,6 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
-import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { fontPx, px } from '@utils/responsive';
 
 interface IUnderlineInputProps {
@@ -26,13 +26,24 @@ const UnderlineInput = ({
   maxLength = 50,
   showUnderline = true,
 }: IUnderlineInputProps) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  // 평소엔 showUnderline에 따라 밑줄을 그리고, 포커스 시엔 항상 primary 밑줄로 표시
   return (
-    <View style={[styles.wrapper, showUnderline && styles.underline]}>
+    <View
+      style={[
+        styles.wrapper,
+        (showUnderline || isFocused) && styles.underline,
+        isFocused && styles.underlineFocused,
+      ]}
+    >
       <TextInput
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmit}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
         placeholderTextColor={COLOR_TEXT.disabled}
         returnKeyType="search"
@@ -53,6 +64,9 @@ const styles = StyleSheet.create({
   underline: {
     borderBottomWidth: px(1),
     borderBottomColor: COLOR_LINE.border,
+  },
+  underlineFocused: {
+    borderBottomColor: COLOR.primary,
   },
   input: {
     fontFamily: 'Pretendard',
