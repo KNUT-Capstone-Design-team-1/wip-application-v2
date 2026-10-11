@@ -20,6 +20,7 @@ const CategoryChipList = ({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.container}
       >
         {chips.map((chip) => (
