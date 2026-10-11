@@ -60,9 +60,11 @@ const styles = StyleSheet.create({
   wrapper: {
     height: px(34),
     justifyContent: 'center',
+    // 보더 두께는 항상 유지하고 색만 바꿔 포커스 시 텍스트가 밀리는 것 방지
+    borderBottomWidth: px(1),
+    borderBottomColor: 'transparent',
   },
   underline: {
-    borderBottomWidth: px(1),
     borderBottomColor: COLOR_LINE.border,
   },
   underlineFocused: {
