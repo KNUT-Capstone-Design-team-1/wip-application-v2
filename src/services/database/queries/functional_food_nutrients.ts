@@ -36,6 +36,17 @@ const getFunctionalFoodNutrientsWhereQuery: TWhereQueryClauseFunc = (
       query: `foodMediumCategoryName LIKE ?`,
       values: (category: string) => [`%${category}%`],
     },
+    // 카테고리 그룹 필터: 여러 중분류 키워드를 OR-LIKE로 결합
+    // (query를 param 값 기준으로 동적 생성해 키워드 개수만큼 '?'를 만든다)
+    mediumCategoryKeywords: {
+      query: `(${(Array.isArray(_params.mediumCategoryKeywords)
+        ? _params.mediumCategoryKeywords
+        : []
+      )
+        .map(() => `foodMediumCategoryName LIKE ?`)
+        .join(' OR ')})`,
+      values: (keywords: string[]) => keywords.map((k) => `%${k}%`),
+    },
     itemReportNumber: {
       query: `itemReportNumber LIKE ?`,
       values: (reportNumber: string) => [`%${reportNumber}%`],
@@ -52,13 +63,9 @@ const getFunctionalFoodNutrientsWhereQuery: TWhereQueryClauseFunc = (
       query: `distributorName LIKE ?`,
       values: (dist: string) => [`%${dist}%`],
     },
-    keyword: {
-      query: `(foodName LIKE ? OR representativeFoodName LIKE ? OR manufacturerName LIKE ?)`,
-      values: (keyword: string) => [
-        `%${keyword}%`,
-        `%${keyword}%`,
-        `%${keyword}%`,
-      ],
+    nameKeyword: {
+      query: `(foodName LIKE ? OR representativeFoodName LIKE ?)`,
+      values: (keyword: string) => [`%${keyword}%`, `%${keyword}%`],
     },
   };
 };
@@ -80,7 +87,29 @@ export const getFunctionalFoodNutrients = async (
 
   const db = await getDatabase();
 
+  // 페이지네이션 안정성을 위해 반드시 결정적 ORDER BY 사용
+  // (ORDER BY 없으면 SQLite가 페이지마다 순서를 달리 반환해 중복 행 발생)
+  // - 기본: 제품명 가나다순 (동률은 PK(foodCode)로 고정)
+  // - 제품명 검색 시: 이름 일치도 우선 (시작 일치 > 포함) 후 가나다
+  const trimmedName = params.nameKeyword?.trim();
+
+  let orderByClause = `ORDER BY foodName COLLATE NOCASE ASC, foodCode ASC`;
+  const orderByValues: string[] = [];
+
+  if (trimmedName) {
+    orderByClause = `ORDER BY
+                     CASE
+                       WHEN foodName LIKE ? THEN 0
+                       WHEN foodName LIKE ? THEN 1
+                       ELSE 2
+                     END,
+                     foodName COLLATE NOCASE ASC,
+                     foodCode ASC`;
+    orderByValues.push(`${trimmedName}%`, `%${trimmedName}%`);
+  }
+
   const sql = `SELECT * FROM functional_food_nutrients ${whereClause}
+               ${orderByClause}
                LIMIT ?, ?`;
 
   const { page = 1, limit = 30 } = queryOption;
@@ -88,6 +117,7 @@ export const getFunctionalFoodNutrients = async (
 
   const result = await db.getAllAsync<IFunctionalFoodNutrients>(sql, [
     ...whereValues,
+    ...orderByValues,
     offset,
     limit,
   ]);
@@ -132,4 +162,22 @@ export const getFunctionalFoodNutrientsCount = async (
   const result = await db.getAllAsync<{ count: number }>(sql, whereValues);
 
   return result?.[0]?.count || 0;
+};
+
+/**
+ * 중분류(foodMediumCategoryName)의 고유 값 목록 조회 (카테고리 칩 동적 노출용)
+ * - 실제 데이터에 존재하는 중분류만 반환 → 비어있는 그룹 칩이 생기지 않도록 필터링에 사용
+ * @returns 중분류명 배열 (중복 제거)
+ */
+export const getDistinctMediumCategoryNames = async (): Promise<string[]> => {
+  const db = await getDatabase();
+
+  const sql = `SELECT DISTINCT foodMediumCategoryName AS name
+               FROM functional_food_nutrients
+               WHERE foodMediumCategoryName IS NOT NULL
+                 AND foodMediumCategoryName != ''`;
+
+  const rows = await db.getAllAsync<{ name: string }>(sql);
+
+  return rows.map((row) => row.name);
 };

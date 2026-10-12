@@ -1,16 +1,7 @@
-import React, { useState, useCallback, memo, useEffect, useRef } from 'react';
-import {
-  View,
-  TextInput,
-  Keyboard,
-  ViewStyle,
-  StyleProp,
-  TouchableOpacity,
-} from 'react-native';
-import { IconStyles, styles } from '../styles/unifiedSearchStyles';
-import { CircleXIcon, Search } from 'lucide-react-native';
+import { useState, useCallback, memo } from 'react';
+import { Keyboard, ViewStyle, StyleProp, StyleSheet } from 'react-native';
+import SearchInput from '@features/shared/components/SearchInput';
 import { useUnifiedSearch } from '../hooks/useUnifiedSearch';
-import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/index';
 
 interface IUnifiedSearchBarProps {
   containerStyle?: StyleProp<ViewStyle>;
@@ -22,8 +13,6 @@ const UnifiedSearchBar = ({
   focus = false,
 }: IUnifiedSearchBarProps) => {
   const [keyword, setKeyword] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<TextInput>(null);
   const { search } = useUnifiedSearch();
 
   const handleSearch = useCallback(
@@ -37,10 +26,6 @@ const UnifiedSearchBar = ({
     },
     [keyword, search],
   );
-
-  const handleClear = useCallback(() => {
-    setKeyword('');
-  }, []);
 
   const handleTextChange = useCallback(
     (text: string) => {
@@ -58,59 +43,24 @@ const UnifiedSearchBar = ({
     [handleSearch],
   );
 
-  useEffect(() => {
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      inputRef.current?.blur();
-      setIsFocused(false);
-    });
-
-    return () => {
-      hideSubscription.remove();
-    };
-  }, []);
-
   return (
-    <View
-      style={[
-        styles.container,
-        containerStyle,
-        { borderColor: isFocused ? COLOR['primary'] : COLOR_LINE['border'] },
-      ]}
-    >
-      <TextInput
-        ref={inputRef}
-        maxLength={50}
-        style={styles.input}
-        placeholder="검색어를 입력하세요"
-        value={keyword}
-        onChangeText={handleTextChange}
-        onSubmitEditing={() => handleSearch()}
-        returnKeyType="search"
-        placeholderTextColor={COLOR_TEXT['disabled']}
-        multiline={false}
-        autoFocus={focus}
-        autoCorrect={false}
-        autoCapitalize="none"
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-      />
-      {keyword.length > 0 ? (
-        <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-          <CircleXIcon
-            size={IconStyles['clearIcon'].size}
-            color={IconStyles['clearIcon'].color}
-            strokeWidth={IconStyles['clearIcon'].strokeWidth}
-          />
-        </TouchableOpacity>
-      ) : (
-        <Search
-          size={IconStyles['searchIcon'].size}
-          color={IconStyles['searchIcon'].color}
-          strokeWidth={IconStyles['searchIcon'].strokeWidth}
-        />
-      )}
-    </View>
+    <SearchInput
+      value={keyword}
+      onChangeText={handleTextChange}
+      onSubmit={() => handleSearch()}
+      placeholder="검색어를 입력하세요"
+      autoFocus={focus}
+      maxLength={50}
+      containerStyle={[styles.grow, containerStyle]}
+    />
   );
 };
+
+const styles = StyleSheet.create({
+  // 헤더 등 가로 공간을 채우기 위한 확장 (기존 UnifiedSearchBar 동작 유지)
+  grow: {
+    flexGrow: 1,
+  },
+});
 
 export default memo(UnifiedSearchBar);

@@ -10,6 +10,8 @@ export const PAGE_TITLES: { [key: string]: string } = {
   '/terms': '이용 약관',
   '/pill-search-result-list': '검색 결과',
   '/pill-search-result-detail': '상세정보',
+  '/functional-food-search': '영양제 검색',
+  '/functional-food-detail': '영양제 상세',
   '/notice': '공지사항',
   '/notice-detail': '공지사항 상세',
 };
