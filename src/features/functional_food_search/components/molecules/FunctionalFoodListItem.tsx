@@ -24,55 +24,59 @@ const FunctionalFoodListItem = ({
         : '';
 
   return (
-    <SearchListRow
-      style={styles.container}
-      onPress={() => onPress(item.foodCode)}
-      trailing={<ChevronRight size={px(20)} color={COLOR_TEXT.disabled} />}
-    >
-      <View style={styles.textWrapper}>
-        <BaseText
-          weight="semiBold"
-          size={15}
-          numberOfLines={2}
-          style={styles.name}
-        >
-          {item.foodName}
-        </BaseText>
+    <View style={styles.container}>
+      <SearchListRow
+        style={styles.itemWrapper}
+        onPress={() => onPress(item.foodCode)}
+        activeOpacity={0.5}
+        trailing={<ChevronRight size={px(20)} color={COLOR_TEXT.disabled} />}
+      >
+        <View style={styles.textWrapper}>
+          <BaseText
+            weight="semiBold"
+            size={15}
+            numberOfLines={1}
+            style={styles.name}
+          >
+            {item.foodName}
+          </BaseText>
 
-        <View style={styles.metaRow}>
-          {!!item.foodMediumCategoryName && (
-            <BaseText
-              weight="medium"
-              size={12}
-              numberOfLines={1}
-              style={styles.category}
-            >
-              {item.foodMediumCategoryName}
-            </BaseText>
-          )}
-          {!!manufacturer && (
-            <BaseText
-              weight="regular"
-              size={12}
-              numberOfLines={1}
-              style={styles.manufacturer}
-            >
-              {manufacturer}
-            </BaseText>
-          )}
+          <View style={styles.metaRow}>
+            {!!item.foodMediumCategoryName && (
+              <BaseText
+                weight="medium"
+                size={12}
+                numberOfLines={1}
+                style={styles.category}
+              >
+                {item.foodMediumCategoryName}
+              </BaseText>
+            )}
+            {!!manufacturer && (
+              <BaseText
+                weight="regular"
+                size={12}
+                numberOfLines={1}
+                style={styles.manufacturer}
+              >
+                {manufacturer}
+              </BaseText>
+            )}
+          </View>
         </View>
-      </View>
-    </SearchListRow>
+      </SearchListRow>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: px(20),
+  },
+  itemWrapper: {
     alignItems: 'center',
     gap: px(8),
     paddingVertical: px(14),
-    // 카운트·칩과 좌측 정렬 (화면 전체 px(20) 그리드)
-    paddingHorizontal: px(20),
     backgroundColor: COLOR_BG.surface,
     borderBottomWidth: 1,
     borderBottomColor: COLOR_LINE.separator,
