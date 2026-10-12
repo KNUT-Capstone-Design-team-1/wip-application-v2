@@ -30,7 +30,11 @@ const StackedSearchBar = ({
 }: IStackedSearchBarProps) => {
   const router = useRouter();
 
-  const handleBack = onBack ?? (() => router.back());
+  const handleBack = useCallback(() => {
+    Keyboard.dismiss();
+    onBack?.();
+    router.back();
+  }, [onBack, router]);
 
   // 검색 실행: 키보드 내리고 검색
   const handleSearch = useCallback(() => {
