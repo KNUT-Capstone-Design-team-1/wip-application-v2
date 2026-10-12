@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { px } from '@utils/responsive';
 import { ICategoryChip } from '../../types';
@@ -28,7 +28,10 @@ const CategoryChipList = ({
             key={chip.value || 'all'}
             label={chip.label}
             selected={selectedCategory === chip.value}
-            onPress={() => onSelectCategory(chip.value)}
+            onPress={() => {
+              Keyboard.dismiss();
+              onSelectCategory(chip.value);
+            }}
           />
         ))}
       </ScrollView>

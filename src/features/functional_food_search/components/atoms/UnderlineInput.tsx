@@ -1,5 +1,5 @@
-import { memo, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { memo, useEffect, useRef, useState } from 'react';
+import { Keyboard, StyleSheet, TextInput, View } from 'react-native';
 import { COLOR, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { fontPx, px } from '@utils/responsive';
 
@@ -26,7 +26,21 @@ const UnderlineInput = ({
   maxLength = 50,
   showUnderline = true,
 }: IUnderlineInputProps) => {
+  const inputRef = useRef<TextInput>(null);
+
   const [isFocused, setIsFocused] = useState(false);
+
+  // 키보드가 내려가면 포커스 해제 (테두리 상태 동기화) 방어로직
+  useEffect(() => {
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      inputRef.current?.blur();
+      setIsFocused(false);
+    });
+
+    return () => {
+      hideSubscription.remove();
+    };
+  }, []);
 
   // 평소엔 showUnderline에 따라 밑줄을 그리고, 포커스 시엔 항상 primary 밑줄로 표시
   return (
@@ -38,6 +52,7 @@ const UnderlineInput = ({
       ]}
     >
       <TextInput
+        ref={inputRef}
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
