@@ -5,6 +5,7 @@ export interface IExternalURLResponse {
   kada: string;
   health: string;
   nifds: string;
+  foodsafetykorea: string;
   reportEmail: string;
 }
 

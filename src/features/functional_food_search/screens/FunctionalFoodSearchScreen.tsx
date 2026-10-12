@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BaseText } from '@components/common/BaseText';
 import NotItem from '@components/common/NotItem';
 import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
@@ -11,9 +12,11 @@ import { useFunctionalFoodCategories } from '../hooks/use_functional_food_catego
 import StackedSearchBar from '../components/organisms/StackedSearchBar';
 import CategoryChipList from '../components/organisms/CategoryChipList';
 import FunctionalFoodListItem from '../components/molecules/FunctionalFoodListItem';
+import FoodSafetyKoreaFloatingButton from '../components/atoms/FoodSafetyKoreaFloatingButton';
 
 const FunctionalFoodSearchScreen = () => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const {
     nameKeyword,
@@ -117,9 +120,14 @@ const FunctionalFoodSearchScreen = () => {
           ListEmptyComponent={renderEmpty}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
-          contentContainerStyle={items.length === 0 && styles.emptyContainer}
+          contentContainerStyle={[
+            { paddingBottom: px(100) + insets.bottom },
+            items.length === 0 && styles.emptyContainer,
+          ]}
         />
       )}
+
+      {!isLoading && <FoodSafetyKoreaFloatingButton />}
     </View>
   );
 };
