@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Keyboard, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
@@ -19,7 +19,12 @@ interface ISearchBarHeaderProps {
 const SearchBarHeader = ({ children, onBack }: ISearchBarHeaderProps) => {
   const router = useRouter();
 
-  const handleBack = onBack ?? (() => router.back());
+  const handleBack =
+    onBack ??
+    (() => {
+      Keyboard.dismiss();
+      router.back();
+    });
 
   return (
     <View style={styles.container}>
