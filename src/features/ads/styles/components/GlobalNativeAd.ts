@@ -74,17 +74,17 @@ export const styles = StyleSheet.create({
     gap: px(2, 2),
   },
   bannerCallToAction: {
-    paddingHorizontal: px(8),
-    paddingVertical: px(4),
-    backgroundColor: COLOR_BG['btnTertiary'],
-    borderRadius: px(5),
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginLeft: px(8),
   },
   callToActionText: {
+    paddingHorizontal: px(8),
+    paddingVertical: px(4),
+    backgroundColor: COLOR_BG['btnTertiary'],
     color: COLOR_TEXT['white'],
+    borderRadius: px(5),
+    marginLeft: px(8),
   },
   headlineWrapper: { flex: 1 },
 });

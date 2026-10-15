@@ -47,7 +47,7 @@ const ResultFlashList = ({
   const loadedImageSeqs = useRef(new Set<string>());
 
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 30, // 화면에 최소 30% 이상 노출 시
+    itemVisiblePercentThreshold: 50, // IAB/AdMob 표준 50%
   }).current;
 
   // 뷰포트 내 광고 슬롯 감지: FlashList의 extraData를 오염시키지 않고 전용 Zustand 스토어에만 업데이트

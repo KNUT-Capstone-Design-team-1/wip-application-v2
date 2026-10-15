@@ -1,9 +1,10 @@
-import { memo, useEffect } from 'react';
+import { memo, useState, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { Image } from '@components/common/CustomImage';
 import { BaseText } from '@components/common/BaseText';
 import { Star, ChevronRight } from 'lucide-react-native';
 import {
+  NativeAd,
   NativeAdView,
   NativeAsset,
   NativeAssetType,
@@ -11,11 +12,9 @@ import {
 import { COLOR, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 import { styles } from '@features/pill_search_result_list/styles/molecules/SearchResultAdItem';
-import { useNativeAd } from '@features/ads/hooks/useNativeAd';
-
-import SearchResultAdSkeleton from './SearchResultAdSkeleton';
-
+import { searchResultAdManager } from '@features/ads/services/searchResultAdManager';
 import { useSearchResultListAdStore } from '@features/pill_search_result_list/store/search_result_list_ad_store';
+import SearchResultAdSkeleton from './SearchResultAdSkeleton';
 
 export interface SearchResultAdItemProps {
   adId: string;
@@ -23,39 +22,69 @@ export interface SearchResultAdItemProps {
 }
 
 const SearchResultAdItem = ({ adId, isScrolling }: SearchResultAdItemProps) => {
-  // 개별 광고 슬롯별 노출 가시성을 Zustand 스토어에서 독립 구독 (전체 리스트 리렌더링 차단)
+  // 개별 광고 슬롯별 뷰포트 노출 가시성을 Zustand 스토어에서 독립 구독 (전체 리스트 리렌더링 격리)
   const isVisible = useSearchResultListAdStore((state) =>
     state.visibleAdSlotIds.has(adId),
   );
 
-  // useNativeAd 단일 훅 사용: 캐싱, keepAlive, On-Demand 제어
-  const { nativeAd, status, load } = useNativeAd({
-    autoLoad: false,
-    cacheKey: adId,
-    keepAlive: true,
-  });
+  // 이미 이 슬롯에 할당된 광고가 있다면 초기 state로 즉시 주입 (0ms 역스크롤 복원)
+  const [nativeAd, setNativeAd] = useState<NativeAd | null>(() =>
+    searchResultAdManager.getSlotAd(adId),
+  );
+  const [isNoFill, setIsNoFill] = useState(false);
 
-  // 뷰포트 기반 On-Demand 로드:
-  // 1) 화면(뷰포트)에 실제로 진입했고 (isVisible === true)
-  // 2) 스크롤이 완전히 멈춘 상태 (!isScrolling)에서
-  // 3) 최소 250ms 이상 안정적으로 머물렀을 때만 실제 광고 로드 실행
+  // 셀 재사용(FlashList recycling) 대응용 Ref
+  const prevAdIdRef = useRef(adId);
+
+  // FlashList 셀 재사용으로 adId가 교체된 경우 상태 동기화
   useEffect(() => {
-    if (status !== 'idle' || isScrolling || !isVisible) return;
+    if (prevAdIdRef.current !== adId) {
+      prevAdIdRef.current = adId;
+      const cached = searchResultAdManager.getSlotAd(adId);
+      setNativeAd(cached);
+      setIsNoFill(false);
+    }
+  }, [adId]);
 
-    const timer = setTimeout(() => {
-      load();
-    }, 250);
+  // 뷰포트 & 스크롤 정지 연동 바인딩:
+  // 1) 화면(뷰포트)에 50% 이상 노출되었고 (isVisible === true)
+  // 2) 스크롤이 완전히 멈춘 상태 (!isScrolling)에서
+  // 3) 아직 바인딩되지 않은 슬롯에 Preload 큐(또는 신규 로드) 광고 즉시 할당
+  useEffect(() => {
+    if (!isVisible || isScrolling || nativeAd || isNoFill) {
+      return;
+    }
 
-    return () => clearTimeout(timer);
-  }, [status, isScrolling, isVisible, load]);
+    let isCancelled = false;
 
-  // No-Fill 또는 로드 에러 발생 시 UI에서 완전히 접힘 (리스트 Collapse)
-  if (status === 'no-fill' || status === 'error') {
+    searchResultAdManager
+      .getOrBindAd(adId)
+      .then((ad) => {
+        if (isCancelled) return;
+        if (ad) {
+          setNativeAd(ad);
+        } else {
+          setIsNoFill(true);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setIsNoFill(true);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isVisible, isScrolling, nativeAd, isNoFill, adId]);
+
+  // No-Fill 또는 로드 에러 확정 시 UI에서 완전히 접힘 (리스트 Collapse)
+  if (isNoFill) {
     return null;
   }
 
-  // 광고 로드 완료 전이거나 아직 인스턴스가 없는 경우 스켈레톤 유지
-  if (status !== 'loaded' || !nativeAd) {
+  // 광고 로드 완료 전이거나 뷰포트 진입 전에는 스켈레톤 유지 (Layout Jump 방지)
+  if (!nativeAd) {
     return <SearchResultAdSkeleton />;
   }
 
@@ -136,8 +165,8 @@ const SearchResultAdItem = ({ adId, isScrolling }: SearchResultAdItemProps) => {
           {nativeAd.body ? (
             <NativeAsset assetType={NativeAssetType.BODY}>
               <BaseText
-                size={11}
-                minSize={11}
+                size={12}
+                minSize={12}
                 weight="medium"
                 style={styles.body}
                 numberOfLines={2}
@@ -153,13 +182,13 @@ const SearchResultAdItem = ({ adId, isScrolling }: SearchResultAdItemProps) => {
               <NativeAsset assetType={NativeAssetType.STAR_RATING}>
                 <View style={styles.ratingWrapper}>
                   <Star
-                    size={px(11, 12)}
+                    size={px(12, 13)}
                     fill={COLOR['guide']}
                     stroke={COLOR['guide']}
                   />
                   <BaseText
-                    size={11}
-                    minSize={11}
+                    size={12}
+                    minSize={14}
                     weight="semiBold"
                     style={styles.ratingText}
                   >
@@ -172,19 +201,19 @@ const SearchResultAdItem = ({ adId, isScrolling }: SearchResultAdItemProps) => {
             )}
 
             {nativeAd.callToAction ? (
-              <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
-                <View style={styles.callToActionContainer}>
+              <View style={styles.callToActionContainer}>
+                <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
                   <BaseText
-                    size={11}
-                    minSize={11}
+                    size={12}
+                    minSize={14}
                     weight="semiBold"
                     style={styles.callToActionText}
                   >
                     {nativeAd.callToAction}
                   </BaseText>
-                  <ChevronRight size={px(12, 13)} color={COLOR_TEXT['label']} />
-                </View>
-              </NativeAsset>
+                </NativeAsset>
+                <ChevronRight size={px(12, 14)} color={COLOR_TEXT['label']} />
+              </View>
             ) : null}
           </View>
         </View>

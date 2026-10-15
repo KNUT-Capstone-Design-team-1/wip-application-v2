@@ -6,6 +6,7 @@ import { useToast } from '@hooks/use_toast';
 import { useAppTrackStore } from '@store/app_track_store';
 import { useFullLoadingStore } from '@store/full_loading_store';
 import { useRecentKeywordStore } from '@store/recent_keyword_store';
+import { searchResultAdManager } from '@features/ads/services/searchResultAdManager';
 
 export const useUnifiedSearch = () => {
   const { showToast } = useToast();
@@ -42,6 +43,9 @@ export const useUnifiedSearch = () => {
       if (!trimmedKeyword) {
         return;
       }
+
+      // 검색 비동기 쿼리와 병렬로 Native 광고 1개 Preload 시작 (비차단)
+      searchResultAdManager.preloadAd().catch(() => {});
 
       resetSearchResults();
 

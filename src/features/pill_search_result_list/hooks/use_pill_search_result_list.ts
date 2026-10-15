@@ -8,7 +8,7 @@ import { pillSearchResultListService } from '../services/pill_search_result_list
 import { unifiedSearchService } from '@features/unified_search/services/unifiedSearchService';
 import { useToast } from '@hooks/use_toast';
 
-import { useSearchResultListAdStore } from '@features/pill_search_result_list/store/search_result_list_ad_store';
+import { useFlashListAdManager } from './useFlashListAdManager';
 
 // 상위 100개 이내에 배치할 광고 위치 (안정적인 고정 오프셋)
 // - 100개 이내에 최대 5개 배치
@@ -64,10 +64,8 @@ export const usePillSearchResultList = (rawSearchResultData?: IPillData[]) => {
   const searchParam = useSearchResultListStore((state) => state.searchParam);
   const searchKey = searchParam?.KEYWORD || searchParam?.ITEM_NAME || '';
 
-  // 검색어 변경 시 뷰포트 광고 슬롯 리셋 (광고 수명 및 메모리는 useNativeAd의 60초 스마트 쿨다운이 자동 관리)
-  useEffect(() => {
-    useSearchResultListAdStore.getState().resetAdSlots();
-  }, [searchKey]);
+  // 검색어/세션 변경 및 화면 이탈 시 locked 광고 정리 및 수명 관리
+  useFlashListAdManager(searchKey);
 
   // 상위 100개 이내에 최대 5개의 광고 슬롯이 선배치된 리스트 (No-Fill 시 컴포넌트 내부에서 자체 축소)
   const displayList = useMemo(

@@ -1,9 +1,10 @@
 import { fontPx } from '@utils/responsive';
+import { forwardRef } from 'react';
 import { Text, TextProps, TextStyle } from 'react-native';
 
 type TBaseTextWeight = 'regular' | 'medium' | 'semiBold' | 'bold';
 
-interface IBaseTextProps extends TextProps {
+export interface IBaseTextProps extends TextProps {
   fontFamily?: string;
   weight?: TBaseTextWeight;
   size?: number;
@@ -22,6 +23,7 @@ const WEIGHT_MAP: Record<TBaseTextWeight, TextStyle['fontWeight']> = {
 
 /**
  * 가장 기본적인 텍스트 컴포넌트
+ * - NativeAsset 등 상위 HOC의 ref 주입 지원을 위해 forwardRef 적용
  * @param fontFamily - 폰트 패밀리 (기본값: 'Pretendard')
  * @param weight - 폰트 두께 (기본값: 'medium')
  * @param size - 폰트 크기 (기본값: px(12))
@@ -33,32 +35,40 @@ const WEIGHT_MAP: Record<TBaseTextWeight, TextStyle['fontWeight']> = {
  * @param props - Text 컴포넌트의 props
  * @returns
  */
-export const BaseText: React.FC<IBaseTextProps> = ({
-  fontFamily = 'Pretendard',
-  weight = 'medium',
-  size = 12,
-  minSize,
-  maxSize,
-  factor = 1,
-  style,
-  children,
-  ...props
-}) => {
-  return (
-    <Text
-      style={[
-        {
-          fontFamily: fontFamily,
-          fontWeight: WEIGHT_MAP[weight],
-          fontSize: fontPx(size, factor, minSize, maxSize),
-          includeFontPadding: false,
-          textAlignVertical: 'center',
-        },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </Text>
-  );
-};
+export const BaseText = forwardRef<Text, IBaseTextProps>(
+  (
+    {
+      fontFamily = 'Pretendard',
+      weight = 'medium',
+      size = 12,
+      minSize,
+      maxSize,
+      factor = 1,
+      style,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <Text
+        ref={ref}
+        style={[
+          {
+            fontFamily: fontFamily,
+            fontWeight: WEIGHT_MAP[weight],
+            fontSize: fontPx(size, factor, minSize, maxSize),
+            includeFontPadding: false,
+            textAlignVertical: 'center',
+          },
+          style,
+        ]}
+        {...props}
+      >
+        {children}
+      </Text>
+    );
+  },
+);
+
+BaseText.displayName = 'BaseText';

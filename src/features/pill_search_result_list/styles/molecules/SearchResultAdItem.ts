@@ -91,9 +91,9 @@ export const styles = StyleSheet.create({
   callToActionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: px(2),
   },
   callToActionText: {
     color: COLOR_TEXT['label'],
+    paddingHorizontal: px(4),
   },
 });

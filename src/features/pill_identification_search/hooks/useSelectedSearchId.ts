@@ -6,6 +6,7 @@ import { getToggledArrayValue } from '../services/identification_filter_toggle_s
 import { router, usePathname } from 'expo-router';
 import { useSearchResultListStore } from '../../pill_search_result_list/store/search_result_list_store';
 import logger from '@utils/logger';
+import { searchResultAdManager } from '@features/ads/services/searchResultAdManager';
 
 // 식별 검색 상태 및 검색 실행 로직을 관리하는 커스텀 훅 (Presentation Layer)
 export const useSelectedSearchId = () => {
@@ -153,6 +154,9 @@ export const useSelectedSearchId = () => {
   // 식별 검색 실행 핸들러
   const searchPillDatas = useCallback(async () => {
     try {
+      // 검색 액션 발생 즉시 Native 광고 1개 비동기 Preload 시작 (비차단)
+      searchResultAdManager.preloadAd().catch(() => {});
+
       const rawParam = getSelectedSearchId();
 
       resetSearchResults();

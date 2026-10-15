@@ -6,6 +6,7 @@ import logger from '@utils/logger';
 import { useInterstitialAd } from '@features/ads/hooks/useInterstitialAd';
 import { useAppTrackStore } from '@store/app_track_store';
 import { useFullLoadingStore } from '@store/full_loading_store';
+import { searchResultAdManager } from '@features/ads/services/searchResultAdManager';
 import {
   pickImageFromLibrary,
   pickImageFromFiles,
@@ -285,6 +286,9 @@ export const usePillImageActions = () => {
         });
         return;
       }
+
+      // 검색 결과 화면 진입 전 Native 광고 1개 백그라운드 Preload 시작 (비차단)
+      searchResultAdManager.preloadAd().catch(() => {});
 
       setSearchResultData(searchData.results);
       setTotalDataCount(searchData.totalDataCount);

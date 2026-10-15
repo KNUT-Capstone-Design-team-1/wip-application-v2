@@ -179,15 +179,15 @@ export const GlobalNativeAd = ({
                     stroke={COLOR['guide']}
                   />
                   <NativeAsset assetType={NativeAssetType.STAR_RATING}>
-                    <BaseText size={11} minSize={11} weight={'medium'}>
+                    <BaseText size={12} minSize={12} weight={'medium'}>
                       {nativeAd.starRating}
                     </BaseText>
                   </NativeAsset>
                 </View>
               )}
               {nativeAd.callToAction && (
-                <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
-                  <View style={styles.bannerCallToAction}>
+                <View style={styles.bannerCallToAction}>
+                  <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
                     <BaseText
                       size={12}
                       minSize={14}
@@ -197,8 +197,8 @@ export const GlobalNativeAd = ({
                     >
                       {nativeAd.callToAction}
                     </BaseText>
-                  </View>
-                </NativeAsset>
+                  </NativeAsset>
+                </View>
               )}
             </View>
           </View>

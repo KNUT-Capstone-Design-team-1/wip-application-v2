@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, forwardRef } from 'react';
 import { Image as ExpoImage, ImageProps } from 'expo-image';
 import { Image as RNImage, StyleSheet } from 'react-native';
 
-export const Image: React.FC<ImageProps> = (props: ImageProps) => {
+export const Image = forwardRef<ExpoImage, ImageProps>((props, ref) => {
   const intrinsicSize = useMemo(() => {
     if (props.source && !Array.isArray(props.source)) {
       try {
@@ -11,7 +11,7 @@ export const Image: React.FC<ImageProps> = (props: ImageProps) => {
         if (resolved && resolved.width && resolved.height) {
           return { width: resolved.width, height: resolved.height };
         }
-      } catch (e) {
+      } catch {
         // 해상도 추론 실패 시 무시
       }
     }
@@ -20,11 +20,14 @@ export const Image: React.FC<ImageProps> = (props: ImageProps) => {
 
   return (
     <ExpoImage
+      ref={ref}
       {...props}
       // 원본 크기를 기본값으로 설정, 명시된 props.style이 덮어쓰도록(override) 함
       style={StyleSheet.flatten([intrinsicSize, props.style])}
     />
   );
-};
+});
+
+Image.displayName = 'CustomImage';
 
 export default Image;
