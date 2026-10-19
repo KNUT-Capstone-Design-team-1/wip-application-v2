@@ -3,7 +3,7 @@ import PillIngredientSpecs from './specs/PillIngredientSpecs';
 import PillManagementSpecs from './specs/PillManagementSpecs';
 import PillOtherSpecs from './specs/PillOtherSpecs';
 import { memo } from 'react';
-import KeywordText from '../atoms/KeywordText';
+import KeywordInfoRow from './KeywordInfoRow';
 import PillSpecsToggle from '../atoms/PillSpecsToggle';
 import { usePillSpecsExpansion } from '../../hooks/use_pill_specs_expansion';
 import { View } from 'react-native';
@@ -23,17 +23,10 @@ const PillSpecsSection = ({ data }: IPillSpecsSectionProps) => {
     <>
       <View style={styles.infoWrapper}>
         <InfoRow label="제조사" value={data.ENTP_NAME} />
-        <InfoRow
+        <KeywordInfoRow
           label="주성분"
-          value={
-            data.MAIN_ITEM_INGR ? (
-              <KeywordText
-                size={14}
-                targetId="specs:mainIngredient"
-                text={data.MAIN_ITEM_INGR}
-              />
-            ) : undefined
-          }
+          targetId="specs:mainIngredient"
+          text={data.MAIN_ITEM_INGR}
         />
         <InfoRow label="분류명" value={data.CLASS_NAME} />
         <InfoRow label="모양" value={data.DRUG_SHAPE} />
