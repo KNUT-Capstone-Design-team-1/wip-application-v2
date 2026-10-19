@@ -31,9 +31,9 @@ export const useCreateKeywordNavigationScope = (): KeywordNavigationScope => {
   const controller = useMemo(
     () =>
       createKeywordNavigationController({
-        setActiveKeyword: (keyword) =>
-          store.getState().setActiveKeyword(keyword),
-        setStatus: (status) => store.getState().setStatus(status),
+        getKeywords: () => store.getState().keywords,
+        setAvailability: (availability) =>
+          store.getState().setAvailability(availability),
         nextFrame: waitForNativeLayout,
         getViewportY: () => measureScrollViewport(scrollRef.current),
         scrollTo: (y) => scrollRef.current?.scrollTo({ y, animated: false }),

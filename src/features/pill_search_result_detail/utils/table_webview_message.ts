@@ -23,6 +23,28 @@ const isTableKeywordMatch = (value: unknown): value is TableKeywordMatch => {
 const parseMatchMessage = (raw: string): TableWebViewMessage => {
   try {
     const parsed = JSON.parse(raw);
+
+    if (parsed?.type === 'dismiss') {
+      return { type: 'dismiss' };
+    }
+
+    if (parsed?.type === 'keywordPress') {
+      if (
+        typeof parsed.keyword !== 'string' ||
+        !parsed.keyword.trim() ||
+        !Number.isSafeInteger(parsed.index) ||
+        parsed.index < 0
+      ) {
+        return { type: 'invalid' };
+      }
+
+      return {
+        type: 'keywordPress',
+        keyword: parsed.keyword,
+        index: parsed.index,
+      };
+    }
+
     const matches = Array.isArray(parsed?.matches)
       ? parsed.matches.filter(isTableKeywordMatch)
       : [];

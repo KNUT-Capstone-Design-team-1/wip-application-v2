@@ -83,3 +83,38 @@ test('표 준비 시간 초과와 화면 해제도 대기를 종료한다', asyn
     jest.useRealTimers();
   }
 });
+
+test('표의 키워드 선택·해제 메시지를 구분하고 잘못된 인덱스를 거부한다', () => {
+  const message = { type: 'keywordPress', keyword: '졸음', index: 2 };
+  expect(parseTableWebViewMessage(JSON.stringify(message))).toEqual(message);
+  expect(parseTableWebViewMessage('{"type":"dismiss"}')).toEqual({
+    type: 'dismiss',
+  });
+
+  for (const index of [-1, 1.2, '2', null]) {
+    expect(
+      parseTableWebViewMessage(JSON.stringify({ ...message, index })),
+    ).toEqual({ type: 'invalid' });
+  }
+});
+
+test('표에서 반복된 키워드를 누르면 해당 항목 인덱스를 전달한다', () => {
+  const postMessage = jest.fn();
+  const source = buildTableKeywordScript(['졸음']);
+  const mark = { dataset: { keyword: '졸음', keywordIndex: '3' } };
+  runInNewContext(
+    source + '\nhandleKeywordPress({ target: { closest: () => mark } });',
+    {
+      window: {
+        addEventListener: () => {},
+        ReactNativeWebView: { postMessage },
+      },
+      mark,
+    },
+  );
+  expect(JSON.parse(postMessage.mock.calls[0][0])).toEqual({
+    type: 'keywordPress',
+    keyword: '졸음',
+    index: 3,
+  });
+});

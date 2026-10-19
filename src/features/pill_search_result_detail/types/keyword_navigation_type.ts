@@ -1,3 +1,8 @@
+export interface KeywordNavigationAvailability {
+  canPrevious: boolean;
+  canNext: boolean;
+}
+
 export interface KeywordTarget {
   id: string;
   keyword: string;
@@ -5,6 +10,6 @@ export interface KeywordTarget {
   reveal?: () => void;
 }
 export type KeywordMeasure = (
-  keyword: string,
+  keywords: readonly string[],
   prepareOnly?: boolean,
 ) => Promise<KeywordTarget[]>;

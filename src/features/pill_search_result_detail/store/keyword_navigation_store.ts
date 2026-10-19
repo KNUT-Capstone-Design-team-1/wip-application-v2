@@ -1,23 +1,24 @@
 import { createStore } from 'zustand/vanilla';
+import { KeywordNavigationAvailability } from '../types/keyword_navigation_type';
 
-export interface KeywordNavigationState {
+export interface KeywordNavigationState extends KeywordNavigationAvailability {
   keywords: string[];
-  activeKeyword: string;
-  status: string;
+  isVisible: boolean;
   setKeywords: (keywords: string[]) => void;
-  setActiveKeyword: (keyword: string) => void;
-  setStatus: (status: string) => void;
+  setVisible: (isVisible: boolean) => void;
+  setAvailability: (availability: KeywordNavigationAvailability) => void;
 }
 
 // 화면별 검색 데이터·단순 Setter 생성.
 export const createKeywordNavigationStore = () =>
   createStore<KeywordNavigationState>((set) => ({
     keywords: [],
-    activeKeyword: '',
-    status: '',
+    isVisible: false,
+    canPrevious: false,
+    canNext: true,
     setKeywords: (keywords) => set({ keywords }),
-    setActiveKeyword: (activeKeyword) => set({ activeKeyword }),
-    setStatus: (status) => set({ status }),
+    setVisible: (isVisible) => set({ isVisible }),
+    setAvailability: (availability) => set(availability),
   }));
 export type KeywordNavigationStore = ReturnType<
   typeof createKeywordNavigationStore

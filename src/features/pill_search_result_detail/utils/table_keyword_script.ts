@@ -42,8 +42,9 @@ function findNodeMatches(node, matches) {
     let start;
 
     while ((start = lower.indexOf(keyword.toLowerCase(), from)) >= 0) {
-      matches.push(measureMatch(node, keyword, start, matches.length));
-      found.push({ start, end: start + keyword.length });
+      const index = matches.length;
+      matches.push(measureMatch(node, keyword, start, index));
+      found.push({ start, end: start + keyword.length, keyword, index });
       from = start + keyword.length;
     }
   }
@@ -71,6 +72,11 @@ function highlightNode(node, found) {
     mark.style.backgroundColor = '#FFF1A8';
     mark.style.color = '#242424';
     mark.textContent = text.slice(match.start, match.end);
+    mark.dataset.keyword = match.keyword;
+    mark.dataset.keywordIndex = String(match.index);
+    mark.setAttribute('role', 'button');
+    mark.setAttribute('aria-label', match.keyword + '부터 본문 탐색');
+    mark.tabIndex = 0;
     fragment.appendChild(mark);
     from = match.end;
   }
@@ -90,6 +96,21 @@ function highlightKeywords() {
   window.ReactNativeWebView.postMessage(JSON.stringify({ matches }));
 }
 
+// 강조 문구 클릭을 네이티브 탐색에 전달.
+function handleKeywordPress(event) {
+  const mark = event.target.closest('mark[data-keyword-index]');
+
+  if (!mark) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'dismiss' }));
+
+    return;
+  }
+
+  window.ReactNativeWebView.postMessage(JSON.stringify({
+    type: 'keywordPress', keyword: mark.dataset.keyword, index: Number(mark.dataset.keywordIndex)
+  }));
+}
+
 // 표 자체 높이 전송.
 function sendHeight() {
   const content = document.getElementById('table-content');
@@ -99,6 +120,19 @@ function sendHeight() {
 
 window.onload = function () {
   highlightKeywords();
+  document.addEventListener('click', handleKeywordPress);
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    if (!event.target.closest('mark[data-keyword-index]')) {
+      return;
+    }
+
+    event.preventDefault();
+    handleKeywordPress(event);
+  });
   setTimeout(sendHeight, 100);
 };
 window.addEventListener('resize', sendHeight);

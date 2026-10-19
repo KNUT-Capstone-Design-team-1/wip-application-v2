@@ -1,36 +1,56 @@
 import { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import { COLOR_TEXT } from '@constants/color';
+import { fontPx, px } from '@utils/responsive';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { styles } from '../../styles/molecules/KeywordSearchBar';
 
-// 현재 문구의 다음 검색 결과 이동.
+// 본문 위에 고정되는 이전·다음 원형 버튼.
 const KeywordSearchBar = () => {
+  const insets = useSafeAreaInsets();
   const { store } = useKeywordNavigationContext();
-  const activeKeyword = useStore(store, (state) => state.activeKeyword);
-  const status = useStore(store, (state) => state.status);
-  const { jump, clear } = useKeywordNavigationActions();
+  const isVisible = useStore(store, (state) => state.isVisible);
+  const hasKeywords = useStore(store, (state) => state.keywords.length > 0);
+  const canPrevious = useStore(store, (state) => state.canPrevious);
+  const canNext = useStore(store, (state) => state.canNext);
+  const { previous, next } = useKeywordNavigationActions();
 
-  if (!activeKeyword) {
+  if (!isVisible || !hasKeywords) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      pointerEvents="box-none"
+      style={[styles.container, { bottom: insets.bottom + px(16) }]}
+    >
       <TouchableOpacity
-        style={styles.nextButton}
+        style={[styles.button, !canPrevious && styles.disabled]}
+        hitSlop={4}
+        activeOpacity={0.8}
         accessibilityRole="button"
-        accessibilityLabel={activeKeyword + ' 다음 항목'}
-        onPress={() => jump(activeKeyword)}
+        accessibilityLabel="이전 주의 키워드 찾기"
+        accessibilityState={{ disabled: !canPrevious }}
+        disabled={!canPrevious}
+        onPress={previous}
       >
-        <BaseText size={14}>
-          {activeKeyword} · {status} · 다음 찾기 ↓
-        </BaseText>
+        <ChevronUp size={fontPx(20)} color={COLOR_TEXT.white} />
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" onPress={clear}>
-        <BaseText size={14}>닫기</BaseText>
+      <TouchableOpacity
+        style={[styles.button, !canNext && styles.disabled]}
+        hitSlop={4}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="다음 주의 키워드 찾기"
+        accessibilityState={{ disabled: !canNext }}
+        disabled={!canNext}
+        onPress={next}
+      >
+        <ChevronDown size={fontPx(20)} color={COLOR_TEXT.white} />
       </TouchableOpacity>
     </View>
   );

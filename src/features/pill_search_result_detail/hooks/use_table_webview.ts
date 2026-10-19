@@ -14,7 +14,7 @@ export const useTableWebView = (
   keywords: string[],
   targetId?: string,
 ) => {
-  const { register } = useKeywordNavigationActions();
+  const { register, select, dismiss } = useKeywordNavigationActions();
   const wrapper = useRef<View>(null);
   const webView = useRef<WebView>(null);
   const matches = useRef<TableKeywordMatch[]>([]);
@@ -27,7 +27,7 @@ export const useTableWebView = (
 
   // 현재 표의 검색 결과 측정.
   const measureTargets = useCallback(
-    (keyword: string): Promise<KeywordTarget[]> =>
+    (searchKeywords: readonly string[]): Promise<KeywordTarget[]> =>
       new Promise((resolve) => {
         if (!wrapper.current || !targetId) {
           resolve([]);
@@ -37,7 +37,8 @@ export const useTableWebView = (
 
         wrapper.current.measureInWindow((_x, y) => {
           const targets = matches.current
-            .filter((match) => match.keyword === keyword)
+            .filter((match) => searchKeywords.includes(match.keyword))
+            .sort((a, b) => a.y - b.y || a.x - b.x || a.index - b.index)
             .map((match) => ({
               id: targetId + ':' + match.index,
               keyword: match.keyword,
@@ -60,14 +61,14 @@ export const useTableWebView = (
       return;
     }
 
-    return register(targetId, async (keyword, prepareOnly) => {
+    return register(targetId, async (searchKeywords, prepareOnly) => {
       if (prepareOnly) {
         await readiness.wait();
 
         return [];
       }
 
-      return measureTargets(keyword);
+      return measureTargets(searchKeywords);
     });
   }, [targetId, register, readiness, measureTargets]);
 
@@ -87,6 +88,25 @@ export const useTableWebView = (
         return;
       }
 
+      if (message.type === 'dismiss') {
+        dismiss();
+
+        return;
+      }
+
+      if (message.type === 'keywordPress') {
+        const match = matches.current.find(
+          (item) =>
+            item.index === message.index && item.keyword === message.keyword,
+        );
+
+        if (targetId && match) {
+          select(targetId + ':' + match.index);
+        }
+
+        return;
+      }
+
       if (message.type === 'matches') {
         matches.current = message.matches;
 
@@ -96,7 +116,7 @@ export const useTableWebView = (
       readiness.complete();
       setHeight(message.height);
     },
-    [readiness],
+    [readiness, targetId, select, dismiss],
   );
 
   return { height, source, wrapper, webView, onMessage };

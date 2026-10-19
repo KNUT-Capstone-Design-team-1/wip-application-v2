@@ -27,11 +27,16 @@ export const useKeywordTextTargets = (
     [text],
   );
 
-  // 현재 문구의 화면 좌표 측정.
+  // 모든 문구의 화면 좌표 일괄 측정.
   const measureTargets = useCallback(
-    (keyword: string, prepareOnly?: boolean): Promise<KeywordTarget[]> =>
+    (
+      keywords: readonly string[],
+      prepareOnly?: boolean,
+    ): Promise<KeywordTarget[]> =>
       new Promise((resolve) => {
-        const relevant = matches.filter((match) => match.keyword === keyword);
+        const relevant = matches.filter((match) =>
+          keywords.includes(match.keyword),
+        );
 
         if (prepareOnly || !targetId || !relevant.length || !ref.current) {
           resolve([]);

@@ -1,6 +1,7 @@
 import { View, ScrollView } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { IPillDetail } from '../../types/pill_detail_type';
+import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationInit } from '../../hooks/use_keyword_navigation_init';
 import { useKeywordNavigationScroll } from '../../hooks/use_keyword_navigation_scroll';
 import { usePillStockInquiryActions } from '../../hooks/use_pill_stock_inquiry_actions';
@@ -26,15 +27,16 @@ const PillDetailContent = ({
   onSaveToggle,
 }: Props) => {
   useKeywordNavigationInit(data);
+  const { dismiss } = useKeywordNavigationActions();
   const { scrollRef, onScroll, onScrollBeginDrag } =
     useKeywordNavigationScroll();
   const { onStockInquiry } = usePillStockInquiryActions(data, image);
 
   return (
-    <>
-      <KeywordSearchBar />
+    <View style={styles.contentWrapper}>
       <ScrollView
         ref={scrollRef}
+        onTouchStart={dismiss}
         onScroll={onScroll}
         onScrollBeginDrag={onScrollBeginDrag}
         scrollEventThrottle={16}
@@ -58,7 +60,8 @@ const PillDetailContent = ({
           </View>
         </View>
       </ScrollView>
-    </>
+      <KeywordSearchBar />
+    </View>
   );
 };
 

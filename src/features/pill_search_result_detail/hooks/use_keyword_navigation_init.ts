@@ -9,9 +9,10 @@ export const useKeywordNavigationInit = (data: IPillDetail) => {
 
   useEffect(() => {
     controller.reset();
+    store.getState().setVisible(false);
 
     return controller.cancel;
-  }, [controller, data.ITEM_SEQ]);
+  }, [store, controller, data.ITEM_SEQ]);
 
   useEffect(() => {
     store.getState().setKeywords(collectPillWarningKeywords(data));

@@ -4,6 +4,9 @@ import { px } from '@utils/responsive';
 import { screenPadding } from '@constants/size';
 
 export const styles = StyleSheet.create({
+  contentWrapper: {
+    flex: 1,
+  },
   scrollViewWrapper: {
     flex: 1,
     backgroundColor: COLOR_BG['surface'],
