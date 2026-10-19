@@ -16,18 +16,4 @@ module.exports = defineConfig([
       'tmp/*',
     ],
   },
-  {
-    rules: {
-      curly: ['error', 'all'],
-      'padding-line-between-statements': [
-        'error',
-        {
-          blankLine: 'always',
-          prev: '*',
-          next: ['if', 'for', 'while', 'switch', 'try', 'return', 'function'],
-        },
-        { blankLine: 'always', prev: ['block-like', 'function'], next: '*' },
-      ],
-    },
-  },
 ]);

@@ -1,3 +1,7 @@
+import {
+  getContainedSubstances,
+  assertSubstanceSearch,
+} from './substance_search';
 import { getDatabase } from '../sqlite';
 import {
   INarcotics,
@@ -17,20 +21,12 @@ const getNarcoticsWhereQuery: TWhereQueryClauseFunc = (
 ): TQuerySearchParamResult<TNarcoticsSearchParam> => {
   return {
     chemicalNameKr: {
-      query: `chemicalNameKr LIKE ?`,
-      values: (chemicalNameKr: string) => [`%${chemicalNameKr}%`],
+      query: `(instr(lower(chemicalNameKr), lower(?)) > 0 OR instr(lower(synonyms), lower(?)) > 0)`,
+      values: (chemicalNameKr: string) => [chemicalNameKr, chemicalNameKr],
     },
     chemicalNameEn: {
-      query: `chemicalNameEn LIKE ?`,
-      values: (chemicalNameEn: string) => [`%${chemicalNameEn}%`],
-    },
-    containedInKr: {
-      query: `? LIKE '%' || chemicalNameKr || '%'`,
-      values: (containedInKr: string) => [containedInKr],
-    },
-    containedInEn: {
-      query: `? LIKE '%' || chemicalNameEn || '%'`,
-      values: (containedInEn: string) => [containedInEn],
+      query: `(instr(lower(chemicalNameEn), lower(?)) > 0 OR instr(lower(synonyms), lower(?)) > 0)`,
+      values: (chemicalNameEn: string) => [chemicalNameEn, chemicalNameEn],
     },
   };
 };
@@ -45,6 +41,24 @@ export const getNarcotics = async (
   params: Partial<TNarcoticsSearchParam> = {},
   queryOption: { page: number; limit: number },
 ) => {
+  if (
+    !assertSubstanceSearch(params, [
+      'chemicalNameKr',
+      'chemicalNameEn',
+      'containedInKr',
+      'containedInEn',
+    ])
+  ) {
+    return [];
+  }
+
+  if (
+    params.containedInKr !== undefined ||
+    params.containedInEn !== undefined
+  ) {
+    return getContainedSubstances('narcotic', params, queryOption);
+  }
+
   const { whereClause, whereValues } = buildWhereClause(
     getNarcoticsWhereQuery,
     params,

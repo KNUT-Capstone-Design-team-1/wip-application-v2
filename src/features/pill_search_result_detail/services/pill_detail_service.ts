@@ -9,12 +9,13 @@ export const pillDetailService = {
   // 로컬 기본 정보와 특수 분류 정보를 조합한다.
   async getBasicDetail(itemSeq: string): Promise<IPillDetail | null> {
     const basicData = await pillDetailRepository.getPillData(itemSeq);
+
     if (!basicData) {
       return null;
     }
 
     const classifications = await checkSpecialClassifications(
-      basicData.MAIN_ITEM_INGR?.replace(/[^가-힣]/g, '') || '',
+      basicData.MAIN_ITEM_INGR || '',
       basicData.MATERIAL_ENG_NAME || '',
       pillDetailRepository,
     );

@@ -1,12 +1,10 @@
-import logger from '@utils/logger';
+import { invalidateClassificationCatalog } from './classification_catalog';
 import { getDatabase } from '../sqlite';
 import { ITableColumnSchema, TDataTable, TResourceDataSchemas } from '../types';
 import {
   getColumnPlaceholderForTableCreate,
   prepareRowForInsert,
 } from '../util';
-
-const INSERT_BATCH_SIZE = 500;
 
 // 테이블 유무 확인
 // !NOTICE: 서버리스 API를 통해 스키마를 관리하는 테이블에만 사용한다
@@ -31,6 +29,7 @@ export const dropTable = async (table: TDataTable) => {
   const db = await getDatabase();
 
   await db.execAsync(`DROP TABLE IF EXISTS ${table}`);
+  invalidateClassificationCatalog(table);
 };
 
 // 테이블 CREATE
@@ -101,12 +100,14 @@ export const insertData = async (
   data: Partial<TResourceDataSchemas>[],
 ) => {
   const hasNoData: boolean = data.length === 0;
+
   if (hasNoData) {
     return;
   }
 
   const columns = getBatchColumns(data);
   const hasNoColumns: boolean = columns.length === 0;
+
   if (hasNoColumns) {
     return;
   }
@@ -119,19 +120,24 @@ export const insertData = async (
 
   const db = await getDatabase();
 
-  await db.withTransactionAsync(async () => {
-    for (let i = 0; i < data.length; i += maxRowsPerChunk) {
-      const chunk = data.slice(i, i + maxRowsPerChunk);
-      const sql = createMultiRowInsertSql(table, columns, chunk.length);
+  try {
+    await db.withTransactionAsync(async () => {
+      for (let i = 0; i < data.length; i += maxRowsPerChunk) {
+        const chunk = data.slice(i, i + maxRowsPerChunk);
+        const sql = createMultiRowInsertSql(table, columns, chunk.length);
 
-      const chunkParams: any[] = [];
-      for (const row of chunk) {
-        chunkParams.push(...createInsertValues(row, columns));
+        const chunkParams: any[] = [];
+
+        for (const row of chunk) {
+          chunkParams.push(...createInsertValues(row, columns));
+        }
+
+        await db.runAsync(sql, chunkParams);
       }
-
-      await db.runAsync(sql, chunkParams);
-    }
-  });
+    });
+  } finally {
+    invalidateClassificationCatalog(table);
+  }
 };
 
 // 특정 테이블의 전체 행 개수(Row Count)를 조회한다.
@@ -139,5 +145,6 @@ export const getTableRowCount = async (table: TDataTable): Promise<number> => {
   const db = await getDatabase();
   const sql = `SELECT COUNT(*) as count FROM ${table}`;
   const result = await db.getAllAsync<{ count: number }>(sql);
+
   return result?.[0]?.count || 0;
 };

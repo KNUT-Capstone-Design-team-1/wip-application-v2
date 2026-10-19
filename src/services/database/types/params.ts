@@ -96,7 +96,10 @@ export type TPsychotropicsSearchParam = Pick<
 };
 
 // 병용 금기 데이터 검색을 위한 파라미터 타입
-export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'>;
+export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'> & {
+  containedInKr?: string;
+  containedInEn?: string;
+};
 
 // 건강기능식품 영양성분 데이터 검색을 위한 파라미터 타입
 export type TFunctionalFoodNutrientsSearchParam = Partial<

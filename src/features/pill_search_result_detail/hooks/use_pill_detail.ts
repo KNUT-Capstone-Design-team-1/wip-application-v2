@@ -17,8 +17,10 @@ export const usePillDetail = () => {
 
         // 로컬 저장소에서 기본 정보와 분류 정보를 가져온다.
         const basicDetail = await pillDetailService.getBasicDetail(itemSeq);
+
         if (!basicDetail) {
           setLoading(false);
+
           return;
         }
 
@@ -32,6 +34,7 @@ export const usePillDetail = () => {
         pillDetailService.getRemoteDetail(itemSeq).then((remoteDetail) => {
           if (!remoteDetail) {
             setDetailLoading(false);
+
             return;
           }
 

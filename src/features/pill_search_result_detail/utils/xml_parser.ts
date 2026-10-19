@@ -25,6 +25,7 @@ const mapParagraph = (p: any) => {
   if (p['@_textIndent'] !== undefined && p['@_textIndent'] !== '') {
     mapped.textIndent = p['@_textIndent'];
   }
+
   if (p['@_marginLeft'] !== undefined && p['@_marginLeft'] !== '') {
     mapped.marginLeft = p['@_marginLeft'];
   }
@@ -38,12 +39,14 @@ const mapParagraph = (p: any) => {
         ? decodeHTMLEntities(contentStr.trim())
         : contentStr;
   }
+
   return mapped;
 };
 
 const mapArticle = (a: any) => {
   const paragraphsRaw = a.PARAGRAPH;
   let paragraphs: any[] = [];
+
   if (Array.isArray(paragraphsRaw)) {
     paragraphs = paragraphsRaw.map(mapParagraph);
   } else if (paragraphsRaw) {
@@ -66,6 +69,7 @@ const mapArticle = (a: any) => {
 const mapSection = (s: any) => {
   const articlesRaw = s.ARTICLE;
   let articles: any[] = [];
+
   if (Array.isArray(articlesRaw)) {
     articles = articlesRaw.map(mapArticle);
   } else if (articlesRaw) {
@@ -82,6 +86,7 @@ export const xmlToJson = (xml: string) => {
   if (!xml) {
     return { doc: null };
   }
+
   try {
     const parser = new XMLParser({
       ignoreAttributes: false,
@@ -97,6 +102,7 @@ export const xmlToJson = (xml: string) => {
 
     const sectionsRaw = docRaw.SECTION;
     let sections: any[] = [];
+
     if (Array.isArray(sectionsRaw)) {
       sections = sectionsRaw.map(mapSection);
     } else if (sectionsRaw) {
@@ -111,6 +117,7 @@ export const xmlToJson = (xml: string) => {
     };
   } catch (e) {
     console.error('XML Parsing error:', e);
+
     return { doc: null };
   }
 };

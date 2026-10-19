@@ -48,6 +48,7 @@ export interface IPillDetail {
   psychotropicIngredients?: string[];
   isProhibited?: boolean;
   prohibitedIngredients?: string[];
+  prohibitedNotes?: string[];
   isDrivingWarning?: boolean;
   drivingWarningKeywords?: string[];
 }
@@ -90,5 +91,6 @@ type TSectionItem = {
 };
 
 export interface ISectionItemProps {
+  targetPrefix?: string;
   sectionItem: TSectionItem | null;
 }

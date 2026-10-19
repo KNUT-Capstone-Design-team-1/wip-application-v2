@@ -18,9 +18,7 @@
     "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:db": "jest __tests__/database_queries.test.ts",
-    "test:api": "jest __tests__/api_call/",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "test:api": "jest __tests__/api_call/"
   },
   "dependencies": {
     "@hyunbinseo/holidays-kr": "^5.2027.2",

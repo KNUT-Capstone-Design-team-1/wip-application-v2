@@ -22,6 +22,7 @@ const mockDb = {
     lastExecutedSql = sql;
     console.log('\x1b[36m%s\x1b[0m', '--- [EXEC SQL] ---');
     console.log(sql);
+
     return Promise.resolve();
   }),
 
@@ -31,6 +32,7 @@ const mockDb = {
     console.log('\x1b[33m%s\x1b[0m', '--- [RUN SQL] ---');
     console.log('SQL:', sql);
     console.log('Params:', JSON.stringify(params));
+
     return Promise.resolve({ changes: 1, lastInsertRowId: 1 });
   }),
 
@@ -40,6 +42,7 @@ const mockDb = {
     console.log('\x1b[32m%s\x1b[0m', '--- [SELECT SQL] ---');
     console.log('SQL:', sql);
     console.log('Params:', JSON.stringify(params));
+
     return Promise.resolve([]);
   }),
 
@@ -49,6 +52,7 @@ const mockDb = {
     console.log('\x1b[35m%s\x1b[0m', '--- [GET FIRST SQL] ---');
     console.log('SQL:', sql);
     console.log('Params:', JSON.stringify(params));
+
     return Promise.resolve(null);
   }),
 };
@@ -89,9 +93,9 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
     test('특정 키 업데이트 확인', async () => {
       await ConfigQuery.updateSpecificConfig('pillDataDataVersion', '20240426');
       expect(lastExecutedSql).toContain(
-        'UPDATE config SET `value` = ? WHERE `key` = ?',
+        'INSERT OR REPLACE INTO config (`key`, `value`) VALUES (?, ?)',
       );
-      expect(lastExecutedParams).toEqual(['20240426', 'pillDataDataVersion']);
+      expect(lastExecutedParams).toEqual(['pillDataDataVersion', '20240426']);
     });
   });
 
@@ -123,8 +127,10 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
         { chemicalNameKr: '코카인' },
         { page: 1, limit: 10 },
       );
-      expect(lastExecutedSql).toContain('WHERE chemicalNameKr LIKE ?');
-      expect(lastExecutedParams).toContain('%코카인%');
+      expect(lastExecutedSql).toContain(
+        'instr(lower(chemicalNameKr), lower(?))',
+      );
+      expect(lastExecutedParams).toContain('코카인');
     });
 
     test('대마초 영문명 검색 확인', async () => {
@@ -132,7 +138,9 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
         { chemicalNameEn: 'CANNABIS' },
         { page: 1, limit: 10 },
       );
-      expect(lastExecutedSql).toContain('WHERE chemicalNameEn LIKE ?');
+      expect(lastExecutedSql).toContain(
+        'instr(lower(chemicalNameEn), lower(?))',
+      );
     });
 
     test('향정신성 의약품 검색 확인', async () => {
@@ -140,7 +148,9 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
         { chemicalNameKr: '졸피뎀' },
         { page: 1, limit: 10 },
       );
-      expect(lastExecutedSql).toContain('WHERE chemicalNameKr LIKE ?');
+      expect(lastExecutedSql).toContain(
+        'instr(lower(chemicalNameKr), lower(?))',
+      );
     });
   });
 
@@ -150,8 +160,8 @@ describe('전체 테이블 쿼리 문법 검증 테스트', () => {
         { contents: 'Gestrinone' },
         { page: 1, limit: 10 },
       );
-      expect(lastExecutedSql).toContain('WHERE contents LIKE ?');
-      expect(lastExecutedParams).toContain('%Gestrinone%');
+      expect(lastExecutedSql).toContain('instr(lower(contents), lower(?))');
+      expect(lastExecutedParams).toContain('Gestrinone');
     });
   });
 });

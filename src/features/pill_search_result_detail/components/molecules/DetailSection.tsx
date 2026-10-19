@@ -9,6 +9,7 @@ import { fontPx } from '@utils/responsive';
 import { xmlToJson } from '@features/pill_search_result_detail/utils/xml_parser';
 import SectionItem from './SectionItem';
 
+// 접기 상태에 따른 상세 문서 표시.
 const DetailSection = ({
   title,
   isOpen,
@@ -19,7 +20,9 @@ const DetailSection = ({
     if (!content) {
       return null;
     }
+
     const result = xmlToJson(content);
+
     return result.doc;
   }, [content]);
 
@@ -49,7 +52,7 @@ const DetailSection = ({
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.detailInfoContent}>
-          <SectionItem sectionItem={parsedData} />
+          <SectionItem sectionItem={parsedData} targetPrefix={title} />
         </View>
       )}
     </View>

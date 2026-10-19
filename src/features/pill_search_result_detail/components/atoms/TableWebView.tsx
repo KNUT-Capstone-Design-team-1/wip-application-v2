@@ -1,90 +1,41 @@
-import React, { memo, useState } from 'react';
-import { View, Platform } from 'react-native';
+import { memo } from 'react';
+import { useStore } from 'zustand';
+import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
+import { View } from 'react-native';
 import WebView from 'react-native-webview';
-import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
-import { styles } from '@features/pill_search_result_detail/styles/atoms/TableWebView';
+import { useTableWebView } from '../../hooks/use_table_webview';
+import { styles } from '../../styles/atoms/TableWebView';
 
-const TableWebView = ({ html }: { html: string }) => {
-  const [height, setHeight] = useState(100);
+interface Props {
+  html: string;
+  targetId?: string;
+}
 
-  const fontFace = Platform.select({
-    ios: `
-      @font-face {
-        font-family: 'Pretendard';
-        src: local('Pretendard-Regular');
-      }
-    `,
-    android: `
-      @font-face {
-        font-family: 'Pretendard';
-        src: url('file:///android_res/font/pretendard_regular.ttf');
-      }
-    `,
-    default: '',
-  });
-
-  const customHtml = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <style>
-          ${fontFace}
-          body {
-            margin: 0; padding: 0; background-color: transparent;
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            overflow-x: auto; -webkit-overflow-scrolling: touch;
-          }
-          table {
-            border-collapse: collapse; width: 100%; min-width: 500px;
-            font-size: 15px; color: ${COLOR_TEXT['body']};
-          }
-          tr:first-child {
-            background-color: ${COLOR_BG['base']};
-          }
-          td {
-            border: 1px solid ${COLOR_LINE['border']}; padding: 2px; text-align: center;
-            word-break: keep-all;
-          }
-        </style>
-        <script>
-          function sendHeight() {
-            var height = document.documentElement.offsetHeight || document.body.offsetHeight;
-            window.ReactNativeWebView.postMessage(height.toString());
-          }
-          window.onload = function() {
-            setTimeout(sendHeight, 100);
-          };
-          window.addEventListener('resize', sendHeight);
-        </script>
-      </head>
-      <body>
-        <div>
-          ${html.trim().startsWith('<table') ? html : `<table>${html}</table>`}
-        </div>
-      </body>
-    </html>
-  `;
+// 표 WebView 표시.
+const TableWebView = ({ html, targetId }: Props) => {
+  const { store } = useKeywordNavigationContext();
+  const keywords = useStore(store, (state) => state.keywords);
+  const { height, source, wrapper, webView, onMessage } = useTableWebView(
+    html,
+    keywords,
+    targetId,
+  );
 
   return (
-    <View style={[styles.tableWrapper, { height }]}>
+    <View
+      ref={wrapper}
+      collapsable={false}
+      style={[styles.tableWrapper, { height }]}
+    >
       <WebView
-        source={{ html: customHtml }}
+        ref={webView}
+        source={source}
         originWhitelist={['*']}
         style={styles.tableWebView}
-        onMessage={(event) => {
-          const parsedHeight = parseInt(event.nativeEvent.data, 10);
-          if (
-            !isNaN(parsedHeight) &&
-            parsedHeight > 0 &&
-            parsedHeight !== height
-          ) {
-            setHeight(parsedHeight + 10); // add a little buffer
-          }
-        }}
-        scrollEnabled={true}
+        onMessage={onMessage}
+        scrollEnabled
         showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={true}
+        showsHorizontalScrollIndicator
         bounces={false}
       />
     </View>
