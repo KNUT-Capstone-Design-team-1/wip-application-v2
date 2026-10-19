@@ -1,0 +1,10 @@
+export const DETAIL_REVIEW_STAY_MS = 3000;
+export const EXTERNAL_LINK_OPEN_DELAY_MS = 800;
+export const SKELETON_FADE_DURATION_MS = 800;
+export const SKELETON_MIN_OPACITY = 0.3;
+
+export const PILL_DETAIL_ACTION_COLOR = '#32D2FF';
+
+export const CLASSIFICATION_CACHE_LIMIT = 200;
+
+export const KEYWORD_SCROLL_TOP_INSET = 24;

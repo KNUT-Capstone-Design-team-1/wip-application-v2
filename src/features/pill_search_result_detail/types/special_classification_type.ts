@@ -9,3 +9,8 @@ export interface ISpecialClassificationResult {
   prohibitedIngredients: string[];
   prohibitedNotes: string[];
 }
+
+export type ClassificationResultCache = Map<
+  string,
+  ISpecialClassificationResult
+>;

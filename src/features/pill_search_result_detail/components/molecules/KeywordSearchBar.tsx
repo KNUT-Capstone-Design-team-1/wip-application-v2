@@ -1,13 +1,13 @@
 import { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import { COLOR_TEXT } from '@constants/color';
-import { fontPx, px } from '@utils/responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
-import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
+import { COLOR_TEXT } from '@constants/color';
+import { fontPx, px } from '@utils/responsive';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
+import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { styles } from '../../styles/molecules/KeywordSearchBar';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
 
 // 본문 위에 고정되는 이전·다음 원형 버튼.
 const KeywordSearchBar = () => {

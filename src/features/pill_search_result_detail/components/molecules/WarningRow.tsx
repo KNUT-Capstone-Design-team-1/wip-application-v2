@@ -1,20 +1,13 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { AlertTriangle } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
-import { fontPx } from '@utils/responsive';
 import InfoRow from '@features/shared/components/InfoRow';
-import WarningKeywords from '../atoms/WarningKeywords';
+import { fontPx } from '@utils/responsive';
 import { styles } from '../../styles/molecules/PillSafetySection';
-
-interface Props {
-  label: string;
-  isWarning?: boolean;
-  prefixLabel?: string;
-  items?: string[] | null;
-  footerNote?: string;
-}
+import type { WarningRowProps } from '../../types/pill_detail_component_type';
+import WarningKeywords from '../atoms/WarningKeywords';
+import { AlertTriangle } from 'lucide-react-native';
 
 // 분류 여부와 해당 문구 표시.
 const WarningRow = ({
@@ -23,7 +16,7 @@ const WarningRow = ({
   prefixLabel = '해당 성분: ',
   items,
   footerNote,
-}: Props) => {
+}: WarningRowProps) => {
   if (!isWarning) {
     return <InfoRow label={label} value="해당 없음 (X)" />;
   }

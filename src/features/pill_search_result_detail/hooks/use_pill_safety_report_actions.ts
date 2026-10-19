@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { useExternalUrlStore } from '@store/external_url_store';
 import { Alert, Linking } from 'react-native';
+import { useExternalUrlStore } from '@store/external_url_store';
 import logger from '@utils/logger';
-import { IPillDetail } from '../types/pill_detail_type';
+import type { IPillDetail } from '../types/pill_detail_type';
 
 // 분류 정보 신고 메일 열기.
 export const usePillSafetyReportActions = (

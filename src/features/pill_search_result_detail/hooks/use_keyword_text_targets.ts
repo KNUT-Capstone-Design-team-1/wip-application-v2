@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Text, TextLayoutEvent } from 'react-native';
-import { KeywordTarget } from '../types/keyword_navigation_type';
-import { KeywordMatch } from '../utils/keyword_matches';
-import {
+import type {
+  KeywordTarget,
+  KeywordMatch,
   KeywordTextLineRange,
+} from '../types/keyword_navigation_type';
+import {
   buildKeywordLineRanges,
   findKeywordLineOffset,
 } from '../utils/keyword_text_layout';

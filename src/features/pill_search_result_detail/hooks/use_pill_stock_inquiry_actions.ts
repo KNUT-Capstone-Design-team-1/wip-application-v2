@@ -1,30 +1,26 @@
 import { useCallback } from 'react';
 import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
-import { IPillDetail } from '../types/pill_detail_type';
+import { usePillDetailContext } from './use_pill_detail_context';
 
-// 재고 문의 명령 제공.
-export const usePillStockInquiryActions = (
-  data: IPillDetail,
-  image?: string,
-) => {
-  const onStockInquiry = useCallback(
-    () =>
-      openStockInquiryModal({
-        seq: data.ITEM_SEQ,
-        name: data.ITEM_NAME,
-        entpName: data.ENTP_NAME,
-        className: data.CLASS_NAME,
-        image: image || data.ITEM_IMAGE,
-      }),
-    [
-      data.ITEM_SEQ,
-      data.ITEM_NAME,
-      data.ENTP_NAME,
-      data.CLASS_NAME,
-      data.ITEM_IMAGE,
-      image,
-    ],
-  );
+// 클릭 시 최신 알약 정보로 재고 문의.
+export const usePillStockInquiryActions = () => {
+  const store = usePillDetailContext();
+
+  const onStockInquiry = useCallback(() => {
+    const { pillData: data, image } = store.getState();
+
+    if (!data) {
+      return;
+    }
+
+    openStockInquiryModal({
+      seq: data.ITEM_SEQ,
+      name: data.ITEM_NAME,
+      entpName: data.ENTP_NAME,
+      className: data.CLASS_NAME,
+      image: image || data.ITEM_IMAGE,
+    });
+  }, [store]);
 
   return { onStockInquiry };
 };

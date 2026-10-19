@@ -1,14 +1,10 @@
 import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { TABLE_FONT_SOURCES } from '../constants/table_webview';
 import { buildTableKeywordScript } from './table_keyword_script';
-
-const FONT_SOURCES: Record<string, string> = {
-  ios: "local('Pretendard-Regular')",
-  android: "url('file:///android_res/font/pretendard_regular.ttf')",
-};
 
 // 플랫폼별 표 글꼴 선언.
 const buildFontFace = (platform: string): string => {
-  const source = FONT_SOURCES[platform];
+  const source = TABLE_FONT_SOURCES[platform];
 
   if (!source) {
     return '';

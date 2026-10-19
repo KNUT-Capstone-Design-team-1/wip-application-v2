@@ -1,20 +1,16 @@
 import { memo, useMemo } from 'react';
 import { Text } from 'react-native';
-import { BaseText, IBaseTextProps } from '@components/common/BaseText';
 import { useStore } from 'zustand';
-import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
-import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
-import { useKeywordTextTargets } from '../../hooks/use_keyword_text_targets';
+import { BaseText } from '@components/common/BaseText';
 import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
+import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
+import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
+import { useKeywordTextTargets } from '../../hooks/use_keyword_text_targets';
+import type { KeywordTextProps } from '../../types/pill_detail_component_type';
 import { findKeywordMatches } from '../../utils/keyword_matches';
 
-interface Props extends IBaseTextProps {
-  text: string;
-  targetId?: string;
-}
-
 // 검색 문구 강조 표시.
-const KeywordText = ({ text, targetId, ...props }: Props) => {
+const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
   const { store } = useKeywordNavigationContext();
   const { select } = useKeywordNavigationActions();
   const keywords = useStore(store, (state) => state.keywords);

@@ -1,4 +1,4 @@
-import {
+import type {
   TableKeywordMatch,
   TableWebViewMessage,
 } from '../types/table_webview_type';
@@ -19,8 +19,8 @@ const isTableKeywordMatch = (value: unknown): value is TableKeywordMatch => {
   );
 };
 
-// 표 검색 메시지 해석.
-const parseMatchMessage = (raw: string): TableWebViewMessage => {
+// 표의 검색 결과·키워드 이벤트 메시지 해석.
+const parseJsonMessage = (raw: string): TableWebViewMessage => {
   try {
     const parsed = JSON.parse(raw);
 
@@ -58,7 +58,7 @@ const parseMatchMessage = (raw: string): TableWebViewMessage => {
 // 검색 좌표·높이 메시지 분류.
 export const parseTableWebViewMessage = (raw: string): TableWebViewMessage => {
   if (raw.startsWith('{')) {
-    return parseMatchMessage(raw);
+    return parseJsonMessage(raw);
   }
 
   const height = parseInt(raw, 10);

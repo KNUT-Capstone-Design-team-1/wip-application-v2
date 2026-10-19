@@ -12,6 +12,7 @@ export const useKeywordNavigationActions = () => {
     },
     [store, controller],
   );
+
   // 강조된 본문 항목에서 탐색 시작.
   const select = useCallback(
     (targetId: string) => {
@@ -27,7 +28,9 @@ export const useKeywordNavigationActions = () => {
     store.getState().setVisible(false);
     controller.cancel();
   }, [store, controller]);
+
   const previous = useCallback(() => controller.previous(), [controller]);
+
   const next = useCallback(() => controller.next(), [controller]);
 
   return useMemo(

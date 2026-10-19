@@ -1,29 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Platform } from 'react-native';
 import WebView, { WebViewMessageEvent } from 'react-native-webview';
-import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
-import { KeywordTarget } from '../types/keyword_navigation_type';
-import { TableKeywordMatch } from '../types/table_webview_type';
+import type { KeywordTarget } from '../types/keyword_navigation_type';
+import type { TableKeywordMatch } from '../types/table_webview_type';
+import { createTableLoadState } from '../utils/table_load_state';
 import { buildTableWebViewHtml } from '../utils/table_webview_html';
 import { parseTableWebViewMessage } from '../utils/table_webview_message';
-import { createTableLoadState } from '../utils/table_load_state';
+import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
 
-// 표 문서·로딩·검색 좌표 연결.
-export const useTableWebView = (
-  html: string,
-  keywords: string[],
-  targetId?: string,
-) => {
-  const { register, select, dismiss } = useKeywordNavigationActions();
+// 표의 네이티브 좌표·준비 상태·키워드 선택 관리.
+const useTableKeywordTargets = (sourceHtml: string, targetId?: string) => {
+  const { register, select } = useKeywordNavigationActions();
   const wrapper = useRef<View>(null);
   const webView = useRef<WebView>(null);
   const matches = useRef<TableKeywordMatch[]>([]);
   const readiness = useMemo(createTableLoadState, []);
-  const [height, setHeight] = useState(100);
-  const source = useMemo(
-    () => ({ html: buildTableWebViewHtml(html, keywords, Platform.OS) }),
-    [html, keywords],
-  );
 
   // 현재 표의 검색 결과 측정.
   const measureTargets = useCallback(
@@ -77,46 +68,90 @@ export const useTableWebView = (
     matches.current = [];
 
     return readiness.release;
-  }, [source, readiness]);
+  }, [sourceHtml, readiness]);
 
-  // 브라우저 좌표·높이 반영.
+  // 검증된 검색 결과 목록 반영.
+  const updateMatches = useCallback((items: TableKeywordMatch[]) => {
+    matches.current = items;
+  }, []);
+
+  // 현재 표에 존재하는 항목만 선택.
+  const selectMatch = useCallback(
+    (index: number, keyword: string) => {
+      if (
+        !targetId ||
+        !matches.current.some(
+          (match) => match.index === index && match.keyword === keyword,
+        )
+      ) {
+        return;
+      }
+
+      void select(targetId + ':' + index);
+    },
+    [targetId, select],
+  );
+
+  return {
+    wrapper,
+    webView,
+    updateMatches,
+    selectMatch,
+    complete: readiness.complete,
+  };
+};
+
+// 표 문서·높이 상태와 브라우저 메시지 연결.
+export const useTableWebView = (
+  html: string,
+  keywords: string[],
+  targetId?: string,
+) => {
+  const [height, setHeight] = useState(100);
+  const source = useMemo(
+    () => ({ html: buildTableWebViewHtml(html, keywords, Platform.OS) }),
+    [html, keywords],
+  );
+  const { wrapper, webView, updateMatches, selectMatch, complete } =
+    useTableKeywordTargets(source.html, targetId);
+  const { dismiss } = useKeywordNavigationActions();
+
   const onMessage = useCallback(
     (event: WebViewMessageEvent) => {
       const message = parseTableWebViewMessage(event.nativeEvent.data);
 
-      if (message.type === 'invalid') {
-        return;
-      }
+      switch (message.type) {
+        case 'dismiss': {
+          dismiss();
 
-      if (message.type === 'dismiss') {
-        dismiss();
-
-        return;
-      }
-
-      if (message.type === 'keywordPress') {
-        const match = matches.current.find(
-          (item) =>
-            item.index === message.index && item.keyword === message.keyword,
-        );
-
-        if (targetId && match) {
-          select(targetId + ':' + match.index);
+          return;
         }
 
-        return;
+        case 'keywordPress': {
+          selectMatch(message.index, message.keyword);
+
+          return;
+        }
+
+        case 'matches': {
+          updateMatches(message.matches);
+
+          return;
+        }
+
+        case 'height': {
+          complete();
+          setHeight(message.height);
+
+          return;
+        }
+
+        default: {
+          return;
+        }
       }
-
-      if (message.type === 'matches') {
-        matches.current = message.matches;
-
-        return;
-      }
-
-      readiness.complete();
-      setHeight(message.height);
     },
-    [readiness, targetId, select, dismiss],
+    [dismiss, selectMatch, updateMatches, complete],
   );
 
   return { height, source, wrapper, webView, onMessage };

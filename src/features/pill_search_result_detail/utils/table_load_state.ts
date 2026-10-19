@@ -1,3 +1,5 @@
+import { TABLE_READY_TIMEOUT_MS } from '../constants/table_webview';
+
 // 표 로딩 대기·해제 관리.
 export const createTableLoadState = () => {
   let loaded = false;
@@ -27,7 +29,7 @@ export const createTableLoadState = () => {
         resolve();
       };
 
-      const timer = setTimeout(finish, 2000);
+      const timer = setTimeout(finish, TABLE_READY_TIMEOUT_MS);
       waiters.add(finish);
     });
   };

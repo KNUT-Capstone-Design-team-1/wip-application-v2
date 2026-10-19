@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren } from 'react';
-import { KeywordNavigationScope } from '../types/keyword_navigation_scope_type';
 import { useCreateKeywordNavigationScope } from '../hooks/use_create_keyword_navigation_scope';
+import type { KeywordNavigationScope } from '../types/keyword_navigation_type';
 
 export const KeywordNavigationContext =
   createContext<KeywordNavigationScope | null>(null);

@@ -1,18 +1,14 @@
 import { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
 import { styles } from '../../styles/organisms/PillDetailInfo';
-
-interface Props {
-  isExpanded: boolean;
-  onToggle: () => void;
-}
+import type { PillSpecsToggleProps } from '../../types/pill_detail_component_type';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
 
 // 상세 제원 더보기 버튼.
-const PillSpecsToggle = ({ isExpanded, onToggle }: Props) => {
+const PillSpecsToggle = ({ isExpanded, onToggle }: PillSpecsToggleProps) => {
   const Icon = isExpanded ? ChevronUp : ChevronDown;
 
   return (

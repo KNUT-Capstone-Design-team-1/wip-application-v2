@@ -1,8 +1,5 @@
-export interface KeywordMatch {
-  keyword: string;
-  start: number;
-  end: number;
-}
+import type { KeywordMatch } from '../types/keyword_navigation_type';
+
 export const findKeywordMatches = (
   text: string,
   keywords: readonly string[],

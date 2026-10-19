@@ -1,88 +1,76 @@
+import type {
+  RawDocument,
+  RawSection,
+  RawArticle,
+  RawParagraph,
+  PillArticle,
+  PillDocument,
+  PillParagraph,
+  PillSection,
+} from '../types/pill_document_type';
 import { XMLParser } from 'fast-xml-parser';
 
-const decodeHTMLEntities = (text: string) => {
-  return text
+// 단일·반복 XML 노드를 동일한 배열로 변환.
+const asArray = <T>(value?: T | T[]): T[] => {
+  if (!value) {
+    return [];
+  }
+
+  return Array.isArray(value) ? value : [value];
+};
+
+// 본문 HTML 엔티티 복원.
+const decodeHTMLEntities = (text: string): string =>
+  text
     .replace(/&nbsp;/g, ' ')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+    .replace(/&#(\d+);/g, (_, dec: string) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) =>
       String.fromCharCode(parseInt(hex, 16)),
     );
+
+// 표·일반 문단의 표시 데이터 변환.
+const mapParagraph = (raw: RawParagraph): PillParagraph => {
+  const paragraph: PillParagraph = { tagName: raw['@_tagName'] || '' };
+  const text = String(raw['#text'] ?? raw.content ?? '').trim();
+
+  if (raw['@_textIndent'] !== undefined && raw['@_textIndent'] !== '') {
+    paragraph.textIndent = String(raw['@_textIndent']);
+  }
+
+  if (raw['@_marginLeft'] !== undefined && raw['@_marginLeft'] !== '') {
+    paragraph.marginLeft = String(raw['@_marginLeft']);
+  }
+
+  if (paragraph.tagName === 'table') {
+    paragraph.table = text;
+
+    return paragraph;
+  }
+
+  paragraph.content = decodeHTMLEntities(text);
+
+  return paragraph;
 };
 
-const mapParagraph = (p: any) => {
-  const isTable = p['@_tagName'] === 'table';
-  const contentStr = p['#text'] || p.content || '';
+// 조항과 하위 문단 변환.
+const mapArticle = (raw: RawArticle): PillArticle => ({
+  title: raw['@_title'] || '',
+  paragraphs: asArray(raw.PARAGRAPH).map(mapParagraph),
+});
 
-  const mapped: any = {
-    tagName: p['@_tagName'],
-  };
+// 절과 하위 조항 변환.
+const mapSection = (raw: RawSection): PillSection => ({
+  title: raw['@_title'] || '',
+  articles: asArray(raw.ARTICLE).map(mapArticle),
+});
 
-  if (p['@_textIndent'] !== undefined && p['@_textIndent'] !== '') {
-    mapped.textIndent = p['@_textIndent'];
-  }
-
-  if (p['@_marginLeft'] !== undefined && p['@_marginLeft'] !== '') {
-    mapped.marginLeft = p['@_marginLeft'];
-  }
-
-  if (isTable) {
-    mapped.table =
-      typeof contentStr === 'string' ? contentStr.trim() : contentStr;
-  } else {
-    mapped.content =
-      typeof contentStr === 'string'
-        ? decodeHTMLEntities(contentStr.trim())
-        : contentStr;
-  }
-
-  return mapped;
-};
-
-const mapArticle = (a: any) => {
-  const paragraphsRaw = a.PARAGRAPH;
-  let paragraphs: any[] = [];
-
-  if (Array.isArray(paragraphsRaw)) {
-    paragraphs = paragraphsRaw.map(mapParagraph);
-  } else if (paragraphsRaw) {
-    paragraphs = [mapParagraph(paragraphsRaw)];
-  }
-
-  if (paragraphs.length === 0) {
-    return {
-      title: a['@_title'] || '',
-      content: '',
-    };
-  }
-
-  return {
-    title: a['@_title'] || '',
-    paragraphs,
-  };
-};
-
-const mapSection = (s: any) => {
-  const articlesRaw = s.ARTICLE;
-  let articles: any[] = [];
-
-  if (Array.isArray(articlesRaw)) {
-    articles = articlesRaw.map(mapArticle);
-  } else if (articlesRaw) {
-    articles = [mapArticle(articlesRaw)];
-  }
-
-  return {
-    title: s['@_title'] || '',
-    articles,
-  };
-};
-
-export const xmlToJson = (xml: string) => {
+// 상세 XML을 렌더링 전용 문서로 변환.
+export const xmlToJson = (xml: string): { doc: PillDocument | null } => {
   if (!xml) {
     return { doc: null };
   }
@@ -92,31 +80,20 @@ export const xmlToJson = (xml: string) => {
       ignoreAttributes: false,
       attributeNamePrefix: '@_',
     });
-    const raw = parser.parse(xml);
+    const raw: { DOC?: RawDocument } = parser.parse(xml);
 
-    if (!raw || !raw.DOC) {
+    if (!raw?.DOC) {
       return { doc: null };
-    }
-
-    const docRaw = raw.DOC;
-
-    const sectionsRaw = docRaw.SECTION;
-    let sections: any[] = [];
-
-    if (Array.isArray(sectionsRaw)) {
-      sections = sectionsRaw.map(mapSection);
-    } else if (sectionsRaw) {
-      sections = [mapSection(sectionsRaw)];
     }
 
     return {
       doc: {
-        title: docRaw['@_title'] || '',
-        sections,
+        title: raw.DOC['@_title'] || '',
+        sections: asArray(raw.DOC.SECTION).map(mapSection),
       },
     };
-  } catch (e) {
-    console.error('XML Parsing error:', e);
+  } catch (error) {
+    console.error('XML Parsing error:', error);
 
     return { doc: null };
   }

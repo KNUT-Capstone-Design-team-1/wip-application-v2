@@ -1,4 +1,4 @@
-import { IPillDetail } from '../types/pill_detail_type';
+import type { IPillDetail } from '../types/pill_detail_type';
 
 // 분류별 표시 문구 병합.
 export const collectPillWarningKeywords = (

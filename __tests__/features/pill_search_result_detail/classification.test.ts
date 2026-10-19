@@ -1,7 +1,4 @@
-import {
-  checkSpecialClassifications,
-  processTokens,
-} from '../../../src/features/pill_search_result_detail/services/special_classification_service';
+import { checkSpecialClassifications } from '../../../src/features/pill_search_result_detail/services/special_classification_service';
 import { ClassificationEntry } from '../../../src/services/database/queries/classification_catalog';
 jest.mock(
   '@features/pill_search_result_detail/data/repositories/pill_detail_repository',
@@ -28,12 +25,6 @@ const catalog: ClassificationEntry[] = [
     contents: 'S6 Including, but not limited to: • Ephedrine',
   },
 ];
-test('한글 토큰을 보존하고 영문 수식어와 중복을 처리한다', () => {
-  expect(processTokens('에페드린 / Ephedrine hydrochloride')).toEqual([
-    '에페드린',
-    'ephedrine',
-  ]);
-});
 test('실제 contents 필드로 도핑을 판별하고 빈 분류명은 일치시키지 않는다', async () => {
   const repo = {
     getClassificationCatalog: jest.fn().mockResolvedValue(catalog),

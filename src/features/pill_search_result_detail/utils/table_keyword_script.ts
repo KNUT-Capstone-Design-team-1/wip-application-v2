@@ -1,7 +1,14 @@
 import { KEYWORD_HIGHLIGHT_STYLE } from '../constants/keyword_highlight';
+import { TABLE_HEIGHT_MESSAGE_DELAY_MS } from '../constants/table_webview';
 
-const TABLE_KEYWORD_SCRIPT = String.raw`
-const keywords = __KEYWORDS__;
+// 검색어·강조색과 표 내부 이벤트 스크립트 조합.
+export const buildTableKeywordScript = (
+  keywords: readonly string[],
+): string => {
+  const serialized = JSON.stringify(keywords).replace(/</g, '\\u003c');
+
+  return String.raw`
+const keywords = ${serialized};
 
 // 검색 가능한 텍스트 노드 수집.
 function collectTextNodes() {
@@ -135,16 +142,8 @@ window.onload = function () {
     event.preventDefault();
     handleKeywordPress(event);
   });
-  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, ${TABLE_HEIGHT_MESSAGE_DELAY_MS});
 };
 window.addEventListener('resize', sendHeight);
 `;
-
-// 검색어를 스크립트 리터럴로 삽입.
-export const buildTableKeywordScript = (
-  keywords: readonly string[],
-): string => {
-  const serialized = JSON.stringify(keywords).replace(/</g, '\\u003c');
-
-  return TABLE_KEYWORD_SCRIPT.replace('__KEYWORDS__', () => serialized);
 };

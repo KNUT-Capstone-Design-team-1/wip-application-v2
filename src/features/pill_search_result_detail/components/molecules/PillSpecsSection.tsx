@@ -1,23 +1,26 @@
-import PillPhysicalSpecs from './specs/PillPhysicalSpecs';
+import { memo } from 'react';
+import { View } from 'react-native';
+import { useStore } from 'zustand';
+import InfoRow from '@features/shared/components/InfoRow';
+import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
+import { usePillSpecsExpansion } from '../../hooks/use_pill_detail_expansion';
+import { styles } from '../../styles/molecules/PillSpecsSection';
+import PillSpecsToggle from '../atoms/PillSpecsToggle';
+import KeywordInfoRow from './KeywordInfoRow';
 import PillIngredientSpecs from './specs/PillIngredientSpecs';
 import PillManagementSpecs from './specs/PillManagementSpecs';
 import PillOtherSpecs from './specs/PillOtherSpecs';
-import { memo } from 'react';
-import KeywordInfoRow from './KeywordInfoRow';
-import PillSpecsToggle from '../atoms/PillSpecsToggle';
-import { usePillSpecsExpansion } from '../../hooks/use_pill_specs_expansion';
-import { View } from 'react-native';
-import InfoRow from '@features/shared/components/InfoRow';
-import { IPillDetail } from '../../types/pill_detail_type';
-import { styles } from '../../styles/molecules/PillSpecsSection';
-
-interface IPillSpecsSectionProps {
-  data: IPillDetail;
-}
+import PillPhysicalSpecs from './specs/PillPhysicalSpecs';
 
 // 기본·확장 제원 그룹 구성.
-const PillSpecsSection = ({ data }: IPillSpecsSectionProps) => {
+const PillSpecsSection = () => {
+  const store = usePillDetailContext();
+  const data = useStore(store, (state) => state.pillData);
   const { moreInfo, toggle } = usePillSpecsExpansion(data);
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <>

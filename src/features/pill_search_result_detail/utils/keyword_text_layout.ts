@@ -1,12 +1,7 @@
-interface TextLine {
-  text: string;
-  y: number;
-}
-export interface KeywordTextLineRange {
-  start: number;
-  end: number;
-  y: number;
-}
+import type {
+  KeywordTextLineRange,
+  TextLine,
+} from '../types/keyword_navigation_type';
 
 // 네이티브 줄을 본문 문자 범위로 변환.
 export const buildKeywordLineRanges = (

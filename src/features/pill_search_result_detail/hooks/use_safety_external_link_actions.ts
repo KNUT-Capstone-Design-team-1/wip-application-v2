@@ -3,8 +3,8 @@ import { Linking } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useToast } from '@hooks/use_toast';
 import { useExternalUrlStore } from '@store/external_url_store';
-
-export type SafetyExternalUrlKey = 'nifdsUrl' | 'kadaUrl';
+import { EXTERNAL_LINK_OPEN_DELAY_MS } from '../constants/pill_detail';
+import type { SafetyExternalUrlKey } from '../types/pill_detail_component_type';
 
 // 성분 복사·외부 정보 열기 명령.
 export const useSafetyExternalLinkActions = (
@@ -27,7 +27,7 @@ export const useSafetyExternalLinkActions = (
 
     setTimeout(() => {
       Linking.openURL(url);
-    }, 800);
+    }, EXTERNAL_LINK_OPEN_DELAY_MS);
   }, [urlKey, materialEngName, showToast]);
 
   return { handlePress };

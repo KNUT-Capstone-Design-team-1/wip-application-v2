@@ -1,17 +1,12 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import KeywordText from '../atoms/KeywordText';
 import { styles } from '../../styles/molecules/KeywordInfoRow';
-
-interface Props {
-  label: string;
-  text?: string;
-  targetId: string;
-}
+import type { KeywordInfoRowProps } from '../../types/pill_detail_component_type';
+import KeywordText from '../atoms/KeywordText';
 
 // 좌표 측정이 가능한 독립 텍스트로 키워드 행 표시.
-const KeywordInfoRow = ({ label, text, targetId }: Props) => {
+const KeywordInfoRow = ({ label, text, targetId }: KeywordInfoRowProps) => {
   if (!text || text === 'null') {
     return null;
   }

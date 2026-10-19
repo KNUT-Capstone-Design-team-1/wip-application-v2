@@ -1,28 +1,20 @@
-import {
+import { KEYWORD_SCROLL_TOP_INSET } from '../constants/pill_detail';
+import type {
+  KeywordNavigationOptions,
   KeywordMeasure,
   KeywordTarget,
-  KeywordNavigationAvailability,
 } from '../types/keyword_navigation_type';
 import {
   findKeywordTargetIndex,
   measureKeywordTargets,
 } from './keyword_navigation_targets';
-export type {
-  KeywordMeasure,
-  KeywordTarget,
-} from '../types/keyword_navigation_type';
-
-interface Options {
-  getKeywords: () => readonly string[];
-  setAvailability: (availability: KeywordNavigationAvailability) => void;
-  getViewportY: () => Promise<number>;
-  scrollTo: (y: number) => void;
-  nextFrame: () => Promise<void>;
-}
 
 // 화면별 본문 검색·이동 제어.
-export const createKeywordNavigationController = (options: Options) => {
+export const createKeywordNavigationController = (
+  options: KeywordNavigationOptions,
+) => {
   const registry = new Map<string, KeywordMeasure>();
+
   const openers = new Set<(keywords: readonly string[]) => void>();
   let scrollY = 0;
   let cursorId: string | null = null;
@@ -85,7 +77,10 @@ export const createKeywordNavigationController = (options: Options) => {
 
     hasMeasured = true;
     targets = measured
-      .map((target) => ({ ...target, y: target.y - viewportY + scrollY - 24 }))
+      .map((target) => ({
+        ...target,
+        y: target.y - viewportY + scrollY - KEYWORD_SCROLL_TOP_INSET,
+      }))
       .sort((a, b) => a.y - b.y);
 
     return true;

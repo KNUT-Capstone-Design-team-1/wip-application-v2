@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { IPillDetail } from '../../types/pill_detail_type';
 import { usePillSafetyReportActions } from '../../hooks/use_pill_safety_report_actions';
 import { styles } from '../../styles/molecules/PillSafetySection';
+import type { PillDetailDataProps } from '../../types/pill_detail_component_type';
 
 // 출처·신고 안내 표시.
-const PillSafetyDisclaimer = ({ data }: { data: IPillDetail }) => {
+const PillSafetyDisclaimer = ({ data }: PillDetailDataProps) => {
   const { handleReport } = usePillSafetyReportActions(data);
 
   return (

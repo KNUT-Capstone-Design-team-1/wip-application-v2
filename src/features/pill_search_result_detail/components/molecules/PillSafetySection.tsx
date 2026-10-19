@@ -1,14 +1,14 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
+import type { PillDetailDataProps } from '../../types/pill_detail_component_type';
 import ExternalLinkButton from '../atoms/SafetyExternalLinkButton';
-import WarningRow from './WarningRow';
 import PillSafetyDisclaimer from './PillSafetyDisclaimer';
+import WarningRow from './WarningRow';
 
 // 주의·특수 분류 정보 구성.
-const PillSafetySection = ({ data }: { data: IPillDetail }) => {
+const PillSafetySection = ({ data }: PillDetailDataProps) => {
   return (
     <View style={styles.container}>
       <BaseText weight="bold" size={16} style={styles.title}>

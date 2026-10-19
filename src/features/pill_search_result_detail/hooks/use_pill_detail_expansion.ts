@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { IPillDetail } from '../types/pill_detail_type';
+import type { IPillDetail } from '../types/pill_detail_type';
 import { hasMoreInfoKeyword } from '../utils/pill_specs_fields';
 import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
 
 // 제원 접기 상태·키워드 검색 시 자동 펼침 관리.
-export const usePillSpecsExpansion = (data: IPillDetail) => {
+export const usePillSpecsExpansion = (data: IPillDetail | null) => {
   const [moreInfo, setMoreInfo] = useState(false);
   const { registerOpener } = useKeywordNavigationActions();
+
   const toggle = useCallback(() => setMoreInfo((previous) => !previous), []);
+
   const openForKeywords = useCallback(
     (keywords: readonly string[]) => {
-      if (!hasMoreInfoKeyword(data, keywords)) {
+      if (!data || !hasMoreInfoKeyword(data, keywords)) {
         return;
       }
 
@@ -25,4 +27,18 @@ export const usePillSpecsExpansion = (data: IPillDetail) => {
   );
 
   return { moreInfo, toggle };
+};
+
+// 각 문서의 접기 상태·검색 시 자동 펼침 관리.
+export const useDetailSectionExpansion = () => {
+  const [isOpen, setOpen] = useState(true);
+  const { registerOpener } = useKeywordNavigationActions();
+
+  const toggle = useCallback(() => setOpen((previous) => !previous), []);
+
+  const open = useCallback(() => setOpen(true), []);
+
+  useEffect(() => registerOpener(open), [registerOpener, open]);
+
+  return { isOpen, toggle };
 };

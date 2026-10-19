@@ -1,39 +1,49 @@
 import { View, ScrollView } from 'react-native';
+import { useStore } from 'zustand';
 import { BaseText } from '@components/common/BaseText';
-import { IPillDetail } from '../../types/pill_detail_type';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationInit } from '../../hooks/use_keyword_navigation_init';
 import { useKeywordNavigationScroll } from '../../hooks/use_keyword_navigation_scroll';
-import { usePillStockInquiryActions } from '../../hooks/use_pill_stock_inquiry_actions';
+import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
+import {
+  usePillDetailReviewInit,
+  usePillDetailMetadataInit,
+} from '../../hooks/use_pill_detail_screen_init';
 import { styles } from '../../styles/PillSearchResultDetailScreen';
 import KeywordSearchBar from '../molecules/KeywordSearchBar';
 import PillDetailImage from '../molecules/PillDetailImage';
 import PillDetailInfo from './PillDetailInfo';
 
-interface Props {
-  data: IPillDetail;
-  image?: string;
-  isSaved: boolean;
-  detailLoading?: boolean;
-  onSaveToggle: () => void;
-}
-
-// 상세 본문 레이아웃·스크롤 연결.
-const PillDetailContent = ({
-  data,
-  image,
-  isSaved,
-  detailLoading,
-  onSaveToggle,
-}: Props) => {
+// 데이터 변경에 따른 비시각적 생명주기 격리.
+const PillDetailLifecycle = () => {
+  const store = usePillDetailContext();
+  const data = useStore(store, (state) => state.pillData);
   useKeywordNavigationInit(data);
+  usePillDetailMetadataInit(data?.ITEM_SEQ, data?.ITEM_NAME);
+  usePillDetailReviewInit(data?.ITEM_SEQ);
+
+  return null;
+};
+
+// 상세 화면 공통 참고 안내.
+const PillDetailDisclaimer = () => (
+  <View style={styles.disclaimerWrapper}>
+    <BaseText weight="semiBold" size={13} style={styles.disclaimerText}>
+      본 앱의 정보는 참고용이며, 정확한 의학적 진단 및 치료를 대신할 수
+      없습니다. 의약품 복용 시 반드시 의사나 약사와 상담하십시오.
+    </BaseText>
+  </View>
+);
+
+// 데이터 구독 없는 본문 레이아웃·스크롤 연결.
+const PillDetailContent = () => {
   const { dismiss } = useKeywordNavigationActions();
   const { scrollRef, onScroll, onScrollBeginDrag } =
     useKeywordNavigationScroll();
-  const { onStockInquiry } = usePillStockInquiryActions(data, image);
 
   return (
     <View style={styles.contentWrapper}>
+      <PillDetailLifecycle />
       <ScrollView
         ref={scrollRef}
         onTouchStart={dismiss}
@@ -44,20 +54,9 @@ const PillDetailContent = ({
         style={styles.scrollViewWrapper}
       >
         <View style={styles.viewWrapper}>
-          <PillDetailImage uri={image || data.ITEM_IMAGE} />
-          <PillDetailInfo
-            data={data}
-            saveState={isSaved}
-            onSaveToggle={onSaveToggle}
-            onStockInquiry={onStockInquiry}
-            detailLoading={detailLoading}
-          />
-          <View style={styles.disclaimerWrapper}>
-            <BaseText weight="semiBold" size={13} style={styles.disclaimerText}>
-              본 앱의 정보는 참고용이며, 정확한 의학적 진단 및 치료를 대신할 수
-              없습니다. 의약품 복용 시 반드시 의사나 약사와 상담하십시오.
-            </BaseText>
-          </View>
+          <PillDetailImage />
+          <PillDetailInfo />
+          <PillDetailDisclaimer />
         </View>
       </ScrollView>
       <KeywordSearchBar />

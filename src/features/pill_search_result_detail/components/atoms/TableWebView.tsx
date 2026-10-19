@@ -1,18 +1,14 @@
 import { memo } from 'react';
-import { useStore } from 'zustand';
-import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { View } from 'react-native';
 import WebView from 'react-native-webview';
+import { useStore } from 'zustand';
+import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { useTableWebView } from '../../hooks/use_table_webview';
 import { styles } from '../../styles/atoms/TableWebView';
-
-interface Props {
-  html: string;
-  targetId?: string;
-}
+import type { TableWebViewProps } from '../../types/pill_detail_component_type';
 
 // 표 WebView 표시.
-const TableWebView = ({ html, targetId }: Props) => {
+const TableWebView = ({ html, targetId }: TableWebViewProps) => {
   const { store } = useKeywordNavigationContext();
   const keywords = useStore(store, (state) => state.keywords);
   const { height, source, wrapper, webView, onMessage } = useTableWebView(

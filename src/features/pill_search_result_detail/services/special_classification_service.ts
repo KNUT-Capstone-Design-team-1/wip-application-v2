@@ -1,26 +1,20 @@
-import { pillDetailRepository } from '../data/repositories/pill_detail_repository';
-import { ISpecialClassificationResult } from '../types/special_classification_type';
-import type { ClassificationEntry } from '@services/database/queries/classification_catalog';
 import {
   findControlledMatches,
   findClassificationProhibitedMatches,
 } from '@services/database/matching/classification_matcher';
-import {
-  normalizeChemicalText,
-  splitChemicalList,
-  ingredientNameVariants,
-} from '@services/database/matching/substance_names';
-export { getDrivingWarningKeywords } from './driving_warning_service';
+import { normalizeChemicalText } from '@services/database/matching/substance_names';
+import type { ClassificationEntry } from '@services/database/queries/classification_catalog';
+import { CLASSIFICATION_CACHE_LIMIT } from '../constants/pill_detail';
+import { pillDetailRepository } from '../data/repositories/pill_detail_repository';
+import type {
+  ISpecialClassificationResult,
+  ClassificationResultCache,
+} from '../types/special_classification_type';
 
-type ResultCache = Map<string, ISpecialClassificationResult>;
-const CACHE_LIMIT = 200;
-const resultCaches = new WeakMap<ClassificationEntry[], ResultCache>();
-
-// 성분별 기본 명칭 추출.
-export const processTokens = (text: string): string[] =>
-  splitChemicalList(text)
-    .map((name) => ingredientNameVariants(name).at(-1)!)
-    .filter(Boolean);
+const resultCaches = new WeakMap<
+  ClassificationEntry[],
+  ClassificationResultCache
+>();
 
 // 빈 분류 결과 생성.
 const createEmptyClassifications = (): ISpecialClassificationResult => ({
@@ -36,14 +30,16 @@ const createEmptyClassifications = (): ISpecialClassificationResult => ({
 });
 
 // 카탈로그별 계산 캐시 반환.
-const getResultCache = (catalog: ClassificationEntry[]): ResultCache => {
+const getClassificationResultCache = (
+  catalog: ClassificationEntry[],
+): ClassificationResultCache => {
   const cached = resultCaches.get(catalog);
 
   if (cached) {
     return cached;
   }
 
-  const cache: ResultCache = new Map();
+  const cache: ClassificationResultCache = new Map();
   resultCaches.set(catalog, cache);
 
   return cache;
@@ -92,11 +88,11 @@ const buildClassificationResult = (
 
 // 크기 제한을 지키며 계산 결과 저장.
 const rememberResult = (
-  cache: ResultCache,
+  cache: ClassificationResultCache,
   key: string,
   result: ISpecialClassificationResult,
 ) => {
-  if (cache.size >= CACHE_LIMIT) {
+  if (cache.size >= CLASSIFICATION_CACHE_LIMIT) {
     cache.delete(cache.keys().next().value!);
   }
 
@@ -120,7 +116,7 @@ export const checkSpecialClassifications = async (
   }
 
   const catalog = await repository.getClassificationCatalog();
-  const cache = getResultCache(catalog);
+  const cache = getClassificationResultCache(catalog);
   const key = JSON.stringify([kr, en]);
   const cached = cache.get(key);
 

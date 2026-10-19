@@ -1,8 +1,8 @@
 import { useMemo, useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { createKeywordNavigationStore } from '../store/keyword_navigation_store';
+import type { KeywordNavigationScope } from '../types/keyword_navigation_type';
 import { createKeywordNavigationController } from '../utils/keyword_navigation_controller';
-import { KeywordNavigationScope } from '../types/keyword_navigation_scope_type';
 
 // 네이티브 레이아웃 반영 대기.
 const waitForNativeLayout = (): Promise<void> =>

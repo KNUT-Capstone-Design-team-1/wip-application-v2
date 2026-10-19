@@ -1,5 +1,7 @@
-import { getPillIngredientFields } from '../../../src/features/pill_search_result_detail/utils/pill_ingredient_fields';
-import { hasMoreInfoKeyword } from '../../../src/features/pill_search_result_detail/utils/pill_specs_fields';
+import {
+  getPillIngredientFields,
+  hasMoreInfoKeyword,
+} from '../../../src/features/pill_search_result_detail/utils/pill_specs_fields';
 import { collectPillWarningKeywords } from '../../../src/features/pill_search_result_detail/utils/pill_warning_keywords';
 
 const data = {

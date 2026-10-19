@@ -1,17 +1,12 @@
-import {
-  KeywordMeasure,
+import type {
+  KeywordMeasurementOptions,
   KeywordTarget,
 } from '../types/keyword_navigation_type';
 
-interface MeasurementOptions {
-  getMeasures: () => KeywordMeasure[];
-  keywords: readonly string[];
-  nextFrame: () => Promise<void>;
-  isCancelled: () => boolean;
-}
-
 // 본문·표 레이아웃 준비 후 일괄 측정.
-export const measureKeywordTargets = async (options: MeasurementOptions) => {
+export const measureKeywordTargets = async (
+  options: KeywordMeasurementOptions,
+) => {
   await options.nextFrame();
 
   if (options.isCancelled()) {
