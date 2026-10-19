@@ -1,19 +1,22 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { BaseText } from '@components/common/BaseText';
-import InfoRow from '@features/shared/components/InfoRow';
 import { IPillDetail } from '../../../types/pill_detail_type';
 import { styles } from '../../../styles/molecules/PillSpecsSection';
+import { getPillOtherFields } from '../../../utils/pill_specs_fields';
+import PillSpecRows from './PillSpecRows';
 
-// 기타 분류 정보 표시.
-const PillOtherSpecs = ({ data }: { data: IPillDetail }) => (
-  <>
-    <BaseText weight="bold" size={16} style={styles.sectionTitle}>
-      [ 기타 ]
-    </BaseText>
+// 기타 강조·탐색 표시.
+const PillOtherSpecs = ({ data }: { data: IPillDetail }) => {
+  const fields = useMemo(() => getPillOtherFields(data), [data]);
 
-    <InfoRow label="마약류 분류" value={data.DRUG_CLASS} />
-    <InfoRow label="신약 여부" value={data.NEW_DRUG_YN} />
-    <InfoRow label="희귀의약품" value={data.RARE_DRUG_YN} />
-  </>
-);
+  return (
+    <>
+      <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+        [ 기타 ]
+      </BaseText>
+      <PillSpecRows fields={fields} targetPrefix="other" />
+    </>
+  );
+};
+
 export default memo(PillOtherSpecs);

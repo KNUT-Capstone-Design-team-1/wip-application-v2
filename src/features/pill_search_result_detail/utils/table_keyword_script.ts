@@ -1,3 +1,5 @@
+import { KEYWORD_HIGHLIGHT_STYLE } from '../constants/keyword_highlight';
+
 const TABLE_KEYWORD_SCRIPT = String.raw`
 const keywords = __KEYWORDS__;
 
@@ -69,8 +71,8 @@ function highlightNode(node, found) {
 
     fragment.appendChild(document.createTextNode(text.slice(from, match.start)));
     const mark = document.createElement('mark');
-    mark.style.backgroundColor = '#FFF1A8';
-    mark.style.color = '#242424';
+    mark.style.backgroundColor = '${KEYWORD_HIGHLIGHT_STYLE.backgroundColor}';
+    mark.style.color = '${KEYWORD_HIGHLIGHT_STYLE.color}';
     mark.textContent = text.slice(match.start, match.end);
     mark.dataset.keyword = match.keyword;
     mark.dataset.keywordIndex = String(match.index);

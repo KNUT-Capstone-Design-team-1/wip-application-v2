@@ -5,6 +5,7 @@ import { useStore } from 'zustand';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordTextTargets } from '../../hooks/use_keyword_text_targets';
+import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
 import { findKeywordMatches } from '../../utils/keyword_matches';
 
 interface Props extends IBaseTextProps {
@@ -44,7 +45,7 @@ const KeywordText = ({ text, targetId, ...props }: Props) => {
               ? () => select(targetId + ':' + match.keyword + ':' + match.start)
               : undefined
           }
-          style={{ backgroundColor: '#FFF1A8', color: '#242424' }}
+          style={KEYWORD_HIGHLIGHT_STYLE}
         >
           {text.slice(match.start, match.end)}
         </Text>,

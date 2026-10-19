@@ -167,3 +167,20 @@ test('마지막 강조 항목을 선택하면 다음 버튼을 비활성화한�
     canNext: false,
   });
 });
+
+test('전체 키워드를 펼침 콜백에 전달하고 선택한 성분 항목을 탐색한다', async () => {
+  const { controller, scrollTo } = setup();
+  const opener = jest.fn((keywords: readonly string[]) => {
+    if (!keywords.includes('졸음')) {
+      return;
+    }
+
+    controller.register('ingredients', async (_keywords, prepareOnly) =>
+      prepareOnly ? [] : [{ id: 'ingredient', keyword: '졸음', y: 124 }],
+    );
+  });
+  controller.registerOpener(opener);
+  await controller.jump('졸음');
+  expect(opener).toHaveBeenCalledWith(['졸음', '어지러움']);
+  expect(scrollTo).toHaveBeenLastCalledWith(50);
+});

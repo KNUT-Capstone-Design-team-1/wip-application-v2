@@ -23,7 +23,7 @@ interface Options {
 // 화면별 본문 검색·이동 제어.
 export const createKeywordNavigationController = (options: Options) => {
   const registry = new Map<string, KeywordMeasure>();
-  const openers = new Set<() => void>();
+  const openers = new Set<(keywords: readonly string[]) => void>();
   let scrollY = 0;
   let cursorId: string | null = null;
   let sequence = 0;
@@ -87,6 +87,7 @@ export const createKeywordNavigationController = (options: Options) => {
     targets = measured
       .map((target) => ({ ...target, y: target.y - viewportY + scrollY - 24 }))
       .sort((a, b) => a.y - b.y);
+
     return true;
   };
 
@@ -94,7 +95,7 @@ export const createKeywordNavigationController = (options: Options) => {
   const navigate = async (direction: 'previous' | 'next', keyword?: string) => {
     const request = ++sequence;
     manualScroll = false;
-    openers.forEach((open) => open());
+    openers.forEach((open) => open(options.getKeywords()));
 
     if (!(await refreshTargets(request))) {
       return;
@@ -142,7 +143,7 @@ export const createKeywordNavigationController = (options: Options) => {
         }
       };
     },
-    registerOpener: (open: () => void) => {
+    registerOpener: (open: (keywords: readonly string[]) => void) => {
       openers.add(open);
 
       return () => {
@@ -168,7 +169,7 @@ export const createKeywordNavigationController = (options: Options) => {
       const request = ++sequence;
       manualScroll = false;
       cursorId = targetId;
-      openers.forEach((open) => open());
+      openers.forEach((open) => open(options.getKeywords()));
 
       if (!(await refreshTargets(request))) {
         return;
