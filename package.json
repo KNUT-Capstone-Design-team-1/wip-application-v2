@@ -17,7 +17,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
-    "test:db": "jest __tests__/database_queries.test.ts",
     "test:api": "jest __tests__/api_call/"
   },
   "dependencies": {
