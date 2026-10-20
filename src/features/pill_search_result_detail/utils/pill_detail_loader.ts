@@ -3,7 +3,7 @@ import type {
   PillDetailStore,
 } from '../types/pill_detail_type';
 
-// 기본·원격 정보 순차 로딩과 오래된 응답 차단.
+// 기본·원격 정보 순차 갱신과 오래된 응답 차단.
 export const createPillDetailLoader = (
   store: PillDetailStore,
   service: PillDetailLoadService,
@@ -15,37 +15,61 @@ export const createPillDetailLoader = (
     sequence++;
   };
 
-  // 기본 정보 우선 표시 후 상세 문서 병합.
   const load = async () => {
     const request = ++sequence;
-    const { itemSeq, setPillData, setLoading, setDetailLoading } =
+
+    const { itemSeq, pillData, setPillData, setLoading, setDetailLoading } =
       store.getState();
-    setPillData(null);
-    setLoading(true);
-    setDetailLoading(true);
+
+    const hasExistingData = !!pillData && pillData.ITEM_SEQ === itemSeq;
+    const isInitialLoad = !hasExistingData;
+
+    // 재진입 시 기존 화면을 유지해 스크롤·펼침·검색 상태를 보존한다.
+    if (isInitialLoad) {
+      setPillData(null);
+      setLoading(true);
+      setDetailLoading(true);
+    }
 
     try {
-      if (!itemSeq) {
+      const hasItemSeq = !!itemSeq;
+
+      if (!hasItemSeq) {
         return;
       }
 
       const basic = await service.getBasicDetail(itemSeq);
 
-      if (request !== sequence || !basic) {
+      const isStaleBasic =
+        request !== sequence || store.getState().itemSeq !== itemSeq;
+      const hasBasic = !!basic;
+
+      if (isStaleBasic || !hasBasic) {
         return;
       }
 
-      setPillData(basic);
+      // 로컬 DB 정보는 갱신하고 기존 원격 문서는 응답이 올 때까지 유지한다.
+      const updated = hasExistingData ? { ...pillData, ...basic } : basic;
+
+      setPillData(updated);
       setLoading(false);
+
       const remote = await service.getRemoteDetail(itemSeq);
 
-      if (request !== sequence || !remote) {
+      const isStaleRemote =
+        request !== sequence || store.getState().itemSeq !== itemSeq;
+      const hasRemote = !!remote;
+
+      if (isStaleRemote || !hasRemote) {
         return;
       }
 
-      setPillData({ ...basic, ...remote });
+      setPillData({ ...updated, ...remote });
     } finally {
-      if (request === sequence) {
+      const isCurrentRequest =
+        request === sequence && store.getState().itemSeq === itemSeq;
+
+      if (isCurrentRequest) {
         setLoading(false);
         setDetailLoading(false);
       }
