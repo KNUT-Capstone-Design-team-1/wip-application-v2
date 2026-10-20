@@ -2,7 +2,7 @@ import { assertSubstanceSearch } from './substance_search';
 import { getClassificationCatalog } from './classification_catalog';
 import {
   getClassificationIndex,
-  findClassificationProhibitedMatches,
+  findClassificationProhibitedReferences,
 } from '../matching/classification_matcher';
 import { getDatabase } from '../sqlite';
 import {
@@ -58,7 +58,7 @@ export const getProhibitedList = async (
     const kr =
       params.containedInKr !== undefined
         ? new Set(
-            findClassificationProhibitedMatches(
+            findClassificationProhibitedReferences(
               catalog,
               params.containedInKr,
             ).map((match) => match.source),
@@ -67,7 +67,7 @@ export const getProhibitedList = async (
     const en =
       params.containedInEn !== undefined
         ? new Set(
-            findClassificationProhibitedMatches(
+            findClassificationProhibitedReferences(
               catalog,
               params.containedInEn,
             ).map((match) => match.source),

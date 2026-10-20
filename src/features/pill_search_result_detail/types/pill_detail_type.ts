@@ -1,6 +1,7 @@
+import type { ISpecialClassificationResult } from './special_classification_type';
 import type { createPillDetailStore } from '../store/pill_detail_store';
 
-export interface IPillDetail {
+export interface IPillDetail extends Partial<ISpecialClassificationResult> {
   ITEM_SEQ: string;
   ITEM_NAME: string;
   ENTP_NAME: string;
@@ -42,15 +43,6 @@ export interface IPillDetail {
   EE_DOC_DATA?: string;
   UD_DOC_DATA?: string;
   NB_DOC_DATA?: string;
-  isNarcotic?: boolean;
-  narcoticIngredients?: string[];
-  isCannabis?: boolean;
-  cannabisIngredients?: string[];
-  isPsychotropic?: boolean;
-  psychotropicIngredients?: string[];
-  isProhibited?: boolean;
-  prohibitedIngredients?: string[];
-  prohibitedNotes?: string[];
   isDrivingWarning?: boolean;
   drivingWarningKeywords?: string[];
 }

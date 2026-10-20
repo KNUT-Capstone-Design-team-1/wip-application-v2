@@ -5,9 +5,8 @@ export interface ISpecialClassificationResult {
   cannabisIngredients: string[];
   isPsychotropic: boolean;
   psychotropicIngredients: string[];
-  isProhibited: boolean;
+  hasProhibitedReferences: boolean;
   prohibitedIngredients: string[];
-  prohibitedNotes: string[];
 }
 
 export type ClassificationResultCache = Map<

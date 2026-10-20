@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { View } from 'react-native';
-import { px } from '@utils/responsive';
 import { styles } from '../../styles/molecules/SectionItem';
 import type {
   DocumentParagraphProps,
@@ -23,7 +22,7 @@ const DocumentParagraph = ({ paragraph, targetId }: DocumentParagraphProps) => {
       size={16}
       style={[
         styles.paragraphText,
-        { marginLeft: paragraph.textIndent === '0' ? px(8) : 0 },
+        paragraph.textIndent === '0' && styles.indentedParagraph,
       ]}
     />
   );

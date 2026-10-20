@@ -1,4 +1,9 @@
-import type { DimensionValue, StyleProp, ViewStyle } from 'react-native';
+import type {
+  Animated,
+  DimensionValue,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import type { IBaseTextProps } from '@components/common/BaseText';
 import type { IPillDetail, PillSpecField } from './pill_detail_type';
 import type {
@@ -78,4 +83,11 @@ export interface WarningRowProps {
 export interface PillSpecRowsProps {
   fields: readonly PillSpecField[];
   targetPrefix: string;
+}
+
+export interface SkeletonBoxStyleOptions extends Pick<
+  SkeletonBoxProps,
+  'width' | 'height' | 'borderRadius'
+> {
+  opacity: Animated.Value;
 }

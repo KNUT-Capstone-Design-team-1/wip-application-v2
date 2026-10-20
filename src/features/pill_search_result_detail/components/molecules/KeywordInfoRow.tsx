@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { styles } from '../../styles/molecules/KeywordInfoRow';
+import { styles } from '../../styles/keyword';
 import type { KeywordInfoRowProps } from '../../types/pill_detail_component_type';
 import KeywordText from '../atoms/KeywordText';
 

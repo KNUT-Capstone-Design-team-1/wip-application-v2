@@ -12,3 +12,8 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['surface'],
   },
 });
+
+export const getTableWrapperStyle = (height: number) => [
+  styles.tableWrapper,
+  { height },
+];

@@ -1,4 +1,3 @@
-import { KEYWORD_HIGHLIGHT_STYLE } from '../constants/keyword_highlight';
 import { TABLE_HEIGHT_MESSAGE_DELAY_MS } from '../constants/table_webview';
 
 // 검색어·강조색과 표 내부 이벤트 스크립트 조합.
@@ -78,8 +77,7 @@ function highlightNode(node, found) {
 
     fragment.appendChild(document.createTextNode(text.slice(from, match.start)));
     const mark = document.createElement('mark');
-    mark.style.backgroundColor = '${KEYWORD_HIGHLIGHT_STYLE.backgroundColor}';
-    mark.style.color = '${KEYWORD_HIGHLIGHT_STYLE.color}';
+    mark.className = 'pill-keyword';
     mark.textContent = text.slice(match.start, match.end);
     mark.dataset.keyword = match.keyword;
     mark.dataset.keywordIndex = String(match.index);

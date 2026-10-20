@@ -4,7 +4,7 @@ import WebView from 'react-native-webview';
 import { useStore } from 'zustand';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { useTableWebView } from '../../hooks/use_table_webview';
-import { styles } from '../../styles/atoms/TableWebView';
+import { styles, getTableWrapperStyle } from '../../styles/atoms/TableWebView';
 import type { TableWebViewProps } from '../../types/pill_detail_component_type';
 
 // 표 WebView 표시.
@@ -21,7 +21,7 @@ const TableWebView = ({ html, targetId }: TableWebViewProps) => {
     <View
       ref={wrapper}
       collapsable={false}
-      style={[styles.tableWrapper, { height }]}
+      style={getTableWrapperStyle(height)}
     >
       <WebView
         ref={webView}

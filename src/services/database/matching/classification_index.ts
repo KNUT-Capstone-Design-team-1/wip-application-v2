@@ -1,15 +1,12 @@
-import type { ClassificationEntry } from '../queries/classification_catalog';
+import type {
+  ClassificationCatalog,
+  ClassificationEntry,
+  ClassificationIndex,
+} from '../types/classification';
 import { chemicalNameKey, substanceAliases } from './substance_names';
-import {
-  prepareProhibitedDocument,
-  PreparedProhibitedDocument,
-} from './prohibited_substances';
+import { prepareProhibitedDocument } from './prohibited_substances';
 
-interface ClassificationIndex {
-  names: Map<string, ClassificationEntry[]>;
-  prohibited: PreparedProhibitedDocument<ClassificationEntry>[];
-}
-const indexes = new WeakMap<ClassificationEntry[], ClassificationIndex>();
+const indexes = new WeakMap<ClassificationCatalog, ClassificationIndex>();
 
 // 정식명·이명 인덱스 등록.
 const addSubstanceNames = (
@@ -51,7 +48,7 @@ const addClassificationEntry = (
 
 // 카탈로그별 인덱스 재사용.
 export const getClassificationIndex = (
-  catalog: ClassificationEntry[],
+  catalog: ClassificationCatalog,
 ): ClassificationIndex => {
   const cached = indexes.get(catalog);
 
@@ -61,7 +58,7 @@ export const getClassificationIndex = (
 
   const index: ClassificationIndex = { names: new Map(), prohibited: [] };
 
-  for (const entry of catalog) {
+  for (const entry of catalog.entries) {
     addClassificationEntry(index, entry);
   }
 

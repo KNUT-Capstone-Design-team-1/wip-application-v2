@@ -1,83 +1,48 @@
-import type { ClassificationEntry } from '../queries/classification_catalog';
-import { chemicalNameKey, ingredientKeys } from './substance_names';
-import { getClassificationIndex } from './classification_index';
+import type {
+  ClassificationCatalog,
+  ClassificationEntry,
+} from '../types/classification';
 import {
-  findProhibitedMatches,
-  ProhibitedMatch,
-  sectionNote,
-} from './prohibited_substances';
+  ingredientKeys,
+  splitChemicalList,
+  substanceAliases,
+} from './substance_names';
+import { getClassificationIndex } from './classification_index';
+import { findProhibitedReferences } from './prohibited_substances';
 export { getClassificationIndex } from './classification_index';
 
-// 성분별 정식명·이명 일치 조회.
+// 현재 DB의 정식명·이명·단일 성분 한영 대응으로 조회한다.
 export const findControlledMatches = (
-  catalog: ClassificationEntry[],
+  catalog: ClassificationCatalog,
   ingredients: string,
 ): ClassificationEntry[] => {
   const { names } = getClassificationIndex(catalog);
-  const matches = [...ingredientKeys(ingredients)].flatMap(
-    (key) => names.get(key) || [],
-  );
+  const matches = [
+    ...ingredientKeys(ingredients, catalog.ingredientAliases),
+  ].flatMap((key) => names.get(key) || []);
 
   return [...new Set(matches)];
 };
 
-// CBD를 제외한 S8 적용 성분 확인.
-const isProhibitedCannabis = (entry: ClassificationEntry): boolean =>
-  entry.kind === 'cannabis' && chemicalNameKey(entry.en) !== 'cannabidiol';
-
-// S8 중복 결과 확인.
-const hasCannabisMatch = (
-  matches: ProhibitedMatch<ClassificationEntry>[],
-  entry: ClassificationEntry,
-): boolean =>
-  matches.some(
-    (match) =>
-      match.section === 'S8' &&
-      chemicalNameKey(match.ingredient) === chemicalNameKey(entry.en),
-  );
-
-// S8 포괄 규정 보완.
-const appendCannabisMatches = (
-  catalog: ClassificationEntry[],
-  controlled: ClassificationEntry[],
-  matches: ProhibitedMatch<ClassificationEntry>[],
-) => {
-  const source = getClassificationIndex(catalog).prohibited.find(
-    (doc) =>
-      doc.section === 'S8' &&
-      /all natural and synthetic cannabinoids/i.test(doc.searchable),
-  );
-
-  if (!source) {
-    return matches;
-  }
-
-  for (const entry of controlled.filter(isProhibitedCannabis)) {
-    if (hasCannabisMatch(matches, entry)) {
-      continue;
-    }
-
-    matches.push({
-      ingredient: entry.kr || entry.en,
-      section: 'S8',
-      note: sectionNote('S8'),
-      source: source.source,
-    });
-  }
-
-  return matches;
-};
-
-// 이명·S8 규정을 포함한 금지 성분 조회.
-export const findClassificationProhibitedMatches = (
-  catalog: ClassificationEntry[],
+// DB 이명으로 검색어만 확장하고 분류별 금지·예외 규칙을 추정하지 않는다.
+export const findClassificationProhibitedReferences = (
+  catalog: ClassificationCatalog,
   ingredients: string,
 ) => {
   const { prohibited } = getClassificationIndex(catalog);
-  const controlled = findControlledMatches(catalog, ingredients);
-  const names =
-    ingredients + '|' + controlled.map((entry) => entry.en).join('|');
-  const matches = findProhibitedMatches(prohibited, names);
+  return splitChemicalList(ingredients).flatMap((ingredient) => {
+    const controlled = findControlledMatches(catalog, ingredient);
+    const names = [ingredient, ...controlled.flatMap(substanceAliases)].join(
+      '|',
+    );
+    const sources = new Set(
+      findProhibitedReferences(
+        prohibited,
+        names,
+        catalog.ingredientAliases,
+      ).map((reference) => reference.source),
+    );
 
-  return appendCannabisMatches(catalog, controlled, matches);
+    return [...sources].map((source) => ({ ingredient, source }));
+  });
 };

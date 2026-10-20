@@ -1,4 +1,8 @@
-import ingredientNamePairs from './ingredient_name_pairs.json';
+import type {
+  IngredientAliasIndex,
+  IngredientNamePair,
+  SubstanceNameEntry,
+} from '../types/classification';
 
 // 성분 구분자와 화학명 내부의 위치번호(2,5-...), 괄호를 구분한다.
 export const splitChemicalList = (value = ''): string[] => {
@@ -87,12 +91,7 @@ export const ingredientNameVariants = (value: string): string[] => {
   return [...new Set(variants.filter(Boolean))];
 };
 
-export const substanceAliases = (entry: {
-  kr: string;
-  en: string;
-  synonyms?: string;
-  casNumber?: string;
-}): string[] => {
+export const substanceAliases = (entry: SubstanceNameEntry): string[] => {
   const names = [
     entry.kr,
     entry.en,
@@ -114,39 +113,81 @@ export const substanceAliases = (entry: {
   ];
 };
 
-const translations = new Map<string, string>(
-  ingredientNamePairs.map(([kr, en]) => [chemicalNameKey(kr), en]),
-);
-// 단일 성분 실제 데이터에서 확인한 한영 대응만 사용한다.
-export const expandIngredientNames = (value: string): string[] => {
-  const variants = ingredientNameVariants(value);
+// 현재 DB의 단일 성분 한영 대응만 사용한다. 복합제의 순서는 추정하지 않는다.
+export const buildIngredientAliasIndex = (
+  rows: IngredientNamePair[],
+): IngredientAliasIndex => {
+  const pairs = new Map<string, Map<string, [string, string]>>();
 
-  for (const variant of [...variants]) {
-    const translated = translations.get(chemicalNameKey(variant));
+  for (const row of rows) {
+    const kr = splitChemicalList(row.MAIN_ITEM_INGR || '');
+    const en = splitChemicalList(row.MATERIAL_ENG_NAME || '');
 
-    if (translated) {
-      variants.push(translated);
+    if (
+      kr.length !== 1 ||
+      en.length !== 1 ||
+      !/[가-힣]/.test(kr[0]) ||
+      !/[a-z]/i.test(en[0]) ||
+      /[가-힣]/.test(en[0])
+    ) {
+      continue;
+    }
+
+    const korean = ingredientNameVariants(kr[0]).at(-1);
+    const english = ingredientNameVariants(en[0]).at(-1);
+
+    if (!korean || !english) {
+      continue;
+    }
+
+    const key = chemicalNameKey(korean);
+    const options = pairs.get(key) || new Map();
+    options.set(chemicalNameKey(english), [korean, english]);
+    pairs.set(key, options);
+  }
+
+  const aliases = new Map<string, string[]>();
+  const add = (name: string, alias: string) => {
+    const key = chemicalNameKey(name);
+    aliases.set(key, [...new Set([...(aliases.get(key) || []), alias])]);
+  };
+
+  for (const options of pairs.values()) {
+    // 같은 국문명에 서로 다른 영문명이 있으면 변환하지 않는다.
+    if (options.size === 1) {
+      const [kr, en] = [...options.values()][0];
+      add(kr, en);
+      add(en, kr);
     }
   }
 
-  return [...new Set(variants)];
+  return aliases;
 };
 
-export const ingredientKeys = (text: string): Set<string> =>
+// 기존 성분 표기 정규화는 유지하고 한영 대응만 현재 DB에서 확장한다.
+export const expandIngredientNames = (
+  value: string,
+  aliases?: IngredientAliasIndex,
+): string[] => {
+  const variants = ingredientNameVariants(value);
+
+  return [
+    ...new Set(
+      variants.flatMap((name) => [
+        name,
+        ...(aliases?.get(chemicalNameKey(name)) || []),
+      ]),
+    ),
+  ];
+};
+
+export const ingredientKeys = (
+  text: string,
+  aliases?: IngredientAliasIndex,
+): Set<string> =>
   new Set(
     splitChemicalList(text)
-      .flatMap(expandIngredientNames)
+      .flatMap((name) => expandIngredientNames(name, aliases))
       .map(chemicalNameKey)
       .filter(Boolean),
   );
-
-export const matchesSubstance = (
-  entry: Parameters<typeof substanceAliases>[0],
-  ingredients: string,
-): boolean => {
-  const keys = ingredientKeys(ingredients);
-
-  return substanceAliases(entry).some((alias) =>
-    keys.has(chemicalNameKey(alias)),
-  );
-};

@@ -1,8 +1,12 @@
 import { StyleSheet } from 'react-native';
-import { COLOR_LINE, COLOR_TEXT } from '@constants/color';
+import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
+  highlight: {
+    backgroundColor: COLOR_BG.highlight,
+    color: COLOR_TEXT.highlight,
+  },
   row: {
     flexDirection: 'row',
     gap: px(8),

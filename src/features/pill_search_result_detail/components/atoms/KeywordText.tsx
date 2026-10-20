@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import { Text } from 'react-native';
 import { useStore } from 'zustand';
 import { BaseText } from '@components/common/BaseText';
-import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
+import { styles } from '../../styles/keyword';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { useKeywordTextTargets } from '../../hooks/use_keyword_text_targets';
@@ -41,7 +41,7 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
               ? () => select(targetId + ':' + match.keyword + ':' + match.start)
               : undefined
           }
-          style={KEYWORD_HIGHLIGHT_STYLE}
+          style={styles.highlight}
         >
           {text.slice(match.start, match.end)}
         </Text>,

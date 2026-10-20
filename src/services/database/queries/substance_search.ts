@@ -1,7 +1,8 @@
-import {
+import type {
   ClassificationKind,
-  getClassificationCatalog,
-} from './classification_catalog';
+  ContainedSubstanceParams,
+} from '../types/classification';
+import { getClassificationCatalog } from './classification_catalog';
 import { findControlledMatches } from '../matching/classification_matcher';
 import { chemicalNameKey, substanceAliases } from '../matching/substance_names';
 import { ICannabis } from '../types';
@@ -27,15 +28,9 @@ export const assertSubstanceSearch = (
   return true;
 };
 
-interface Params {
-  containedInKr?: string;
-  containedInEn?: string;
-  chemicalNameKr?: string;
-  chemicalNameEn?: string;
-}
 export const getContainedSubstances = async (
   kind: Exclude<ClassificationKind, 'prohibited'>,
-  params: Params,
+  params: ContainedSubstanceParams,
   options: { page: number; limit: number },
 ): Promise<ICannabis[]> => {
   const catalog = await getClassificationCatalog();
@@ -47,7 +42,7 @@ export const getContainedSubstances = async (
     params.containedInEn !== undefined
       ? new Set(findControlledMatches(catalog, params.containedInEn))
       : null;
-  const rows = catalog
+  const rows = catalog.entries
     .filter(
       (row) =>
         row.kind === kind && (!kr || kr.has(row)) && (!en || en.has(row)),

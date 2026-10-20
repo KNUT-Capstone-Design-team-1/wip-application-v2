@@ -29,6 +29,7 @@ const PALETTE = {
   'color-tertiary': '#004A94',
   'color-tertiary-pressed': '#003366',
   'bg-base': '#F1F5F9',
+  'bg-keyword-highlight': '#FFF1A8',
   'bg-surface': '#FFFFFF',
   'bg-tabbar': '#182729',
   'bg-toast': '#001b24',
@@ -41,6 +42,7 @@ const PALETTE = {
   'text-subTitle': '#006581',
   'text-label': '#2B464A',
   'text-body': '#222222',
+  'text-keyword-highlight': '#242424',
   'text-sub': '#64748B',
   'text-disabled': '#94A3B8',
   'line-border': '#E2E8F0',
@@ -80,6 +82,7 @@ export const COLOR = {
 };
 
 export const COLOR_BG = {
+  highlight: PALETTE['bg-keyword-highlight'],
   base: PALETTE['bg-base'],
   surface: PALETTE['bg-surface'],
   overlay: PALETTE['bg-overlay'],
@@ -96,6 +99,7 @@ export const COLOR_BG = {
 };
 
 export const COLOR_TEXT = {
+  highlight: PALETTE['text-keyword-highlight'],
   title: PALETTE['text-title'],
   subTitle: PALETTE['text-subTitle'],
   label: PALETTE['text-label'],

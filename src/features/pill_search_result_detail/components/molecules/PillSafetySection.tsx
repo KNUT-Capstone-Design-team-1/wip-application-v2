@@ -50,12 +50,9 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
 
       <WarningRow
         label="도핑 금지"
-        isWarning={data.isProhibited}
+        isWarning={data.hasProhibitedReferences}
         items={data.prohibitedIngredients}
-        footerNote={[
-          ...(data.prohibitedNotes || []),
-          '※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고',
-        ].join('\n')}
+        footerNote="※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고"
       />
 
       <ExternalLinkButton

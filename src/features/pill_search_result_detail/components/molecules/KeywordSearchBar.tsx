@@ -3,11 +3,13 @@ import { View, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 import { COLOR_TEXT } from '@constants/color';
-import { fontPx, px } from '@utils/responsive';
-import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
+import { fontPx } from '@utils/responsive';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
-import { styles } from '../../styles/molecules/KeywordSearchBar';
+import {
+  styles,
+  getKeywordSearchBarStyle,
+} from '../../styles/molecules/KeywordSearchBar';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 
 // 본문 위에 고정되는 이전·다음 원형 버튼.
@@ -28,7 +30,7 @@ const KeywordSearchBar = () => {
   return (
     <View
       pointerEvents="box-none"
-      style={[styles.container, { bottom: insets.bottom + px(16) }]}
+      style={getKeywordSearchBarStyle(insets.bottom)}
     >
       <TouchableOpacity
         style={[styles.button, !canPrevious && styles.disabled]}
@@ -43,9 +45,7 @@ const KeywordSearchBar = () => {
         <ChevronUp
           size={fontPx(24)}
           strokeWidth={2.5}
-          color={
-            canPrevious ? KEYWORD_HIGHLIGHT_STYLE.color : COLOR_TEXT.disabled
-          }
+          color={canPrevious ? COLOR_TEXT.highlight : COLOR_TEXT.disabled}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -61,7 +61,7 @@ const KeywordSearchBar = () => {
         <ChevronDown
           size={fontPx(24)}
           strokeWidth={2.5}
-          color={canNext ? KEYWORD_HIGHLIGHT_STYLE.color : COLOR_TEXT.disabled}
+          color={canNext ? COLOR_TEXT.highlight : COLOR_TEXT.disabled}
         />
       </TouchableOpacity>
     </View>

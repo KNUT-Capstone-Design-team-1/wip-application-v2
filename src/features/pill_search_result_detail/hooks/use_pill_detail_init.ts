@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   usePillDetailLoadActions,
   usePillDetailSaveActions,
@@ -9,11 +10,13 @@ export const usePillDetailInit = () => {
   const { load, cancel } = usePillDetailLoadActions();
   const { refreshSavedFolders } = usePillDetailSaveActions();
 
-  useEffect(() => {
-    void load();
+  useFocusEffect(
+    useCallback(() => {
+      void load();
 
-    return cancel;
-  }, [load, cancel]);
+      return cancel;
+    }, [load, cancel]),
+  );
 
   useEffect(() => {
     void refreshSavedFolders();

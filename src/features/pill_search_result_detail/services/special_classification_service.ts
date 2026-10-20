@@ -1,9 +1,12 @@
 import {
   findControlledMatches,
-  findClassificationProhibitedMatches,
+  findClassificationProhibitedReferences,
 } from '@services/database/matching/classification_matcher';
 import { normalizeChemicalText } from '@services/database/matching/substance_names';
-import type { ClassificationEntry } from '@services/database/queries/classification_catalog';
+import type {
+  ClassificationCatalog,
+  ClassificationEntry,
+} from '@services/database/types/classification';
 import { CLASSIFICATION_CACHE_LIMIT } from '../constants/pill_detail';
 import { pillDetailRepository } from '../data/repositories/pill_detail_repository';
 import type {
@@ -13,7 +16,7 @@ import type {
 import { uniqueWarningItems } from '../utils/unique_warning_items';
 
 const resultCaches = new WeakMap<
-  ClassificationEntry[],
+  ClassificationCatalog,
   ClassificationResultCache
 >();
 
@@ -25,14 +28,13 @@ const createEmptyClassifications = (): ISpecialClassificationResult => ({
   cannabisIngredients: [],
   isPsychotropic: false,
   psychotropicIngredients: [],
-  isProhibited: false,
+  hasProhibitedReferences: false,
   prohibitedIngredients: [],
-  prohibitedNotes: [],
 });
 
 // 카탈로그별 계산 캐시 반환.
 const getClassificationResultCache = (
-  catalog: ClassificationEntry[],
+  catalog: ClassificationCatalog,
 ): ClassificationResultCache => {
   const cached = resultCaches.get(catalog);
 
@@ -59,14 +61,17 @@ const getIngredientNames = (
 
 // 분류 일치 결과 조합.
 const buildClassificationResult = (
-  catalog: ClassificationEntry[],
+  catalog: ClassificationCatalog,
   ingredients: string,
 ): ISpecialClassificationResult => {
   const matched = findControlledMatches(catalog, ingredients);
   const narcoticIngredients = getIngredientNames(matched, 'narcotic');
   const cannabisIngredients = getIngredientNames(matched, 'cannabis');
   const psychotropicIngredients = getIngredientNames(matched, 'psychotropic');
-  const prohibited = findClassificationProhibitedMatches(catalog, ingredients);
+  const prohibited = findClassificationProhibitedReferences(
+    catalog,
+    ingredients,
+  );
 
   return {
     isNarcotic: narcoticIngredients.length > 0,
@@ -75,11 +80,10 @@ const buildClassificationResult = (
     cannabisIngredients,
     isPsychotropic: psychotropicIngredients.length > 0,
     psychotropicIngredients,
-    isProhibited: prohibited.length > 0,
+    hasProhibitedReferences: prohibited.length > 0,
     prohibitedIngredients: uniqueWarningItems(
       prohibited.map((match) => match.ingredient.trim()),
     ),
-    prohibitedNotes: uniqueWarningItems(prohibited.map((match) => match.note)),
   };
 };
 

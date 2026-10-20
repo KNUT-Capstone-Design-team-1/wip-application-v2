@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG } from '@constants/color';
 import { screenPadding } from '@constants/size';
 import { px } from '@utils/responsive';
-import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
 
 const buttonSize = px(44, 44, 48);
 
@@ -18,7 +17,7 @@ export const styles = StyleSheet.create({
     width: buttonSize,
     height: buttonSize,
     borderRadius: buttonSize / 2,
-    backgroundColor: KEYWORD_HIGHLIGHT_STYLE.backgroundColor,
+    backgroundColor: COLOR_BG.highlight,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: COLOR.shadow,
@@ -31,3 +30,8 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG.btnDisabled,
   },
 });
+
+export const getKeywordSearchBarStyle = (bottomInset: number) => [
+  styles.container,
+  { bottom: bottomInset + px(16) },
+];
