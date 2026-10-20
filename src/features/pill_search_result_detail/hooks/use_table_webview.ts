@@ -4,6 +4,7 @@ import WebView, { WebViewMessageEvent } from 'react-native-webview';
 import type { KeywordTarget } from '../types/keyword_navigation_type';
 import type { TableKeywordMatch } from '../types/table_webview_type';
 import { createTableLoadState } from '../utils/table_load_state';
+import { buildTableHighlightCommand } from '../utils/table_keyword_script';
 import { buildTableWebViewHtml } from '../utils/table_webview_html';
 import { parseTableWebViewMessage } from '../utils/table_webview_message';
 import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
@@ -28,11 +29,16 @@ const useTableKeywordTargets = (sourceHtml: string, targetId?: string) => {
 
         wrapper.current.measureInWindow((_x, y) => {
           const targets = matches.current
-            .filter((match) => searchKeywords.includes(match.keyword))
+            .filter((match) =>
+              match.keywords.some((keyword) =>
+                searchKeywords.includes(keyword),
+              ),
+            )
             .sort((a, b) => a.y - b.y || a.x - b.x || a.index - b.index)
             .map((match) => ({
               id: targetId + ':' + match.index,
               keyword: match.keyword,
+              keywords: match.keywords,
               y: y + match.y,
               reveal: () =>
                 webView.current?.injectJavaScript(
@@ -81,7 +87,7 @@ const useTableKeywordTargets = (sourceHtml: string, targetId?: string) => {
       if (
         !targetId ||
         !matches.current.some(
-          (match) => match.index === index && match.keyword === keyword,
+          (match) => match.index === index && match.keywords.includes(keyword),
         )
       ) {
         return;
@@ -121,6 +127,18 @@ export const useTableWebView = (
       const message = parseTableWebViewMessage(event.nativeEvent.data);
 
       switch (message.type) {
+        case 'textNodes': {
+          webView.current?.injectJavaScript(
+            buildTableHighlightCommand(
+              message.nodes,
+              keywords,
+              message.documentId,
+            ),
+          );
+
+          return;
+        }
+
         case 'dismiss': {
           dismiss();
 
@@ -151,7 +169,7 @@ export const useTableWebView = (
         }
       }
     },
-    [dismiss, selectMatch, updateMatches, complete],
+    [dismiss, selectMatch, updateMatches, complete, webView, keywords],
   );
 
   return { height, source, wrapper, webView, onMessage };

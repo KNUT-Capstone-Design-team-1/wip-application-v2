@@ -24,10 +24,6 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
     let from = 0;
 
     for (const match of matches) {
-      if (match.start < from) {
-        continue;
-      }
-
       parts.push(text.slice(from, match.start));
       parts.push(
         <Text

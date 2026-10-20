@@ -18,10 +18,33 @@ export const findKeywordMatches = (
         break;
       }
 
-      matches.push({ keyword, start, end: start + keyword.length });
+      matches.push({
+        keyword,
+        keywords: [keyword],
+        start,
+        end: start + keyword.length,
+      });
       from = start + keyword.length;
     }
   }
 
-  return matches.sort((a, b) => a.start - b.start || b.end - a.end);
+  const groups: KeywordMatch[] = [];
+
+  // 앞쪽에서 시작하는 긴 구간부터 묶고, 맞닿기만 한 구간은 분리한다.
+  for (const match of matches.sort(
+    (a, b) => a.start - b.start || b.end - a.end,
+  )) {
+    const previous = groups[groups.length - 1];
+
+    if (previous && match.start < previous.end) {
+      previous.end = Math.max(previous.end, match.end);
+      previous.keywords = [
+        ...new Set([...previous.keywords, ...match.keywords]),
+      ];
+    } else {
+      groups.push(match);
+    }
+  }
+
+  return groups;
 };

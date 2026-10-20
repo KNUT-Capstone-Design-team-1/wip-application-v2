@@ -23,6 +23,7 @@ export const useSafetySectionTarget = () => {
             {
               id: SECTION_ID,
               keyword: '주의 및 특수 분류 정보',
+              keywords: [],
               kind: 'section',
               y,
             },

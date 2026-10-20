@@ -37,7 +37,7 @@ export const useKeywordTextTargets = (
     ): Promise<KeywordTarget[]> =>
       new Promise((resolve) => {
         const relevant = matches.filter((match) =>
-          keywords.includes(match.keyword),
+          match.keywords.some((keyword) => keywords.includes(keyword)),
         );
 
         if (prepareOnly || !targetId || !relevant.length || !ref.current) {
@@ -51,6 +51,7 @@ export const useKeywordTextTargets = (
             relevant.map((match) => ({
               id: targetId + ':' + match.keyword + ':' + match.start,
               keyword: match.keyword,
+              keywords: match.keywords,
               y: y + findKeywordLineOffset(lines.current, match.start),
             })),
           ),

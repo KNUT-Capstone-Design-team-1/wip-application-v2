@@ -1,6 +1,12 @@
+import type {
+  TableTextNode,
+  TableTextMatches,
+} from '../types/table_webview_type';
+import { findKeywordMatches } from './keyword_matches';
 import { TABLE_HEIGHT_MESSAGE_DELAY_MS } from '../constants/table_webview';
 
 // 검색어·강조색과 표 내부 이벤트 스크립트 조합.
+// WebView는 별도 실행 환경이므로 실행할 JavaScript 소스를 문자열로 전달한다.
 export const buildTableKeywordScript = (
   keywords: readonly string[],
 ): string => {
@@ -8,6 +14,9 @@ export const buildTableKeywordScript = (
 
   return String.raw`
 const keywords = ${serialized};
+const documentId = String(Date.now()) + ':' + Math.random();
+let textNodes = [];
+let isHighlighted = false;
 
 // 검색 가능한 텍스트 노드 수집.
 function collectTextNodes() {
@@ -16,7 +25,8 @@ function collectTextNodes() {
   let node;
 
   while ((node = walker.nextNode())) {
-    if (/^(SCRIPT|STYLE)$/.test(node.parentElement.tagName)) {
+    const isExcludedElement = /^(SCRIPT|STYLE)$/.test(node.parentElement.tagName);
+    if (isExcludedElement) {
       continue;
     }
 
@@ -26,43 +36,35 @@ function collectTextNodes() {
   return nodes;
 }
 
-// 일치 문구의 표 좌표 측정.
-function measureMatch(node, keyword, start, index) {
+// 공통 매처가 정한 강조 구간의 표 좌표 측정.
+function measureMatch(node, match, index) {
   const range = document.createRange();
-  range.setStart(node, start);
-  range.setEnd(node, start + keyword.length);
+  range.setStart(node, match.start);
+  range.setEnd(node, match.end);
   const rect = range.getBoundingClientRect();
 
-  return { keyword, y: rect.top + window.scrollY, x: rect.left + window.scrollX, index };
+  return {
+    keyword: match.keyword, keywords: match.keywords,
+    y: rect.top + window.scrollY, x: rect.left + window.scrollX, index
+  };
 }
 
-// 노드 안의 반복 문구 위치 수집.
-function findNodeMatches(node, matches) {
-  const lower = node.textContent.toLowerCase();
-  const found = [];
+// DOM 텍스트 중 검색 후보만 네이티브 공통 매처로 전달한다.
+function requestKeywordMatches() {
+  textNodes = collectTextNodes();
+  const nodes = textNodes
+    .map((node, index) => ({ index, text: node.textContent || '' }))
+    .filter((node) => keywords.some(
+      (keyword) => keyword && node.text.toLowerCase().includes(keyword.toLowerCase())
+    ));
 
-  for (const keyword of keywords) {
-    if (!keyword) {
-      continue;
-    }
-
-    let from = 0;
-    let start;
-
-    while ((start = lower.indexOf(keyword.toLowerCase(), from)) >= 0) {
-      const index = matches.length;
-      matches.push(measureMatch(node, keyword, start, index));
-      found.push({ start, end: start + keyword.length, keyword, index });
-      from = start + keyword.length;
-    }
-  }
-
-  return found.sort((a, b) => a.start - b.start || b.end - a.end);
+  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'textNodes', documentId, nodes }));
 }
 
 // 겹치지 않는 문구 강조.
 function highlightNode(node, found) {
-  if (!found.length) {
+  const hasMatches = found.length > 0;
+  if (!hasMatches) {
     return;
   }
 
@@ -71,10 +73,6 @@ function highlightNode(node, found) {
   let from = 0;
 
   for (const match of found) {
-    if (match.start < from) {
-      continue;
-    }
-
     fragment.appendChild(document.createTextNode(text.slice(from, match.start)));
     const mark = document.createElement('mark');
     mark.className = 'pill-keyword';
@@ -92,22 +90,41 @@ function highlightNode(node, found) {
   node.parentNode.replaceChild(fragment, node);
 }
 
-// 강조 및 검색 좌표 전송.
-function highlightKeywords() {
+// 같은 공통 매칭 결과로 강조와 이동 좌표를 함께 만든다.
+window.applyKeywordMatches = function (sourceId, groups) {
+  const isCurrentDocument = sourceId === documentId;
+  const canApplyMatches = isCurrentDocument && !isHighlighted;
+  if (!canApplyMatches) {
+    return;
+  }
   const matches = [];
 
-  for (const node of collectTextNodes()) {
-    highlightNode(node, findNodeMatches(node, matches));
+  for (const group of groups) {
+    const node = textNodes[group.index];
+    const hasTextNode = Boolean(node);
+    if (!hasTextNode) {
+      continue;
+    }
+
+    const found = group.matches.map((match) => {
+      const index = matches.length;
+      matches.push(measureMatch(node, match, index));
+      return { ...match, index };
+    });
+    highlightNode(node, found);
   }
 
+  isHighlighted = true;
   window.ReactNativeWebView.postMessage(JSON.stringify({ matches }));
-}
+  setTimeout(sendHeight, ${TABLE_HEIGHT_MESSAGE_DELAY_MS});
+};
 
 // 강조 문구 클릭을 네이티브 탐색에 전달.
 function handleKeywordPress(event) {
   const mark = event.target.closest('mark[data-keyword-index]');
 
-  if (!mark) {
+  const hasKeywordMark = Boolean(mark);
+  if (!hasKeywordMark) {
     window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'dismiss' }));
 
     return;
@@ -120,28 +137,53 @@ function handleKeywordPress(event) {
 
 // 표 자체 높이 전송.
 function sendHeight() {
+  if (!isHighlighted) {
+    return;
+  }
   const content = document.getElementById('table-content');
   const height = Math.ceil(content.getBoundingClientRect().height);
   window.ReactNativeWebView.postMessage(height.toString());
 }
 
 window.onload = function () {
-  highlightKeywords();
+  requestKeywordMatches();
   document.addEventListener('click', handleKeywordPress);
   document.addEventListener('keydown', function (event) {
-    if (event.key !== 'Enter' && event.key !== ' ') {
+    const isActivationKey = event.key === 'Enter' || event.key === ' ';
+    if (!isActivationKey) {
       return;
     }
 
-    if (!event.target.closest('mark[data-keyword-index]')) {
+    const isKeywordTarget = Boolean(event.target.closest('mark[data-keyword-index]'));
+    if (!isKeywordTarget) {
       return;
     }
 
     event.preventDefault();
     handleKeywordPress(event);
   });
-  setTimeout(sendHeight, ${TABLE_HEIGHT_MESSAGE_DELAY_MS});
 };
 window.addEventListener('resize', sendHeight);
 `;
+};
+
+// 표와 네이티브가 같은 매처를 사용하도록 강조 구간을 전달한다.
+export const buildTableHighlightCommand = (
+  nodes: readonly TableTextNode[],
+  keywords: readonly string[],
+  documentId: string,
+): string => {
+  const groups: TableTextMatches[] = nodes.map((node) => ({
+    index: node.index,
+    matches: findKeywordMatches(node.text, keywords),
+  }));
+  const serialized = JSON.stringify(groups).replace(/</g, '\\u003c');
+
+  return (
+    'window.applyKeywordMatches(' +
+    JSON.stringify(documentId) +
+    ', ' +
+    serialized +
+    '); true;'
+  );
 };

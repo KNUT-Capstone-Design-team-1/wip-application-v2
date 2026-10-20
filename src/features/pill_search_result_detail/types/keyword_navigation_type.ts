@@ -9,6 +9,8 @@ export interface KeywordNavigationAvailability {
 }
 
 export interface KeywordTarget {
+  // 같은 강조 구간으로 이동할 수 있는 키워드 목록.
+  keywords: readonly string[];
   kind?: 'section';
   id: string;
   keyword: string;
@@ -36,6 +38,8 @@ export interface KeywordNavigationOptions {
 }
 
 export interface KeywordMatch {
+  // 겹친 일치 구간을 하나로 묶어도 각 키워드의 탐색 경로를 보존한다.
+  keywords: string[];
   keyword: string;
   start: number;
   end: number;
