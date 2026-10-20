@@ -28,18 +28,21 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         label="마약류 (마약)"
         isWarning={data.isNarcotic}
         items={data.narcoticIngredients}
+        matches={data.classificationMatches}
       />
 
       <WarningRow
         label="마약류 (대마)"
         isWarning={data.isCannabis}
         items={data.cannabisIngredients}
+        matches={data.classificationMatches}
       />
 
       <WarningRow
         label="마약류 (향정)"
         isWarning={data.isPsychotropic}
         items={data.psychotropicIngredients}
+        matches={data.classificationMatches}
       />
 
       <ExternalLinkButton
@@ -52,6 +55,7 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         label="도핑 금지"
         isWarning={data.hasProhibitedReferences}
         items={data.prohibitedIngredients}
+        matches={data.classificationMatches}
         footerNote="※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고"
       />
 

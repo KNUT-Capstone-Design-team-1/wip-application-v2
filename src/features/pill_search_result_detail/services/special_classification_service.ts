@@ -1,5 +1,5 @@
 import {
-  findControlledMatches,
+  findControlledIngredientMatches,
   findClassificationProhibitedReferences,
 } from '@services/database/matching/classification_matcher';
 import { normalizeChemicalText } from '@services/database/matching/substance_names';
@@ -12,6 +12,7 @@ import { pillDetailRepository } from '../data/repositories/pill_detail_repositor
 import type {
   ISpecialClassificationResult,
   ClassificationResultCache,
+  ClassificationIngredientMatch,
 } from '../types/special_classification_type';
 import { uniqueWarningItems } from '../utils/unique_warning_items';
 
@@ -22,6 +23,7 @@ const resultCaches = new WeakMap<
 
 // 빈 분류 결과 생성.
 const createEmptyClassifications = (): ISpecialClassificationResult => ({
+  classificationMatches: [],
   isNarcotic: false,
   narcoticIngredients: [],
   isCannabis: false,
@@ -50,13 +52,13 @@ const getClassificationResultCache = (
 
 // 분류별 표시 성분명 수집.
 const getIngredientNames = (
-  entries: ClassificationEntry[],
+  matches: ClassificationIngredientMatch[],
   kind: ClassificationEntry['kind'],
 ): string[] =>
   uniqueWarningItems(
-    entries
-      .filter((entry) => entry.kind === kind)
-      .map((entry) => (entry.kr || '').trim() || (entry.en || '').trim()),
+    matches
+      .filter((match) => match.source.kind === kind)
+      .map((match) => match.displayName),
   );
 
 // 분류 일치 결과 조합.
@@ -64,7 +66,7 @@ const buildClassificationResult = (
   catalog: ClassificationCatalog,
   ingredients: string,
 ): ISpecialClassificationResult => {
-  const matched = findControlledMatches(catalog, ingredients);
+  const matched = findControlledIngredientMatches(catalog, ingredients);
   const narcoticIngredients = getIngredientNames(matched, 'narcotic');
   const cannabisIngredients = getIngredientNames(matched, 'cannabis');
   const psychotropicIngredients = getIngredientNames(matched, 'psychotropic');
@@ -74,6 +76,7 @@ const buildClassificationResult = (
   );
 
   return {
+    classificationMatches: [...matched, ...prohibited],
     isNarcotic: narcoticIngredients.length > 0,
     narcoticIngredients,
     isCannabis: cannabisIngredients.length > 0,
@@ -82,7 +85,7 @@ const buildClassificationResult = (
     psychotropicIngredients,
     hasProhibitedReferences: prohibited.length > 0,
     prohibitedIngredients: uniqueWarningItems(
-      prohibited.map((match) => match.ingredient.trim()),
+      prohibited.map((match) => match.displayName.trim()),
     ),
   };
 };
@@ -118,7 +121,8 @@ export const checkSpecialClassifications = async (
 
   const catalog = await repository.getClassificationCatalog();
   const cache = getClassificationResultCache(catalog);
-  const key = JSON.stringify([kr, en]);
+  // 실제 입력의 공백과 표기를 보존해야 하므로 원문을 캐시 키로 사용한다.
+  const key = JSON.stringify([materialName, materialEngName]);
   const cached = cache.get(key);
 
   if (cached) {

@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { BaseText } from '@components/common/BaseText';
-import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
+import { useWarningKeywordActions } from '../../hooks/use_keyword_navigation_actions';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import type { WarningKeywordsProps } from '../../types/pill_detail_component_type';
 
 // 문구별 본문 찾기 링크.
-const WarningKeywords = ({ items }: WarningKeywordsProps) => {
-  const { jump } = useKeywordNavigationActions();
+const WarningKeywords = ({ items, matches }: WarningKeywordsProps) => {
+  const jump = useWarningKeywordActions(matches);
 
   if (!items?.length) {
     return <>-</>;

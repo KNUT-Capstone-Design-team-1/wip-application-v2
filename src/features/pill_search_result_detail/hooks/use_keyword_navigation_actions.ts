@@ -1,3 +1,5 @@
+import type { WarningKeywordTarget } from '../types/special_classification_type';
+import { getWarningKeywordTarget } from '../utils/pill_warning_keywords';
 import { useCallback, useMemo } from 'react';
 import { useKeywordNavigationContext } from './use_keyword_navigation_context';
 
@@ -50,5 +52,18 @@ export const useKeywordNavigationActions = () => {
       registerOpener: controller.registerOpener,
     }),
     [jump, select, dismiss, previous, next, controller],
+  );
+};
+
+// 표시 이름을 탐색 가능한 실제 일치 문자열로 변환하는 경고 항목 명령.
+export const useWarningKeywordActions = (
+  matches?: readonly WarningKeywordTarget[],
+) => {
+  const { jump } = useKeywordNavigationActions();
+
+  return useCallback(
+    (displayName: string) =>
+      jump(getWarningKeywordTarget(displayName, matches)),
+    [jump, matches],
   );
 };

@@ -13,6 +13,13 @@ export interface ClassificationEntry {
   molecularWeight?: string;
 }
 
+// 표시용 이름과 실제 입력에서 일치한 문자열을 분리한다.
+export interface IngredientMatch<TSource> {
+  displayName: string;
+  matchedText: string;
+  source: TSource;
+}
+
 export interface IngredientNamePair {
   MAIN_ITEM_INGR: string;
   MATERIAL_ENG_NAME: string;
