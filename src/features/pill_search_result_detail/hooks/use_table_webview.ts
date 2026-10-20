@@ -5,12 +5,19 @@ import type { KeywordTarget } from '../types/keyword_navigation_type';
 import type { TableKeywordMatch } from '../types/table_webview_type';
 import { createTableLoadState } from '../utils/table_load_state';
 import { buildTableHighlightCommand } from '../utils/table_keyword_script';
-import { buildTableWebViewHtml } from '../utils/table_webview_html';
+import {
+  buildTableWebViewHtml,
+  hasTableKeywords,
+} from '../utils/table_webview_html';
 import { parseTableWebViewMessage } from '../utils/table_webview_message';
 import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
 
 // 표의 네이티브 좌표·준비 상태·키워드 선택 관리.
-const useTableKeywordTargets = (sourceHtml: string, targetId?: string) => {
+const useTableKeywordTargets = (
+  html: string,
+  sourceHtml: string,
+  targetId?: string,
+) => {
   const { register, select } = useKeywordNavigationActions();
   const wrapper = useRef<View>(null);
   const webView = useRef<WebView>(null);
@@ -60,6 +67,12 @@ const useTableKeywordTargets = (sourceHtml: string, targetId?: string) => {
 
     return register(targetId, async (searchKeywords, prepareOnly) => {
       if (prepareOnly) {
+        const hasRelevantKeywords = hasTableKeywords(html, searchKeywords);
+
+        if (!hasRelevantKeywords) {
+          return [];
+        }
+
         await readiness.wait();
 
         return [];
@@ -67,7 +80,7 @@ const useTableKeywordTargets = (sourceHtml: string, targetId?: string) => {
 
       return measureTargets(searchKeywords);
     });
-  }, [targetId, register, readiness, measureTargets]);
+  }, [html, targetId, register, readiness, measureTargets]);
 
   useEffect(() => {
     readiness.reset();
@@ -119,9 +132,10 @@ export const useTableWebView = (
     [html, keywords],
   );
   const { wrapper, webView, updateMatches, selectMatch, complete } =
-    useTableKeywordTargets(source.html, targetId);
+    useTableKeywordTargets(html, source.html, targetId);
   const { dismiss } = useKeywordNavigationActions();
 
+  // WebView 메시지를 받아 강조·탐색·높이 상태에 반영한다.
   const onMessage = useCallback(
     (event: WebViewMessageEvent) => {
       const message = parseTableWebViewMessage(event.nativeEvent.data);
@@ -172,5 +186,11 @@ export const useTableWebView = (
     [dismiss, selectMatch, updateMatches, complete, webView, keywords],
   );
 
-  return { height, source, wrapper, webView, onMessage };
+  // 표 로딩 실패 시 검색 결과를 비우고 진행 중인 대기를 해제한다.
+  const onLoadError = useCallback(() => {
+    updateMatches([]);
+    complete();
+  }, [updateMatches, complete]);
+
+  return { height, source, wrapper, webView, onMessage, onLoadError };
 };

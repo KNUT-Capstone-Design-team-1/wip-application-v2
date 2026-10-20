@@ -25,6 +25,8 @@ export type KeywordMeasure = (
 export interface KeywordMeasurementOptions {
   getMeasures: () => KeywordMeasure[];
   keywords: readonly string[];
+  // 바로 이동할 키워드가 있으면 해당 키워드와 관련된 표만 기다린다.
+  prepareKeywords?: readonly string[];
   nextFrame: () => Promise<void>;
   isCancelled: () => boolean;
 }

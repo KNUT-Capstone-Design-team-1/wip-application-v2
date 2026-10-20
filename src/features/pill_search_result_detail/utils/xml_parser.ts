@@ -19,8 +19,19 @@ const asArray = <T>(value?: T | T[]): T[] => {
   return Array.isArray(value) ? value : [value];
 };
 
+// 유효한 유니코드 값은 문자로 복원하고 범위를 벗어나면 원문을 유지한다.
+const decodeCodePoint = (entity: string, value: number): string => {
+  const isValidCodePoint = value >= 0 && value <= 0x10ffff;
+
+  if (!isValidCodePoint) {
+    return entity;
+  }
+
+  return String.fromCodePoint(value);
+};
+
 // 본문 HTML 엔티티 복원.
-const decodeHTMLEntities = (text: string): string =>
+export const decodeHTMLEntities = (text: string): string =>
   text
     .replace(/&nbsp;/g, ' ')
     .replace(/&lt;/g, '<')
@@ -28,9 +39,11 @@ const decodeHTMLEntities = (text: string): string =>
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_, dec: string) => String.fromCharCode(Number(dec)))
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) =>
-      String.fromCharCode(parseInt(hex, 16)),
+    .replace(/&#(\d+);/g, (entity, dec: string) =>
+      decodeCodePoint(entity, Number(dec)),
+    )
+    .replace(/&#x([0-9a-fA-F]+);/gi, (entity, hex: string) =>
+      decodeCodePoint(entity, parseInt(hex, 16)),
     );
 
 // 표·일반 문단의 표시 데이터 변환.

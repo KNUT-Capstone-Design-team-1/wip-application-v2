@@ -57,10 +57,14 @@ export const createKeywordNavigationController = (
   };
 
   // 현재 등록된 본문 좌표 갱신.
-  const refreshTargets = async (request: number): Promise<boolean> => {
+  const refreshTargets = async (
+    request: number,
+    keyword?: string,
+  ): Promise<boolean> => {
     const measured = await measureKeywordTargets({
       getMeasures: () => [...registry.values()],
       keywords: options.getKeywords(),
+      prepareKeywords: keyword ? [keyword] : undefined,
       nextFrame: options.nextFrame,
       isCancelled: () => request !== sequence,
     });
@@ -92,7 +96,7 @@ export const createKeywordNavigationController = (
     manualScroll = false;
     openers.forEach((open) => open(options.getKeywords()));
 
-    if (!(await refreshTargets(request))) {
+    if (!(await refreshTargets(request, keyword))) {
       return;
     }
 

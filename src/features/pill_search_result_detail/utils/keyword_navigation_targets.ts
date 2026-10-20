@@ -14,7 +14,9 @@ export const measureKeywordTargets = async (
   }
 
   const measures = options.getMeasures();
-  await Promise.all(measures.map((measure) => measure(options.keywords, true)));
+  const prepareKeywords = options.prepareKeywords ?? options.keywords;
+
+  await Promise.all(measures.map((measure) => measure(prepareKeywords, true)));
   await options.nextFrame();
 
   if (options.isCancelled()) {
