@@ -1,63 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Keyboard, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { useStore } from 'zustand';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
+import { useDetailFind } from '../../hooks/use_detail_find';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { styles } from '../../styles/molecules/DetailFindBar';
 import { ChevronDown, ChevronUp, Search, X } from 'lucide-react-native';
 
+// 검색 입력과 결과·탐색 버튼을 표시한다.
 const DetailFindForm = () => {
-  const { store, controller } = useKeywordNavigationContext();
+  const { store } = useKeywordNavigationContext();
   const canPrevious = useStore(store, (state) => state.canPrevious);
   const canNext = useStore(store, (state) => state.canNext);
-  const [query, setQuery] = useState('');
-  const [searching, setSearching] = useState(false);
-  const [matchCount, setMatchCount] = useState<number | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const request = useRef(0);
-
-  useEffect(
-    () => () => {
-      request.current++;
-      controller.cancel();
-    },
-    [controller],
-  );
-
-  const search = useCallback(async () => {
-    const value = query.trim();
-    if (!value) return;
-    Keyboard.dismiss();
-    const id = ++request.current;
-    setSearching(true);
-    setHasSearched(false);
-    store.getState().setSearchQuery(value);
-    store.getState().setVisible(true);
-    try {
-      const count = await controller.jump(value);
-      if (id === request.current) {
-        setHasSearched(true);
-        setMatchCount(count ?? null);
-      }
-    } finally {
-      if (id === request.current) setSearching(false);
-    }
-  }, [query, store, controller]);
-
-  const close = () => {
-    request.current++;
-    controller.cancel();
-    store.getState().setSearchOpen(false);
-    store.getState().setSearchQuery('');
-    store.getState().setVisible(false);
-    setQuery('');
-    setSearching(false);
-    setHasSearched(false);
-    setMatchCount(null);
-    Keyboard.dismiss();
-  };
+  const {
+    query,
+    searching,
+    matchCount,
+    hasSearched,
+    search,
+    updateQuery,
+    close,
+    previous,
+    next,
+  } = useDetailFind();
 
   return (
     <View style={styles.container}>
@@ -65,14 +31,7 @@ const DetailFindForm = () => {
         <TextInput
           autoFocus
           value={query}
-          onChangeText={(value) => {
-            request.current++;
-            controller.cancel();
-            setQuery(value);
-            setSearching(false);
-            setHasSearched(false);
-            store.getState().setSearchQuery('');
-          }}
+          onChangeText={updateQuery}
           onSubmitEditing={search}
           placeholder="상세 정보에서 찾기"
           placeholderTextColor={COLOR_TEXT.sub}
@@ -92,7 +51,7 @@ const DetailFindForm = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => controller.previous()}
+          onPress={previous}
           disabled={!hasSearched || searching || !canPrevious}
           accessibilityRole="button"
           accessibilityLabel="이전 검색 결과"
@@ -109,7 +68,7 @@ const DetailFindForm = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => controller.next()}
+          onPress={next}
           disabled={!hasSearched || searching || !canNext}
           accessibilityRole="button"
           accessibilityLabel="다음 검색 결과"
@@ -150,9 +109,11 @@ const DetailFindForm = () => {
   );
 };
 
+// 검색 열림 상태에 따라 폼을 표시한다.
 const DetailFindBar = () => {
   const { store } = useKeywordNavigationContext();
   const isOpen = useStore(store, (state) => state.isSearchOpen);
+
   return isOpen ? <DetailFindForm /> : null;
 };
 

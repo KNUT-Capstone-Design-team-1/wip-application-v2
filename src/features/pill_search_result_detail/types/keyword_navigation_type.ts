@@ -80,3 +80,10 @@ export interface KeywordNavigationScope {
   scrollRef: RefObject<ScrollView | null>;
   controller: ReturnType<typeof createKeywordNavigationController>;
 }
+
+export interface DetailFindStateSetters {
+  setQuery: (query: string) => void;
+  setSearching: (searching: boolean) => void;
+  setHasSearched: (hasSearched: boolean) => void;
+  setMatchCount: (matchCount: number | null) => void;
+}
