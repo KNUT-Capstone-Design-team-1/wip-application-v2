@@ -135,7 +135,7 @@ test('본문 결과가 없으면 양쪽 화살표를 비활성화한다', async 
     getViewportY: async () => 0,
     nextFrame: async () => {},
   });
-  await controller.next();
+  expect(await controller.next()).toBe(0);
   expect(scrollTo).not.toHaveBeenCalled();
   expect(setAvailability).toHaveBeenLastCalledWith({
     canPrevious: false,
@@ -183,4 +183,75 @@ test('전체 키워드를 펼침 콜백에 전달하고 선택한 성분 항목�
   await controller.jump('졸음');
   expect(opener).toHaveBeenCalledWith(['졸음', '어지러움']);
   expect(scrollTo).toHaveBeenLastCalledWith(50);
+});
+
+test('검색어 변경 후 기존 결과를 버리고 새 본문 결과 수를 반환한다', async () => {
+  let keywords = ['졸음'];
+  let offset = 0;
+  const scrollTo = jest.fn((y: number) => {
+    offset = y;
+  });
+  const controller = createKeywordNavigationController({
+    getKeywords: () => keywords,
+    setAvailability: jest.fn(),
+    scrollTo,
+    getViewportY: async () => 0,
+    nextFrame: async () => {},
+  });
+  controller.register('body', async (_keywords, prepareOnly) =>
+    prepareOnly
+      ? []
+      : [
+          { id: 'a', keyword: '졸음', y: 100 - offset },
+          { id: 'b', keyword: '복용', y: 200 - offset },
+          { id: 'c', keyword: '복용', y: 300 - offset },
+        ],
+  );
+  expect(await controller.jump('졸음')).toBe(1);
+  keywords = ['복용'];
+  expect(await controller.jump('복용')).toBe(2);
+  expect(scrollTo).toHaveBeenLastCalledWith(176);
+});
+
+test('화살표는 주의 정보 영역과 본문을 오가고 키워드 바로가기는 본문으로 이동한다', async () => {
+  let offset = 0;
+  const setAvailability = jest.fn();
+  const scrollTo = jest.fn((y: number) => {
+    offset = y;
+  });
+  const controller = createKeywordNavigationController({
+    getKeywords: () => ['운전'],
+    setAvailability,
+    scrollTo,
+    getViewportY: async () => 0,
+    nextFrame: async () => {},
+  });
+  controller.register('safety', async (_keywords, prepareOnly) =>
+    prepareOnly
+      ? []
+      : [
+          {
+            id: 'safety',
+            keyword: '주의 및 특수 분류 정보',
+            kind: 'section',
+            y: 100 - offset,
+          },
+        ],
+  );
+  controller.register('body', async (_keywords, prepareOnly) =>
+    prepareOnly ? [] : [{ id: 'body', keyword: '운전', y: 400 - offset }],
+  );
+
+  await controller.next();
+  expect(scrollTo).toHaveBeenLastCalledWith(76);
+  await controller.next();
+  expect(scrollTo).toHaveBeenLastCalledWith(376);
+  await controller.previous();
+  expect(scrollTo).toHaveBeenLastCalledWith(76);
+  expect(setAvailability).toHaveBeenLastCalledWith({
+    canPrevious: false,
+    canNext: true,
+  });
+  await controller.jump('운전');
+  expect(scrollTo).toHaveBeenLastCalledWith(376);
 });

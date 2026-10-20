@@ -70,3 +70,29 @@ test('보이지 않는 공백만 있어도 DB를 읽거나 빈 키워드를 반�
   expect(result.prohibitedIngredients).toEqual([]);
   expect(repo.getClassificationCatalog).not.toHaveBeenCalled();
 });
+
+test('각 마약류 분류 안에서 공백 차이 중복을 제거하고 서로 다른 분류는 유지한다', async () => {
+  const kinds: ClassificationEntry['kind'][] = [
+    'narcotic',
+    'cannabis',
+    'psychotropic',
+  ];
+  const duplicateCatalog: ClassificationEntry[] = kinds.flatMap((kind) =>
+    ['테스트 성분', '테스트성분', '테스트  성분'].map((kr) => ({
+      kind,
+      kr,
+      en: 'TestIngredient',
+      contents: '',
+    })),
+  );
+  const result = await checkSpecialClassifications('', 'TestIngredient', {
+    getClassificationCatalog: async () => duplicateCatalog,
+  });
+
+  expect(result.narcoticIngredients).toEqual(['테스트 성분']);
+  expect(result.cannabisIngredients).toEqual(['테스트 성분']);
+  expect(result.psychotropicIngredients).toEqual(['테스트 성분']);
+  expect(result.isNarcotic).toBe(true);
+  expect(result.isCannabis).toBe(true);
+  expect(result.isPsychotropic).toBe(true);
+});

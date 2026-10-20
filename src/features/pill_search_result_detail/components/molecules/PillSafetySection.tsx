@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
+import { useSafetySectionTarget } from '../../hooks/use_safety_section_target';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import type { PillDetailDataProps } from '../../types/pill_detail_component_type';
 import ExternalLinkButton from '../atoms/SafetyExternalLinkButton';
@@ -9,8 +10,9 @@ import WarningRow from './WarningRow';
 
 // 주의·특수 분류 정보 구성.
 const PillSafetySection = ({ data }: PillDetailDataProps) => {
+  const sectionRef = useSafetySectionTarget();
   return (
-    <View style={styles.container}>
+    <View ref={sectionRef} collapsable={false} style={styles.container}>
       <BaseText weight="bold" size={16} style={styles.title}>
         [ 주의 및 특수 분류 정보 ]
       </BaseText>

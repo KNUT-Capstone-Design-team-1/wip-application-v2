@@ -4,12 +4,14 @@ import { useRouter } from 'expo-router';
 import { styles } from './styles';
 import { fontPx } from '@utils/responsive';
 import { COLOR } from '@constants/color';
-import { ChevronLeft } from 'lucide-react-native';
+import { useHeaderActionStore } from './store/header_action_store';
+import { ChevronLeft, Search } from 'lucide-react-native';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 
 const SubHeader = () => {
   const router = useRouter();
 
+  const onSearch = useHeaderActionStore((state) => state.onSearch);
   const title = useHeaderTitleStore((state) => state.title);
 
   const handleBackPress = () => {
@@ -35,8 +37,19 @@ const SubHeader = () => {
         >
           {title}
         </BaseText>
-        {/* 이게 없으면 title이 우측으로 치우침 */}
-        <View style={styles.menuButton} />
+        {onSearch ? (
+          <TouchableOpacity
+            onPress={onSearch}
+            style={styles.menuButton}
+            accessibilityRole="button"
+            accessibilityLabel="상세 정보에서 찾기"
+            accessibilityHint="검색어를 입력해 본문에서 찾습니다"
+          >
+            <Search size={fontPx(22)} color={COLOR.secondary} />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.menuButton} />
+        )}
       </View>
     </View>
   );

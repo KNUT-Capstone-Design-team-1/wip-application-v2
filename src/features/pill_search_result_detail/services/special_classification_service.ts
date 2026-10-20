@@ -10,6 +10,7 @@ import type {
   ISpecialClassificationResult,
   ClassificationResultCache,
 } from '../types/special_classification_type';
+import { uniqueWarningItems } from '../utils/unique_warning_items';
 
 const resultCaches = new WeakMap<
   ClassificationEntry[],
@@ -49,14 +50,12 @@ const getClassificationResultCache = (
 const getIngredientNames = (
   entries: ClassificationEntry[],
   kind: ClassificationEntry['kind'],
-): string[] => [
-  ...new Set(
+): string[] =>
+  uniqueWarningItems(
     entries
       .filter((entry) => entry.kind === kind)
-      .map((entry) => (entry.kr || '').trim() || (entry.en || '').trim())
-      .filter(Boolean),
-  ),
-];
+      .map((entry) => (entry.kr || '').trim() || (entry.en || '').trim()),
+  );
 
 // 분류 일치 결과 조합.
 const buildClassificationResult = (
@@ -77,12 +76,10 @@ const buildClassificationResult = (
     isPsychotropic: psychotropicIngredients.length > 0,
     psychotropicIngredients,
     isProhibited: prohibited.length > 0,
-    prohibitedIngredients: [
-      ...new Set(
-        prohibited.map((match) => match.ingredient.trim()).filter(Boolean),
-      ),
-    ],
-    prohibitedNotes: [...new Set(prohibited.map((match) => match.note))],
+    prohibitedIngredients: uniqueWarningItems(
+      prohibited.map((match) => match.ingredient.trim()),
+    ),
+    prohibitedNotes: uniqueWarningItems(prohibited.map((match) => match.note)),
   };
 };
 

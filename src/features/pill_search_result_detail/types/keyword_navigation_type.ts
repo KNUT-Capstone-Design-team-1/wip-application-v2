@@ -9,6 +9,7 @@ export interface KeywordNavigationAvailability {
 }
 
 export interface KeywordTarget {
+  kind?: 'section';
   id: string;
   keyword: string;
   y: number;
@@ -54,6 +55,11 @@ export interface KeywordTextLineRange {
 export interface KeywordNavigationState extends KeywordNavigationAvailability {
   keywords: string[];
   isVisible: boolean;
+  isSearchOpen: boolean;
+  searchQuery: string;
+  warningKeywords: string[];
+  setSearchOpen: (isSearchOpen: boolean) => void;
+  setSearchQuery: (searchQuery: string) => void;
   setKeywords: (keywords: string[]) => void;
   setVisible: (isVisible: boolean) => void;
   setAvailability: (availability: KeywordNavigationAvailability) => void;

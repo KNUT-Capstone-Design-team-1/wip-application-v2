@@ -23,7 +23,7 @@ const WarningKeywords = ({ items }: WarningKeywordsProps) => {
             accessibilityRole="button"
             accessibilityLabel={item + ' 본문에서 찾기'}
             onPress={() => jump(item)}
-            style={[styles.warningText, { textDecorationLine: 'underline' }]}
+            style={styles.warningText}
           >
             {item}
           </BaseText>

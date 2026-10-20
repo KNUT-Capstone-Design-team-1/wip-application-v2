@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx, px } from '@utils/responsive';
+import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { styles } from '../../styles/molecules/KeywordSearchBar';
@@ -14,12 +15,13 @@ const KeywordSearchBar = () => {
   const insets = useSafeAreaInsets();
   const { store } = useKeywordNavigationContext();
   const isVisible = useStore(store, (state) => state.isVisible);
+  const isSearchOpen = useStore(store, (state) => state.isSearchOpen);
   const hasKeywords = useStore(store, (state) => state.keywords.length > 0);
   const canPrevious = useStore(store, (state) => state.canPrevious);
   const canNext = useStore(store, (state) => state.canNext);
   const { previous, next } = useKeywordNavigationActions();
 
-  if (!isVisible || !hasKeywords) {
+  if (isSearchOpen || !isVisible || !hasKeywords) {
     return null;
   }
 
@@ -38,7 +40,13 @@ const KeywordSearchBar = () => {
         disabled={!canPrevious}
         onPress={previous}
       >
-        <ChevronUp size={fontPx(20)} color={COLOR_TEXT.white} />
+        <ChevronUp
+          size={fontPx(24)}
+          strokeWidth={2.5}
+          color={
+            canPrevious ? KEYWORD_HIGHLIGHT_STYLE.color : COLOR_TEXT.disabled
+          }
+        />
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, !canNext && styles.disabled]}
@@ -50,7 +58,11 @@ const KeywordSearchBar = () => {
         disabled={!canNext}
         onPress={next}
       >
-        <ChevronDown size={fontPx(20)} color={COLOR_TEXT.white} />
+        <ChevronDown
+          size={fontPx(24)}
+          strokeWidth={2.5}
+          color={canNext ? KEYWORD_HIGHLIGHT_STYLE.color : COLOR_TEXT.disabled}
+        />
       </TouchableOpacity>
     </View>
   );

@@ -6,6 +6,8 @@ export const useKeywordNavigationActions = () => {
   const { store, controller } = useKeywordNavigationContext();
   const jump = useCallback(
     (keyword: string) => {
+      store.getState().setSearchQuery('');
+      store.getState().setSearchOpen(false);
       store.getState().setVisible(true);
 
       return controller.jump(keyword);
@@ -25,6 +27,10 @@ export const useKeywordNavigationActions = () => {
 
   // 본문 터치 시 버튼과 대기 중 이동 해제.
   const dismiss = useCallback(() => {
+    if (store.getState().isSearchOpen) {
+      return;
+    }
+
     store.getState().setVisible(false);
     controller.cancel();
   }, [store, controller]);

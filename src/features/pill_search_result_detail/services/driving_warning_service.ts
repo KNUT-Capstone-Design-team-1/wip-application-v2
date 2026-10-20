@@ -2,6 +2,7 @@ import {
   DRIVING_CONTEXT,
   DRIVING_WARNING_KEYWORDS,
 } from '../constants/driving_warning';
+import { uniqueWarningItems } from '../utils/unique_warning_items';
 
 // XML·HTML의 표시 문장을 분리하고 속성값 제외.
 const getVisibleSentences = (document: string): string[] =>
@@ -22,7 +23,7 @@ export const getDrivingWarningKeywords = (
   udData?: string,
   nbData?: string,
 ): string[] => {
-  const keywords = new Set<string>();
+  const keywords: string[] = [];
 
   for (const document of [eeData, udData, nbData]) {
     if (!document) {
@@ -35,10 +36,10 @@ export const getDrivingWarningKeywords = (
       }
 
       for (const match of sentence.matchAll(DRIVING_WARNING_KEYWORDS)) {
-        keywords.add(match[0]);
+        keywords.push(match[0]);
       }
     }
   }
 
-  return [...keywords];
+  return uniqueWarningItems(keywords);
 };

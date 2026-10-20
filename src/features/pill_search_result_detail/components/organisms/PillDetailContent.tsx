@@ -10,6 +10,8 @@ import {
   usePillDetailMetadataInit,
 } from '../../hooks/use_pill_detail_screen_init';
 import { styles } from '../../styles/PillSearchResultDetailScreen';
+import DetailFindBar from '../molecules/DetailFindBar';
+import { useDetailFindHeader } from '../../hooks/use_detail_find_header';
 import KeywordSearchBar from '../molecules/KeywordSearchBar';
 import PillDetailImage from '../molecules/PillDetailImage';
 import PillDetailInfo from './PillDetailInfo';
@@ -19,6 +21,7 @@ const PillDetailLifecycle = () => {
   const store = usePillDetailContext();
   const data = useStore(store, (state) => state.pillData);
   useKeywordNavigationInit(data);
+  useDetailFindHeader();
   usePillDetailMetadataInit(data?.ITEM_SEQ, data?.ITEM_NAME);
   usePillDetailReviewInit(data?.ITEM_SEQ);
 
@@ -44,7 +47,9 @@ const PillDetailContent = () => {
   return (
     <View style={styles.contentWrapper}>
       <PillDetailLifecycle />
+      <DetailFindBar />
       <ScrollView
+        keyboardShouldPersistTaps="handled"
         ref={scrollRef}
         onTouchStart={dismiss}
         onScroll={onScroll}

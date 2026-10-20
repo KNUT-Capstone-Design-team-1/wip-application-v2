@@ -27,7 +27,10 @@ export const measureKeywordTargets = async (
 
   return groups
     .flat()
-    .filter((target) => options.keywords.includes(target.keyword));
+    .filter(
+      (target) =>
+        target.kind === 'section' || options.keywords.includes(target.keyword),
+    );
 };
 
 // 전체 문구에서 방향별 인덱스 선택.
@@ -40,12 +43,17 @@ export const findKeywordTargetIndex = (
 ): number => {
   if (keyword) {
     const ahead = targets.findIndex(
-      (target) => target.keyword === keyword && target.y >= scrollY - 2,
+      (target) =>
+        target.kind !== 'section' &&
+        target.keyword === keyword &&
+        target.y >= scrollY - 2,
     );
 
     return ahead >= 0
       ? ahead
-      : targets.findIndex((target) => target.keyword === keyword);
+      : targets.findIndex(
+          (target) => target.kind !== 'section' && target.keyword === keyword,
+        );
   }
 
   const current = targets.findIndex((target) => target.id === cursorId);

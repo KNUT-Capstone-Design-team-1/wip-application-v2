@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { COLOR } from '@constants/color';
+import { COLOR, COLOR_BG } from '@constants/color';
 import { screenPadding } from '@constants/size';
 import { px } from '@utils/responsive';
 import { KEYWORD_HIGHLIGHT_STYLE } from '../../constants/keyword_highlight';
 
-const buttonSize = px(36, 36, 40);
+const buttonSize = px(44, 44, 48);
 
 export const styles = StyleSheet.create({
   container: {
@@ -27,5 +27,7 @@ export const styles = StyleSheet.create({
     shadowRadius: px(4),
     elevation: 4,
   },
-  disabled: { opacity: 0.4 },
+  disabled: {
+    backgroundColor: COLOR_BG.btnDisabled,
+  },
 });

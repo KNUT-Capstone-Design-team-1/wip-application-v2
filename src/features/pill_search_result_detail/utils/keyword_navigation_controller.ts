@@ -108,7 +108,7 @@ export const createKeywordNavigationController = (
     if (!target) {
       updateAvailability();
 
-      return;
+      return targets.length;
     }
 
     target.reveal?.();
@@ -116,6 +116,8 @@ export const createKeywordNavigationController = (
     updateAvailability();
     scrollY = Math.max(0, target.y);
     options.scrollTo(scrollY);
+
+    return targets.length;
   };
 
   return {
