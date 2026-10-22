@@ -12,7 +12,7 @@ import {
 } from '../../styles/molecules/KeywordSearchBar';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 
-// 본문 위에 고정되는 이전·다음 원형 버튼.
+// 본문 위에 고정되는 이전·다음 탐색 버튼.
 const KeywordSearchBar = () => {
   const insets = useSafeAreaInsets();
   const { store } = useKeywordNavigationContext();
@@ -42,11 +42,7 @@ const KeywordSearchBar = () => {
         disabled={!canPrevious}
         onPress={previous}
       >
-        <ChevronUp
-          size={fontPx(24)}
-          strokeWidth={2.5}
-          color={canPrevious ? COLOR_TEXT.highlight : COLOR_TEXT.disabled}
-        />
+        <ChevronUp size={fontPx(24)} strokeWidth={2} color={COLOR_TEXT.white} />
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, !canNext && styles.disabled]}
@@ -60,8 +56,8 @@ const KeywordSearchBar = () => {
       >
         <ChevronDown
           size={fontPx(24)}
-          strokeWidth={2.5}
-          color={canNext ? COLOR_TEXT.highlight : COLOR_TEXT.disabled}
+          strokeWidth={2}
+          color={COLOR_TEXT.white}
         />
       </TouchableOpacity>
     </View>

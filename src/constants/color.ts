@@ -29,7 +29,6 @@ const PALETTE = {
   'color-tertiary': '#004A94',
   'color-tertiary-pressed': '#003366',
   'bg-base': '#F1F5F9',
-  'bg-keyword-highlight': '#FFF1A8',
   'bg-surface': '#FFFFFF',
   'bg-tabbar': '#182729',
   'bg-toast': '#001b24',
@@ -82,7 +81,7 @@ export const COLOR = {
 };
 
 export const COLOR_BG = {
-  highlight: PALETTE['bg-keyword-highlight'],
+  highlight: `${PALETTE['color-primary']}33`, // primary, 불투명도 20%
   base: PALETTE['bg-base'],
   surface: PALETTE['bg-surface'],
   overlay: PALETTE['bg-overlay'],

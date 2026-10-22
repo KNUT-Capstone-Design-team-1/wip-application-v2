@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLOR, COLOR_BG } from '@constants/color';
+import { COLOR } from '@constants/color';
 import { screenPadding } from '@constants/size';
 import { px } from '@utils/responsive';
 
@@ -17,17 +17,13 @@ export const styles = StyleSheet.create({
     width: buttonSize,
     height: buttonSize,
     borderRadius: buttonSize / 2,
-    backgroundColor: COLOR_BG.highlight,
+    backgroundColor: COLOR.primary,
+    opacity: 0.8,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLOR.shadow,
-    shadowOffset: { width: 0, height: px(2) },
-    shadowOpacity: 0.15,
-    shadowRadius: px(4),
-    elevation: 4,
   },
   disabled: {
-    backgroundColor: COLOR_BG.btnDisabled,
+    opacity: 0.35,
   },
 });
 
