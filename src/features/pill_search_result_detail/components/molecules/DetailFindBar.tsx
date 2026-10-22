@@ -18,7 +18,6 @@ const DetailFindForm = () => {
   const {
     query,
     searching,
-    matchCount,
     hasSearched,
     search,
     updateQuery,
@@ -48,13 +47,42 @@ const DetailFindForm = () => {
             style={styles.input}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={styles.resultButton}
             onPress={() => search()}
             disabled={!query.trim() || searching}
             accessibilityRole="button"
-            accessibilityLabel="본문 검색"
+            accessibilityLabel={
+              hasSearched && !searching && totalCount === 0
+                ? '검색 결과 없음, 다시 검색'
+                : '본문 검색'
+            }
+            accessibilityHint="입력한 검색어로 검색합니다"
           >
-            <Search size={fontPx(20)} color={COLOR_TEXT.body} />
+            {!searching && (!hasSearched || totalCount === 0) ? (
+              <Search size={fontPx(20)} color={COLOR_TEXT.sub} />
+            ) : (
+              <BaseText
+                size={11}
+                numberOfLines={1}
+                style={styles.resultCount}
+                accessibilityLiveRegion="polite"
+                accessibilityLabel={
+                  searching
+                    ? '검색 중'
+                    : hasSearched
+                      ? totalCount + '개 중 ' + currentIndex + '번째'
+                      : '검색 전'
+                }
+              >
+                {searching
+                  ? '…'
+                  : hasSearched
+                    ? (totalCount ? currentIndex || '–' : 0) +
+                      ' / ' +
+                      totalCount
+                    : '0 / 0'}
+              </BaseText>
+            )}
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -100,20 +128,6 @@ const DetailFindForm = () => {
           <X size={fontPx(20)} color={COLOR_TEXT.body} />
         </TouchableOpacity>
       </View>
-      <BaseText
-        size={11}
-        numberOfLines={1}
-        style={styles.message}
-        accessibilityLiveRegion="polite"
-      >
-        {searching
-          ? '검색 중…'
-          : hasSearched
-            ? matchCount === 0
-              ? '검색 결과가 없습니다.'
-              : '검색 결과 ' + (currentIndex || '–') + ' / ' + totalCount
-            : ' '}
-      </BaseText>
     </View>
   );
 };

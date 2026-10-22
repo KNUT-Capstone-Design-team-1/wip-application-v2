@@ -40,15 +40,19 @@ const SubHeader = () => {
         {onSearch ? (
           <TouchableOpacity
             onPress={onSearch}
-            style={styles.menuButton}
+            style={styles.backButton}
             accessibilityRole="button"
             accessibilityLabel="상세 정보에서 찾기"
             accessibilityHint="검색어를 입력해 본문에서 찾습니다"
           >
-            <Search size={fontPx(22)} color={COLOR.secondary} />
+            <Search
+              size={fontPx(24)}
+              color={COLOR.secondary}
+              strokeWidth={2.5}
+            />
           </TouchableOpacity>
         ) : (
-          <View style={styles.menuButton} />
+          <View style={styles.backButton} />
         )}
       </View>
     </View>

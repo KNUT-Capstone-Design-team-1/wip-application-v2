@@ -1,12 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
-import { fontPx, px } from '@utils/responsive';
+import { screenPadding } from '@constants/size';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: COLOR_BG.surface,
-    paddingHorizontal: px(8),
-    paddingVertical: px(2),
+    paddingLeft: screenPadding.horizontal,
+    paddingRight: px(8),
+    paddingTop: px(-10),
+    paddingBottom: px(10),
     borderBottomWidth: 1,
     borderBottomColor: COLOR_LINE.border,
   },
@@ -31,15 +34,21 @@ export const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   button: {
-    width: px(36),
+    width: px(30),
     height: px(36),
     alignItems: 'center',
     justifyContent: 'center',
   },
-  message: {
+  resultButton: {
+    minWidth: px(56),
+    height: px(36),
+    paddingHorizontal: px(8),
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  resultCount: {
     color: COLOR_TEXT.sub,
-    lineHeight: fontPx(14),
-    marginTop: px(2),
-    paddingHorizontal: px(10),
+    fontVariant: ['tabular-nums'],
   },
 });

@@ -11,8 +11,7 @@ import {
 } from '../../hooks/use_pill_detail_screen_init';
 import { styles } from '../../styles/PillSearchResultDetailScreen';
 import DetailFindBar from '../molecules/DetailFindBar';
-import DetailFindFloatingButton from '../atoms/DetailFindFloatingButton';
-import { useDetailFindShortcuts } from '../../hooks/use_detail_find_shortcuts';
+import { useDetailFindHeader } from '../../hooks/use_detail_find_header';
 import KeywordSearchBar from '../molecules/KeywordSearchBar';
 import PillDetailImage from '../molecules/PillDetailImage';
 import PillDetailInfo from './PillDetailInfo';
@@ -22,7 +21,7 @@ const PillDetailLifecycle = () => {
   const store = usePillDetailContext();
   const data = useStore(store, (state) => state.pillData);
   useKeywordNavigationInit(data);
-  useDetailFindShortcuts();
+  useDetailFindHeader();
   usePillDetailMetadataInit(data?.ITEM_SEQ, data?.ITEM_NAME);
   usePillDetailReviewInit(data?.ITEM_SEQ);
 
@@ -39,7 +38,7 @@ const PillDetailDisclaimer = () => (
   </View>
 );
 
-// 데이터 구독 없는 본문 레이아웃·스크롤 연결.
+// 본문 레이아웃·스크롤 연결.
 const PillDetailContent = () => {
   const { dismiss } = useKeywordNavigationActions();
   const { scrollRef, onScroll, onScrollBeginDrag } =
@@ -67,7 +66,6 @@ const PillDetailContent = () => {
           </View>
         </ScrollView>
         <KeywordSearchBar />
-        <DetailFindFloatingButton />
       </View>
     </View>
   );
