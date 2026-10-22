@@ -30,27 +30,33 @@ const DetailFindForm = () => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <TextInput
-          autoFocus
-          value={query}
-          onChangeText={updateQuery}
-          onSubmitEditing={search}
-          placeholder="상세 정보에서 찾기"
-          placeholderTextColor={COLOR_TEXT.sub}
-          accessibilityLabel="본문 검색어"
-          returnKeyType="search"
-          autoCorrect={false}
-          style={styles.input}
-        />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={search}
-          disabled={!query.trim() || searching}
-          accessibilityRole="button"
-          accessibilityLabel="본문 검색"
-        >
-          <Search size={fontPx(20)} color={COLOR_TEXT.body} />
-        </TouchableOpacity>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            autoFocus
+            value={query}
+            onChangeText={updateQuery}
+            multiline={false}
+            submitBehavior="blurAndSubmit"
+            onSubmitEditing={(event) => {
+              if (!searching) void search(event.nativeEvent.text);
+            }}
+            placeholder="상세 정보에서 찾기"
+            placeholderTextColor={COLOR_TEXT.sub}
+            accessibilityLabel="본문 검색어"
+            returnKeyType="search"
+            autoCorrect={false}
+            style={styles.input}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => search()}
+            disabled={!query.trim() || searching}
+            accessibilityRole="button"
+            accessibilityLabel="본문 검색"
+          >
+            <Search size={fontPx(20)} color={COLOR_TEXT.body} />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           style={styles.button}
           onPress={previous}

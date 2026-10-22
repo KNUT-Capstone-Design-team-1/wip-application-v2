@@ -3,7 +3,7 @@ import { COLOR } from '@constants/color';
 import { screenPadding } from '@constants/size';
 import { px } from '@utils/responsive';
 
-const buttonSize = px(44, 44, 48);
+const buttonSize = px(36, 36, 40);
 
 export const styles = StyleSheet.create({
   button: {
@@ -19,5 +19,4 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  active: { opacity: 1 },
 });

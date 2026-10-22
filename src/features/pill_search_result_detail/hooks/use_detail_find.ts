@@ -38,41 +38,44 @@ export const useDetailFindActions = (
   );
 
   // 검색어를 강조한 뒤 첫 일치 위치로 이동하고 최신 요청의 결과만 반영한다.
-  const search = useCallback(async () => {
-    const value = query.trim();
-    const hasQuery = !!value;
+  const search = useCallback(
+    async (submittedQuery = query) => {
+      const value = submittedQuery.trim();
+      const hasQuery = !!value;
 
-    if (!hasQuery) {
-      return;
-    }
-
-    Keyboard.dismiss();
-
-    const id = ++request.current;
-
-    setSearching(true);
-    setHasSearched(false);
-    store.getState().setSearchQuery(value);
-    store.getState().setVisible(true);
-
-    try {
-      const count = await controller.jump(value);
-      const isCurrentRequest = id === request.current;
-
-      if (!isCurrentRequest) {
+      if (!hasQuery) {
         return;
       }
 
-      setHasSearched(true);
-      setMatchCount(count ?? null);
-    } finally {
-      const isCurrentRequest = id === request.current;
+      Keyboard.dismiss();
 
-      if (isCurrentRequest) {
-        setSearching(false);
+      const id = ++request.current;
+
+      setSearching(true);
+      setHasSearched(false);
+      store.getState().setSearchQuery(value);
+      store.getState().setVisible(true);
+
+      try {
+        const count = await controller.jump(value);
+        const isCurrentRequest = id === request.current;
+
+        if (!isCurrentRequest) {
+          return;
+        }
+
+        setHasSearched(true);
+        setMatchCount(count ?? null);
+      } finally {
+        const isCurrentRequest = id === request.current;
+
+        if (isCurrentRequest) {
+          setSearching(false);
+        }
       }
-    }
-  }, [query, store, controller, setSearching, setHasSearched, setMatchCount]);
+    },
+    [query, store, controller, setSearching, setHasSearched, setMatchCount],
+  );
 
   // 검색을 취소하고 폼과 탐색 표시를 초기화한다.
   const close = useCallback(() => {
