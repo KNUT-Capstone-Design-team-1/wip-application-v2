@@ -2,7 +2,6 @@ import { memo, useMemo } from 'react';
 import { BaseText } from '@components/common/BaseText';
 import { View } from 'react-native';
 import { useStore } from 'zustand';
-import InfoRow from '@features/shared/components/InfoRow';
 import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
 import { usePillSpecsExpansion } from '../../hooks/use_pill_detail_expansion';
 import { styles } from '../../styles/molecules/PillSpecsSection';
@@ -13,6 +12,7 @@ import type {
   PillSpecRowsProps,
 } from '../../types/pill_detail_component_type';
 import {
+  getPillBasicFields,
   getPillIngredientFields,
   getPillManagementFields,
   getPillOtherFields,
@@ -32,6 +32,12 @@ const PillSpecRows = memo(({ fields, targetPrefix }: PillSpecRowsProps) => (
     ))}
   </>
 ));
+
+const PillBasicSpecs = memo(({ data }: PillDetailDataProps) => {
+  const fields = useMemo(() => getPillBasicFields(data), [data]);
+
+  return <PillSpecRows fields={fields} targetPrefix="specs" />;
+});
 
 const PillPhysicalSpecs = memo(({ data }: PillDetailDataProps) => {
   const fields = useMemo(() => getPillPhysicalFields(data), [data]);
@@ -87,6 +93,7 @@ const PillOtherSpecs = memo(({ data }: PillDetailDataProps) => {
 });
 
 PillSpecRows.displayName = 'PillSpecRows';
+PillBasicSpecs.displayName = 'PillBasicSpecs';
 PillPhysicalSpecs.displayName = 'PillPhysicalSpecs';
 PillIngredientSpecs.displayName = 'PillIngredientSpecs';
 PillManagementSpecs.displayName = 'PillManagementSpecs';
@@ -105,22 +112,7 @@ const PillSpecsSection = () => {
   return (
     <>
       <View style={styles.infoWrapper}>
-        <InfoRow label="제조사" value={data.ENTP_NAME} />
-        <KeywordInfoRow
-          label="주성분"
-          targetId="specs:mainIngredient"
-          text={data.MAIN_ITEM_INGR}
-        />
-        <InfoRow label="분류명" value={data.CLASS_NAME} />
-        <InfoRow label="모양" value={data.DRUG_SHAPE} />
-        <InfoRow label="제형" value={data.FORM_CODE} />
-        <InfoRow label="성상" value={data.CHART} />
-        <InfoRow
-          label="식별 문자"
-          value={`앞: ${data.PRINT_FRONT || '-'} / 뒤: ${data.PRINT_BACK || '-'}`}
-        />
-        <InfoRow label="포장 단위" value={data.PACK_UNIT} />
-        <InfoRow label="유효 기간" value={data.VALID_TERM} />
+        <PillBasicSpecs data={data} />
 
         {/* 더보기 정보 */}
         {moreInfo && (

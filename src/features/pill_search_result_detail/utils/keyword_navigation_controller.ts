@@ -30,8 +30,11 @@ export const createKeywordNavigationController = (
 
   // 현재 위치의 이동 가능 방향 반영.
   const updateAvailability = () => {
+    const current = targets.findIndex((target) => target.id === cursorId);
+    const progress = { currentIndex: current + 1, totalCount: targets.length };
     if (!hasMeasured) {
       options.setAvailability({
+        ...progress,
         canPrevious: scrollY > 2,
         canNext: options.getKeywords().length > 0,
       });
@@ -39,10 +42,9 @@ export const createKeywordNavigationController = (
       return;
     }
 
-    const current = targets.findIndex((target) => target.id === cursorId);
-
     if (current >= 0) {
       options.setAvailability({
+        ...progress,
         canPrevious: current > 0,
         canNext: current < targets.length - 1,
       });
@@ -51,6 +53,7 @@ export const createKeywordNavigationController = (
     }
 
     options.setAvailability({
+      ...progress,
       canPrevious: targets.some((target) => target.y < scrollY - 2),
       canNext: targets.some((target) => target.y >= scrollY - 2),
     });
@@ -133,7 +136,12 @@ export const createKeywordNavigationController = (
       hasMeasured = false;
       scrollY = 0;
       manualScroll = false;
-      options.setAvailability({ canPrevious: false, canNext: true });
+      options.setAvailability({
+        currentIndex: 0,
+        totalCount: 0,
+        canPrevious: false,
+        canNext: true,
+      });
     },
     register: (id: string, measure: KeywordMeasure) => {
       registry.set(id, measure);

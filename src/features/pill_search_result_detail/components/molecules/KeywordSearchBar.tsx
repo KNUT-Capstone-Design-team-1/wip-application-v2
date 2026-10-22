@@ -1,18 +1,14 @@
 import { memo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
-import { COLOR_TEXT } from '@constants/color';
-import { fontPx } from '@utils/responsive';
 import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
-import {
-  styles,
-  getKeywordSearchBarStyle,
-} from '../../styles/molecules/KeywordSearchBar';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import { getKeywordSearchBarStyle } from '../../styles/molecules/KeywordSearchBar';
+import KeywordNavigationButton from '../atoms/KeywordNavigationButton';
+import KeywordNavigationPosition from '../atoms/KeywordNavigationPosition';
 
-// 본문 위에 고정되는 이전·다음 탐색 버튼.
+// 우측 하단의 이전·다음 탐색 버튼 배치와 표시 상태 관리.
 const KeywordSearchBar = () => {
   const insets = useSafeAreaInsets();
   const { store } = useKeywordNavigationContext();
@@ -23,43 +19,24 @@ const KeywordSearchBar = () => {
   const canNext = useStore(store, (state) => state.canNext);
   const { previous, next } = useKeywordNavigationActions();
 
-  if (isSearchOpen || !isVisible || !hasKeywords) {
-    return null;
-  }
+  if (isSearchOpen || !isVisible || !hasKeywords) return null;
 
   return (
     <View
       pointerEvents="box-none"
       style={getKeywordSearchBarStyle(insets.bottom)}
     >
-      <TouchableOpacity
-        style={[styles.button, !canPrevious && styles.disabled]}
-        hitSlop={4}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel="이전 주의 키워드 찾기"
-        accessibilityState={{ disabled: !canPrevious }}
+      <KeywordNavigationButton
+        direction="previous"
         disabled={!canPrevious}
         onPress={previous}
-      >
-        <ChevronUp size={fontPx(24)} strokeWidth={2} color={COLOR_TEXT.white} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, !canNext && styles.disabled]}
-        hitSlop={4}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel="다음 주의 키워드 찾기"
-        accessibilityState={{ disabled: !canNext }}
+      />
+      <KeywordNavigationPosition />
+      <KeywordNavigationButton
+        direction="next"
         disabled={!canNext}
         onPress={next}
-      >
-        <ChevronDown
-          size={fontPx(24)}
-          strokeWidth={2}
-          color={COLOR_TEXT.white}
-        />
-      </TouchableOpacity>
+      />
     </View>
   );
 };

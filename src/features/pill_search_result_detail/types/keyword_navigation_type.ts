@@ -4,6 +4,8 @@ import type { createKeywordNavigationStore } from '../store/keyword_navigation_s
 import { createKeywordNavigationController } from '../utils/keyword_navigation_controller';
 
 export interface KeywordNavigationAvailability {
+  currentIndex: number;
+  totalCount: number;
   canPrevious: boolean;
   canNext: boolean;
 }

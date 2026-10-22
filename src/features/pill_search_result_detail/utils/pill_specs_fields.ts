@@ -1,6 +1,24 @@
 import type { IPillDetail, PillSpecField } from '../types/pill_detail_type';
 import { findKeywordMatches } from './keyword_matches';
 
+// 기본정보의 표시·탐색 데이터를 같은 필드 목록으로 관리한다.
+export const getPillBasicFields = (data: IPillDetail): PillSpecField[] => [
+  { id: 'manufacturer', label: '제조사', text: data.ENTP_NAME || '' },
+  { id: 'mainIngredient', label: '주성분', text: data.MAIN_ITEM_INGR || '' },
+  { id: 'className', label: '분류명', text: data.CLASS_NAME || '' },
+  { id: 'shape', label: '모양', text: data.DRUG_SHAPE || '' },
+  { id: 'form', label: '제형', text: data.FORM_CODE || '' },
+  { id: 'appearance', label: '성상', text: data.CHART || '' },
+  {
+    id: 'imprint',
+    label: '식별 문자',
+    text:
+      '앞: ' + (data.PRINT_FRONT || '-') + ' / 뒤: ' + (data.PRINT_BACK || '-'),
+  },
+  { id: 'packUnit', label: '포장 단위', text: data.PACK_UNIT || '' },
+  { id: 'validTerm', label: '유효 기간', text: data.VALID_TERM || '' },
+];
+
 // 성분 영역의 표시·탐색 데이터 구성.
 export const getPillIngredientFields = (data: IPillDetail) => [
   {

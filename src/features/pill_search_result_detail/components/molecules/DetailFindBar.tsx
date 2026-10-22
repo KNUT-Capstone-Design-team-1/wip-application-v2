@@ -11,6 +11,8 @@ import { ChevronDown, ChevronUp, Search, X } from 'lucide-react-native';
 // 검색 입력과 결과·탐색 버튼을 표시한다.
 const DetailFindForm = () => {
   const { store } = useKeywordNavigationContext();
+  const currentIndex = useStore(store, (state) => state.currentIndex);
+  const totalCount = useStore(store, (state) => state.totalCount);
   const canPrevious = useStore(store, (state) => state.canPrevious);
   const canNext = useStore(store, (state) => state.canNext);
   const {
@@ -92,19 +94,20 @@ const DetailFindForm = () => {
           <X size={fontPx(20)} color={COLOR_TEXT.body} />
         </TouchableOpacity>
       </View>
-      {searching || hasSearched ? (
-        <BaseText
-          size={11}
-          style={styles.message}
-          accessibilityLiveRegion="polite"
-        >
-          {searching
-            ? '검색 중…'
-            : matchCount === 0
+      <BaseText
+        size={11}
+        numberOfLines={1}
+        style={styles.message}
+        accessibilityLiveRegion="polite"
+      >
+        {searching
+          ? '검색 중…'
+          : hasSearched
+            ? matchCount === 0
               ? '검색 결과가 없습니다.'
-              : matchCount + '개의 검색 결과'}
-        </BaseText>
-      ) : null}
+              : '검색 결과 ' + (currentIndex || '–') + ' / ' + totalCount
+            : ' '}
+      </BaseText>
     </View>
   );
 };

@@ -13,13 +13,19 @@ export const createKeywordNavigationStore = () =>
     setSearchQuery: (searchQuery) =>
       set((state) => ({
         searchQuery,
+        currentIndex: 0,
+        totalCount: 0,
         keywords: searchQuery ? [searchQuery] : state.warningKeywords,
       })),
+    currentIndex: 0,
+    totalCount: 0,
     canPrevious: false,
     canNext: true,
     setKeywords: (warningKeywords) =>
       set((state) => ({
         warningKeywords,
+        currentIndex: 0,
+        totalCount: 0,
         keywords: state.searchQuery ? [state.searchQuery] : warningKeywords,
       })),
     setVisible: (isVisible) => set({ isVisible }),

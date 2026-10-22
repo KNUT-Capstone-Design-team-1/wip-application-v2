@@ -94,3 +94,9 @@ export interface SkeletonBoxStyleOptions extends Pick<
 > {
   opacity: Animated.Value;
 }
+
+export interface KeywordNavigationButtonProps {
+  direction: 'previous' | 'next';
+  disabled: boolean;
+  onPress: () => void;
+}
