@@ -8,6 +8,7 @@ import MarkSection from '@features/pill_identification_search/components/molecul
 import IdentificationTextInputSection from '@features/pill_identification_search/components/organisms/IdentificationTextInputSection';
 import IdentificationIconButtonSection from '@features/pill_identification_search/components/organisms/IdentificationIconButtonSection';
 import IdentificationSearchActions from '@features/pill_identification_search/components/organisms/IdentificationSearchActions';
+import { GuideTarget, useGuideScroll } from '@features/guide';
 import { styles } from '@features/pill_identification_search/styles/organisms/PillIdentificationSearchModal';
 
 interface IPillIdentificationSearchFormProps {
@@ -24,6 +25,9 @@ const PillIdentificationSearchForm = memo(
       resetButtonClickHandler,
     } = useSelectedSearchId();
 
+    // 가이드: 스크롤 영역 안의 섹션을 화면에 보이도록 스크롤 등록
+    const tourScroll = useGuideScroll();
+
     // 검색 실행 핸들러
     const handleSearch = useCallback(async () => {
       if (onSearchComplete) {
@@ -32,13 +36,15 @@ const PillIdentificationSearchForm = memo(
       await searchPillDatas();
     }, [onSearchComplete, searchPillDatas]);
 
-    // 섹션별 렌더링 함수
-    const renderSection = (key: string, section: IIdentificationSection) => {
+    // 섹션 내용 렌더링
+    const renderSectionContent = (
+      key: string,
+      section: IIdentificationSection,
+    ) => {
       switch (section.type) {
         case 'textInput':
           return (
             <IdentificationTextInputSection
-              key={key}
               sectionKey={key}
               section={section}
               searchIdInputChangeHandler={searchIdInputChangeHandler}
@@ -47,7 +53,6 @@ const PillIdentificationSearchForm = memo(
         case 'iconButton':
           return (
             <IdentificationIconButtonSection
-              key={key}
               sectionKey={key}
               section={section}
               radioButtonPressHandler={radioButtonPressHandler}
@@ -55,7 +60,7 @@ const PillIdentificationSearchForm = memo(
           );
         case 'other':
           return (
-            <View key={key} style={styles.otherSection}>
+            <View style={styles.otherSection}>
               <IdentificationSection title={section.title}>
                 <MarkSection />
               </IdentificationSection>
@@ -66,9 +71,21 @@ const PillIdentificationSearchForm = memo(
       }
     };
 
+    // 섹션을 가이드 타겟으로 감싸 렌더링 (id: id.<key>)
+    const renderSection = (key: string, section: IIdentificationSection) => {
+      const content = renderSectionContent(key, section);
+      if (!content) return null;
+      return (
+        <GuideTarget key={key} id={`id.${key}`}>
+          {content}
+        </GuideTarget>
+      );
+    };
+
     return (
       <View style={styles.container}>
         <ScrollView
+          {...tourScroll}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContentContainer}
           showsVerticalScrollIndicator={false}
