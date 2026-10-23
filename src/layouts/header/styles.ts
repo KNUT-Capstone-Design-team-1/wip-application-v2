@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(12),
   },
   subHeaderContent: {
+    paddingHorizontal: px(4),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

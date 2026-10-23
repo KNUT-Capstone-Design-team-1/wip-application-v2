@@ -1,0 +1,143 @@
+import { TextInput, TouchableOpacity, View } from 'react-native';
+import { useStore } from 'zustand';
+import { BaseText } from '@components/common/BaseText';
+import { COLOR_TEXT } from '@constants/color';
+import { fontPx } from '@utils/responsive';
+import { useDetailFind } from '../../hooks/use_detail_find';
+import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
+import { styles } from '../../styles/molecules/DetailFindBar';
+import { ChevronDown, ChevronUp, Search, X } from 'lucide-react-native';
+
+// 검색 입력과 결과·탐색 버튼을 표시한다.
+const DetailFindForm = () => {
+  const { store } = useKeywordNavigationContext();
+  const currentIndex = useStore(store, (state) => state.currentIndex);
+  const totalCount = useStore(store, (state) => state.totalCount);
+  const canPrevious = useStore(store, (state) => state.canPrevious);
+  const canNext = useStore(store, (state) => state.canNext);
+  const {
+    query,
+    searching,
+    hasSearched,
+    search,
+    updateQuery,
+    close,
+    previous,
+    next,
+  } = useDetailFind();
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.row}>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            autoFocus
+            value={query}
+            onChangeText={updateQuery}
+            multiline={false}
+            submitBehavior="blurAndSubmit"
+            onSubmitEditing={(event) => {
+              if (!searching) void search(event.nativeEvent.text);
+            }}
+            placeholder="상세 정보에서 찾기"
+            placeholderTextColor={COLOR_TEXT.sub}
+            accessibilityLabel="본문 검색어"
+            returnKeyType="search"
+            autoCorrect={false}
+            style={styles.input}
+          />
+          <TouchableOpacity
+            style={styles.resultButton}
+            onPress={() => search()}
+            disabled={!query.trim() || searching}
+            accessibilityRole="button"
+            accessibilityLabel={
+              hasSearched && !searching && totalCount === 0
+                ? '검색 결과 없음, 다시 검색'
+                : '본문 검색'
+            }
+            accessibilityHint="입력한 검색어로 검색합니다"
+          >
+            {!searching && (!hasSearched || totalCount === 0) ? (
+              <Search size={fontPx(20)} color={COLOR_TEXT.sub} />
+            ) : (
+              <BaseText
+                size={11}
+                numberOfLines={1}
+                style={styles.resultCount}
+                accessibilityLiveRegion="polite"
+                accessibilityLabel={
+                  searching
+                    ? '검색 중'
+                    : hasSearched
+                      ? totalCount + '개 중 ' + currentIndex + '번째'
+                      : '검색 전'
+                }
+              >
+                {searching
+                  ? '…'
+                  : hasSearched
+                    ? (totalCount ? currentIndex || '–' : 0) +
+                      ' / ' +
+                      totalCount
+                    : '0 / 0'}
+              </BaseText>
+            )}
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={previous}
+          disabled={!hasSearched || searching || !canPrevious}
+          accessibilityRole="button"
+          accessibilityLabel="이전 검색 결과"
+          accessibilityState={{
+            disabled: !hasSearched || searching || !canPrevious,
+          }}
+        >
+          <ChevronUp
+            size={fontPx(20)}
+            color={
+              hasSearched && canPrevious ? COLOR_TEXT.body : COLOR_TEXT.disabled
+            }
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={next}
+          disabled={!hasSearched || searching || !canNext}
+          accessibilityRole="button"
+          accessibilityLabel="다음 검색 결과"
+          accessibilityState={{
+            disabled: !hasSearched || searching || !canNext,
+          }}
+        >
+          <ChevronDown
+            size={fontPx(20)}
+            color={
+              hasSearched && canNext ? COLOR_TEXT.body : COLOR_TEXT.disabled
+            }
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={close}
+          accessibilityRole="button"
+          accessibilityLabel="본문 검색 닫기"
+        >
+          <X size={fontPx(20)} color={COLOR_TEXT.body} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+// 검색 열림 상태에 따라 폼을 표시한다.
+const DetailFindBar = () => {
+  const { store } = useKeywordNavigationContext();
+  const isOpen = useStore(store, (state) => state.isSearchOpen);
+
+  return isOpen ? <DetailFindForm /> : null;
+};
+
+export default DetailFindBar;

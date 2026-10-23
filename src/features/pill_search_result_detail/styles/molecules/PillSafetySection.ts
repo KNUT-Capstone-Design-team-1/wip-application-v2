@@ -1,7 +1,7 @@
-import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { screenPadding } from '@constants/size';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {

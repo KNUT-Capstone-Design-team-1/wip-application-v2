@@ -1,26 +1,49 @@
-import { Image } from '@components/common/CustomImage';
-import { View, ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { useStore } from 'zustand';
 import { BaseText } from '@components/common/BaseText';
-import PillDetailInfo from '@features/pill_search_result_detail/components/organisms/PillDetailInfo';
-import PillDetailSkeleton from '@features/pill_search_result_detail/components/organisms/PillDetailSkeleton';
-import { styles } from '@features/pill_search_result_detail/styles/PillSearchResultDetailScreen';
-import { usePillDetailScreen } from '@features/pill_search_result_detail/hooks/use_pill_detail_screen';
 import FolderSelectModal from '@features/pill_save/components/organisms/FolderSelectModal';
-import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
+import PillDetailContent from '../components/organisms/PillDetailContent';
+import PillDetailSkeleton from '../components/organisms/PillDetailSkeleton';
+import { KeywordNavigationProvider } from '../contexts/keyword_navigation_context';
+import { PillDetailProvider } from '../contexts/pill_detail_context';
+import { usePillDetailSaveActions } from '../hooks/use_pill_detail_actions';
+import { usePillDetailContext } from '../hooks/use_pill_detail_context';
+import { usePillDetailInit } from '../hooks/use_pill_detail_init';
+import { styles } from '../styles/PillSearchResultDetailScreen';
 
-const PillSearchResultDetailScreen = () => {
-  const {
-    pillData,
-    loading,
-    itemImageStr,
-    isSaved,
-    savedFolderIds,
-    isFolderModalVisible,
-    openFolderModal,
-    closeFolderModal,
-    handleSaveComplete,
-    detailLoading,
-  } = usePillDetailScreen();
+// 저장 폴더 모달에 필요한 상태만 구독.
+const PillDetailSaveModal = () => {
+  const store = usePillDetailContext();
+  const visible = useStore(store, (state) => state.isFolderModalVisible);
+  const savedFolderIds = useStore(store, (state) => state.savedFolderIds);
+  const itemSeq = useStore(store, (state) => state.pillData?.ITEM_SEQ);
+  const itemName = useStore(store, (state) => state.pillData?.ITEM_NAME);
+  const { closeFolderModal, completeSave } = usePillDetailSaveActions();
+
+  if (!itemSeq || !itemName) {
+    return null;
+  }
+
+  return (
+    <FolderSelectModal
+      isVisible={visible}
+      onClose={closeFolderModal}
+      itemSeq={itemSeq}
+      itemName={itemName}
+      initialSelectedIds={savedFolderIds}
+      onSaveComplete={completeSave}
+    />
+  );
+};
+
+// 초기 조회 상태에 따른 상세 화면 구성.
+const PillDetailView = () => {
+  const store = usePillDetailContext();
+
+  const loading = useStore(store, (state) => state.loading);
+  const hasData = useStore(store, (state) => state.pillData !== null);
+  usePillDetailInit();
 
   if (loading) {
     return (
@@ -30,7 +53,7 @@ const PillSearchResultDetailScreen = () => {
     );
   }
 
-  if (!pillData) {
+  if (!hasData) {
     return (
       <View style={styles.pillResultDetailRoot}>
         <BaseText
@@ -45,68 +68,23 @@ const PillSearchResultDetailScreen = () => {
   }
 
   return (
-    <>
-      <ScrollView style={styles.scrollViewWrapper}>
-        <View style={styles.viewWrapper}>
-          {/* 알약 이미지 */}
-          <View style={styles.pillImgContainer}>
-            <View style={styles.pillImgWrapper}>
-              {itemImageStr || pillData.ITEM_IMAGE ? (
-                <Image
-                  style={styles.pillImg}
-                  source={{ uri: itemImageStr || pillData.ITEM_IMAGE || '' }}
-                  contentFit="contain"
-                />
-              ) : (
-                <View style={styles.pillDetailNoImageWrapper}>
-                  <BaseText
-                    weight="semiBold"
-                    size={16}
-                    style={styles.pillDetailNoImageText}
-                  >
-                    이미지가 없습니다
-                  </BaseText>
-                </View>
-              )}
-            </View>
-          </View>
+    <KeywordNavigationProvider>
+      <PillDetailContent />
+      <PillDetailSaveModal />
+    </KeywordNavigationProvider>
+  );
+};
 
-          {/* 알약 정보 */}
-          <PillDetailInfo
-            data={pillData}
-            saveState={isSaved}
-            onSaveToggle={openFolderModal}
-            onStockInquiry={() =>
-              openStockInquiryModal({
-                seq: pillData.ITEM_SEQ,
-                name: pillData.ITEM_NAME,
-                entpName: pillData.ENTP_NAME,
-                className: pillData.CLASS_NAME,
-                image: itemImageStr || pillData.ITEM_IMAGE,
-              })
-            }
-            detailLoading={detailLoading}
-          />
+// 경로와 화면별 의존성 연결.
+const PillSearchResultDetailScreen = () => {
+  const { ITEM_SEQ, itemImage } = useLocalSearchParams();
+  const itemSeq = Array.isArray(ITEM_SEQ) ? ITEM_SEQ[0] : ITEM_SEQ;
+  const image = Array.isArray(itemImage) ? itemImage[0] : itemImage;
 
-          {/* 의료 정보 면책 조항 */}
-          <View style={styles.disclaimerWrapper}>
-            <BaseText weight="semiBold" size={13} style={styles.disclaimerText}>
-              본 앱의 정보는 참고용이며, 정확한 의학적 진단 및 치료를 대신할 수
-              없습니다. 의약품 복용 시 반드시 의사나 약사와 상담하십시오.
-            </BaseText>
-          </View>
-        </View>
-      </ScrollView>
-
-      <FolderSelectModal
-        isVisible={isFolderModalVisible}
-        onClose={closeFolderModal}
-        itemSeq={pillData.ITEM_SEQ}
-        itemName={pillData.ITEM_NAME}
-        initialSelectedIds={savedFolderIds}
-        onSaveComplete={handleSaveComplete}
-      />
-    </>
+  return (
+    <PillDetailProvider key={itemSeq} itemSeq={itemSeq} image={image}>
+      <PillDetailView />
+    </PillDetailProvider>
   );
 };
 

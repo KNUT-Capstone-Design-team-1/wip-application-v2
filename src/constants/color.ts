@@ -41,6 +41,7 @@ const PALETTE = {
   'text-subTitle': '#006581',
   'text-label': '#2B464A',
   'text-body': '#222222',
+  'text-keyword-highlight': '#242424',
   'text-sub': '#64748B',
   'text-disabled': '#94A3B8',
   'line-border': '#E2E8F0',
@@ -80,6 +81,7 @@ export const COLOR = {
 };
 
 export const COLOR_BG = {
+  highlight: `${PALETTE['color-primary']}33`, // primary, 불투명도 20%
   base: PALETTE['bg-base'],
   surface: PALETTE['bg-surface'],
   overlay: PALETTE['bg-overlay'],
@@ -96,6 +98,7 @@ export const COLOR_BG = {
 };
 
 export const COLOR_TEXT = {
+  highlight: PALETTE['text-keyword-highlight'],
   title: PALETTE['text-title'],
   subTitle: PALETTE['text-subTitle'],
   label: PALETTE['text-label'],

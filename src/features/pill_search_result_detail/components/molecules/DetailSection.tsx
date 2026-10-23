@@ -1,25 +1,25 @@
 import { memo, useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { styles } from '../../styles/molecules/DetailSection';
-import { IDetailSectionProps } from '@features/pill_search_result_detail/types/pill_detail_type';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
 import { COLOR } from '@constants/color';
-import { fontPx } from '@utils/responsive';
 import { xmlToJson } from '@features/pill_search_result_detail/utils/xml_parser';
+import { fontPx } from '@utils/responsive';
+import { useDetailSectionExpansion } from '../../hooks/use_pill_detail_expansion';
+import { styles } from '../../styles/molecules/DetailSection';
+import type { DetailSectionProps } from '../../types/pill_detail_component_type';
 import SectionItem from './SectionItem';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
 
-const DetailSection = ({
-  title,
-  isOpen,
-  onToggle,
-  content,
-}: IDetailSectionProps) => {
+// 접기 상태에 따른 상세 문서 표시.
+const DetailSection = ({ title, content }: DetailSectionProps) => {
+  const { isOpen, toggle } = useDetailSectionExpansion();
   const parsedData = useMemo(() => {
     if (!content) {
       return null;
     }
+
     const result = xmlToJson(content);
+
     return result.doc;
   }, [content]);
 
@@ -27,7 +27,7 @@ const DetailSection = ({
     <View style={styles.detailSectionWrapper}>
       <TouchableOpacity
         style={styles.detailInfoHeadWrapper}
-        onPress={onToggle}
+        onPress={toggle}
         activeOpacity={0.7}
       >
         <BaseText weight="bold" size={20} style={styles.detailInfoHeadText}>
@@ -49,7 +49,7 @@ const DetailSection = ({
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.detailInfoContent}>
-          <SectionItem sectionItem={parsedData} />
+          <SectionItem sectionItem={parsedData} targetPrefix={title} />
         </View>
       )}
     </View>

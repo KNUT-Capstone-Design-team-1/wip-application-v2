@@ -1,191 +1,139 @@
+import {
+  findControlledIngredientMatches,
+  findClassificationProhibitedReferences,
+} from '@services/database/matching/classification_matcher';
+import { normalizeChemicalText } from '@services/database/matching/substance_names';
+import type {
+  ClassificationCatalog,
+  ClassificationEntry,
+} from '@services/database/types/classification';
+import { CLASSIFICATION_CACHE_LIMIT } from '../constants/pill_detail';
 import { pillDetailRepository } from '../data/repositories/pill_detail_repository';
+import type {
+  ISpecialClassificationResult,
+  ClassificationResultCache,
+  ClassificationIngredientMatch,
+} from '../types/special_classification_type';
+import { uniqueWarningItems } from '../utils/unique_warning_items';
 
-interface ISpecialClassificationResult {
-  isNarcotic: boolean;
-  narcoticIngredients: string[];
-  isCannabis: boolean;
-  cannabisIngredients: string[];
-  isPsychotropic: boolean;
-  psychotropicIngredients: string[];
-  isProhibited: boolean;
-  prohibitedIngredients: string[];
-}
+const resultCaches = new WeakMap<
+  ClassificationCatalog,
+  ClassificationResultCache
+>();
 
-interface IIngredientParams {
-  kr: string;
-  en: string;
-}
+// 빈 분류 결과 생성.
+const createEmptyClassifications = (): ISpecialClassificationResult => ({
+  classificationMatches: [],
+  isNarcotic: false,
+  narcoticIngredients: [],
+  isCannabis: false,
+  cannabisIngredients: [],
+  isPsychotropic: false,
+  psychotropicIngredients: [],
+  hasProhibitedReferences: false,
+  prohibitedIngredients: [],
+});
 
-// 특정 성분이 특정 분류에 속하는지 확인하는 범용 함수
-const checkSubstance = async (
-  ingredients: IIngredientParams,
-  queryFn: (
-    params: any,
-    options: { page: number; limit: number },
-  ) => Promise<any[]>,
-): Promise<string[]> => {
-  const matched = new Set<string>();
+// 카탈로그별 계산 캐시 반환.
+const getClassificationResultCache = (
+  catalog: ClassificationCatalog,
+): ClassificationResultCache => {
+  const cached = resultCaches.get(catalog);
 
-  const [foundKr, foundEn] = await Promise.all([
-    ingredients.kr
-      ? queryFn({ containedInKr: ingredients.kr }, { page: 1, limit: 100 })
-      : Promise.resolve([]),
-    ingredients.en
-      ? queryFn({ containedInEn: ingredients.en }, { page: 1, limit: 100 })
-      : Promise.resolve([]),
-  ]);
-
-  foundKr.forEach((item) => matched.add(item.chemicalNameKr));
-  foundEn.forEach((item) => matched.add(item.chemicalNameEn));
-
-  return Array.from(matched);
-};
-
-// 성분명 분리: 불필요한 염(Salt)/수화물 단어 제거, 특수문자(/, |, ,) 기준 분리
-const processTokens = (text: string) => {
-  if (!text) {
-    return [];
+  if (cached) {
+    return cached;
   }
 
-  // 제거할 염기 및 수화물 단어 목록
-  const sanitized = text
-    .replace(
-      /\b(hydrochloride|hydrate|sulfate|maleate|tartrate|citrate|mesylate|acetate|bromide|anhydrous|micronized|diluted)\b/gi,
-      '',
-    )
-    .replace(/[^\w\s/|,-]/g, ' ');
+  const cache: ClassificationResultCache = new Map();
+  resultCaches.set(catalog, cache);
 
-  return sanitized
-    .split(/[/|, -]+/)
-    .map((token) => token.trim())
-    .filter((token) => token.length >= 3);
+  return cache;
 };
 
-// 도핑 금지 성분 확인 로직
-const checkProhibitedSubstance = async (
-  ingredients: IIngredientParams,
-  repository: typeof pillDetailRepository = pillDetailRepository,
-): Promise<{ ingredients: string[] }> => {
-  const matched = new Set<string>();
+// 분류별 표시 성분명 수집.
+const getIngredientNames = (
+  matches: ClassificationIngredientMatch[],
+  kind: ClassificationEntry['kind'],
+): string[] =>
+  uniqueWarningItems(
+    matches
+      .filter((match) => match.source.kind === kind)
+      .map((match) => match.displayName),
+  );
 
-  const krTokens = processTokens(ingredients.kr);
-  const enTokens = processTokens(ingredients.en);
-  const allTokens = Array.from(new Set([...krTokens, ...enTokens]));
-
-  const checkAndAddProhibitedToken = async (token: string) => {
-    const isAlphabet = /^[a-zA-Z]+$/.test(token);
-    const query = isAlphabet
-      ? { chemicalNameEn: token }
-      : { chemicalNameKr: token };
-
-    const results = await repository.searchProhibitedList(query);
-    results.forEach((item) => {
-      matched.add(item.chemicalNameKr || item.chemicalNameEn);
-    });
-  };
-
-  await Promise.all(allTokens.map(checkAndAddProhibitedToken));
-
-  return { ingredients: Array.from(matched) };
-};
-
-/**
- * 성분명을 기반으로 특수 분류(마약, 대마, 향정, 도핑) 여부 확인
- * @param materialName 국문 성분명
- * @param materialEngName 영문 성분명
- */
-export const checkSpecialClassifications = async (
-  materialName?: string,
-  materialEngName?: string,
-  repository: typeof pillDetailRepository = pillDetailRepository,
-): Promise<ISpecialClassificationResult> => {
-  const ingredients: IIngredientParams = {
-    kr: materialName?.trim() || '',
-    en: materialEngName?.trim() || '',
-  };
-
-  if (!ingredients.kr && !ingredients.en) {
-    return {
-      isNarcotic: false,
-      narcoticIngredients: [],
-      isCannabis: false,
-      cannabisIngredients: [],
-      isPsychotropic: false,
-      psychotropicIngredients: [],
-      isProhibited: false,
-      prohibitedIngredients: [],
-    };
-  }
-
-  const [narcotic, cannabis, psychotropic, prohibited] = await Promise.all([
-    checkSubstance(ingredients, (params) => repository.searchNarcotics(params)),
-    checkSubstance(ingredients, (params) => repository.searchCannabis(params)),
-    checkSubstance(ingredients, (params) =>
-      repository.searchPsychotropics(params),
-    ),
-    checkProhibitedSubstance(ingredients, repository),
-  ]);
+// 분류 일치 결과 조합.
+const buildClassificationResult = (
+  catalog: ClassificationCatalog,
+  ingredients: string,
+): ISpecialClassificationResult => {
+  const matched = findControlledIngredientMatches(catalog, ingredients);
+  const narcoticIngredients = getIngredientNames(matched, 'narcotic');
+  const cannabisIngredients = getIngredientNames(matched, 'cannabis');
+  const psychotropicIngredients = getIngredientNames(matched, 'psychotropic');
+  const prohibited = findClassificationProhibitedReferences(
+    catalog,
+    ingredients,
+  );
 
   return {
-    isNarcotic: narcotic.length > 0,
-    narcoticIngredients: narcotic,
-    isCannabis: cannabis.length > 0,
-    cannabisIngredients: cannabis,
-    isPsychotropic: psychotropic.length > 0,
-    psychotropicIngredients: psychotropic,
-    isProhibited: prohibited.ingredients.length > 0,
-    prohibitedIngredients: prohibited.ingredients,
+    classificationMatches: [...matched, ...prohibited],
+    isNarcotic: narcoticIngredients.length > 0,
+    narcoticIngredients,
+    isCannabis: cannabisIngredients.length > 0,
+    cannabisIngredients,
+    isPsychotropic: psychotropicIngredients.length > 0,
+    psychotropicIngredients,
+    hasProhibitedReferences: prohibited.length > 0,
+    prohibitedIngredients: uniqueWarningItems(
+      prohibited.map((match) => match.displayName.trim()),
+    ),
   };
 };
 
-// 문서 데이터에서 운전 및 기계 조작 주의 키워드 확인
-export const getDrivingWarningKeywords = (
-  eeData?: string,
-  udData?: string,
-  nbData?: string,
-): string[] => {
-  const keywords = [
-    // 운전/기계조작
-    '운전',
-    '자동차',
-    '차량',
-    '기계조작',
-    '기계 조작',
-    '위험한 기계',
-    '중장비',
+// 크기 제한을 지키며 계산 결과 저장.
+const rememberResult = (
+  cache: ClassificationResultCache,
+  key: string,
+  result: ISpecialClassificationResult,
+) => {
+  if (cache.size >= CLASSIFICATION_CACHE_LIMIT) {
+    cache.delete(cache.keys().next().value!);
+  }
 
-    // 졸음/진정
-    '졸음',
-    '졸리',
-    '수면',
-    '진정',
-    '진정작용',
-    '몽롱',
-    '의식저하',
+  cache.set(key, result);
+};
 
-    // 어지러움
-    '어지러움',
-    '어지럼',
-    '어지럼증',
-    '현기증',
-    '실신',
+// 성분 분류 조회·계산 캐시 재사용.
+export const checkSpecialClassifications = async (
+  materialName = '',
+  materialEngName = '',
+  repository: Pick<
+    typeof pillDetailRepository,
+    'getClassificationCatalog'
+  > = pillDetailRepository,
+): Promise<ISpecialClassificationResult> => {
+  const kr = normalizeChemicalText(materialName);
+  const en = normalizeChemicalText(materialEngName);
 
-    // 인지/반응
-    '집중력',
-    '주의력',
-    '판단력',
-    '반응속도',
-    '반응시간',
-    '인지기능',
-    '운동실조',
+  if (!kr && !en) {
+    return createEmptyClassifications();
+  }
 
-    // 시야
-    '시야흐림',
-    '복시',
-    '시력장애',
-  ];
+  const catalog = await repository.getClassificationCatalog();
+  const cache = getClassificationResultCache(catalog);
+  // 실제 입력의 공백과 표기를 보존해야 하므로 원문을 캐시 키로 사용한다.
+  const key = JSON.stringify([materialName, materialEngName]);
+  const cached = cache.get(key);
 
-  const combinedData = `${eeData ?? ''} ${udData ?? ''} ${nbData ?? ''}`;
+  if (cached) {
+    return cached;
+  }
 
-  return keywords.filter((keyword) => combinedData.includes(keyword));
+  const result = buildClassificationResult(
+    catalog,
+    materialName + '|' + materialEngName,
+  );
+  rememberResult(cache, key, result);
+
+  return result;
 };
