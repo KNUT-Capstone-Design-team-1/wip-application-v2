@@ -11,10 +11,10 @@ export const useDetailFindHeader = () => {
     useCallback(() => {
       const open = () => store.getState().setSearchOpen(true);
       const close = () => {
+        Keyboard.dismiss();
         controller.cancel();
         store.getState().setSearchOpen(false);
         store.getState().setSearchQuery('');
-        Keyboard.dismiss();
       };
       const toggle = () => {
         if (store.getState().isSearchOpen) close();

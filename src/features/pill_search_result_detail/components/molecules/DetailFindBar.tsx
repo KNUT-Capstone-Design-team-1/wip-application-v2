@@ -14,16 +14,26 @@ const DetailFindForm = () => {
   const searchRequest = useStore(store, (state) => state.searchRequest);
   const { query, search, updateQuery } = useDetailFind();
   const inputRef = useRef<TextInput>(null);
+  // 닫기 중 검색 요청이 초기화되어도 자동 포커스가 다시 켜지지 않도록 고정한다.
+  const autoFocus = useRef(!searchRequest).current;
 
   useEffect(() => {
+    const input = inputRef.current;
     const subscription = Keyboard.addListener('keyboardDidHide', () => {
       inputRef.current?.blur();
     });
-    return () => subscription.remove();
+    return () => {
+      subscription.remove();
+      input?.blur();
+      Keyboard.dismiss();
+    };
   }, []);
 
   useEffect(() => {
-    if (searchRequest) inputRef.current?.blur();
+    if (searchRequest) {
+      inputRef.current?.blur();
+      Keyboard.dismiss();
+    }
   }, [searchRequest]);
 
   return (
@@ -31,7 +41,7 @@ const DetailFindForm = () => {
       <View style={styles.inputWrapper}>
         <TextInput
           ref={inputRef}
-          autoFocus={!searchRequest}
+          autoFocus={autoFocus}
           value={query}
           onChangeText={updateQuery}
           multiline={false}
