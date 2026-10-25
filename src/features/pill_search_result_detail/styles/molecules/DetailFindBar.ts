@@ -13,9 +13,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLOR_LINE.border,
   },
-  row: { flexDirection: 'row', alignItems: 'center' },
   inputWrapper: {
-    flex: 1,
     minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',

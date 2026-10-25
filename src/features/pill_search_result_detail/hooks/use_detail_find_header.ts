@@ -14,7 +14,6 @@ export const useDetailFindHeader = () => {
         controller.cancel();
         store.getState().setSearchOpen(false);
         store.getState().setSearchQuery('');
-        store.getState().setVisible(false);
         Keyboard.dismiss();
       };
       const toggle = () => {

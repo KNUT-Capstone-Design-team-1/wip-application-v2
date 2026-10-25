@@ -12,7 +12,6 @@ import { findKeywordMatches } from '../../utils/keyword_matches';
 const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
   const { store } = useKeywordNavigationContext();
   const keywords = useStore(store, (state) => state.keywords);
-  const isVisible = useStore(store, (state) => state.isVisible);
   const matches = useMemo(
     () => findKeywordMatches(text, keywords),
     [text, keywords],
@@ -25,10 +24,7 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
     for (const match of matches) {
       parts.push(text.slice(from, match.start));
       parts.push(
-        <Text
-          key={match.start}
-          style={isVisible ? styles.highlight : undefined}
-        >
+        <Text key={match.start} style={styles.highlight}>
           {text.slice(match.start, match.end)}
         </Text>,
       );
@@ -38,7 +34,7 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
     parts.push(text.slice(from));
 
     return parts;
-  }, [text, matches, isVisible]);
+  }, [text, matches]);
 
   return (
     <BaseText {...props} ref={ref} onTextLayout={onTextLayout}>

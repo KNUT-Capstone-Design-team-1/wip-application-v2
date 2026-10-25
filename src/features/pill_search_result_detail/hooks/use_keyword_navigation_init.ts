@@ -8,8 +8,6 @@ export const useKeywordNavigationInit = (data: IPillDetail | null) => {
 
   useEffect(() => {
     controller.reset();
-
-    store.getState().setVisible(false);
     store.getState().setSearchOpen(false);
     store.getState().setSearchQuery('');
 

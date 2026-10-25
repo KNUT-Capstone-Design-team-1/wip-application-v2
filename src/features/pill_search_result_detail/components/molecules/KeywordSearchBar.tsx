@@ -11,7 +11,6 @@ import KeywordNavigationPosition from '../atoms/KeywordNavigationPosition';
 const KeywordSearchBar = () => {
   const insets = useSafeAreaInsets();
   const { store, controller } = useKeywordNavigationContext();
-  const isVisible = useStore(store, (state) => state.isVisible);
   const isSearchOpen = useStore(store, (state) => state.isSearchOpen);
   const hasSearchResults = useStore(
     store,
@@ -20,7 +19,7 @@ const KeywordSearchBar = () => {
   const canPrevious = useStore(store, (state) => state.canPrevious);
   const canNext = useStore(store, (state) => state.canNext);
 
-  if (!isSearchOpen || !isVisible || !hasSearchResults) return null;
+  if (!isSearchOpen || !hasSearchResults) return null;
 
   return (
     <View

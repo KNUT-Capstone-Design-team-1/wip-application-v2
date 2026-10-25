@@ -5,7 +5,6 @@ import { createStore } from 'zustand/vanilla';
 export const createKeywordNavigationStore = () =>
   createStore<KeywordNavigationState>((set) => ({
     keywords: [],
-    isVisible: false,
     isSearchOpen: false,
     searchQuery: '',
     searchRequest: null,
@@ -29,6 +28,5 @@ export const createKeywordNavigationStore = () =>
     totalCount: 0,
     canPrevious: false,
     canNext: true,
-    setVisible: (isVisible) => set({ isVisible }),
     setAvailability: (availability) => set(availability),
   }));

@@ -10,7 +10,7 @@ import { CircleX, Search } from 'lucide-react-native';
 
 // 검색 입력과 검색어 초기화 버튼을 표시한다.
 const DetailFindForm = () => {
-  const { query, searching, search, updateQuery } = useDetailFind();
+  const { query, search, updateQuery } = useDetailFind();
   const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
@@ -22,49 +22,47 @@ const DetailFindForm = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            ref={inputRef}
-            autoFocus
-            value={query}
-            onChangeText={updateQuery}
-            multiline={false}
-            onSubmitEditing={(event) => {
-              if (!searching) void search(event.nativeEvent.text);
-            }}
-            placeholder="상세 정보 내 검색"
-            placeholderTextColor={COLOR_TEXT.sub}
-            accessibilityLabel="본문 검색어"
-            returnKeyType="search"
-            autoCorrect={false}
-            autoCapitalize="none"
-            style={styles.input}
-          />
-          <View style={styles.rightIcon}>
-            {query.length > 0 ? (
-              <TouchableOpacity
-                style={styles.clearButton}
-                hitSlop={6}
-                onPress={() => updateQuery('')}
-                accessibilityRole="button"
-                accessibilityLabel="검색어 지우기"
-                accessibilityHint="검색창을 유지하고 입력한 검색어를 지웁니다"
-              >
-                <CircleX
-                  size={fontPx(16)}
-                  color={COLOR_TEXT.sub}
-                  strokeWidth={px(2)}
-                />
-              </TouchableOpacity>
-            ) : (
-              <Search
+      <View style={styles.inputWrapper}>
+        <TextInput
+          ref={inputRef}
+          autoFocus
+          value={query}
+          onChangeText={updateQuery}
+          multiline={false}
+          onSubmitEditing={(event) => {
+            void search(event.nativeEvent.text);
+          }}
+          placeholder="상세 정보 내 검색"
+          placeholderTextColor={COLOR_TEXT.sub}
+          accessibilityLabel="본문 검색어"
+          returnKeyType="search"
+          autoCorrect={false}
+          autoCapitalize="none"
+          style={styles.input}
+        />
+        <View style={styles.rightIcon}>
+          {query.length > 0 ? (
+            <TouchableOpacity
+              style={styles.clearButton}
+              hitSlop={6}
+              onPress={() => updateQuery('')}
+              accessibilityRole="button"
+              accessibilityLabel="검색어 지우기"
+              accessibilityHint="검색창을 유지하고 입력한 검색어를 지웁니다"
+            >
+              <CircleX
                 size={fontPx(16)}
                 color={COLOR_TEXT.sub}
                 strokeWidth={px(2)}
               />
-            )}
-          </View>
+            </TouchableOpacity>
+          ) : (
+            <Search
+              size={fontPx(16)}
+              color={COLOR_TEXT.sub}
+              strokeWidth={px(2)}
+            />
+          )}
         </View>
       </View>
     </View>

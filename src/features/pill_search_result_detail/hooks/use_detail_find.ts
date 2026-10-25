@@ -11,13 +11,12 @@ export const useDetailFind = () => {
   const searchRequest = useStore(store, (state) => state.searchRequest);
   const [query, setQuery] = useState(searchRequest?.query ?? '');
   const queryRef = useRef(query);
-  const [searching, setSearching] = useState(false);
-  const request = useRef(0);
+  const requestId = useRef(0);
   const activeQuery = useRef<string | null>(null);
 
   // 이전 검색 응답과 진행 중인 인덱스 이동을 무효화한다.
   const cancel = useCallback(() => {
-    request.current++;
+    requestId.current++;
     activeQuery.current = null;
     controller.cancel();
   }, [controller]);
@@ -33,14 +32,12 @@ export const useDetailFind = () => {
       queryRef.current = text;
       setQuery(text);
       Keyboard.dismiss();
-      const id = ++request.current;
-      setSearching(true);
+      const id = ++requestId.current;
       store.getState().setSearchQuery(value);
-      store.getState().setVisible(true);
 
       try {
         const count = await controller.jump(value);
-        if (id !== request.current) return;
+        if (id !== requestId.current) return;
 
         if (count === 0) {
           showToast({
@@ -49,9 +46,8 @@ export const useDetailFind = () => {
           });
         }
       } finally {
-        if (id === request.current) {
+        if (id === requestId.current) {
           activeQuery.current = null;
-          setSearching(false);
         }
       }
     },
@@ -72,8 +68,6 @@ export const useDetailFind = () => {
       queryRef.current = value;
       cancel();
       setQuery(value);
-      setSearching(false);
-      store.getState().setVisible(false);
       store.getState().setSearchQuery('');
     },
     [cancel, store, search],
@@ -87,5 +81,5 @@ export const useDetailFind = () => {
 
   useEffect(() => cancel, [cancel]);
 
-  return { query, searching, search, updateQuery };
+  return { query, search, updateQuery };
 };

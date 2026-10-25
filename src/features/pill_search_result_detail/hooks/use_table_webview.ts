@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Platform } from 'react-native';
 import WebView, { WebViewMessageEvent } from 'react-native-webview';
-import { useStore } from 'zustand';
 import { useKeywordNavigationContext } from './use_keyword_navigation_context';
 import type { KeywordTarget } from '../types/keyword_navigation_type';
 import type { TableKeywordMatch } from '../types/table_webview_type';
@@ -112,8 +111,6 @@ export const useTableWebView = (
   targetId?: string,
 ) => {
   const [height, setHeight] = useState(100);
-  const { store } = useKeywordNavigationContext();
-  const isVisible = useStore(store, (state) => state.isVisible);
   const source = useMemo(
     () => ({ html: buildTableWebViewHtml(html, keywords, Platform.OS) }),
     [html, keywords],
@@ -123,19 +120,6 @@ export const useTableWebView = (
     source.html,
     targetId,
   );
-
-  // 문서를 다시 로딩하지 않고 탐색 활성 상태에 맞춰 강조색만 전환한다.
-  const updateHighlightVisibility = useCallback(() => {
-    webView.current?.injectJavaScript(
-      'document.documentElement.classList.toggle("keyword-highlights", ' +
-        store.getState().isVisible +
-        '); true;',
-    );
-  }, [store, webView]);
-
-  useEffect(() => {
-    updateHighlightVisibility();
-  }, [isVisible, updateHighlightVisibility]);
 
   // WebView 메시지를 받아 강조·탐색·높이 상태에 반영한다.
   const onMessage = useCallback(
@@ -157,7 +141,6 @@ export const useTableWebView = (
 
         case 'matches': {
           updateMatches(message.matches);
-          updateHighlightVisibility();
 
           return;
         }
@@ -174,7 +157,7 @@ export const useTableWebView = (
         }
       }
     },
-    [updateMatches, updateHighlightVisibility, complete, webView, keywords],
+    [updateMatches, complete, webView, keywords],
   );
 
   // 표 로딩 실패 시 검색 결과를 비우고 진행 중인 대기를 해제한다.

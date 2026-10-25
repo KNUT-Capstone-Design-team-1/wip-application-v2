@@ -61,14 +61,12 @@ export interface KeywordTextLineRange {
 
 export interface KeywordNavigationState extends KeywordNavigationAvailability {
   keywords: string[];
-  isVisible: boolean;
   isSearchOpen: boolean;
   searchQuery: string;
   searchRequest: { query: string } | null;
   requestSearch: (query: string) => void;
   setSearchOpen: (isSearchOpen: boolean) => void;
   setSearchQuery: (searchQuery: string) => void;
-  setVisible: (isVisible: boolean) => void;
   setAvailability: (availability: KeywordNavigationAvailability) => void;
 }
 
