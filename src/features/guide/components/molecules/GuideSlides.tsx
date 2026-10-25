@@ -13,16 +13,23 @@ import type { ResolvedTheme } from '@features/guide/constants/guide_defaults';
 
 export interface GuideSlidesProps {
   steps: GuideStep[];
+  /** 현재 스텝 (0-based). 외부가 바뀌면 ScrollView 가 그 페이지로 애니메이션 */
   index: number;
+  /** 한 페이지 폭(px). `computeTooltipLayout.slideWidth` 로 계산된 값 */
   width: number;
   theme: ResolvedTheme;
   labels: Required<GuideLabels>;
+  /** 스와이프로 페이지 바뀔 때 외부 상태 동기화 */
   onIndexChange: (i: number) => void;
   onSkip: () => void;
+  /** 마지막 스텝의 'done' 버튼 */
   onDone: () => void;
 }
 
-// 슬라이드형 말풍선 (가로 스와이프 + 점 인디케이터)
+/**
+ * 슬라이드형 말풍선 — 가로 스와이프 + 점 인디케이터 + 마지막 페이지 '완료' 버튼.
+ * 버튼형과 달리 **백드롭 탭은 무시**(진행 X) — 사용자가 스와이프/완료로만 넘어감.
+ */
 export const GuideSlides: React.FC<GuideSlidesProps> = ({
   steps,
   index,

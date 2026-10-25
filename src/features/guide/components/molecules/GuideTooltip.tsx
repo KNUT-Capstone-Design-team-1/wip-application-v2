@@ -6,16 +6,21 @@ import type { ResolvedTheme } from '@features/guide/constants/guide_defaults';
 
 export interface GuideTooltipProps {
   step: GuideStep;
+  /** 0-based */
   index: number;
   total: number;
   theme: ResolvedTheme;
   labels: Required<GuideLabels>;
   onPrev: () => void;
+  /** 마지막 스텝에선 'done' 라벨로 바뀌지만 콜백은 동일 — 호출 측(GuideOverlay)에서 stop 처리 */
   onNext: () => void;
   onSkip: () => void;
 }
 
-// 버튼형 말풍선 (이전 / 다음·완료 + 건너뛰기)
+/**
+ * 버튼형 말풍선 — "이전 / 다음·완료 + 건너뛰기" + 스텝 인디케이터(`1/N`).
+ * 백드롭 탭으로도 `onNext` 가 호출된다(= 다음으로 진행). 슬라이드형과의 차이점.
+ */
 export const GuideTooltip: React.FC<GuideTooltipProps> = ({
   step,
   index,

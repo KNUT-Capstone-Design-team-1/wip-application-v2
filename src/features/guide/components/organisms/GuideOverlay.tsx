@@ -25,8 +25,12 @@ import { GuideSlides } from '@features/guide/components/molecules/GuideSlides';
 import { styles } from '@features/guide/styles/organisms/GuideOverlay';
 
 /**
- * 투어 활성 시 Modal 로 윈도우 전체를 덮어 dim + 타겟 하이라이트 + 말풍선을 표시한다.
- * <GuideProvider> 내부(화면 루트)에 한 번 렌더하세요.
+ * 투어 활성 시 **Modal 로 윈도우 전체** 를 덮어 dim + 타겟 하이라이트 + 말풍선을 표시.
+ *
+ * - `<GuideProvider>` 내부에 **한 번만** 렌더 (`createFeatureGuide.wrap` 이 자동 배치)
+ * - Modal 로 감싸는 이유: GlobalHeader / 상태바 영역까지 dim 되도록 — Stack content 안이면
+ *   `absoluteFill` 이 content 범위로 제한돼 상단이 비어 보임
+ * - 백드롭 탭 동작은 투어의 `tooltipMode` 에 따라: `'button'` 이면 다음 스텝, `'slide'` 면 무시
  */
 export const GuideOverlay: React.FC = () => {
   const { activeTour, stepIndex } = useGuideState();

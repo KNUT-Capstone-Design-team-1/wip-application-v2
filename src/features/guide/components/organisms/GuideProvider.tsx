@@ -18,16 +18,25 @@ import {
 
 export interface GuideProviderProps {
   children: GuideChildren;
-  // 'once' 노출 기록 저장소 (미지정 시 메모리 — 앱 재시작 시 초기화)
+  /**
+   * `visibility: 'once'` 기록 저장소.
+   * 미지정 시 인메모리 저장소(앱 재시작 시 초기화) — 보통 개발용.
+   * 실 운영은 `@utils/guide_storage` 의 AsyncStorage 어댑터.
+   */
   storage?: StorageAdapter;
+  /** 색상/스페이싱 커스터마이즈. 미지정 필드는 `DEFAULT_THEME` 와 머지 */
   theme?: GuideTheme;
+  /** 버튼/링크 라벨. 미지정 필드는 한국어 기본값과 머지 */
   labels?: GuideLabels;
-  // 투어에서 개별 지정 안 하면 사용할 기본 말풍선 모드
+  /** 투어 쪽에서 개별 지정 안 했을 때 사용할 기본 말풍선 모드. 기본 `'button'` */
   tooltipMode?: TooltipMode;
+  /** 투어 쪽에서 개별 지정 안 했을 때 사용할 기본 등장 애니메이션. 기본 `'fade'` */
   animation?: EnterAnimation;
 }
 
-// storage 미주입 시 기본 인메모리 저장소
+// storage 미주입 시의 폴백 — 세션 메모리에만 보관.
+// 실 사용에선 거의 쓰이지 않지만, Provider 가 nullable storage 를 다루지 않도록
+// 생성 시점에 어댑터로 정규화한다.
 function createMemoryStorage(): StorageAdapter {
   const memory = new Map<string, string>();
   return {
