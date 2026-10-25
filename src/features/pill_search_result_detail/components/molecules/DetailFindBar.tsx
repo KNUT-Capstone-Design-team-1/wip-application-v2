@@ -10,6 +10,8 @@ import { CircleX, Search } from 'lucide-react-native';
 
 // 검색 입력과 검색어 초기화 버튼을 표시한다.
 const DetailFindForm = () => {
+  const { store } = useKeywordNavigationContext();
+  const searchRequest = useStore(store, (state) => state.searchRequest);
   const { query, search, updateQuery } = useDetailFind();
   const inputRef = useRef<TextInput>(null);
 
@@ -20,12 +22,16 @@ const DetailFindForm = () => {
     return () => subscription.remove();
   }, []);
 
+  useEffect(() => {
+    if (searchRequest) inputRef.current?.blur();
+  }, [searchRequest]);
+
   return (
     <View style={styles.container}>
       <View style={styles.inputWrapper}>
         <TextInput
           ref={inputRef}
-          autoFocus
+          autoFocus={!searchRequest}
           value={query}
           onChangeText={updateQuery}
           multiline={false}
