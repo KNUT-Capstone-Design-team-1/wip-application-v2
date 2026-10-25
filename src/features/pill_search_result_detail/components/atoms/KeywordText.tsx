@@ -14,6 +14,7 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
   const { store } = useKeywordNavigationContext();
   const { select } = useKeywordNavigationActions();
   const keywords = useStore(store, (state) => state.keywords);
+  const isVisible = useStore(store, (state) => state.isVisible);
   const matches = useMemo(
     () => findKeywordMatches(text, keywords),
     [text, keywords],
@@ -37,7 +38,7 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
               ? () => select(targetId + ':' + match.keyword + ':' + match.start)
               : undefined
           }
-          style={styles.highlight}
+          style={isVisible ? styles.highlight : undefined}
         >
           {text.slice(match.start, match.end)}
         </Text>,
@@ -48,7 +49,7 @@ const KeywordText = ({ text, targetId, ...props }: KeywordTextProps) => {
     parts.push(text.slice(from));
 
     return parts;
-  }, [text, matches, targetId, select]);
+  }, [text, matches, targetId, select, isVisible]);
 
   return (
     <BaseText {...props} ref={ref} onTextLayout={onTextLayout}>

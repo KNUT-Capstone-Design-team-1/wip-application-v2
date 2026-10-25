@@ -35,6 +35,10 @@ export const buildTableDocumentStyles = (platform: string): string => `
             word-break: keep-all;
           }
           mark.pill-keyword {
+            background-color: transparent;
+            color: inherit;
+          }
+          .keyword-highlights mark.pill-keyword {
             background-color: ${COLOR_BG.highlight};
             color: ${COLOR_TEXT.highlight};
           }

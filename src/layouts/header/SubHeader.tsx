@@ -46,7 +46,7 @@ const SubHeader = () => {
             accessibilityHint="검색어를 입력해 본문에서 찾습니다"
           >
             <Search
-              size={fontPx(24)}
+              size={fontPx(16)}
               color={COLOR.secondary}
               strokeWidth={2.5}
             />
