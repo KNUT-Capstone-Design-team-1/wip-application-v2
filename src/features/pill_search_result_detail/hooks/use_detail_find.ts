@@ -24,11 +24,10 @@ export const useDetailFind = () => {
 
   const search = useCallback(
     async (submittedQuery: string, fromStart = false) => {
+      // 제출·키워드 터치·중복 요청 모두 검색 진입 시 키보드와 포커스를 해제한다.
+      Keyboard.dismiss();
       const text = submittedQuery.replace(/[\r\n]/g, '');
       const value = text.trim();
-      // 빈 입력·중복 제출도 포커스와 키보드는 해제한다.
-      inputRef.current?.blur();
-      Keyboard.dismiss();
       if (!value || (!fromStart && activeSearch.current?.query === value))
         return;
 
