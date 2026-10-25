@@ -38,6 +38,7 @@ const DatabaseUpdateView: React.FC<IUpdateProgress> = ({
       flex: flexValue.value,
     };
   });
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* 로고 영역 */}
