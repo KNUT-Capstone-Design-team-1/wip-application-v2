@@ -14,6 +14,8 @@ const KeywordNavigationPosition = () => {
   return (
     <BaseText
       size={11}
+      numberOfLines={1}
+      adjustsFontSizeToFit
       weight="semiBold"
       style={styles.label}
       accessibilityLiveRegion="polite"

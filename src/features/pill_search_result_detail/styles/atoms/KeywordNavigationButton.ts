@@ -2,13 +2,10 @@ import { StyleSheet } from 'react-native';
 import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 
-const buttonSize = px(44, 44, 48) * 0.7;
-
 export const styles = StyleSheet.create({
   button: {
-    width: buttonSize,
-    height: buttonSize,
-    borderRadius: buttonSize / 2,
+    height: px(44),
+    borderRadius: px(22),
     backgroundColor: COLOR.primary,
     elevation: 3,
     opacity: 0.95,

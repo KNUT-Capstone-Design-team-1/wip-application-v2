@@ -94,7 +94,10 @@ export const createKeywordNavigationController = (
   };
 
   // 전체 키워드 인덱스로 이전·다음 이동.
-  const navigate = async (direction: 'previous' | 'next', keyword?: string) => {
+  const navigate = async (
+    direction: 'first' | 'previous' | 'next',
+    keyword?: string,
+  ) => {
     const request = ++sequence;
     manualScroll = false;
     openers.forEach((open) => open(options.getKeywords()));
@@ -103,13 +106,18 @@ export const createKeywordNavigationController = (
       return;
     }
 
-    const index = findKeywordTargetIndex(
-      targets,
-      scrollY,
-      cursorId,
-      direction,
-      keyword,
-    );
+    const index =
+      direction === 'first'
+        ? targets.findIndex(
+            (target) => !keyword || target.keywords.includes(keyword),
+          )
+        : findKeywordTargetIndex(
+            targets,
+            scrollY,
+            cursorId,
+            direction,
+            keyword,
+          );
     const target = targets[index];
 
     if (!target) {
@@ -173,7 +181,8 @@ export const createKeywordNavigationController = (
       cursorId = null;
       updateAvailability();
     },
-    jump: (keyword: string) => navigate('next', keyword),
+    jump: (keyword: string, fromStart = false) =>
+      navigate(fromStart ? 'first' : 'next', keyword),
     previous: () => navigate('previous'),
     next: () => navigate('next'),
   };

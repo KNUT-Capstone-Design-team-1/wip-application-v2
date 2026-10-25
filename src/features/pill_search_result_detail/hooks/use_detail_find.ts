@@ -22,10 +22,10 @@ export const useDetailFind = () => {
   }, [controller]);
 
   const search = useCallback(
-    async (submittedQuery: string) => {
+    async (submittedQuery: string, fromStart = false) => {
       const text = submittedQuery.replace(/[\r\n]/g, '');
       const value = text.trim();
-      if (!value || activeQuery.current === value) return;
+      if (!value || (!fromStart && activeQuery.current === value)) return;
 
       // React 상태보다 최신인 네이티브 제출 문자열을 먼저 반영한다.
       activeQuery.current = value;
@@ -36,7 +36,7 @@ export const useDetailFind = () => {
       store.getState().setSearchQuery(value);
 
       try {
-        const count = await controller.jump(value);
+        const count = await controller.jump(value, fromStart);
         if (id !== requestId.current) return;
 
         if (count === 0) {
@@ -76,7 +76,7 @@ export const useDetailFind = () => {
   useEffect(() => {
     if (!searchRequest) return;
 
-    void search(searchRequest.query);
+    void search(searchRequest.query, true);
   }, [searchRequest, search]);
 
   useEffect(() => cancel, [cancel]);

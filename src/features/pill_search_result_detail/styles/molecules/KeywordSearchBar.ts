@@ -8,7 +8,8 @@ export const styles = StyleSheet.create({
     right: screenPadding.horizontal,
     zIndex: 10,
     gap: px(12),
-    alignItems: 'center',
+    width: px(44),
+    alignItems: 'stretch',
   },
 });
 
