@@ -10,26 +10,16 @@ import { FolderSortModal } from '@features/pill_save/components/organisms/Folder
 import PillSaveFolderList from '@features/pill_save/components/organisms/PillSaveFolderList';
 import { PillSaveEditBottomBar } from '@features/pill_save/components/organisms/PillSaveEditBottomBar';
 import { usePillSaveFolders } from '@features/pill_save/hooks/use_pill_save_folders';
-import { GuideProvider, GuideOverlay, useGuide } from '@features/guide';
-import { guideStorage } from '@utils/guide_storage';
-import { PILL_SAVE_TOUR } from '@features/pill_save/constants/pill_save_tour_constant';
+import { pillSaveGuide } from '@features/pill_save/guide';
 
-// 보관함(폴더 목록) 본문 — GuideProvider 안에서 가이드 사용
-const PillSaveContent = () => {
+const PillSave = () => {
   const { fetchRemindedItemSeqs } = usePillReminderStore();
-  const { start, autoStart } = useGuide();
+  const replay = pillSaveGuide.useReplay();
 
   useFocusEffect(
     useCallback(() => {
       fetchRemindedItemSeqs();
     }, [fetchRemindedItemSeqs]),
-  );
-
-  // 첫 진입 시 1회 자동 노출
-  useFocusEffect(
-    useCallback(() => {
-      autoStart(PILL_SAVE_TOUR);
-    }, [autoStart]),
   );
 
   const {
@@ -55,7 +45,6 @@ const PillSaveContent = () => {
     handleBackgroundPress,
   } = usePillSaveFolders();
 
-  // 로딩 중일 때 조기 반환 (Early Return)
   if (loading) {
     return <PillSaveLoadingView />;
   }
@@ -68,7 +57,7 @@ const PillSaveContent = () => {
           folderCount={folders.length}
           onAddRequest={handleOpenAddModal}
           onSortRequest={() => setIsSortModalVisible(true)}
-          onGuideRequest={() => start(PILL_SAVE_TOUR)}
+          onGuideRequest={replay}
         />
 
         <PillSaveFolderList
@@ -107,15 +96,4 @@ const PillSaveContent = () => {
   );
 };
 
-// 알약 보관함(폴더 목록) 메인 화면 컴포넌트
-const PillSave = () => {
-  return (
-    <GuideProvider storage={guideStorage}>
-      <PillSaveContent />
-      {/* 스포트라이트 오버레이 (Provider 안에 1회) */}
-      <GuideOverlay />
-    </GuideProvider>
-  );
-};
-
-export default PillSave;
+export default pillSaveGuide.wrap(PillSave);

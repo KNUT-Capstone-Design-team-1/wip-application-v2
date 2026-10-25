@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { View, Pressable } from 'react-native';
-import { useFocusEffect } from 'expo-router';
 import { CircleQuestionMark } from 'lucide-react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageLoadButtons from '../components/organisms/ImageLoadButtons';
@@ -11,34 +10,24 @@ import ImageSearchButton from '../components/organisms/ImageSearchButton';
 import { CameraPermissionAlert } from '../components/molecules/CameraPermissionAlert';
 import { usePillImageStore } from '../store/pill_image_store';
 import { usePillImageActions } from '../hooks/usePillImageActions';
-import { GuideProvider, GuideOverlay, useGuide } from '@features/guide';
-import { guideStorage } from '@utils/guide_storage';
 import { COLOR } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import { IMAGE_TOUR } from '../constants/image_tour_constant';
+import { imageSearchGuide } from '../guide';
 
 // TODO: 검색 중 취소 로직 필요 (사용자의 뒤로가기, 외부에서 종료)
 
-const PillImageSearchContent = () => {
+const PillImageSearch = () => {
   const insets = useSafeAreaInsets();
   const showPermissionAlert = usePillImageStore(
     (state) => state.showPermissionAlert,
   );
   const { handlePermissionAlertClose } = usePillImageActions();
-  const { start, autoStart } = useGuide();
-
-  // 첫 진입 시 1회 자동 노출 (AsyncStorage 저장)
-  useFocusEffect(
-    useCallback(() => {
-      autoStart(IMAGE_TOUR);
-    }, [autoStart]),
-  );
+  const replay = imageSearchGuide.useReplay();
 
   return (
     <View style={[styles.container, { marginBottom: insets.bottom }]}>
-      {/* 가이드 다시보기 버튼 */}
       <Pressable
-        onPress={() => start(IMAGE_TOUR)}
+        onPress={replay}
         hitSlop={8}
         style={styles.guideButton}
         accessibilityRole="button"
@@ -53,7 +42,6 @@ const PillImageSearchContent = () => {
         <ImageLoadButtons />
       </View>
       <ImageSearchInfo />
-      {/* 검색하기 버튼 */}
       <ImageSearchButton />
       <CameraPermissionAlert
         visible={showPermissionAlert}
@@ -64,14 +52,4 @@ const PillImageSearchContent = () => {
   );
 };
 
-const PillImageSearch = () => {
-  return (
-    <GuideProvider storage={guideStorage}>
-      <PillImageSearchContent />
-      {/* 스포트라이트 오버레이 (Provider 안에 1회) */}
-      <GuideOverlay />
-    </GuideProvider>
-  );
-};
-
-export default PillImageSearch;
+export default imageSearchGuide.wrap(PillImageSearch);
