@@ -59,11 +59,15 @@ export interface KeywordTextLineRange {
   y: number;
 }
 
+export interface KeywordSearchRequest {
+  query: string;
+}
+
 export interface KeywordNavigationState extends KeywordNavigationAvailability {
   keywords: string[];
   isSearchOpen: boolean;
   searchQuery: string;
-  searchRequest: { query: string } | null;
+  searchRequest: KeywordSearchRequest | null;
   requestSearch: (query: string) => void;
   setSearchOpen: (isSearchOpen: boolean) => void;
   setSearchQuery: (searchQuery: string) => void;

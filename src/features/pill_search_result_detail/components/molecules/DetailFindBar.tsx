@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { Keyboard, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { useStore } from 'zustand';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx, px } from '@utils/responsive';
@@ -10,31 +9,7 @@ import { CircleX, Search } from 'lucide-react-native';
 
 // 검색 입력과 검색어 초기화 버튼을 표시한다.
 const DetailFindForm = () => {
-  const { store } = useKeywordNavigationContext();
-  const searchRequest = useStore(store, (state) => state.searchRequest);
-  const { query, search, updateQuery } = useDetailFind();
-  const inputRef = useRef<TextInput>(null);
-  // 닫기 중 검색 요청이 초기화되어도 자동 포커스가 다시 켜지지 않도록 고정한다.
-  const autoFocus = useRef(!searchRequest).current;
-
-  useEffect(() => {
-    const input = inputRef.current;
-    const subscription = Keyboard.addListener('keyboardDidHide', () => {
-      inputRef.current?.blur();
-    });
-    return () => {
-      subscription.remove();
-      input?.blur();
-      Keyboard.dismiss();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (searchRequest) {
-      inputRef.current?.blur();
-      Keyboard.dismiss();
-    }
-  }, [searchRequest]);
+  const { inputRef, autoFocus, query, search, updateQuery } = useDetailFind();
 
   return (
     <View style={styles.container}>
@@ -45,6 +20,7 @@ const DetailFindForm = () => {
           value={query}
           onChangeText={updateQuery}
           multiline={false}
+          submitBehavior="blurAndSubmit"
           onSubmitEditing={(event) => {
             void search(event.nativeEvent.text);
           }}
