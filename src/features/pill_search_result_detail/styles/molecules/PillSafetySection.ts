@@ -9,6 +9,12 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_BG['surface'],
     paddingHorizontal: screenPadding.horizontal,
   },
+  titleContainer: {
+    gap: px(4),
+  },
+  keywordHint: {
+    color: COLOR_TEXT.sub,
+  },
   title: {
     color: COLOR_TEXT['subTitle'],
     textAlign: 'left',

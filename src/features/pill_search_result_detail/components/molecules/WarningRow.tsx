@@ -36,11 +36,6 @@ const WarningRow = ({
       <BaseText weight="bold" size={14} style={styles.warningText}>
         <WarningKeywords items={items} />
       </BaseText>
-      {items?.length ? (
-        <BaseText weight="regular" size={10.5} style={styles.smallInfoText}>
-          {'\n키워드를 누르면 본문에서 찾아볼 수 있어요.'}
-        </BaseText>
-      ) : null}
       {footerNote ? (
         <BaseText weight="semiBold" size={11} style={styles.smallInfoText}>
           {'\n' + footerNote}

@@ -11,9 +11,14 @@ import WarningRow from './WarningRow';
 const PillSafetySection = ({ data }: PillDetailDataProps) => {
   return (
     <View style={styles.container}>
-      <BaseText weight="bold" size={16} style={styles.title}>
-        [ 주의 및 특수 분류 정보 ]
-      </BaseText>
+      <View style={styles.titleContainer}>
+        <BaseText weight="bold" size={16} style={styles.title}>
+          [ 주의 및 특수 분류 정보 ]
+        </BaseText>
+        <BaseText weight="regular" size={10.5} style={styles.keywordHint}>
+          키워드를 누르면 본문에서 찾아볼 수 있어요.
+        </BaseText>
+      </View>
 
       <WarningRow
         label="운전/기계조작"
