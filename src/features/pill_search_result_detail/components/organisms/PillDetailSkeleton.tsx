@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { View } from 'react-native';
-import SkeletonBox from '../atoms/SkeletonBox';
-import { styles } from '../../styles/organisms/PillDetailSkeleton';
 import { px } from '@utils/responsive';
+import { styles } from '../../styles/organisms/PillDetailSkeleton';
+import SkeletonBox from '../atoms/SkeletonBox';
 
 const PillDetailSkeleton = () => {
   return (

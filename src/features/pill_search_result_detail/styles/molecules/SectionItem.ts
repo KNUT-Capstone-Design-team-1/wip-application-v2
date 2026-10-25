@@ -16,6 +16,9 @@ export const styles = StyleSheet.create({
     marginTop: px(16),
     color: COLOR_TEXT['label'],
   },
+  indentedParagraph: {
+    marginLeft: px(8),
+  },
   paragraphText: {
     paddingLeft: px(4),
     marginTop: px(8),

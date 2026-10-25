@@ -1,13 +1,19 @@
-import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { StyleSheet } from 'react-native';
-import { px } from '@utils/responsive';
+import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { screenPadding } from '@constants/size';
+import { px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   container: {
     paddingVertical: px(16),
     backgroundColor: COLOR_BG['surface'],
     paddingHorizontal: screenPadding.horizontal,
+  },
+  titleContainer: {
+    gap: px(4),
+  },
+  keywordHint: {
+    color: COLOR_TEXT.sub,
   },
   title: {
     color: COLOR_TEXT['subTitle'],
@@ -52,6 +58,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: px(4),
+  },
+  referenceText: {
+    color: COLOR.tertiary,
   },
   warningText: {
     color: COLOR['alert'],

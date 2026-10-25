@@ -1,155 +1,24 @@
-import { memo, useCallback } from 'react';
-import { View, TouchableOpacity, Linking, Alert } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
+import { memo } from 'react';
+import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { AlertTriangle } from 'lucide-react-native';
-import { COLOR } from '@constants/color';
-import { fontPx } from '@utils/responsive';
-import InfoRow from '@features/shared/components/InfoRow';
-import { IPillDetail } from '../../types/pill_detail_type';
 import { styles } from '../../styles/molecules/PillSafetySection';
-import { useExternalUrlStore } from '@store/external_url_store';
-import { useToast } from '@hooks/use_toast';
-import logger from '@utils/logger';
+import type { PillDetailDataProps } from '../../types/pill_detail_component_type';
+import ExternalLinkButton from '../atoms/SafetyExternalLinkButton';
+import PillSafetyDisclaimer from './PillSafetyDisclaimer';
+import WarningRow from './WarningRow';
 
-interface IWarningRowProps {
-  label: string;
-  isWarning?: boolean;
-  prefixLabel?: string;
-  items?: string[] | null;
-  footerNote?: string;
-}
-
-// 주의 및 특수 분류 정보를 통일된 포맷으로 렌더링하는 경고 행 컴포넌트
-const WarningRow = memo(
-  ({
-    label,
-    isWarning = false,
-    prefixLabel = '해당 성분: ',
-    items,
-    footerNote,
-  }: IWarningRowProps) => {
-    const value = isWarning ? (
-      <>
-        <View style={styles.warningBadgeRow}>
-          <AlertTriangle size={fontPx(14)} color={COLOR['alert']} />
-          <BaseText weight="bold" size={14} style={styles.warningText}>
-            주의
-          </BaseText>
-        </View>
-        {`\n`}
-        <BaseText weight="medium" size={14} style={styles.normalText}>
-          {prefixLabel}
-        </BaseText>
-        <BaseText weight="bold" size={14} style={styles.warningText}>
-          {Array.isArray(items) && items.length > 0 ? items.join(', ') : '-'}
-        </BaseText>
-        {footerNote ? (
-          <BaseText weight="semiBold" size={11} style={styles.smallInfoText}>
-            {`\n${footerNote}`}
-          </BaseText>
-        ) : null}
-      </>
-    ) : (
-      '해당 없음 (X)'
-    );
-
-    return <InfoRow label={label} value={value} />;
-  },
-);
-
-WarningRow.displayName = 'WarningRow';
-
-interface IExternalLinkButtonProps {
-  title: string;
-  url: string;
-  materialEngName?: string;
-}
-
-// 영문 성분명을 복사하고 외부 링크 URL로 이동하는 버튼 컴포넌트
-const ExternalLinkButton = memo(
-  ({ title, url, materialEngName }: IExternalLinkButtonProps) => {
-    const { showToast } = useToast();
-
-    const handlePress = useCallback(async () => {
-      if (materialEngName) {
-        await Clipboard.setStringAsync(materialEngName);
-
-        showToast({
-          message: `검색 지원을 위해 영문 성분명 (${materialEngName})이 복사되었습니다.`,
-        });
-      }
-
-      // 토스트 애니메이션이 충분히 보일 수 있도록 대기 후 브라우저 이동
-      setTimeout(() => {
-        Linking.openURL(url);
-      }, 800);
-    }, [materialEngName, showToast, url]);
-
-    return (
-      <TouchableOpacity style={styles.externalLinkButton} onPress={handlePress}>
-        <BaseText weight="bold" size={14} style={styles.externalLinkButtonText}>
-          {title}
-        </BaseText>
-      </TouchableOpacity>
-    );
-  },
-);
-
-ExternalLinkButton.displayName = 'ExternalLinkButton';
-
-interface IPillSafetySectionProps {
-  data: IPillDetail;
-}
-
-const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
-  const { reportEmail, nifdsUrl, kadaUrl } = useExternalUrlStore();
-
-  const handleReport = useCallback(() => {
-    const subject = encodeURIComponent(
-      `[잘못된 정보 신고] ${data.ITEM_NAME} (${data.ITEM_SEQ})`,
-    );
-    const body = encodeURIComponent(
-      `안녕하세요.\n\n'${data.ITEM_NAME}' (코드: ${data.ITEM_SEQ}) 의 주의 및 특수 분류 정보가 잘못되었음을 신고합니다.\n\n[신고 내용]\n(여기에 잘못된 부분과 올바른 정보를 입력해 주세요.)\n\n감사합니다.`,
-    );
-
-    const url = `mailto:${reportEmail}?subject=${subject}&body=${body}`;
-
-    Alert.alert(
-      '이메일 앱 열기',
-      '잘못된 정보 신고를 위해 이메일 앱으로 이동합니다. 이동하시겠습니까?',
-      [
-        {
-          text: '취소',
-          style: 'cancel',
-        },
-        {
-          text: '이동',
-          onPress: async () => {
-            try {
-              await Linking.openURL(url);
-            } catch (e) {
-              logger.error(
-                `Failed to open email client for reporting. URL: ${url}. ${(e as Error).stack || e}`,
-              );
-
-              Alert.alert(
-                '오류',
-                `이메일 앱을 열 수 없습니다.\n${reportEmail} 로 직접 메일을 보내주세요.`,
-              );
-            }
-          },
-        },
-      ],
-      { cancelable: true },
-    );
-  }, [data.ITEM_NAME, data.ITEM_SEQ, reportEmail]);
-
+// 주의·특수 분류 정보 구성.
+const PillSafetySection = ({ data }: PillDetailDataProps) => {
   return (
     <View style={styles.container}>
-      <BaseText weight="bold" size={16} style={styles.title}>
-        [ 주의 및 특수 분류 정보 ]
-      </BaseText>
+      <View style={styles.titleContainer}>
+        <BaseText weight="bold" size={16} style={styles.title}>
+          [ 주의 및 특수 분류 정보 ]
+        </BaseText>
+        <BaseText weight="regular" size={10.5} style={styles.keywordHint}>
+          키워드를 누르면 본문에서 찾아볼 수 있어요.
+        </BaseText>
+      </View>
 
       <WarningRow
         label="운전/기계조작"
@@ -178,38 +47,26 @@ const PillSafetySection = ({ data }: IPillSafetySectionProps) => {
 
       <ExternalLinkButton
         title="마약 정보 데이터베이스"
-        url={nifdsUrl}
+        urlKey="nifdsUrl"
         materialEngName={data.MATERIAL_ENG_NAME}
       />
 
       <WarningRow
-        label="도핑 금지"
-        isWarning={data.isProhibited}
+        label="도핑 관련 문서"
+        variant="reference"
+        prefixLabel="언급된 성분: "
+        isWarning={data.hasProhibitedReferences}
         items={data.prohibitedIngredients}
-        footerNote="※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고"
+        footerNote="※ 문서 언급 여부이며 금지 판정이 아닙니다. 적용 조건은 KADA에서 확인해 주세요."
       />
 
       <ExternalLinkButton
         title="도핑 금지 약물 확인 (KADA)"
-        url={kadaUrl}
+        urlKey="kadaUrl"
         materialEngName={data.MATERIAL_ENG_NAME}
       />
 
-      <View style={styles.disclaimerContainer}>
-        <BaseText weight="semiBold" size={12} style={styles.disclaimerText}>
-          * 데이터 특성상 정보가 부정확하거나 변경되었을 수 있습니다. 최신
-          정보는 마약 정보 데이터베이스 및 KADA 홈페이지를 확인해 주세요.
-        </BaseText>
-        <TouchableOpacity style={styles.reportButton} onPress={handleReport}>
-          <BaseText weight="semiBold" size={12} style={styles.reportButtonText}>
-            잘못된 정보 신고하기
-          </BaseText>
-        </TouchableOpacity>
-      </View>
-
-      <BaseText weight="semiBold" size={12} style={styles.sourceText}>
-        * 출처: 식약처 마약정보DB, 한국도핑방지위원회(KADA)
-      </BaseText>
+      <PillSafetyDisclaimer data={data} />
     </View>
   );
 };

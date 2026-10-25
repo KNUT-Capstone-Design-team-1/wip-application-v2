@@ -1,42 +1,70 @@
-import { View, TouchableOpacity } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
+import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { styles } from './styles';
-import { fontPx } from '@utils/responsive';
+import { ChevronLeft, Search, X } from 'lucide-react-native';
+import { BaseText } from '@components/common/BaseText';
 import { COLOR } from '@constants/color';
-import { ChevronLeft } from 'lucide-react-native';
-import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
+import { fontPx } from '@utils/responsive';
+import { useHeaderActionStore } from './store/header_action_store';
+import { useHeaderTitleStore } from './store/header_title_store';
+import { styles } from './styles';
 
 const SubHeader = () => {
   const router = useRouter();
-
+  const onSearch = useHeaderActionStore((state) => state.onSearch);
+  const isSearchOpen = useHeaderActionStore((state) => state.isSearchOpen);
   const title = useHeaderTitleStore((state) => state.title);
+  const SearchIcon = isSearchOpen ? X : Search;
 
   const handleBackPress = () => {
+    Keyboard.dismiss();
     router.back();
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onTouchStart={Keyboard.dismiss}>
       <View style={styles.subHeaderContent}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel="뒤로가기"
+        >
           <ChevronLeft
             size={fontPx(24)}
-            color={COLOR['secondary']}
+            color={COLOR.secondary}
             strokeWidth={2.5}
           />
         </TouchableOpacity>
-        <BaseText
-          weight="bold"
-          size={18}
-          style={styles.headerTitle}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {title}
-        </BaseText>
-        {/* 이게 없으면 title이 우측으로 치우침 */}
-        <View style={styles.menuButton} />
+        <View style={styles.headerTitleContainer}>
+          <BaseText
+            weight="bold"
+            size={18}
+            style={styles.headerTitle}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {title}
+          </BaseText>
+        </View>
+        {onSearch ? (
+          <TouchableOpacity
+            onPress={onSearch}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isSearchOpen ? '본문 검색 닫기' : '상세 정보에서 찾기'
+            }
+            accessibilityHint="상세 정보 검색창을 열거나 닫습니다"
+          >
+            <SearchIcon
+              size={fontPx(isSearchOpen ? 20 : 18)}
+              color={COLOR.secondary}
+              strokeWidth={2.5}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.backButton} />
+        )}
       </View>
     </View>
   );

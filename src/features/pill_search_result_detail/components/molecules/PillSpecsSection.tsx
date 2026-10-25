@@ -1,92 +1,133 @@
-import { memo } from 'react';
-import { View } from 'react-native';
+import { memo, useMemo } from 'react';
 import { BaseText } from '@components/common/BaseText';
-import InfoRow from '@features/shared/components/InfoRow';
-import { IPillDetail } from '../../types/pill_detail_type';
+import { View } from 'react-native';
+import { useStore } from 'zustand';
+import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
+import { usePillSpecsExpansion } from '../../hooks/use_pill_detail_expansion';
 import { styles } from '../../styles/molecules/PillSpecsSection';
+import PillSpecsToggle from '../atoms/PillSpecsToggle';
+import KeywordInfoRow from './KeywordInfoRow';
+import type {
+  PillDetailDataProps,
+  PillSpecRowsProps,
+} from '../../types/pill_detail_component_type';
+import {
+  getPillBasicFields,
+  getPillIngredientFields,
+  getPillManagementFields,
+  getPillOtherFields,
+  getPillPhysicalFields,
+} from '../../utils/pill_specs_fields';
 
-interface IPillSpecsSectionProps {
-  data: IPillDetail;
-  moreInfo: boolean;
-}
-
-const PillSpecsSection = ({ data, moreInfo }: IPillSpecsSectionProps) => {
-  return (
-    <View style={styles.infoWrapper}>
-      <InfoRow label="제조사" value={data.ENTP_NAME} />
-      <InfoRow label="주성분" value={data.MAIN_ITEM_INGR} />
-      <InfoRow label="분류명" value={data.CLASS_NAME} />
-      <InfoRow label="모양" value={data.DRUG_SHAPE} />
-      <InfoRow label="제형" value={data.FORM_CODE} />
-      <InfoRow label="성상" value={data.CHART} />
-      <InfoRow
-        label="식별 문자"
-        value={`앞: ${data.PRINT_FRONT || '-'} / 뒤: ${data.PRINT_BACK || '-'}`}
+// 제원 하위 뷰는 같은 파일에 모으고 기존 필드·탐색 ID·메모이제이션을 유지한다.
+const PillSpecRows = memo(({ fields, targetPrefix }: PillSpecRowsProps) => (
+  <>
+    {fields.map((field) => (
+      <KeywordInfoRow
+        key={field.id}
+        label={field.label}
+        text={field.text}
+        targetId={targetPrefix + ':' + field.id}
       />
-      <InfoRow label="포장 단위" value={data.PACK_UNIT} />
-      <InfoRow label="유효 기간" value={data.VALID_TERM} />
+    ))}
+  </>
+));
 
-      {/* 더보기 정보 */}
-      {moreInfo && (
-        <>
-          <InfoRow label="영문명" value={data.ITEM_ENG_NAME} />
-          <InfoRow label="전문/일반" value={data.ETC_OTC_CODE} />
-          <InfoRow label="분류 번호" value={data.CLASS_NO} />
-          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
-            [ 상세 제원 ]
-          </BaseText>
-          <InfoRow
-            label="색상"
-            value={`${data.COLOR_CLASS1 || '-'}${data.COLOR_CLASS2 ? ` / ${data.COLOR_CLASS2}` : ''}`}
-          />
-          <InfoRow
-            label="분할선"
-            value={`앞: ${data.LINE_FRONT || '-'} / 뒤: ${data.LINE_BACK || '-'}`}
-          />
-          <InfoRow
-            label="크기 (mm)"
-            value={`장축: ${data.LENGTH_LONG || '-'} / 단축: ${data.LENGTH_SHORT || '-'} / 두께: ${data.LENGTH_THICK || '-'}`}
-          />
-          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
-            [ 성분 및 저장 ]
-          </BaseText>
-          <InfoRow
-            label="원료 성분"
-            value={data.MATERIAL_NAME?.replace(/[;|]/g, '\n')}
-          />
-          <InfoRow label="영문 성분명" value={data.MATERIAL_ENG_NAME} />
-          <InfoRow
-            label="첨가제"
-            value={data.INGR_NAME?.replace(/[;|]/g, '\n')}
-          />
-          <InfoRow label="총량" value={data.TOTAL_CONTENT} />
-          <InfoRow label="저장 방법" value={data.STORAGE_METHOD} />
-          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
-            [ 관리 정보 ]
-          </BaseText>
-          <InfoRow
-            label="보험 코드"
-            value={data.INSURANCE_CODE || data.COVERAGE_ENG_NAME}
-          />
-          <InfoRow label="허가 일자" value={data.ITEM_PERMIT_DATE} />
-          <InfoRow label="업체 영문명" value={data.ENTP_ENG_NAME} />
-          <InfoRow label="위탁제조업체" value={data.OEM_ENTP_NAME} />
+const PillBasicSpecs = memo(({ data }: PillDetailDataProps) => {
+  const fields = useMemo(() => getPillBasicFields(data), [data]);
 
-          <InfoRow label="변경 일자" value={data.CHANGE_DATE} />
-          <InfoRow
-            label="변경 내용"
-            value={data.CHANGE_CONTENT?.replace(/[/]/g, '\n')}
-          />
-          <BaseText weight="bold" size={16} style={styles.sectionTitle}>
-            [ 기타 ]
-          </BaseText>
+  return <PillSpecRows fields={fields} targetPrefix="specs" />;
+});
 
-          <InfoRow label="마약류 분류" value={data.DRUG_CLASS} />
-          <InfoRow label="신약 여부" value={data.NEW_DRUG_YN} />
-          <InfoRow label="희귀의약품" value={data.RARE_DRUG_YN} />
-        </>
-      )}
-    </View>
+const PillPhysicalSpecs = memo(({ data }: PillDetailDataProps) => {
+  const fields = useMemo(() => getPillPhysicalFields(data), [data]);
+
+  return (
+    <>
+      <PillSpecRows fields={fields.identity} targetPrefix="physical" />
+      <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+        [ 상세 제원 ]
+      </BaseText>
+      <PillSpecRows fields={fields.details} targetPrefix="physical" />
+    </>
+  );
+});
+
+const PillIngredientSpecs = memo(({ data }: PillDetailDataProps) => {
+  const fields = useMemo(() => getPillIngredientFields(data), [data]);
+
+  return (
+    <>
+      <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+        [ 성분 및 저장 ]
+      </BaseText>
+      <PillSpecRows fields={fields} targetPrefix="ingredients" />
+    </>
+  );
+});
+
+const PillManagementSpecs = memo(({ data }: PillDetailDataProps) => {
+  const fields = useMemo(() => getPillManagementFields(data), [data]);
+
+  return (
+    <>
+      <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+        [ 관리 정보 ]
+      </BaseText>
+      <PillSpecRows fields={fields} targetPrefix="management" />
+    </>
+  );
+});
+
+const PillOtherSpecs = memo(({ data }: PillDetailDataProps) => {
+  const fields = useMemo(() => getPillOtherFields(data), [data]);
+
+  return (
+    <>
+      <BaseText weight="bold" size={16} style={styles.sectionTitle}>
+        [ 기타 ]
+      </BaseText>
+      <PillSpecRows fields={fields} targetPrefix="other" />
+    </>
+  );
+});
+
+PillSpecRows.displayName = 'PillSpecRows';
+PillBasicSpecs.displayName = 'PillBasicSpecs';
+PillPhysicalSpecs.displayName = 'PillPhysicalSpecs';
+PillIngredientSpecs.displayName = 'PillIngredientSpecs';
+PillManagementSpecs.displayName = 'PillManagementSpecs';
+PillOtherSpecs.displayName = 'PillOtherSpecs';
+
+// 기본·확장 제원 그룹 구성.
+const PillSpecsSection = () => {
+  const store = usePillDetailContext();
+  const data = useStore(store, (state) => state.pillData);
+  const { moreInfo, toggle } = usePillSpecsExpansion(data);
+
+  const hasNoData = !data;
+
+  if (hasNoData) {
+    return null;
+  }
+
+  return (
+    <>
+      <View style={styles.infoWrapper}>
+        <PillBasicSpecs data={data} />
+
+        {/* 더보기 정보 */}
+        {moreInfo && (
+          <>
+            <PillPhysicalSpecs data={data} />
+            <PillIngredientSpecs data={data} />
+            <PillManagementSpecs data={data} />
+            <PillOtherSpecs data={data} />
+          </>
+        )}
+      </View>
+      <PillSpecsToggle isExpanded={moreInfo} onToggle={toggle} />
+    </>
   );
 };
 

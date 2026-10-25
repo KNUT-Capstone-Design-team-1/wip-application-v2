@@ -1,116 +1,120 @@
+import type {
+  RawDocument,
+  RawSection,
+  RawArticle,
+  RawParagraph,
+  PillArticle,
+  PillDocument,
+  PillParagraph,
+  PillSection,
+} from '../types/pill_document_type';
 import { XMLParser } from 'fast-xml-parser';
 
-const decodeHTMLEntities = (text: string) => {
-  return text
+// 단일·반복 XML 노드를 동일한 배열로 변환.
+const asArray = <T>(value?: T | T[]): T[] => {
+  const hasNoValue = !value;
+
+  if (hasNoValue) {
+    return [];
+  }
+
+  return Array.isArray(value) ? value : [value];
+};
+
+// 유효한 유니코드 값은 문자로 복원하고 범위를 벗어나면 원문을 유지한다.
+const decodeCodePoint = (entity: string, value: number): string => {
+  const isValidCodePoint = value >= 0 && value <= 0x10ffff;
+
+  if (!isValidCodePoint) {
+    return entity;
+  }
+
+  return String.fromCodePoint(value);
+};
+
+// 본문 HTML 엔티티 복원.
+export const decodeHTMLEntities = (text: string): string =>
+  text
     .replace(/&nbsp;/g, ' ')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
-      String.fromCharCode(parseInt(hex, 16)),
+    .replace(/&#(\d+);/g, (entity, dec: string) =>
+      decodeCodePoint(entity, Number(dec)),
+    )
+    .replace(/&#x([0-9a-fA-F]+);/gi, (entity, hex: string) =>
+      decodeCodePoint(entity, parseInt(hex, 16)),
     );
-};
 
-const mapParagraph = (p: any) => {
-  const isTable = p['@_tagName'] === 'table';
-  const contentStr = p['#text'] || p.content || '';
+// 표·일반 문단의 표시 데이터 변환.
+const mapParagraph = (raw: RawParagraph): PillParagraph => {
+  const paragraph: PillParagraph = { tagName: raw['@_tagName'] || '' };
+  const text = String(raw['#text'] ?? raw.content ?? '').trim();
 
-  const mapped: any = {
-    tagName: p['@_tagName'],
-  };
+  const hasTextIndent =
+    raw['@_textIndent'] !== undefined && raw['@_textIndent'] !== '';
 
-  if (p['@_textIndent'] !== undefined && p['@_textIndent'] !== '') {
-    mapped.textIndent = p['@_textIndent'];
+  if (hasTextIndent) {
+    paragraph.textIndent = String(raw['@_textIndent']);
   }
-  if (p['@_marginLeft'] !== undefined && p['@_marginLeft'] !== '') {
-    mapped.marginLeft = p['@_marginLeft'];
-  }
+
+  const isTable = paragraph.tagName === 'table';
 
   if (isTable) {
-    mapped.table =
-      typeof contentStr === 'string' ? contentStr.trim() : contentStr;
-  } else {
-    mapped.content =
-      typeof contentStr === 'string'
-        ? decodeHTMLEntities(contentStr.trim())
-        : contentStr;
+    paragraph.table = text;
+
+    return paragraph;
   }
-  return mapped;
+
+  paragraph.content = decodeHTMLEntities(text);
+
+  return paragraph;
 };
 
-const mapArticle = (a: any) => {
-  const paragraphsRaw = a.PARAGRAPH;
-  let paragraphs: any[] = [];
-  if (Array.isArray(paragraphsRaw)) {
-    paragraphs = paragraphsRaw.map(mapParagraph);
-  } else if (paragraphsRaw) {
-    paragraphs = [mapParagraph(paragraphsRaw)];
-  }
+// 조항과 하위 문단 변환.
+const mapArticle = (raw: RawArticle): PillArticle => ({
+  title: raw['@_title'] || '',
+  paragraphs: asArray(raw.PARAGRAPH).map(mapParagraph),
+});
 
-  if (paragraphs.length === 0) {
-    return {
-      title: a['@_title'] || '',
-      content: '',
-    };
-  }
+// 절과 하위 조항 변환.
+const mapSection = (raw: RawSection): PillSection => ({
+  title: raw['@_title'] || '',
+  articles: asArray(raw.ARTICLE).map(mapArticle),
+});
 
-  return {
-    title: a['@_title'] || '',
-    paragraphs,
-  };
-};
+// 상세 XML을 렌더링 전용 문서로 변환.
+export const xmlToJson = (xml: string): { doc: PillDocument | null } => {
+  const hasNoXml = !xml;
 
-const mapSection = (s: any) => {
-  const articlesRaw = s.ARTICLE;
-  let articles: any[] = [];
-  if (Array.isArray(articlesRaw)) {
-    articles = articlesRaw.map(mapArticle);
-  } else if (articlesRaw) {
-    articles = [mapArticle(articlesRaw)];
-  }
-
-  return {
-    title: s['@_title'] || '',
-    articles,
-  };
-};
-
-export const xmlToJson = (xml: string) => {
-  if (!xml) {
+  if (hasNoXml) {
     return { doc: null };
   }
+
   try {
     const parser = new XMLParser({
       ignoreAttributes: false,
       attributeNamePrefix: '@_',
     });
-    const raw = parser.parse(xml);
+    const raw: { DOC?: RawDocument } = parser.parse(xml);
 
-    if (!raw || !raw.DOC) {
+    const document = raw?.DOC;
+    const hasNoDocument = !document;
+
+    if (hasNoDocument) {
       return { doc: null };
-    }
-
-    const docRaw = raw.DOC;
-
-    const sectionsRaw = docRaw.SECTION;
-    let sections: any[] = [];
-    if (Array.isArray(sectionsRaw)) {
-      sections = sectionsRaw.map(mapSection);
-    } else if (sectionsRaw) {
-      sections = [mapSection(sectionsRaw)];
     }
 
     return {
       doc: {
-        title: docRaw['@_title'] || '',
-        sections,
+        sections: asArray(document.SECTION).map(mapSection),
       },
     };
-  } catch (e) {
-    console.error('XML Parsing error:', e);
+  } catch (error) {
+    console.error('XML Parsing error:', error);
+
     return { doc: null };
   }
 };

@@ -1,4 +1,7 @@
-export interface IPillDetail {
+import type { ISpecialClassificationResult } from './special_classification_type';
+import type { createPillDetailStore } from '../store/pill_detail_store';
+
+export interface IPillDetail extends Partial<ISpecialClassificationResult> {
   ITEM_SEQ: string;
   ITEM_NAME: string;
   ENTP_NAME: string;
@@ -40,55 +43,39 @@ export interface IPillDetail {
   EE_DOC_DATA?: string;
   UD_DOC_DATA?: string;
   NB_DOC_DATA?: string;
-  isNarcotic?: boolean;
-  narcoticIngredients?: string[];
-  isCannabis?: boolean;
-  cannabisIngredients?: string[];
-  isPsychotropic?: boolean;
-  psychotropicIngredients?: string[];
-  isProhibited?: boolean;
-  prohibitedIngredients?: string[];
   isDrivingWarning?: boolean;
   drivingWarningKeywords?: string[];
 }
 
-export interface IPillDetailInfoProps {
-  data: IPillDetail;
-  saveState: boolean;
-  onSaveToggle: () => void;
-  onStockInquiry?: () => void;
-  detailLoading?: boolean;
+export interface PillDetailRoute {
+  itemSeq?: string;
+  image?: string;
 }
 
-export interface IDetailSectionProps {
-  title: string;
-  isOpen: boolean;
-  onToggle: () => void;
-  content?: string;
+export interface PillDetailState extends PillDetailRoute {
+  pillData: IPillDetail | null;
+  loading: boolean;
+  detailLoading: boolean;
+  savedFolderIds: number[];
+  isFolderModalVisible: boolean;
+  hasSaved: boolean;
+  setPillData: (pillData: IPillDetail | null) => void;
+  setLoading: (loading: boolean) => void;
+  setDetailLoading: (detailLoading: boolean) => void;
+  setSavedFolderIds: (savedFolderIds: number[]) => void;
+  setFolderModalVisible: (isFolderModalVisible: boolean) => void;
+  setHasSaved: (hasSaved: boolean) => void;
 }
 
-type TParagraph = {
-  tagName: string;
-  textIndent?: '0' | '';
-  content?: string;
-  table?: string;
-};
+export type PillDetailStore = ReturnType<typeof createPillDetailStore>;
 
-type TArticle = {
-  title: string;
-  paragraphs: TParagraph[];
-};
+export interface PillDetailLoadService {
+  getBasicDetail: (itemSeq: string) => Promise<IPillDetail | null>;
+  getRemoteDetail: (itemSeq: string) => Promise<Partial<IPillDetail> | null>;
+}
 
-type TSection = {
-  title: string;
-  articles: TArticle[];
-};
-
-type TSectionItem = {
-  title: string;
-  sections: TSection[];
-};
-
-export interface ISectionItemProps {
-  sectionItem: TSectionItem | null;
+export interface PillSpecField {
+  id: string;
+  label: string;
+  text: string;
 }

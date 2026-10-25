@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: px(12),
   },
   subHeaderContent: {
+    paddingHorizontal: px(4),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -51,8 +52,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerTitle: {
+  headerTitleContainer: {
     flex: 1,
+    minWidth: 0,
+    height: px(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    width: '100%',
     color: COLOR_TEXT['subTitle'],
     textAlign: 'center',
   },

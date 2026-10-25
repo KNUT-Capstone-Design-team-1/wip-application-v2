@@ -1,53 +1,88 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { View } from 'react-native';
-import { BaseText } from '@components/common/BaseText';
-import { ISectionItemProps } from '@features/pill_search_result_detail/types/pill_detail_type';
-import { styles } from '@features/pill_search_result_detail/styles/molecules/SectionItem';
-import { px } from '@utils/responsive';
-import TableWebView from '@features/pill_search_result_detail/components/atoms/TableWebView';
+import { styles } from '../../styles/molecules/SectionItem';
+import type {
+  DocumentParagraphProps,
+  DocumentArticleProps,
+  SectionItemProps,
+} from '../../types/pill_detail_component_type';
+import KeywordText from '../atoms/KeywordText';
+import TableWebView from '../atoms/TableWebView';
 
-const SectionItem = ({ sectionItem }: ISectionItemProps) => {
-  if (!sectionItem || !sectionItem.sections) {
+// 문단 형식에 따른 표·텍스트 표시.
+const DocumentParagraph = ({ paragraph, targetId }: DocumentParagraphProps) => {
+  const table = paragraph.table;
+  const hasTable = !!table;
+
+  if (hasTable) {
+    return <TableWebView html={table} targetId={targetId} />;
+  }
+
+  return (
+    <KeywordText
+      text={paragraph.content || ''}
+      targetId={targetId}
+      size={16}
+      style={[
+        styles.paragraphText,
+        paragraph.textIndent === '0' && styles.indentedParagraph,
+      ]}
+    />
+  );
+};
+
+// 조항 제목·문단 목록 표시.
+const DocumentArticle = ({ article, targetPrefix }: DocumentArticleProps) => (
+  <View style={styles.articleWrapper}>
+    {article.title ? (
+      <KeywordText
+        size={17}
+        weight="bold"
+        style={styles.articleTitle}
+        text={article.title}
+        targetId={targetPrefix + '-title'}
+      />
+    ) : null}
+    {article.paragraphs.map((paragraph, index) => (
+      <DocumentParagraph
+        key={index}
+        paragraph={paragraph}
+        targetId={targetPrefix + '-' + index}
+      />
+    ))}
+  </View>
+);
+
+// 문서 절 제목·조항 그룹 표시.
+const SectionItem = ({
+  sectionItem,
+  targetPrefix = 'doc',
+}: SectionItemProps) => {
+  const hasNoDocument = !sectionItem;
+
+  if (hasNoDocument) {
     return null;
   }
 
   return (
     <View>
-      {sectionItem.sections.map((section, sIndex) => (
-        <View key={`sec-${sIndex}`}>
+      {sectionItem.sections.map((section, index) => (
+        <View key={index}>
           {section.title ? (
-            <BaseText size={18} weight="bold" style={styles.sectionTitle}>
-              {section.title}
-            </BaseText>
+            <KeywordText
+              size={18}
+              weight="bold"
+              style={styles.sectionTitle}
+              text={section.title}
+              targetId={targetPrefix + '-' + index + '-title'}
+            />
           ) : null}
-          {section.articles?.map((article, aIndex) => (
-            <View key={`art-${sIndex}-${aIndex}`} style={styles.articleWrapper}>
-              {article.title ? (
-                <BaseText size={17} weight="bold" style={styles.articleTitle}>
-                  {article.title}
-                </BaseText>
-              ) : null}
-              {article.paragraphs?.map((p, pIndex) => {
-                if (p.table) {
-                  return (
-                    <TableWebView key={`table-${pIndex}`} html={p.table} />
-                  );
-                }
-                const pContent = p.content ?? '';
-                return (
-                  <BaseText
-                    key={`p-${pIndex}`}
-                    size={16}
-                    style={[
-                      styles.paragraphText,
-                      { marginLeft: p.textIndent === '0' ? px(8) : 0 },
-                    ]}
-                  >
-                    {pContent}
-                  </BaseText>
-                );
-              })}
-            </View>
+          {section.articles.map((article, articleIndex) => (
+            <DocumentArticle
+              key={articleIndex}
+              article={article}
+              targetPrefix={targetPrefix + '-' + index + '-' + articleIndex}
+            />
           ))}
         </View>
       ))}

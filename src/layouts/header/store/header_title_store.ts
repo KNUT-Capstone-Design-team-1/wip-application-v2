@@ -1,10 +1,5 @@
 import { create } from 'zustand';
-
-export interface IHeaderTitleStore {
-  title: string;
-  setTitle: (title: string) => void;
-  resetTitle: () => void;
-}
+import type { IHeaderTitleStore } from '../types/header_store_type';
 
 export const useHeaderTitleStore = create<IHeaderTitleStore>((set) => ({
   title: '',
