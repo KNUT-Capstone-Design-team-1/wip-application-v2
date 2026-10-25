@@ -9,6 +9,10 @@ export type { GuideTargetProps } from './components/atoms/GuideTarget';
 export { useGuide } from './hooks/use_guide';
 export { useGuideScroll } from './hooks/use_guide_scroll';
 
+// 팩토리 (feature별 가이드 쉘)
+export { createFeatureGuide } from './create_feature_guide';
+export type { FeatureGuide, FeatureGuideOptions } from './create_feature_guide';
+
 // 타입
 export type {
   GuideStep,
