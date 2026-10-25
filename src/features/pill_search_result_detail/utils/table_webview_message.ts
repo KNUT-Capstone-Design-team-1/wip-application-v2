@@ -61,7 +61,7 @@ const isTableTextNode = (value: unknown): value is TableTextNode => {
   return hasText;
 };
 
-// 표의 검색 결과·키워드 이벤트 메시지 해석.
+// 표의 검색 결과 메시지 해석.
 const parseJsonMessage = (raw: string): TableWebViewMessage => {
   try {
     const parsed = JSON.parse(raw);
@@ -87,36 +87,6 @@ const parseJsonMessage = (raw: string): TableWebViewMessage => {
         type: 'textNodes',
         documentId: parsed.documentId,
         nodes: parsed.nodes,
-      };
-    }
-
-    const isDismissMessage = parsed?.type === 'dismiss';
-
-    if (isDismissMessage) {
-      return { type: 'dismiss' };
-    }
-
-    const isKeywordPressMessage = parsed?.type === 'keywordPress';
-
-    if (isKeywordPressMessage) {
-      const hasKeyword =
-        typeof parsed.keyword === 'string' && parsed.keyword.trim().length > 0;
-
-      if (!hasKeyword) {
-        return { type: 'invalid' };
-      }
-
-      const hasValidIndex =
-        Number.isSafeInteger(parsed.index) && parsed.index >= 0;
-
-      if (!hasValidIndex) {
-        return { type: 'invalid' };
-      }
-
-      return {
-        type: 'keywordPress',
-        keyword: parsed.keyword,
-        index: parsed.index,
       };
     }
 

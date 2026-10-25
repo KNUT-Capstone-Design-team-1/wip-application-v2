@@ -9,7 +9,7 @@ import {
   buildKeywordLineRanges,
   findKeywordLineOffset,
 } from '../utils/keyword_text_layout';
-import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
+import { useKeywordNavigationContext } from './use_keyword_navigation_context';
 
 // 강조 문구의 네이티브 줄 좌표 등록.
 export const useKeywordTextTargets = (
@@ -17,7 +17,9 @@ export const useKeywordTextTargets = (
   matches: KeywordMatch[],
   targetId?: string,
 ) => {
-  const { register } = useKeywordNavigationActions();
+  const {
+    controller: { register },
+  } = useKeywordNavigationContext();
   const ref = useRef<Text>(null);
   const lines = useRef<KeywordTextLineRange[]>([]);
 

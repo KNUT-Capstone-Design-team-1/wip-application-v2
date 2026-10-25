@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { useSafetySectionTarget } from '../../hooks/use_safety_section_target';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import type { PillDetailDataProps } from '../../types/pill_detail_component_type';
 import ExternalLinkButton from '../atoms/SafetyExternalLinkButton';
@@ -10,9 +9,8 @@ import WarningRow from './WarningRow';
 
 // 주의·특수 분류 정보 구성.
 const PillSafetySection = ({ data }: PillDetailDataProps) => {
-  const sectionRef = useSafetySectionTarget();
   return (
-    <View ref={sectionRef} collapsable={false} style={styles.container}>
+    <View style={styles.container}>
       <BaseText weight="bold" size={16} style={styles.title}>
         [ 주의 및 특수 분류 정보 ]
       </BaseText>
@@ -28,21 +26,18 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         label="마약류 (마약)"
         isWarning={data.isNarcotic}
         items={data.narcoticIngredients}
-        matches={data.classificationMatches}
       />
 
       <WarningRow
         label="마약류 (대마)"
         isWarning={data.isCannabis}
         items={data.cannabisIngredients}
-        matches={data.classificationMatches}
       />
 
       <WarningRow
         label="마약류 (향정)"
         isWarning={data.isPsychotropic}
         items={data.psychotropicIngredients}
-        matches={data.classificationMatches}
       />
 
       <ExternalLinkButton
@@ -55,7 +50,6 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         label="도핑 금지"
         isWarning={data.hasProhibitedReferences}
         items={data.prohibitedIngredients}
-        matches={data.classificationMatches}
         footerNote="※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고"
       />
 

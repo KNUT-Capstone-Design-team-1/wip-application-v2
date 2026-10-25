@@ -8,26 +8,27 @@ export const createKeywordNavigationStore = () =>
     isVisible: false,
     isSearchOpen: false,
     searchQuery: '',
-    warningKeywords: [],
-    setSearchOpen: (isSearchOpen) => set({ isSearchOpen }),
-    setSearchQuery: (searchQuery) =>
+    searchRequest: null,
+    requestSearch: (query) =>
+      set({ isSearchOpen: true, searchRequest: { query } }),
+    setSearchOpen: (isSearchOpen) =>
       set((state) => ({
+        isSearchOpen,
+        searchRequest: isSearchOpen ? state.searchRequest : null,
+      })),
+    setSearchQuery: (searchQuery) =>
+      set({
         searchQuery,
         currentIndex: 0,
         totalCount: 0,
-        keywords: searchQuery ? [searchQuery] : state.warningKeywords,
-      })),
+        keywords: searchQuery ? [searchQuery] : [],
+        canPrevious: false,
+        canNext: false,
+      }),
     currentIndex: 0,
     totalCount: 0,
     canPrevious: false,
     canNext: true,
-    setKeywords: (warningKeywords) =>
-      set((state) => ({
-        warningKeywords,
-        currentIndex: 0,
-        totalCount: 0,
-        keywords: state.searchQuery ? [state.searchQuery] : warningKeywords,
-      })),
     setVisible: (isVisible) => set({ isVisible }),
     setAvailability: (availability) => set(availability),
   }));

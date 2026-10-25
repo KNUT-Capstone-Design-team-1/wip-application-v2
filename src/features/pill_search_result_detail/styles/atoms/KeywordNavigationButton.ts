@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLOR } from '@constants/color';
 import { px } from '@utils/responsive';
 
-const buttonSize = px(44, 44, 48);
+const buttonSize = px(44, 44, 48) * 0.7;
 
 export const styles = StyleSheet.create({
   button: {
@@ -10,9 +10,10 @@ export const styles = StyleSheet.create({
     height: buttonSize,
     borderRadius: buttonSize / 2,
     backgroundColor: COLOR.primary,
-    opacity: 0.8,
+    elevation: 3,
+    opacity: 0.95,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  disabled: { opacity: 0.35 },
+  disabled: { opacity: 0.5 },
 });

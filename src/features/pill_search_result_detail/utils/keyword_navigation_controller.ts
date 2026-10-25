@@ -173,19 +173,6 @@ export const createKeywordNavigationController = (
       cursorId = null;
       updateAvailability();
     },
-    // 누른 항목을 이동 없이 현재 인덱스로 선택.
-    select: async (targetId: string) => {
-      const request = ++sequence;
-      manualScroll = false;
-      cursorId = targetId;
-      openers.forEach((open) => open(options.getKeywords()));
-
-      if (!(await refreshTargets(request))) {
-        return;
-      }
-
-      updateAvailability();
-    },
     jump: (keyword: string) => navigate('next', keyword),
     previous: () => navigate('previous'),
     next: () => navigate('next'),

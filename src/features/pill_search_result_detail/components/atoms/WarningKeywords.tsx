@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { BaseText } from '@components/common/BaseText';
-import { useWarningKeywordActions } from '../../hooks/use_keyword_navigation_actions';
+import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import type { WarningKeywordsProps } from '../../types/pill_detail_component_type';
 
 // 문구별 본문 찾기 링크.
-const WarningKeywords = ({ items, matches }: WarningKeywordsProps) => {
-  const jump = useWarningKeywordActions(matches);
+const WarningKeywords = ({ items }: WarningKeywordsProps) => {
+  const { store } = useKeywordNavigationContext();
 
   if (!items?.length) {
     return <>-</>;
@@ -22,7 +22,7 @@ const WarningKeywords = ({ items, matches }: WarningKeywordsProps) => {
             size={14}
             accessibilityRole="button"
             accessibilityLabel={item + ' 본문에서 찾기'}
-            onPress={() => jump(item)}
+            onPress={() => store.getState().requestSearch(item)}
             style={styles.warningText}
           >
             {item}

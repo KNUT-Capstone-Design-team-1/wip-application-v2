@@ -29,10 +29,8 @@ export const measureKeywordTargets = async (
 
   return groups
     .flat()
-    .filter(
-      (target) =>
-        target.kind === 'section' ||
-        target.keywords.some((keyword) => options.keywords.includes(keyword)),
+    .filter((target) =>
+      target.keywords.some((keyword) => options.keywords.includes(keyword)),
     );
 };
 
@@ -46,18 +44,12 @@ export const findKeywordTargetIndex = (
 ): number => {
   if (keyword) {
     const ahead = targets.findIndex(
-      (target) =>
-        target.kind !== 'section' &&
-        target.keywords.includes(keyword) &&
-        target.y >= scrollY - 2,
+      (target) => target.keywords.includes(keyword) && target.y >= scrollY - 2,
     );
 
     return ahead >= 0
       ? ahead
-      : targets.findIndex(
-          (target) =>
-            target.kind !== 'section' && target.keywords.includes(keyword),
-        );
+      : targets.findIndex((target) => target.keywords.includes(keyword));
   }
 
   const current = targets.findIndex((target) => target.id === cursorId);

@@ -1,4 +1,3 @@
-import type { WarningKeywordTarget } from './special_classification_type';
 import type {
   Animated,
   DimensionValue,
@@ -19,7 +18,6 @@ export interface PillDetailDataProps {
 }
 export interface WarningKeywordsProps {
   items?: string[] | null;
-  matches?: readonly WarningKeywordTarget[];
 }
 export interface DocumentArticleProps {
   article: PillArticle;
@@ -76,7 +74,6 @@ export interface SectionItemProps {
 
 export interface WarningRowProps {
   label: string;
-  matches?: readonly WarningKeywordTarget[];
   isWarning?: boolean;
   prefixLabel?: string;
   items?: string[] | null;

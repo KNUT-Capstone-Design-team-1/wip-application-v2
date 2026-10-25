@@ -1,11 +1,9 @@
 import { create } from 'zustand';
-
-interface HeaderActionState {
-  onSearch: (() => void) | null;
-  setSearch: (onSearch: (() => void) | null) => void;
-}
+import type { HeaderActionState } from '../types/header_store_type';
 
 export const useHeaderActionStore = create<HeaderActionState>((set) => ({
   onSearch: null,
-  setSearch: (onSearch) => set({ onSearch }),
+  isSearchOpen: false,
+  setSearchOpen: (isSearchOpen) => set({ isSearchOpen }),
+  setSearch: (onSearch) => set({ onSearch, isSearchOpen: false }),
 }));

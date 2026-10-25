@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Keyboard, TouchableOpacity } from 'react-native';
 import { Hospital } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
@@ -15,6 +15,7 @@ const StockInquiryIconButton = ({
     <TouchableOpacity
       onPress={(e) => {
         e.stopPropagation();
+        Keyboard.dismiss();
         onPress(e);
       }}
       activeOpacity={0.6}

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Platform } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useHeaderActionStore } from '@layouts/header/store/header_action_store';
 import { useKeywordNavigationContext } from './use_keyword_navigation_context';
@@ -10,7 +10,29 @@ export const useDetailFindHeader = () => {
   useFocusEffect(
     useCallback(() => {
       const open = () => store.getState().setSearchOpen(true);
-      useHeaderActionStore.getState().setSearch(open);
+      const close = () => {
+        controller.cancel();
+        store.getState().setSearchOpen(false);
+        store.getState().setSearchQuery('');
+        store.getState().setVisible(false);
+        Keyboard.dismiss();
+      };
+      const toggle = () => {
+        if (store.getState().isSearchOpen) close();
+        else open();
+      };
+      useHeaderActionStore.getState().setSearch(toggle);
+      useHeaderActionStore
+        .getState()
+        .setSearchOpen(store.getState().isSearchOpen);
+      const unsubscribe = store.subscribe((state, previous) => {
+        if (
+          state.isSearchOpen !== previous.isSearchOpen &&
+          useHeaderActionStore.getState().onSearch === toggle
+        ) {
+          useHeaderActionStore.getState().setSearchOpen(state.isSearchOpen);
+        }
+      });
       const onKeyDown = (event: KeyboardEvent) => {
         if (
           (event.ctrlKey || event.metaKey) &&
@@ -20,15 +42,13 @@ export const useDetailFindHeader = () => {
           open();
         }
         if (event.key === 'Escape' && store.getState().isSearchOpen) {
-          controller.cancel();
-          store.getState().setSearchOpen(false);
-          store.getState().setSearchQuery('');
-          store.getState().setVisible(false);
+          close();
         }
       };
       if (Platform.OS === 'web') window.addEventListener('keydown', onKeyDown);
       return () => {
-        if (useHeaderActionStore.getState().onSearch === open) {
+        unsubscribe();
+        if (useHeaderActionStore.getState().onSearch === toggle) {
           useHeaderActionStore.getState().setSearch(null);
         }
         if (Platform.OS === 'web')

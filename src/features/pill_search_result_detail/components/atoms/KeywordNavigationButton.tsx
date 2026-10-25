@@ -14,13 +14,11 @@ const KeywordNavigationButton = ({
   return (
     <TouchableOpacity
       style={[styles.button, disabled && styles.disabled]}
-      hitSlop={4}
-      activeOpacity={0.8}
+      hitSlop={10}
+      activeOpacity={0.9}
       accessibilityRole="button"
       accessibilityLabel={
-        direction === 'previous'
-          ? '이전 주의 키워드 찾기'
-          : '다음 주의 키워드 찾기'
+        direction === 'previous' ? '이전 검색 결과' : '다음 검색 결과'
       }
       accessibilityState={{ disabled }}
       disabled={disabled}

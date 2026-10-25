@@ -43,9 +43,10 @@ test('updates the position for next and previous navigation, including the last 
   expect(progress()).toMatchObject({ currentIndex: 2, totalCount: 3 });
 });
 
-test('tracks a directly selected keyword and clears selection after manual scrolling', async () => {
+test('clears the current navigation position after manual scrolling', async () => {
   const { controller, progress } = createFixture();
-  await controller.select('target:1');
+  await controller.next();
+  await controller.next();
   expect(progress()).toMatchObject({ currentIndex: 2, totalCount: 3 });
   controller.onScrollBeginDrag();
   controller.onScroll(50);
@@ -75,4 +76,26 @@ test('clears a previous position when search keywords change', () => {
   });
   store.getState().setSearchQuery('new query');
   expect(store.getState()).toMatchObject({ currentIndex: 0, totalCount: 0 });
+});
+
+test('cancelling a pending search prevents later scrolling and result updates', async () => {
+  let finishLayout!: () => void;
+  const layout = new Promise<void>((resolve) => {
+    finishLayout = resolve;
+  });
+  const scrollTo = jest.fn();
+  const setAvailability = jest.fn();
+  const controller = createKeywordNavigationController({
+    getKeywords: () => ['keyword'],
+    nextFrame: () => layout,
+    getViewportY: async () => 0,
+    scrollTo,
+    setAvailability,
+  });
+  const pending = controller.jump('keyword');
+  controller.cancel();
+  finishLayout();
+  await pending;
+  expect(scrollTo).not.toHaveBeenCalled();
+  expect(setAvailability).not.toHaveBeenCalled();
 });

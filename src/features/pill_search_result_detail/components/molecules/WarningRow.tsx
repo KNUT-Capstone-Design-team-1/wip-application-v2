@@ -15,7 +15,6 @@ const WarningRow = ({
   isWarning = false,
   prefixLabel = '해당 성분: ',
   items,
-  matches,
   footerNote,
 }: WarningRowProps) => {
   if (!isWarning) {
@@ -35,7 +34,7 @@ const WarningRow = ({
         {prefixLabel}
       </BaseText>
       <BaseText weight="bold" size={14} style={styles.warningText}>
-        <WarningKeywords items={items} matches={matches} />
+        <WarningKeywords items={items} />
       </BaseText>
       {items?.length ? (
         <BaseText weight="regular" size={10.5} style={styles.smallInfoText}>

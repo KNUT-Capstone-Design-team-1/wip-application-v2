@@ -77,11 +77,6 @@ function highlightNode(node, found) {
     const mark = document.createElement('mark');
     mark.className = 'pill-keyword';
     mark.textContent = text.slice(match.start, match.end);
-    mark.dataset.keyword = match.keyword;
-    mark.dataset.keywordIndex = String(match.index);
-    mark.setAttribute('role', 'button');
-    mark.setAttribute('aria-label', match.keyword + '부터 본문 탐색');
-    mark.tabIndex = 0;
     fragment.appendChild(mark);
     from = match.end;
   }
@@ -119,22 +114,6 @@ window.applyKeywordMatches = function (sourceId, groups) {
   setTimeout(sendHeight, ${TABLE_HEIGHT_MESSAGE_DELAY_MS});
 };
 
-// 강조 문구 클릭을 네이티브 탐색에 전달.
-function handleKeywordPress(event) {
-  const mark = event.target.closest('mark[data-keyword-index]');
-
-  const hasKeywordMark = Boolean(mark);
-  if (!hasKeywordMark) {
-    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'dismiss' }));
-
-    return;
-  }
-
-  window.ReactNativeWebView.postMessage(JSON.stringify({
-    type: 'keywordPress', keyword: mark.dataset.keyword, index: Number(mark.dataset.keywordIndex)
-  }));
-}
-
 // 표 자체 높이 전송.
 function sendHeight() {
   if (!isHighlighted) {
@@ -147,21 +126,6 @@ function sendHeight() {
 
 window.onload = function () {
   requestKeywordMatches();
-  document.addEventListener('click', handleKeywordPress);
-  document.addEventListener('keydown', function (event) {
-    const isActivationKey = event.key === 'Enter' || event.key === ' ';
-    if (!isActivationKey) {
-      return;
-    }
-
-    const isKeywordTarget = Boolean(event.target.closest('mark[data-keyword-index]'));
-    if (!isKeywordTarget) {
-      return;
-    }
-
-    event.preventDefault();
-    handleKeywordPress(event);
-  });
 };
 window.addEventListener('resize', sendHeight);
 `;

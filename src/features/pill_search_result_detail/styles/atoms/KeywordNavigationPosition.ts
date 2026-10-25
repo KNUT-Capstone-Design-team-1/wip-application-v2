@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     borderRadius: px(12),
     overflow: 'hidden',
     backgroundColor: COLOR_BG.surface,
+    elevation: 3,
     color: COLOR_TEXT.body,
     textAlign: 'center',
     fontVariant: ['tabular-nums'],

@@ -12,15 +12,16 @@ import {
   hasTableKeywords,
 } from '../utils/table_webview_html';
 import { parseTableWebViewMessage } from '../utils/table_webview_message';
-import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
 
-// 표의 네이티브 좌표·준비 상태·키워드 선택 관리.
+// 표의 네이티브 좌표·준비 상태 관리.
 const useTableKeywordTargets = (
   html: string,
   sourceHtml: string,
   targetId?: string,
 ) => {
-  const { register, select } = useKeywordNavigationActions();
+  const {
+    controller: { register },
+  } = useKeywordNavigationContext();
   const wrapper = useRef<View>(null);
   const webView = useRef<WebView>(null);
   const matches = useRef<TableKeywordMatch[]>([]);
@@ -96,28 +97,10 @@ const useTableKeywordTargets = (
     matches.current = items;
   }, []);
 
-  // 현재 표에 존재하는 항목만 선택.
-  const selectMatch = useCallback(
-    (index: number, keyword: string) => {
-      if (
-        !targetId ||
-        !matches.current.some(
-          (match) => match.index === index && match.keywords.includes(keyword),
-        )
-      ) {
-        return;
-      }
-
-      void select(targetId + ':' + index);
-    },
-    [targetId, select],
-  );
-
   return {
     wrapper,
     webView,
     updateMatches,
-    selectMatch,
     complete: readiness.complete,
   };
 };
@@ -135,9 +118,11 @@ export const useTableWebView = (
     () => ({ html: buildTableWebViewHtml(html, keywords, Platform.OS) }),
     [html, keywords],
   );
-  const { wrapper, webView, updateMatches, selectMatch, complete } =
-    useTableKeywordTargets(html, source.html, targetId);
-  const { dismiss } = useKeywordNavigationActions();
+  const { wrapper, webView, updateMatches, complete } = useTableKeywordTargets(
+    html,
+    source.html,
+    targetId,
+  );
 
   // 문서를 다시 로딩하지 않고 탐색 활성 상태에 맞춰 강조색만 전환한다.
   const updateHighlightVisibility = useCallback(() => {
@@ -170,18 +155,6 @@ export const useTableWebView = (
           return;
         }
 
-        case 'dismiss': {
-          dismiss();
-
-          return;
-        }
-
-        case 'keywordPress': {
-          selectMatch(message.index, message.keyword);
-
-          return;
-        }
-
         case 'matches': {
           updateMatches(message.matches);
           updateHighlightVisibility();
@@ -201,15 +174,7 @@ export const useTableWebView = (
         }
       }
     },
-    [
-      dismiss,
-      selectMatch,
-      updateMatches,
-      updateHighlightVisibility,
-      complete,
-      webView,
-      keywords,
-    ],
+    [updateMatches, updateHighlightVisibility, complete, webView, keywords],
   );
 
   // 표 로딩 실패 시 검색 결과를 비우고 진행 중인 대기를 해제한다.

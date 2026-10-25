@@ -1,7 +1,6 @@
 import { View, ScrollView } from 'react-native';
 import { useStore } from 'zustand';
 import { BaseText } from '@components/common/BaseText';
-import { useKeywordNavigationActions } from '../../hooks/use_keyword_navigation_actions';
 import { useKeywordNavigationInit } from '../../hooks/use_keyword_navigation_init';
 import { useKeywordNavigationScroll } from '../../hooks/use_keyword_navigation_scroll';
 import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
@@ -40,7 +39,6 @@ const PillDetailDisclaimer = () => (
 
 // 본문 레이아웃·스크롤 연결.
 const PillDetailContent = () => {
-  const { dismiss } = useKeywordNavigationActions();
   const { scrollRef, onScroll, onScrollBeginDrag } =
     useKeywordNavigationScroll();
 
@@ -52,7 +50,6 @@ const PillDetailContent = () => {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           ref={scrollRef}
-          onTouchStart={dismiss}
           onScroll={onScroll}
           onScrollBeginDrag={onScrollBeginDrag}
           scrollEventThrottle={16}

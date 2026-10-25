@@ -1,128 +1,91 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard } from 'react-native';
-import type { DetailFindStateSetters } from '../types/keyword_navigation_type';
-import { useKeywordNavigationActions } from './use_keyword_navigation_actions';
+import { useStore } from 'zustand';
+import { useToast } from '@hooks/use_toast';
 import { useKeywordNavigationContext } from './use_keyword_navigation_context';
 
-// 검색 실행·입력 변경·닫기 명령을 상태 구독 없이 제공한다.
-export const useDetailFindActions = (
-  query: string,
-  {
-    setQuery,
-    setSearching,
-    setHasSearched,
-    setMatchCount,
-  }: DetailFindStateSetters,
-) => {
+// 검색 입력·실행과 키워드 클릭 요청을 한 흐름으로 관리한다.
+export const useDetailFind = () => {
   const { store, controller } = useKeywordNavigationContext();
-  const { previous, next } = useKeywordNavigationActions();
+  const { showToast } = useToast();
+  const searchRequest = useStore(store, (state) => state.searchRequest);
+  const [query, setQuery] = useState(searchRequest?.query ?? '');
+  const queryRef = useRef(query);
+  const [searching, setSearching] = useState(false);
   const request = useRef(0);
+  const activeQuery = useRef<string | null>(null);
 
   // 이전 검색 응답과 진행 중인 인덱스 이동을 무효화한다.
   const cancel = useCallback(() => {
     request.current++;
+    activeQuery.current = null;
     controller.cancel();
   }, [controller]);
 
-  // 입력 중인 검색어를 반영하고 이전 검색 상태를 해제한다.
-  const updateQuery = useCallback(
-    (value: string) => {
-      cancel();
-
-      setQuery(value);
-      setSearching(false);
-      setHasSearched(false);
-      store.getState().setSearchQuery('');
-    },
-    [cancel, setQuery, setSearching, setHasSearched, store],
-  );
-
-  // 검색어를 강조한 뒤 첫 일치 위치로 이동하고 최신 요청의 결과만 반영한다.
   const search = useCallback(
-    async (submittedQuery = query) => {
-      const value = submittedQuery.trim();
-      const hasQuery = !!value;
+    async (submittedQuery: string) => {
+      const text = submittedQuery.replace(/[\r\n]/g, '');
+      const value = text.trim();
+      if (!value || activeQuery.current === value) return;
 
-      if (!hasQuery) {
-        return;
-      }
-
+      // React 상태보다 최신인 네이티브 제출 문자열을 먼저 반영한다.
+      activeQuery.current = value;
+      queryRef.current = text;
+      setQuery(text);
       Keyboard.dismiss();
-
       const id = ++request.current;
-
       setSearching(true);
-      setHasSearched(false);
       store.getState().setSearchQuery(value);
       store.getState().setVisible(true);
 
       try {
         const count = await controller.jump(value);
-        const isCurrentRequest = id === request.current;
+        if (id !== request.current) return;
 
-        if (!isCurrentRequest) {
-          return;
+        if (count === 0) {
+          showToast({
+            message: '일치하는 단어가 없습니다.',
+            duration: 2500,
+          });
         }
-
-        setHasSearched(true);
-        setMatchCount(count ?? null);
       } finally {
-        const isCurrentRequest = id === request.current;
-
-        if (isCurrentRequest) {
+        if (id === request.current) {
+          activeQuery.current = null;
           setSearching(false);
         }
       }
     },
-    [query, store, controller, setSearching, setHasSearched, setMatchCount],
+    [store, controller, showToast],
   );
 
-  // 검색을 취소하고 폼과 탐색 표시를 초기화한다.
-  const close = useCallback(() => {
-    cancel();
+  const updateQuery = useCallback(
+    (value: string) => {
+      // 통합검색과 동일하게 엔터가 입력 문자열에 포함된 경우도 즉시 검색한다.
+      if (/[\r\n]/.test(value)) {
+        void search(value);
+        return;
+      }
 
-    store.getState().setSearchOpen(false);
-    store.getState().setSearchQuery('');
-    store.getState().setVisible(false);
-    setQuery('');
-    setSearching(false);
-    setHasSearched(false);
-    setMatchCount(null);
-    Keyboard.dismiss();
-  }, [cancel, store, setQuery, setSearching, setHasSearched, setMatchCount]);
+      // 제출·포커스 해제 후 전달되는 동일한 값은 진행 중인 검색을 취소하지 않는다.
+      if (value === queryRef.current) return;
 
-  return useMemo(
-    () => ({ search, updateQuery, close, cancel, previous, next }),
-    [search, updateQuery, close, cancel, previous, next],
+      queryRef.current = value;
+      cancel();
+      setQuery(value);
+      setSearching(false);
+      store.getState().setVisible(false);
+      store.getState().setSearchQuery('');
+    },
+    [cancel, store, search],
   );
-};
 
-// 폼 내부 상태와 언마운트 시 검색 취소를 관리한다.
-export const useDetailFind = () => {
-  const [query, setQuery] = useState('');
-  const [searching, setSearching] = useState(false);
-  const [matchCount, setMatchCount] = useState<number | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
+  useEffect(() => {
+    if (!searchRequest) return;
 
-  const { search, updateQuery, close, cancel, previous, next } =
-    useDetailFindActions(query, {
-      setQuery,
-      setSearching,
-      setHasSearched,
-      setMatchCount,
-    });
+    void search(searchRequest.query);
+  }, [searchRequest, search]);
 
   useEffect(() => cancel, [cancel]);
 
-  return {
-    query,
-    searching,
-    matchCount,
-    hasSearched,
-    search,
-    updateQuery,
-    close,
-    previous,
-    next,
-  };
+  return { query, searching, search, updateQuery };
 };

@@ -13,7 +13,6 @@ export interface KeywordNavigationAvailability {
 export interface KeywordTarget {
   // 같은 강조 구간으로 이동할 수 있는 키워드 목록.
   keywords: readonly string[];
-  kind?: 'section';
   id: string;
   keyword: string;
   y: number;
@@ -65,10 +64,10 @@ export interface KeywordNavigationState extends KeywordNavigationAvailability {
   isVisible: boolean;
   isSearchOpen: boolean;
   searchQuery: string;
-  warningKeywords: string[];
+  searchRequest: { query: string } | null;
+  requestSearch: (query: string) => void;
   setSearchOpen: (isSearchOpen: boolean) => void;
   setSearchQuery: (searchQuery: string) => void;
-  setKeywords: (keywords: string[]) => void;
   setVisible: (isVisible: boolean) => void;
   setAvailability: (availability: KeywordNavigationAvailability) => void;
 }
@@ -81,11 +80,4 @@ export interface KeywordNavigationScope {
   store: KeywordNavigationStore;
   scrollRef: RefObject<ScrollView | null>;
   controller: ReturnType<typeof createKeywordNavigationController>;
-}
-
-export interface DetailFindStateSetters {
-  setQuery: (query: string) => void;
-  setSearching: (searching: boolean) => void;
-  setHasSearched: (hasSearched: boolean) => void;
-  setMatchCount: (matchCount: number | null) => void;
 }
