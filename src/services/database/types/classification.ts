@@ -13,10 +13,9 @@ export interface ClassificationEntry {
   molecularWeight?: string;
 }
 
-// 표시용 이름과 실제 입력에서 일치한 문자열을 분리한다.
+// 분류 표시 이름과 DB 출처를 담는다.
 export interface IngredientMatch<TSource> {
   displayName: string;
-  matchedText: string;
   source: TSource;
 }
 
@@ -24,6 +23,8 @@ export interface IngredientNamePair {
   MAIN_ITEM_INGR: string;
   MATERIAL_ENG_NAME: string;
 }
+
+export type IngredientTranslation = readonly [korean: string, english: string];
 
 export type IngredientAliasIndex = ReadonlyMap<string, readonly string[]>;
 
@@ -50,13 +51,6 @@ export interface ProhibitedReference<T extends ProhibitedDocument> {
 export interface ClassificationIndex {
   names: Map<string, ClassificationEntry[]>;
   prohibited: PreparedProhibitedDocument<ClassificationEntry>[];
-}
-
-export interface ContainedSubstanceParams {
-  containedInKr?: string;
-  containedInEn?: string;
-  chemicalNameKr?: string;
-  chemicalNameEn?: string;
 }
 
 export interface SubstanceNameEntry {

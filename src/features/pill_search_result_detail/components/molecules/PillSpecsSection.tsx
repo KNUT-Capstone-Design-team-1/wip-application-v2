@@ -105,7 +105,9 @@ const PillSpecsSection = () => {
   const data = useStore(store, (state) => state.pillData);
   const { moreInfo, toggle } = usePillSpecsExpansion(data);
 
-  if (!data) {
+  const hasNoData = !data;
+
+  if (hasNoData) {
     return null;
   }
 

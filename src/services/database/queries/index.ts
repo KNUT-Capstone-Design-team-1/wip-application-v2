@@ -3,8 +3,4 @@ export * as InitTableQuery from './init_table';
 export * as PillDataQuery from './pill_data';
 export * as MarkImagesQuery from './mark_images';
 export * as NearbyPharmaciesQuery from './nearby_pharmacies';
-export * as CannabisQuery from './cannabis';
-export * as NarcoticsQuery from './narcotics';
-export * as PsychotropicsQuery from './psychotropics';
-export * as ProhibitedListQuery from './prohibited_list';
 export * as FunctionalFoodNutrientsQuery from './functional_food_nutrients';

@@ -31,7 +31,9 @@ const PillDetailDocuments = () => {
     );
   }
 
-  if (!data) {
+  const hasNoData = !data;
+
+  if (hasNoData) {
     return null;
   }
 

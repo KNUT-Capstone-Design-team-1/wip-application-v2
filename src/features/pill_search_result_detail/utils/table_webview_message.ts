@@ -4,122 +4,104 @@ import type {
   TableWebViewMessage,
 } from '../types/table_webview_type';
 
-// 표 메시지의 검색 좌표 검증.
 const isTableKeywordMatch = (value: unknown): value is TableKeywordMatch => {
-  const isObject = Boolean(value) && typeof value === 'object';
+  const isNotObject = !value || typeof value !== 'object';
 
-  if (!isObject) {
+  if (isNotObject) {
     return false;
   }
 
   const match = value as TableKeywordMatch;
-
-  const hasKeyword = typeof match.keyword === 'string';
-
-  if (!hasKeyword) {
-    return false;
-  }
-
-  const hasValidKeywords =
+  const hasValidKeyword =
+    typeof match.keyword === 'string' &&
+    match.keyword.length > 0 &&
     Array.isArray(match.keywords) &&
     match.keywords.every((keyword) => typeof keyword === 'string') &&
     match.keywords.includes(match.keyword);
-
-  if (!hasValidKeywords) {
-    return false;
-  }
-
   const hasValidCoordinates =
     Number.isFinite(match.x) && Number.isFinite(match.y);
+  const hasValidIndex = Number.isSafeInteger(match.index) && match.index >= 0;
 
-  if (!hasValidCoordinates) {
-    return false;
-  }
-
-  const hasValidIndex = Number.isFinite(match.index);
-
-  return hasValidIndex;
+  return hasValidKeyword && hasValidCoordinates && hasValidIndex;
 };
 
 const isTableTextNode = (value: unknown): value is TableTextNode => {
-  const isObject = Boolean(value) && typeof value === 'object';
+  const isNotObject = !value || typeof value !== 'object';
 
-  if (!isObject) {
+  if (isNotObject) {
     return false;
   }
 
   const node = value as TableTextNode;
 
-  const hasValidIndex = Number.isSafeInteger(node.index) && node.index >= 0;
-
-  if (!hasValidIndex) {
-    return false;
-  }
-
-  const hasText = typeof node.text === 'string';
-
-  return hasText;
+  return (
+    Number.isSafeInteger(node.index) &&
+    node.index >= 0 &&
+    typeof node.text === 'string'
+  );
 };
 
-// 표의 검색 결과 메시지 해석.
-const parseJsonMessage = (raw: string): TableWebViewMessage => {
+// 새 source에 속한 메시지만 처리하며, 알 수 없는 응답으로 결과를 비우지 않는다.
+export const parseTableWebViewMessage = (
+  raw: string,
+  currentDocumentId: string,
+): TableWebViewMessage => {
   try {
-    const parsed = JSON.parse(raw);
+    const message = JSON.parse(raw);
+    const isInvalidDocument =
+      !message ||
+      typeof message !== 'object' ||
+      message.documentId !== currentDocumentId;
 
-    const isTextNodesMessage = parsed?.type === 'textNodes';
-
-    if (isTextNodesMessage) {
-      const hasDocumentId =
-        typeof parsed.documentId === 'string' && parsed.documentId.length > 0;
-
-      if (!hasDocumentId) {
-        return { type: 'invalid' };
-      }
-
-      const hasValidNodes =
-        Array.isArray(parsed.nodes) && parsed.nodes.every(isTableTextNode);
-
-      if (!hasValidNodes) {
-        return { type: 'invalid' };
-      }
-
-      return {
-        type: 'textNodes',
-        documentId: parsed.documentId,
-        nodes: parsed.nodes,
-      };
+    if (isInvalidDocument) {
+      return { type: 'invalid' };
     }
 
-    const hasMatches = Array.isArray(parsed?.matches);
+    switch (message.type) {
+      case 'textNodes': {
+        const hasValidNodes =
+          Array.isArray(message.nodes) && message.nodes.every(isTableTextNode);
 
-    if (!hasMatches) {
-      return { type: 'matches', matches: [] };
+        return hasValidNodes
+          ? {
+              type: 'textNodes',
+              documentId: currentDocumentId,
+              nodes: message.nodes,
+            }
+          : { type: 'invalid' };
+      }
+
+      case 'matches': {
+        const hasValidMatches =
+          Array.isArray(message.matches) &&
+          message.matches.every(isTableKeywordMatch);
+
+        return hasValidMatches
+          ? {
+              type: 'matches',
+              documentId: currentDocumentId,
+              matches: message.matches,
+            }
+          : { type: 'invalid' };
+      }
+
+      case 'height': {
+        const hasValidHeight =
+          Number.isFinite(message.height) && message.height > 0;
+
+        return hasValidHeight
+          ? {
+              type: 'height',
+              documentId: currentDocumentId,
+              height: Math.ceil(message.height) + 10,
+            }
+          : { type: 'invalid' };
+      }
+
+      default:
+        return { type: 'invalid' };
     }
-
-    return {
-      type: 'matches',
-      matches: parsed.matches.filter(isTableKeywordMatch),
-    };
   } catch {
-    return { type: 'matches', matches: [] };
-  }
-};
-
-// 검색 좌표·높이 메시지 분류.
-export const parseTableWebViewMessage = (raw: string): TableWebViewMessage => {
-  const isJsonMessage = raw.startsWith('{');
-
-  if (isJsonMessage) {
-    return parseJsonMessage(raw);
-  }
-
-  const height = parseInt(raw, 10);
-
-  const hasValidHeight = Number.isFinite(height) && height > 0;
-
-  if (!hasValidHeight) {
     return { type: 'invalid' };
   }
-
-  return { type: 'height', height: height + 10 };
 };

@@ -9,7 +9,9 @@ const TABLE_FONT_SOURCES: Readonly<Record<string, string>> = {
 const buildFontFace = (platform: string): string => {
   const source = TABLE_FONT_SOURCES[platform];
 
-  if (!source) {
+  const hasNoSource = !source;
+
+  if (hasNoSource) {
     return '';
   }
 

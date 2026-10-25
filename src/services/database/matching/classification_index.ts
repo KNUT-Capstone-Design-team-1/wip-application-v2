@@ -17,7 +17,9 @@ const addSubstanceNames = (
     const key = chemicalNameKey(alias);
     const rows = index.names.get(key) || [];
 
-    if (rows.includes(entry)) {
+    const hasEntry = rows.includes(entry);
+
+    if (hasEntry) {
       continue;
     }
 
@@ -31,7 +33,9 @@ const addClassificationEntry = (
   index: ClassificationIndex,
   entry: ClassificationEntry,
 ) => {
-  if (entry.kind !== 'prohibited') {
+  const isControlledIngredient = entry.kind !== 'prohibited';
+
+  if (isControlledIngredient) {
     addSubstanceNames(index, entry);
 
     return;
@@ -39,7 +43,9 @@ const addClassificationEntry = (
 
   const document = prepareProhibitedDocument(entry);
 
-  if (!document) {
+  const hasNoDocument = !document;
+
+  if (hasNoDocument) {
     return;
   }
 
@@ -52,7 +58,9 @@ export const getClassificationIndex = (
 ): ClassificationIndex => {
   const cached = indexes.get(catalog);
 
-  if (cached) {
+  const hasCachedValue = !!cached;
+
+  if (hasCachedValue) {
     return cached;
   }
 

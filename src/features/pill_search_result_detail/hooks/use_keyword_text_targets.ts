@@ -38,21 +38,31 @@ export const useKeywordTextTargets = (
       prepareOnly?: boolean,
     ): Promise<KeywordTarget[]> =>
       new Promise((resolve) => {
-        const relevant = matches.filter((match) =>
-          match.keywords.some((keyword) => keywords.includes(keyword)),
-        );
+        const nativeText = ref.current;
+        const shouldSkipMeasurement = prepareOnly || !targetId || !nativeText;
 
-        if (prepareOnly || !targetId || !relevant.length || !ref.current) {
+        if (shouldSkipMeasurement) {
           resolve([]);
 
           return;
         }
 
-        ref.current.measureInWindow((_x, y) =>
+        const relevant = matches.filter((match) =>
+          match.keywords.some((keyword) => keywords.includes(keyword)),
+        );
+
+        const hasNoMatches = !relevant.length;
+
+        if (hasNoMatches) {
+          resolve([]);
+
+          return;
+        }
+
+        nativeText.measureInWindow((_x, y) =>
           resolve(
             relevant.map((match) => ({
               id: targetId + ':' + match.keyword + ':' + match.start,
-              keyword: match.keyword,
               keywords: match.keywords,
               y: y + findKeywordLineOffset(lines.current, match.start),
             })),
@@ -63,7 +73,9 @@ export const useKeywordTextTargets = (
   );
 
   useEffect(() => {
-    if (!targetId || !matches.length) {
+    const shouldSkipRegistration = !targetId || !matches.length;
+
+    if (shouldSkipRegistration) {
       return;
     }
 

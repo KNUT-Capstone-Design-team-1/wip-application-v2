@@ -11,8 +11,11 @@ import TableWebView from '../atoms/TableWebView';
 
 // 문단 형식에 따른 표·텍스트 표시.
 const DocumentParagraph = ({ paragraph, targetId }: DocumentParagraphProps) => {
-  if (paragraph.table) {
-    return <TableWebView html={paragraph.table} targetId={targetId} />;
+  const table = paragraph.table;
+  const hasTable = !!table;
+
+  if (hasTable) {
+    return <TableWebView html={table} targetId={targetId} />;
   }
 
   return (
@@ -55,7 +58,9 @@ const SectionItem = ({
   sectionItem,
   targetPrefix = 'doc',
 }: SectionItemProps) => {
-  if (!sectionItem) {
+  const hasNoDocument = !sectionItem;
+
+  if (hasNoDocument) {
     return null;
   }
 

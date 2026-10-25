@@ -7,7 +7,9 @@ import KeywordText from '../atoms/KeywordText';
 
 // 좌표 측정이 가능한 독립 텍스트로 키워드 행 표시.
 const KeywordInfoRow = ({ label, text, targetId }: KeywordInfoRowProps) => {
-  if (!text || text === 'null') {
+  const hasNoText = !text || text === 'null';
+
+  if (hasNoText) {
     return null;
   }
 

@@ -1,44 +1,52 @@
 import { TABLE_READY_TIMEOUT_MS } from '../constants/table_webview';
+import type { TableLoadResult } from '../types/table_webview_type';
 
-// 표 로딩 대기·해제 관리.
+export class TableLoadError extends Error {
+  constructor(readonly reason: Exclude<TableLoadResult, 'ready'>) {
+    super('Table loading: ' + reason);
+    this.name = 'TableLoadError';
+  }
+}
+
+// 시간 초과는 현재 대기만 끝내고, 늦게 도착한 결과와 재시도를 허용한다.
 export const createTableLoadState = () => {
-  let isSettled = false;
+  let status: 'ready' | 'error' | undefined;
+  const waiters = new Set<(result: TableLoadResult) => void>();
 
-  const waiters = new Set<() => void>();
-
-  // 완료·실패·시간 초과 후에는 같은 표를 다시 기다리지 않는다.
-  const release = () => {
-    isSettled = true;
-    waiters.forEach((finish) => finish());
+  const finish = (result: TableLoadResult) => {
+    waiters.forEach((resolve) => resolve(result));
   };
 
-  // 표 로딩이 끝나거나 제한 시간이 지날 때까지 기다린다.
-  const wait = async (): Promise<void> => {
+  const wait = (): Promise<TableLoadResult> => {
+    const settledStatus = status;
+    const isSettled = !!settledStatus;
+
     if (isSettled) {
-      return;
+      return Promise.resolve(settledStatus);
     }
 
-    await new Promise<void>((resolve) => {
-      // 타이머와 대기 목록을 정리하고 현재 대기를 끝낸다.
-      const finish = () => {
+    return new Promise((resolve) => {
+      const settle = (result: TableLoadResult) => {
         clearTimeout(timer);
-        waiters.delete(finish);
-        resolve();
+        waiters.delete(settle);
+        resolve(result);
       };
 
-      const timer = setTimeout(release, TABLE_READY_TIMEOUT_MS);
-      waiters.add(finish);
+      const timer = setTimeout(() => settle('timeout'), TABLE_READY_TIMEOUT_MS);
+      waiters.add(settle);
     });
   };
 
   return {
     wait,
-    complete: release,
-    release,
-    // 문서가 바뀌면 기존 대기를 해제하고 새 로딩을 기다린다.
-    reset: () => {
-      release();
-      isSettled = false;
+    complete: () => {
+      status = 'ready';
+      finish(status);
     },
+    fail: () => {
+      status = 'error';
+      finish(status);
+    },
+    cancel: () => finish('cancelled'),
   };
 };

@@ -19,7 +19,11 @@ const KeywordSearchBar = () => {
   const canPrevious = useStore(store, (state) => state.canPrevious);
   const canNext = useStore(store, (state) => state.canNext);
 
-  if (!isSearchOpen || !hasSearchResults) return null;
+  const isHidden = !isSearchOpen || !hasSearchResults;
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <View

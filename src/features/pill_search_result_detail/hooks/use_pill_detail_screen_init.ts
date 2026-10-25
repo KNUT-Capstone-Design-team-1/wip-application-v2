@@ -10,7 +10,9 @@ import { usePillDetailContext } from './use_pill_detail_context';
 // 조회 기록·헤더 제목 생명주기 관리.
 export const usePillDetailMetadataInit = (itemSeq?: string, name?: string) => {
   useEffect(() => {
-    if (!itemSeq || !name) {
+    const hasIncompleteMetadata = !itemSeq || !name;
+
+    if (hasIncompleteMetadata) {
       return;
     }
 
@@ -21,7 +23,9 @@ export const usePillDetailMetadataInit = (itemSeq?: string, name?: string) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (name) {
+      const hasName = !!name;
+
+      if (hasName) {
         useHeaderTitleStore.getState().setTitle(name);
       }
 
@@ -35,7 +39,9 @@ export const usePillDetailReviewInit = (itemSeq?: string) => {
   const store = usePillDetailContext();
   useFocusEffect(
     useCallback(() => {
-      if (!itemSeq) {
+      const hasNoItemSeq = !itemSeq;
+
+      if (hasNoItemSeq) {
         return;
       }
 
@@ -53,7 +59,9 @@ export const usePillDetailReviewInit = (itemSeq?: string) => {
             .increaseReviewActionCount('detail_viewed');
         }
 
-        if (!stayed && !store.getState().hasSaved) {
+        const shouldSkipReview = !stayed && !store.getState().hasSaved;
+
+        if (shouldSkipReview) {
           return;
         }
 

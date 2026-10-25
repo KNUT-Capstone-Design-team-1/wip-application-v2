@@ -15,7 +15,9 @@ export const useSafetyExternalLinkActions = (
   const handlePress = useCallback(async () => {
     const url = useExternalUrlStore.getState()[urlKey];
 
-    if (materialEngName) {
+    const hasEnglishName = !!materialEngName;
+
+    if (hasEnglishName) {
       await Clipboard.setStringAsync(materialEngName);
       showToast({
         message:

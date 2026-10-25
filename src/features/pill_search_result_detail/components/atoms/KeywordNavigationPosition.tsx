@@ -1,4 +1,5 @@
 import { useStore } from 'zustand';
+import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
 import { useKeywordNavigationContext } from '../../hooks/use_keyword_navigation_context';
 import { styles } from '../../styles/atoms/KeywordNavigationPosition';
@@ -9,24 +10,31 @@ const KeywordNavigationPosition = () => {
   const currentIndex = useStore(store, (state) => state.currentIndex);
   const totalCount = useStore(store, (state) => state.totalCount);
 
-  if (!totalCount) return null;
+  const hasNoResults = !totalCount;
+
+  if (hasNoResults) {
+    return null;
+  }
 
   return (
-    <BaseText
-      size={11}
-      numberOfLines={1}
-      adjustsFontSizeToFit
-      weight="semiBold"
-      style={styles.label}
-      accessibilityLiveRegion="polite"
-      accessibilityLabel={
-        currentIndex
-          ? totalCount + '개 중 ' + currentIndex + '번째'
-          : '전체 ' + totalCount + '개, 선택된 위치 없음'
-      }
-    >
-      {(currentIndex || '–') + ' / ' + totalCount}
-    </BaseText>
+    <View style={styles.label}>
+      <BaseText
+        size={11}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.5}
+        weight="semiBold"
+        style={styles.text}
+        accessibilityLiveRegion="polite"
+        accessibilityLabel={
+          currentIndex
+            ? totalCount + '개 중 ' + currentIndex + '번째'
+            : '전체 ' + totalCount + '개, 선택된 위치 없음'
+        }
+      >
+        {(currentIndex || '–') + ' / ' + totalCount}
+      </BaseText>
+    </View>
   );
 };
 

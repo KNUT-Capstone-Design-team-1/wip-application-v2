@@ -16,7 +16,10 @@ export type SafetyExternalUrlKey = 'nifdsUrl' | 'kadaUrl';
 export interface PillDetailDataProps {
   data: IPillDetail;
 }
+export type WarningRowVariant = 'warning' | 'reference';
+
 export interface WarningKeywordsProps {
+  variant?: WarningRowVariant;
   items?: string[] | null;
 }
 export interface DocumentArticleProps {
@@ -73,6 +76,7 @@ export interface SectionItemProps {
 }
 
 export interface WarningRowProps {
+  variant?: WarningRowVariant;
   label: string;
   isWarning?: boolean;
   prefixLabel?: string;

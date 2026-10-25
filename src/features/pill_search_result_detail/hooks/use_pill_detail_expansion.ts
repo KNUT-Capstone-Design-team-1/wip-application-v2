@@ -14,7 +14,9 @@ export const usePillSpecsExpansion = (data: IPillDetail | null) => {
 
   const openForKeywords = useCallback(
     (keywords: readonly string[]) => {
-      if (!data || !hasMoreInfoKeyword(data, keywords)) {
+      const hasNoMatchingInfo = !data || !hasMoreInfoKeyword(data, keywords);
+
+      if (hasNoMatchingInfo) {
         return;
       }
 

@@ -55,7 +55,9 @@ const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
     const preparedRow = prepareRowForInsert(row);
 
     Object.entries(preparedRow).forEach(([key, value]) => {
-      if (value !== undefined) {
+      const hasValue = value !== undefined;
+
+      if (hasValue) {
         columnSet.add(key);
       }
     });

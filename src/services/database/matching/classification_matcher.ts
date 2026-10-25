@@ -10,31 +10,29 @@ import {
 } from './substance_names';
 import { getClassificationIndex } from './classification_index';
 import { findProhibitedReferences } from './prohibited_substances';
-export { getClassificationIndex } from './classification_index';
 
-// 정규화한 이름으로 분류를 찾되 탐색에는 실제 입력 문자열을 남긴다.
+// 정규화한 이름으로 분류를 찾아 표시 이름과 출처를 반환한다.
 export const findControlledIngredientMatches = (
   catalog: ClassificationCatalog,
   ingredients: string,
 ): IngredientMatch<ClassificationEntry>[] => {
   const { names } = getClassificationIndex(catalog);
 
-  return [...new Set(splitChemicalList(ingredients))].flatMap((matchedText) => {
+  return [...new Set(splitChemicalList(ingredients))].flatMap((ingredient) => {
     const sources = new Set(
-      [...ingredientKeys(matchedText, catalog.ingredientAliases)].flatMap(
+      [...ingredientKeys(ingredient, catalog.ingredientAliases)].flatMap(
         (key) => names.get(key) || [],
       ),
     );
 
     return [...sources].map((source) => ({
       displayName: (source.kr || '').trim() || (source.en || '').trim(),
-      matchedText,
       source,
     }));
   });
 };
 
-// 기존 DB 조회 API는 분류 레코드만 반환한다.
+// 도핑 문서 참조 검색에 사용할 분류 레코드와 이명을 수집한다.
 export const findControlledMatches = (
   catalog: ClassificationCatalog,
   ingredients: string,
@@ -52,6 +50,7 @@ export const findClassificationProhibitedReferences = (
   ingredients: string,
 ): IngredientMatch<ClassificationEntry>[] => {
   const { prohibited } = getClassificationIndex(catalog);
+
   return splitChemicalList(ingredients).flatMap((ingredient) => {
     const controlled = findControlledMatches(catalog, ingredient);
     const names = [ingredient, ...controlled.flatMap(substanceAliases)].join(
@@ -67,7 +66,6 @@ export const findClassificationProhibitedReferences = (
 
     return [...sources].map((source) => ({
       displayName: ingredient,
-      matchedText: ingredient,
       source,
     }));
   });

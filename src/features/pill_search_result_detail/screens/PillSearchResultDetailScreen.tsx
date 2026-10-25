@@ -21,7 +21,9 @@ const PillDetailSaveModal = () => {
   const itemName = useStore(store, (state) => state.pillData?.ITEM_NAME);
   const { closeFolderModal, completeSave } = usePillDetailSaveActions();
 
-  if (!itemSeq || !itemName) {
+  const hasIncompleteRoute = !itemSeq || !itemName;
+
+  if (hasIncompleteRoute) {
     return null;
   }
 

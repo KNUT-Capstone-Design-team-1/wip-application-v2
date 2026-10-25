@@ -5,7 +5,9 @@ import { KeywordNavigationContext } from '../contexts/keyword_navigation_context
 export const useKeywordNavigationContext = () => {
   const context = useContext(KeywordNavigationContext);
 
-  if (!context) {
+  const hasNoContext = !context;
+
+  if (hasNoContext) {
     throw new Error('KeywordNavigationProvider is required.');
   }
 

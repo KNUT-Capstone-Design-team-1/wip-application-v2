@@ -9,7 +9,9 @@ export const usePillStockInquiryActions = () => {
   const onStockInquiry = useCallback(() => {
     const { pillData: data, image } = store.getState();
 
-    if (!data) {
+    const hasNoData = !data;
+
+    if (hasNoData) {
       return;
     }
 

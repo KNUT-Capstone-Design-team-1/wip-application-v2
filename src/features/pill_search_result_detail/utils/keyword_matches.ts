@@ -14,7 +14,9 @@ export const findKeywordMatches = (
     while (from < text.length) {
       const start = lower.indexOf(search, from);
 
-      if (start < 0) {
+      const hasNoMatch = start < 0;
+
+      if (hasNoMatch) {
         break;
       }
 
@@ -36,7 +38,10 @@ export const findKeywordMatches = (
   )) {
     const previous = groups[groups.length - 1];
 
-    if (previous && match.start < previous.end) {
+    const overlapsPrevious =
+      previous !== undefined && match.start < previous.end;
+
+    if (overlapsPrevious) {
       previous.end = Math.max(previous.end, match.end);
       previous.keywords = [
         ...new Set([...previous.keywords, ...match.keywords]),
@@ -47,4 +52,16 @@ export const findKeywordMatches = (
   }
 
   return groups;
+};
+
+// 강조 구간이 필요 없는 곳에서는 첫 일치만 확인한다.
+export const hasKeywordMatch = (
+  text: string,
+  keywords: readonly string[],
+): boolean => {
+  const lower = text.toLowerCase();
+
+  return keywords.some(
+    (keyword) => Boolean(keyword) && lower.includes(keyword.toLowerCase()),
+  );
 };

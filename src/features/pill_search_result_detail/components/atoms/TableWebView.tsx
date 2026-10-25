@@ -11,8 +11,15 @@ import type { TableWebViewProps } from '../../types/pill_detail_component_type';
 const TableWebView = ({ html, targetId }: TableWebViewProps) => {
   const { store } = useKeywordNavigationContext();
   const keywords = useStore(store, (state) => state.keywords);
-  const { height, source, wrapper, webView, onMessage, onLoadError } =
-    useTableWebView(html, keywords, targetId);
+  const {
+    documentId,
+    height,
+    source,
+    wrapper,
+    webView,
+    onMessage,
+    onLoadError,
+  } = useTableWebView(html, keywords, targetId);
 
   return (
     <View
@@ -21,6 +28,7 @@ const TableWebView = ({ html, targetId }: TableWebViewProps) => {
       style={getTableWrapperStyle(height)}
     >
       <WebView
+        key={documentId}
         ref={webView}
         source={source}
         originWhitelist={['*']}

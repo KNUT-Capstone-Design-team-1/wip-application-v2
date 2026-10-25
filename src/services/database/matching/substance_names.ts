@@ -1,6 +1,7 @@
 import type {
   IngredientAliasIndex,
   IngredientNamePair,
+  IngredientTranslation,
   SubstanceNameEntry,
 } from '../types/classification';
 
@@ -14,11 +15,15 @@ export const splitChemicalList = (value = ''): string[] => {
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
 
-    if ('([{'.includes(char)) {
+    const opensGroup = '([{'.includes(char);
+
+    if (opensGroup) {
       depth++;
     }
 
-    if (')]}'.includes(char)) {
+    const closesGroup = ')]}'.includes(char);
+
+    if (closesGroup) {
       depth = Math.max(0, depth - 1);
     }
 
@@ -27,7 +32,10 @@ export const splitChemicalList = (value = ''): string[] => {
       /\d/.test(text[i - 1] || '') &&
       /^\s*\d/.test(text.slice(i + 1));
 
-    if (!depth && (/[\/|;\n]/.test(char) || (char === ',' && !numericComma))) {
+    const isSeparator =
+      !depth && (/[\/|;\n]/.test(char) || (char === ',' && !numericComma));
+
+    if (isSeparator) {
       parts.push(text.slice(start, i).trim());
       start = i + 1;
     }
@@ -76,11 +84,15 @@ export const ingredientNameVariants = (value: string): string[] => {
       .replace(koreanSuffix, '')
       .trim();
 
-    if (!next) {
+    const hasNoBaseName = !next;
+
+    if (hasNoBaseName) {
       return [];
     }
 
-    if (next === base) {
+    const isUnchangedName = next === base;
+
+    if (isUnchangedName) {
       break;
     }
 
@@ -103,7 +115,9 @@ export const substanceAliases = (entry: SubstanceNameEntry): string[] => {
     // '엑스터시(Ecstasy)' 같은 이명만 분리한다. 화학식의 괄호는 보존한다.
     const bilingual = name.match(/^([가-힣\s]+)\(([a-zA-Z\s]+)\)$/);
 
-    if (bilingual) {
+    const hasBilingualName = !!bilingual;
+
+    if (hasBilingualName) {
       names.push(bilingual[1], bilingual[2]);
     }
   }
@@ -113,33 +127,51 @@ export const substanceAliases = (entry: SubstanceNameEntry): string[] => {
   ];
 };
 
+// 단일 한영 성분 쌍만 정규화하며 복합제와 불완전한 쌍은 제외한다.
+const getIngredientTranslation = (
+  row: IngredientNamePair,
+): IngredientTranslation | undefined => {
+  const kr = splitChemicalList(row.MAIN_ITEM_INGR || '');
+  const en = splitChemicalList(row.MATERIAL_ENG_NAME || '');
+
+  const isAmbiguousPair =
+    kr.length !== 1 ||
+    en.length !== 1 ||
+    !/[가-힣]/.test(kr[0]) ||
+    !/[a-z]/i.test(en[0]) ||
+    /[가-힣]/.test(en[0]);
+
+  if (isAmbiguousPair) {
+    return undefined;
+  }
+
+  const korean = ingredientNameVariants(kr[0]).at(-1);
+  const english = ingredientNameVariants(en[0]).at(-1);
+
+  const hasIncompletePair = !korean || !english;
+
+  if (hasIncompletePair) {
+    return undefined;
+  }
+
+  return [korean, english];
+};
+
 // 현재 DB의 단일 성분 한영 대응만 사용한다. 복합제의 순서는 추정하지 않는다.
 export const buildIngredientAliasIndex = (
   rows: IngredientNamePair[],
 ): IngredientAliasIndex => {
-  const pairs = new Map<string, Map<string, [string, string]>>();
+  const pairs = new Map<string, Map<string, IngredientTranslation>>();
 
   for (const row of rows) {
-    const kr = splitChemicalList(row.MAIN_ITEM_INGR || '');
-    const en = splitChemicalList(row.MATERIAL_ENG_NAME || '');
+    const translation = getIngredientTranslation(row);
+    const hasTranslation = !!translation;
 
-    if (
-      kr.length !== 1 ||
-      en.length !== 1 ||
-      !/[가-힣]/.test(kr[0]) ||
-      !/[a-z]/i.test(en[0]) ||
-      /[가-힣]/.test(en[0])
-    ) {
+    if (!hasTranslation) {
       continue;
     }
 
-    const korean = ingredientNameVariants(kr[0]).at(-1);
-    const english = ingredientNameVariants(en[0]).at(-1);
-
-    if (!korean || !english) {
-      continue;
-    }
-
+    const [korean, english] = translation;
     const key = chemicalNameKey(korean);
     const options = pairs.get(key) || new Map();
     options.set(chemicalNameKey(english), [korean, english]);
@@ -154,7 +186,9 @@ export const buildIngredientAliasIndex = (
 
   for (const options of pairs.values()) {
     // 같은 국문명에 서로 다른 영문명이 있으면 변환하지 않는다.
-    if (options.size === 1) {
+    const hasSingleTranslation = options.size === 1;
+
+    if (hasSingleTranslation) {
       const [kr, en] = [...options.values()][0];
       add(kr, en);
       add(en, kr);

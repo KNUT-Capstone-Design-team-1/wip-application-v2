@@ -12,7 +12,9 @@ import { XMLParser } from 'fast-xml-parser';
 
 // 단일·반복 XML 노드를 동일한 배열로 변환.
 const asArray = <T>(value?: T | T[]): T[] => {
-  if (!value) {
+  const hasNoValue = !value;
+
+  if (hasNoValue) {
     return [];
   }
 
@@ -51,15 +53,16 @@ const mapParagraph = (raw: RawParagraph): PillParagraph => {
   const paragraph: PillParagraph = { tagName: raw['@_tagName'] || '' };
   const text = String(raw['#text'] ?? raw.content ?? '').trim();
 
-  if (raw['@_textIndent'] !== undefined && raw['@_textIndent'] !== '') {
+  const hasTextIndent =
+    raw['@_textIndent'] !== undefined && raw['@_textIndent'] !== '';
+
+  if (hasTextIndent) {
     paragraph.textIndent = String(raw['@_textIndent']);
   }
 
-  if (raw['@_marginLeft'] !== undefined && raw['@_marginLeft'] !== '') {
-    paragraph.marginLeft = String(raw['@_marginLeft']);
-  }
+  const isTable = paragraph.tagName === 'table';
 
-  if (paragraph.tagName === 'table') {
+  if (isTable) {
     paragraph.table = text;
 
     return paragraph;
@@ -84,7 +87,9 @@ const mapSection = (raw: RawSection): PillSection => ({
 
 // 상세 XML을 렌더링 전용 문서로 변환.
 export const xmlToJson = (xml: string): { doc: PillDocument | null } => {
-  if (!xml) {
+  const hasNoXml = !xml;
+
+  if (hasNoXml) {
     return { doc: null };
   }
 
@@ -95,14 +100,16 @@ export const xmlToJson = (xml: string): { doc: PillDocument | null } => {
     });
     const raw: { DOC?: RawDocument } = parser.parse(xml);
 
-    if (!raw?.DOC) {
+    const document = raw?.DOC;
+    const hasNoDocument = !document;
+
+    if (hasNoDocument) {
       return { doc: null };
     }
 
     return {
       doc: {
-        title: raw.DOC['@_title'] || '',
-        sections: asArray(raw.DOC.SECTION).map(mapSection),
+        sections: asArray(document.SECTION).map(mapSection),
       },
     };
   } catch (error) {

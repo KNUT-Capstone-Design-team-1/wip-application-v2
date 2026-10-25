@@ -16,42 +16,67 @@ export const useDetailFindHeader = () => {
         store.getState().setSearchOpen(false);
         store.getState().setSearchQuery('');
       };
+
       const toggle = () => {
-        if (store.getState().isSearchOpen) close();
-        else open();
+        const isSearchOpen = store.getState().isSearchOpen;
+
+        if (isSearchOpen) {
+          close();
+        } else {
+          open();
+        }
       };
+
       useHeaderActionStore.getState().setSearch(toggle);
       useHeaderActionStore
         .getState()
         .setSearchOpen(store.getState().isSearchOpen);
       const unsubscribe = store.subscribe((state, previous) => {
-        if (
+        const shouldUpdateHeader =
           state.isSearchOpen !== previous.isSearchOpen &&
-          useHeaderActionStore.getState().onSearch === toggle
-        ) {
+          useHeaderActionStore.getState().onSearch === toggle;
+
+        if (shouldUpdateHeader) {
           useHeaderActionStore.getState().setSearchOpen(state.isSearchOpen);
         }
       });
       const onKeyDown = (event: KeyboardEvent) => {
-        if (
-          (event.ctrlKey || event.metaKey) &&
-          event.key.toLowerCase() === 'f'
-        ) {
+        const isFindShortcut =
+          (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f';
+
+        if (isFindShortcut) {
           event.preventDefault();
           open();
         }
-        if (event.key === 'Escape' && store.getState().isSearchOpen) {
+
+        const shouldCloseSearch =
+          event.key === 'Escape' && store.getState().isSearchOpen;
+
+        if (shouldCloseSearch) {
           close();
         }
       };
-      if (Platform.OS === 'web') window.addEventListener('keydown', onKeyDown);
+
+      const isWeb = Platform.OS === 'web';
+
+      if (isWeb) {
+        window.addEventListener('keydown', onKeyDown);
+      }
+
       return () => {
         unsubscribe();
-        if (useHeaderActionStore.getState().onSearch === toggle) {
+        const ownsHeaderSearch =
+          useHeaderActionStore.getState().onSearch === toggle;
+
+        if (ownsHeaderSearch) {
           useHeaderActionStore.getState().setSearch(null);
         }
-        if (Platform.OS === 'web')
+
+        const isWeb = Platform.OS === 'web';
+
+        if (isWeb) {
           window.removeEventListener('keydown', onKeyDown);
+        }
       };
     }, [store, controller]),
   );

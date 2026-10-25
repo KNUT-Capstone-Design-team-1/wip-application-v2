@@ -11,6 +11,7 @@ const KeywordNavigationButton = ({
   onPress,
 }: KeywordNavigationButtonProps) => {
   const Icon = direction === 'previous' ? ChevronUp : ChevronDown;
+
   return (
     <TouchableOpacity
       style={[styles.button, disabled && styles.disabled]}

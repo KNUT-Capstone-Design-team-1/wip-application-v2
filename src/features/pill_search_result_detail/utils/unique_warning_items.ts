@@ -5,7 +5,9 @@ export const uniqueWarningItems = (items: readonly string[]): string[] => {
   for (const item of items) {
     const key = item.replace(/\s+/g, '');
 
-    if (key && !unique.has(key)) {
+    const isNewItem = key.length > 0 && !unique.has(key);
+
+    if (isNewItem) {
       unique.set(key, item);
     }
   }

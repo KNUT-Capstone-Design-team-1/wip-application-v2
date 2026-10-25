@@ -1,5 +1,8 @@
 import type {
   KeywordMeasurementOptions,
+  KeywordNavigationDirection,
+  KeywordAvailabilityOptions,
+  KeywordNavigationAvailability,
   KeywordTarget,
 } from '../types/keyword_navigation_type';
 
@@ -9,7 +12,9 @@ export const measureKeywordTargets = async (
 ) => {
   await options.nextFrame();
 
-  if (options.isCancelled()) {
+  const isCancelled = options.isCancelled();
+
+  if (isCancelled) {
     return [];
   }
 
@@ -19,7 +24,9 @@ export const measureKeywordTargets = async (
   await Promise.all(measures.map((measure) => measure(prepareKeywords, true)));
   await options.nextFrame();
 
-  if (options.isCancelled()) {
+  const isCancelledAfterPreparation = options.isCancelled();
+
+  if (isCancelledAfterPreparation) {
     return [];
   }
 
@@ -39,10 +46,20 @@ export const findKeywordTargetIndex = (
   targets: KeywordTarget[],
   scrollY: number,
   cursorId: string | null,
-  direction: 'previous' | 'next',
+  direction: KeywordNavigationDirection,
   keyword?: string,
 ): number => {
-  if (keyword) {
+  const isFirst = direction === 'first';
+
+  if (isFirst) {
+    return targets.findIndex(
+      (target) => !keyword || target.keywords.includes(keyword),
+    );
+  }
+
+  const hasKeyword = !!keyword;
+
+  if (hasKeyword) {
     const ahead = targets.findIndex(
       (target) => target.keywords.includes(keyword) && target.y >= scrollY - 2,
     );
@@ -54,15 +71,51 @@ export const findKeywordTargetIndex = (
 
   const current = targets.findIndex((target) => target.id === cursorId);
 
-  if (current >= 0) {
+  const hasCurrentTarget = current >= 0;
+
+  if (hasCurrentTarget) {
     return current + (direction === 'next' ? 1 : -1);
   }
 
   const ahead = targets.findIndex((target) => target.y >= scrollY - 2);
 
-  if (direction === 'next') {
+  const isNext = direction === 'next';
+
+  if (isNext) {
     return ahead;
   }
 
   return ahead < 0 ? targets.length - 1 : ahead - 1;
+};
+
+// 측정 결과와 현재 위치로 표시할 인덱스·이동 가능 방향만 계산한다.
+export const getKeywordNavigationAvailability = ({
+  targets,
+  cursorId,
+  scrollY,
+  hasMeasured,
+  hasKeywords,
+}: KeywordAvailabilityOptions): KeywordNavigationAvailability => {
+  const current = targets.findIndex((target) => target.id === cursorId);
+  const progress = { currentIndex: current + 1, totalCount: targets.length };
+
+  if (!hasMeasured) {
+    return { ...progress, canPrevious: scrollY > 2, canNext: hasKeywords };
+  }
+
+  const hasCurrentTarget = current >= 0;
+
+  if (hasCurrentTarget) {
+    return {
+      ...progress,
+      canPrevious: current > 0,
+      canNext: current < targets.length - 1,
+    };
+  }
+
+  return {
+    ...progress,
+    canPrevious: targets.some((target) => target.y < scrollY - 2),
+    canNext: targets.some((target) => target.y >= scrollY - 2),
+  };
 };

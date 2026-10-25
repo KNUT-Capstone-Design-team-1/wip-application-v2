@@ -9,12 +9,13 @@ import { TABLE_HEIGHT_MESSAGE_DELAY_MS } from '../constants/table_webview';
 // WebView는 별도 실행 환경이므로 실행할 JavaScript 소스를 문자열로 전달한다.
 export const buildTableKeywordScript = (
   keywords: readonly string[],
+  documentId: string,
 ): string => {
   const serialized = JSON.stringify(keywords).replace(/</g, '\\u003c');
 
   return String.raw`
 const keywords = ${serialized};
-const documentId = String(Date.now()) + ':' + Math.random();
+const documentId = ${JSON.stringify(documentId).replace(/</g, '\\u003c')};
 let textNodes = [];
 let isHighlighted = false;
 
@@ -101,16 +102,14 @@ window.applyKeywordMatches = function (sourceId, groups) {
       continue;
     }
 
-    const found = group.matches.map((match) => {
-      const index = matches.length;
-      matches.push(measureMatch(node, match, index));
-      return { ...match, index };
-    });
-    highlightNode(node, found);
+    for (const match of group.matches) {
+      matches.push(measureMatch(node, match, matches.length));
+    }
+    highlightNode(node, group.matches);
   }
 
   isHighlighted = true;
-  window.ReactNativeWebView.postMessage(JSON.stringify({ matches }));
+  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'matches', documentId, matches }));
   setTimeout(sendHeight, ${TABLE_HEIGHT_MESSAGE_DELAY_MS});
 };
 
@@ -121,7 +120,7 @@ function sendHeight() {
   }
   const content = document.getElementById('table-content');
   const height = Math.ceil(content.getBoundingClientRect().height);
-  window.ReactNativeWebView.postMessage(height.toString());
+  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'height', documentId, height }));
 }
 
 window.onload = function () {

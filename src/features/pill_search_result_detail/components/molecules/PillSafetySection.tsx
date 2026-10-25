@@ -52,10 +52,12 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
       />
 
       <WarningRow
-        label="도핑 금지"
+        label="도핑 관련 문서"
+        variant="reference"
+        prefixLabel="언급된 성분: "
         isWarning={data.hasProhibitedReferences}
         items={data.prohibitedIngredients}
-        footerNote="※ 적용 범위 및 상세 정보는 KADA 홈페이지 참고"
+        footerNote="※ 문서 언급 여부이며 금지 판정이 아닙니다. 적용 조건은 KADA에서 확인해 주세요."
       />
 
       <ExternalLinkButton

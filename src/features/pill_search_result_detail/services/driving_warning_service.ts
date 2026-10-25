@@ -26,12 +26,16 @@ export const getDrivingWarningKeywords = (
   const keywords: string[] = [];
 
   for (const document of [eeData, udData, nbData]) {
-    if (!document) {
+    const hasNoDocument = !document;
+
+    if (hasNoDocument) {
       continue;
     }
 
     for (const sentence of getVisibleSentences(document)) {
-      if (!DRIVING_CONTEXT.test(sentence)) {
+      const hasNoDrivingContext = !DRIVING_CONTEXT.test(sentence);
+
+      if (hasNoDrivingContext) {
         continue;
       }
 

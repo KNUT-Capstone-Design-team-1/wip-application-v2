@@ -1,5 +1,5 @@
 import type { IPillDetail, PillSpecField } from '../types/pill_detail_type';
-import { findKeywordMatches } from './keyword_matches';
+import { hasKeywordMatch } from './keyword_matches';
 
 // 기본정보의 표시·탐색 데이터를 같은 필드 목록으로 관리한다.
 export const getPillBasicFields = (data: IPillDetail): PillSpecField[] => [
@@ -115,8 +115,6 @@ export const hasMoreInfoKeyword = (
   ];
 
   return fields.some(
-    (field) =>
-      field.text !== 'null' &&
-      findKeywordMatches(field.text, keywords).length > 0,
+    (field) => field.text !== 'null' && hasKeywordMatch(field.text, keywords),
   );
 };

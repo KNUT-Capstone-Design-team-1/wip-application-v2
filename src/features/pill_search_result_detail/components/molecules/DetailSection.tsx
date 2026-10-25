@@ -14,7 +14,9 @@ import { ChevronDown, ChevronUp } from 'lucide-react-native';
 const DetailSection = ({ title, content }: DetailSectionProps) => {
   const { isOpen, toggle } = useDetailSectionExpansion();
   const parsedData = useMemo(() => {
-    if (!content) {
+    const hasNoContent = !content;
+
+    if (hasNoContent) {
       return null;
     }
 

@@ -5,7 +5,9 @@ import { PillDetailContext } from '../contexts/pill_detail_context';
 export const usePillDetailContext = () => {
   const store = useContext(PillDetailContext);
 
-  if (!store) {
+  const hasNoStore = !store;
+
+  if (hasNoStore) {
     throw new Error('PillDetailProvider is required.');
   }
 

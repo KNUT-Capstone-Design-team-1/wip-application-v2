@@ -23,7 +23,9 @@ export const prepareProhibitedDocument = <T extends ProhibitedDocument>(
 const matchesDocumentName = (name: string, searchable: string): boolean => {
   const candidate = normalizeChemicalText(name);
 
-  if (chemicalNameKey(candidate).length < 2) {
+  const isTooShort = chemicalNameKey(candidate).length < 2;
+
+  if (isTooShort) {
     return false;
   }
 
@@ -52,9 +54,11 @@ export const findProhibitedReferences = <T extends ProhibitedDocument>(
     const variants = expandIngredientNames(ingredient, aliases);
 
     for (const document of documents) {
-      if (
-        variants.some((name) => matchesDocumentName(name, document.searchable))
-      ) {
+      const hasReference = variants.some((name) =>
+        matchesDocumentName(name, document.searchable),
+      );
+
+      if (hasReference) {
         references.push({ ingredient, source: document.source });
       }
     }

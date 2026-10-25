@@ -59,6 +59,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(4),
   },
+  referenceText: {
+    color: COLOR.tertiary,
+  },
   warningText: {
     color: COLOR['alert'],
   },

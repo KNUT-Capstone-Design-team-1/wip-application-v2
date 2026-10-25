@@ -8,7 +8,9 @@ export const pillDetailService = {
   async getBasicDetail(itemSeq: string): Promise<IPillDetail | null> {
     const basicData = await pillDetailRepository.getPillData(itemSeq);
 
-    if (!basicData) {
+    const hasNoBasicData = !basicData;
+
+    if (hasNoBasicData) {
       return null;
     }
 

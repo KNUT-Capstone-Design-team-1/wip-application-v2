@@ -21,6 +21,8 @@ export interface TableTextMatches {
 
 export type TableWebViewMessage =
   | { type: 'textNodes'; documentId: string; nodes: TableTextNode[] }
-  | { type: 'matches'; matches: TableKeywordMatch[] }
-  | { type: 'height'; height: number }
+  | { type: 'matches'; documentId: string; matches: TableKeywordMatch[] }
+  | { type: 'height'; documentId: string; height: number }
   | { type: 'invalid' };
+
+export type TableLoadResult = 'ready' | 'timeout' | 'error' | 'cancelled';

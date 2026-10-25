@@ -50,6 +50,7 @@ const PillDetailContent = () => {
         style={styles.contentWrapper}
         onStartShouldSetResponderCapture={() => {
           Keyboard.dismiss();
+
           return false;
         }}
       >

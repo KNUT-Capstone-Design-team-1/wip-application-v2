@@ -1,12 +1,8 @@
 import {
-  ICannabis,
   IFunctionalFoodNutrients,
   IMarkImages,
-  INarcotics,
   INearbyPharmacies,
   IPillData,
-  IProhibitedList,
-  IPsychotropics,
 } from './schemas';
 
 // SQL WHERE 절 생성을 위한 조건절 스키마
@@ -67,39 +63,6 @@ export interface INearbyPharmaciesQueryOption {
   limit: number;
   maxRadiusKm?: number;
 }
-
-// 대마초 데이터 검색을 위한 파라미터 타입
-export type TCannabisSearchParam = Pick<
-  ICannabis,
-  'chemicalNameKr' | 'chemicalNameEn'
-> & {
-  containedInKr?: string;
-  containedInEn?: string;
-};
-
-// 마약 데이터 검색을 위한 파라미터 타입
-export type TNarcoticsSearchParam = Pick<
-  INarcotics,
-  'chemicalNameKr' | 'chemicalNameEn'
-> & {
-  containedInKr?: string;
-  containedInEn?: string;
-};
-
-// 향정신성 데이터 검색을 위한 파라미터 타입
-export type TPsychotropicsSearchParam = Pick<
-  IPsychotropics,
-  'chemicalNameKr' | 'chemicalNameEn'
-> & {
-  containedInKr?: string;
-  containedInEn?: string;
-};
-
-// 병용 금기 데이터 검색을 위한 파라미터 타입
-export type TProhibitedListSearchParam = Pick<IProhibitedList, 'contents'> & {
-  containedInKr?: string;
-  containedInEn?: string;
-};
 
 // 건강기능식품 영양성분 데이터 검색을 위한 파라미터 타입
 export type TFunctionalFoodNutrientsSearchParam = Partial<

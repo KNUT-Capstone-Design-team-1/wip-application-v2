@@ -44,7 +44,9 @@ export const createPillDetailLoader = (
         request !== sequence || store.getState().itemSeq !== itemSeq;
       const hasBasic = !!basic;
 
-      if (isStaleBasic || !hasBasic) {
+      const shouldSkipBasic = isStaleBasic || !hasBasic;
+
+      if (shouldSkipBasic) {
         return;
       }
 
@@ -60,7 +62,9 @@ export const createPillDetailLoader = (
         request !== sequence || store.getState().itemSeq !== itemSeq;
       const hasRemote = !!remote;
 
-      if (isStaleRemote || !hasRemote) {
+      const shouldSkipRemote = isStaleRemote || !hasRemote;
+
+      if (shouldSkipRemote) {
         return;
       }
 

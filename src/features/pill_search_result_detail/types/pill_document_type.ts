@@ -1,7 +1,6 @@
 export interface PillParagraph {
   tagName: string;
   textIndent?: string;
-  marginLeft?: string;
   content?: string;
   table?: string;
 }
@@ -17,14 +16,12 @@ export interface PillSection {
 }
 
 export interface PillDocument {
-  title: string;
   sections: PillSection[];
 }
 
 export interface RawParagraph {
   '@_tagName'?: string;
   '@_textIndent'?: string;
-  '@_marginLeft'?: string;
   '#text'?: string | number;
   content?: string | number;
 }
@@ -40,6 +37,5 @@ export interface RawSection {
 }
 
 export interface RawDocument {
-  '@_title'?: string;
   SECTION?: RawSection | RawSection[];
 }

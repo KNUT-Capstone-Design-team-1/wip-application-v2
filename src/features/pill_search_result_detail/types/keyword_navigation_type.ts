@@ -10,11 +10,20 @@ export interface KeywordNavigationAvailability {
   canNext: boolean;
 }
 
+export type KeywordNavigationDirection = 'first' | 'previous' | 'next';
+
+export interface KeywordAvailabilityOptions {
+  targets: readonly KeywordTarget[];
+  cursorId: string | null;
+  scrollY: number;
+  hasMeasured: boolean;
+  hasKeywords: boolean;
+}
+
 export interface KeywordTarget {
   // 같은 강조 구간으로 이동할 수 있는 키워드 목록.
   keywords: readonly string[];
   id: string;
-  keyword: string;
   y: number;
   reveal?: () => void;
 }
@@ -33,6 +42,7 @@ export interface KeywordMeasurementOptions {
 }
 
 export interface KeywordNavigationOptions {
+  onSearchUnavailable: (reason: 'timeout' | 'error') => void;
   getKeywords: () => readonly string[];
   setAvailability: (availability: KeywordNavigationAvailability) => void;
   getViewportY: () => Promise<number>;

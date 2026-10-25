@@ -23,7 +23,6 @@ const resultCaches = new WeakMap<
 
 // 빈 분류 결과 생성.
 const createEmptyClassifications = (): ISpecialClassificationResult => ({
-  classificationMatches: [],
   isNarcotic: false,
   narcoticIngredients: [],
   isCannabis: false,
@@ -40,7 +39,9 @@ const getClassificationResultCache = (
 ): ClassificationResultCache => {
   const cached = resultCaches.get(catalog);
 
-  if (cached) {
+  const hasCachedValue = !!cached;
+
+  if (hasCachedValue) {
     return cached;
   }
 
@@ -76,7 +77,6 @@ const buildClassificationResult = (
   );
 
   return {
-    classificationMatches: [...matched, ...prohibited],
     isNarcotic: narcoticIngredients.length > 0,
     narcoticIngredients,
     isCannabis: cannabisIngredients.length > 0,
@@ -96,7 +96,9 @@ const rememberResult = (
   key: string,
   result: ISpecialClassificationResult,
 ) => {
-  if (cache.size >= CLASSIFICATION_CACHE_LIMIT) {
+  const isCacheFull = cache.size >= CLASSIFICATION_CACHE_LIMIT;
+
+  if (isCacheFull) {
     cache.delete(cache.keys().next().value!);
   }
 
@@ -115,7 +117,9 @@ export const checkSpecialClassifications = async (
   const kr = normalizeChemicalText(materialName);
   const en = normalizeChemicalText(materialEngName);
 
-  if (!kr && !en) {
+  const hasNoIngredients = !kr && !en;
+
+  if (hasNoIngredients) {
     return createEmptyClassifications();
   }
 
@@ -125,7 +129,9 @@ export const checkSpecialClassifications = async (
   const key = JSON.stringify([materialName, materialEngName]);
   const cached = cache.get(key);
 
-  if (cached) {
+  const hasCachedValue = !!cached;
+
+  if (hasCachedValue) {
     return cached;
   }
 

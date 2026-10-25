@@ -37,7 +37,9 @@ export const usePillDetailSaveActions = () => {
   const refreshSavedFolders = useCallback(async () => {
     const { itemSeq, setSavedFolderIds } = store.getState();
 
-    if (!itemSeq) {
+    const hasNoItemSeq = !itemSeq;
+
+    if (hasNoItemSeq) {
       setSavedFolderIds([]);
 
       return;
@@ -55,7 +57,9 @@ export const usePillDetailSaveActions = () => {
   }, [store]);
 
   const openFolderModal = useCallback(() => {
-    if (!store.getState().pillData) {
+    const hasNoPillData = !store.getState().pillData;
+
+    if (hasNoPillData) {
       return;
     }
 

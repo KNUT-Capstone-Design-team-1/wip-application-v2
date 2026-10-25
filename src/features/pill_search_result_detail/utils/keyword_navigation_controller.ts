@@ -1,11 +1,14 @@
+import { TableLoadError } from './table_load_state';
 import { KEYWORD_SCROLL_TOP_INSET } from '../constants/pill_detail';
 import type {
   KeywordNavigationOptions,
+  KeywordNavigationDirection,
   KeywordMeasure,
   KeywordTarget,
 } from '../types/keyword_navigation_type';
 import {
   findKeywordTargetIndex,
+  getKeywordNavigationAvailability,
   measureKeywordTargets,
 } from './keyword_navigation_targets';
 
@@ -30,33 +33,15 @@ export const createKeywordNavigationController = (
 
   // 현재 위치의 이동 가능 방향 반영.
   const updateAvailability = () => {
-    const current = targets.findIndex((target) => target.id === cursorId);
-    const progress = { currentIndex: current + 1, totalCount: targets.length };
-    if (!hasMeasured) {
-      options.setAvailability({
-        ...progress,
-        canPrevious: scrollY > 2,
-        canNext: options.getKeywords().length > 0,
-      });
-
-      return;
-    }
-
-    if (current >= 0) {
-      options.setAvailability({
-        ...progress,
-        canPrevious: current > 0,
-        canNext: current < targets.length - 1,
-      });
-
-      return;
-    }
-
-    options.setAvailability({
-      ...progress,
-      canPrevious: targets.some((target) => target.y < scrollY - 2),
-      canNext: targets.some((target) => target.y >= scrollY - 2),
+    const availability = getKeywordNavigationAvailability({
+      targets,
+      cursorId,
+      scrollY,
+      hasMeasured,
+      hasKeywords: options.getKeywords().length > 0,
     });
+
+    options.setAvailability(availability);
   };
 
   // 현재 등록된 본문 좌표 갱신.
@@ -72,13 +57,17 @@ export const createKeywordNavigationController = (
       isCancelled: () => request !== sequence,
     });
 
-    if (request !== sequence) {
+    const isStaleRequest = request !== sequence;
+
+    if (isStaleRequest) {
       return false;
     }
 
     const viewportY = await options.getViewportY();
 
-    if (request !== sequence) {
+    const isStaleAfterViewport = request !== sequence;
+
+    if (isStaleAfterViewport) {
       return false;
     }
 
@@ -93,34 +82,65 @@ export const createKeywordNavigationController = (
     return true;
   };
 
+  // 준비 실패는 이동 실행과 분리하여 현재 요청에만 안내한다.
+  const prepareNavigation = async (
+    request: number,
+    keyword?: string,
+  ): Promise<boolean> => {
+    try {
+      return await refreshTargets(request, keyword);
+    } catch (error) {
+      const isStaleRequest = request !== sequence;
+
+      if (isStaleRequest) {
+        return false;
+      }
+
+      const isUnexpectedError = !(error instanceof TableLoadError);
+
+      if (isUnexpectedError) {
+        throw error;
+      }
+
+      const shouldReportFailure = error.reason !== 'cancelled';
+
+      if (shouldReportFailure) {
+        options.onSearchUnavailable(error.reason);
+      }
+
+      return false;
+    }
+  };
+
   // 전체 키워드 인덱스로 이전·다음 이동.
   const navigate = async (
-    direction: 'first' | 'previous' | 'next',
+    direction: KeywordNavigationDirection,
     keyword?: string,
   ) => {
     const request = ++sequence;
     manualScroll = false;
     openers.forEach((open) => open(options.getKeywords()));
 
-    if (!(await refreshTargets(request, keyword))) {
+    const isPrepared = await prepareNavigation(request, keyword);
+
+    const canNavigate = isPrepared && request === sequence;
+
+    if (!canNavigate) {
       return;
     }
 
-    const index =
-      direction === 'first'
-        ? targets.findIndex(
-            (target) => !keyword || target.keywords.includes(keyword),
-          )
-        : findKeywordTargetIndex(
-            targets,
-            scrollY,
-            cursorId,
-            direction,
-            keyword,
-          );
+    const index = findKeywordTargetIndex(
+      targets,
+      scrollY,
+      cursorId,
+      direction,
+      keyword,
+    );
     const target = targets[index];
 
-    if (!target) {
+    const hasNoTarget = !target;
+
+    if (hasNoTarget) {
       updateAvailability();
 
       return targets.length;
@@ -155,7 +175,9 @@ export const createKeywordNavigationController = (
       registry.set(id, measure);
 
       return () => {
-        if (registry.get(id) === measure) {
+        const ownsRegistration = registry.get(id) === measure;
+
+        if (ownsRegistration) {
           registry.delete(id);
         }
       };

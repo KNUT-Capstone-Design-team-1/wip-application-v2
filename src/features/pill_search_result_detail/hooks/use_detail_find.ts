@@ -28,8 +28,12 @@ export const useDetailFind = () => {
       Keyboard.dismiss();
       const text = submittedQuery.replace(/[\r\n]/g, '');
       const value = text.trim();
-      if (!value || (!fromStart && activeSearch.current?.query === value))
+      const shouldSkipSearch =
+        !value || (!fromStart && activeSearch.current?.query === value);
+
+      if (shouldSkipSearch) {
         return;
+      }
 
       // React 상태보다 최신인 네이티브 제출 문자열을 먼저 반영한다.
       const request = { query: value };
@@ -40,16 +44,24 @@ export const useDetailFind = () => {
 
       try {
         const count = await controller.jump(value, fromStart);
-        if (activeSearch.current !== request) return;
+        const isStaleSearch = activeSearch.current !== request;
 
-        if (count === 0) {
+        if (isStaleSearch) {
+          return;
+        }
+
+        const hasNoResults = count === 0;
+
+        if (hasNoResults) {
           showToast({
             message: '일치하는 단어가 없습니다.',
             duration: 2500,
           });
         }
       } finally {
-        if (activeSearch.current === request) {
+        const isCurrentSearch = activeSearch.current === request;
+
+        if (isCurrentSearch) {
           activeSearch.current = null;
         }
       }
@@ -60,13 +72,20 @@ export const useDetailFind = () => {
   const updateQuery = useCallback(
     (value: string) => {
       // 통합검색과 동일하게 엔터가 입력 문자열에 포함된 경우도 즉시 검색한다.
-      if (/[\r\n]/.test(value)) {
+      const hasSubmittedLineBreak = /[\r\n]/.test(value);
+
+      if (hasSubmittedLineBreak) {
         void search(value);
+
         return;
       }
 
       // 제출·포커스 해제 후 전달되는 동일한 값은 진행 중인 검색을 취소하지 않는다.
-      if (value === queryRef.current) return;
+      const isUnchangedQuery = value === queryRef.current;
+
+      if (isUnchangedQuery) {
+        return;
+      }
 
       queryRef.current = value;
       cancel();
@@ -81,6 +100,7 @@ export const useDetailFind = () => {
     const subscription = Keyboard.addListener('keyboardDidHide', () => {
       inputRef.current?.blur();
     });
+
     return () => {
       cancel();
       subscription.remove();
@@ -90,7 +110,11 @@ export const useDetailFind = () => {
   }, [cancel]);
 
   useEffect(() => {
-    if (!searchRequest) return;
+    const hasNoSearchRequest = !searchRequest;
+
+    if (hasNoSearchRequest) {
+      return;
+    }
 
     void search(searchRequest.query, true);
   }, [searchRequest, search]);
