@@ -21,7 +21,7 @@ const SubHeader = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onTouchStart={Keyboard.dismiss}>
       <View style={styles.subHeaderContent}>
         <TouchableOpacity
           onPress={handleBackPress}

@@ -1,4 +1,4 @@
-import { View, ScrollView } from 'react-native';
+import { Keyboard, View, ScrollView } from 'react-native';
 import { useStore } from 'zustand';
 import { BaseText } from '@components/common/BaseText';
 import { useKeywordNavigationInit } from '../../hooks/use_keyword_navigation_init';
@@ -46,8 +46,15 @@ const PillDetailContent = () => {
     <View style={styles.contentWrapper}>
       <PillDetailLifecycle />
       <DetailFindBar />
-      <View style={styles.contentWrapper}>
+      <View
+        style={styles.contentWrapper}
+        onStartShouldSetResponderCapture={() => {
+          Keyboard.dismiss();
+          return false;
+        }}
+      >
         <ScrollView
+          keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="handled"
           ref={scrollRef}
           onScroll={onScroll}
