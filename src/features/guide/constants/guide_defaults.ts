@@ -20,6 +20,10 @@ export const DEFAULT_THEME = {
     textColor: '#FFFFFF',
     skipColor: '#94A3B8',
   },
+  arrow: {
+    size: 8,
+    color: '#FFFFFF',
+  },
   dotColor: '#CBD5E1',
   dotActiveColor: '#2CB7DE',
 };
@@ -38,6 +42,7 @@ export function resolveTheme(theme?: GuideTheme) {
     spotlight: { ...DEFAULT_THEME.spotlight, ...theme?.spotlight },
     tooltip: { ...DEFAULT_THEME.tooltip, ...theme?.tooltip },
     button: { ...DEFAULT_THEME.button, ...theme?.button },
+    arrow: { ...DEFAULT_THEME.arrow, ...theme?.arrow },
     dotColor: theme?.dotColor ?? DEFAULT_THEME.dotColor,
     dotActiveColor: theme?.dotActiveColor ?? DEFAULT_THEME.dotActiveColor,
   };

@@ -15,6 +15,8 @@ export interface TooltipLayout {
   side: 'top' | 'bottom';
   top: number;
   slideWidth: number;
+  // 말풍선 좌측(TOOLTIP_MARGIN 기준) 에서의 화살표 중심 x
+  arrowCenterX: number;
 }
 
 /**
@@ -70,6 +72,16 @@ export function computeTooltipLayout(args: {
 
   const slideWidth = windowWidth - TOOLTIP_MARGIN * 2 - TOOLTIP_PADDING_H * 2;
 
+  // 화살표가 타겟 중앙을 가리키도록 — 카드 좌측 기준 x 좌표.
+  // 카드 가장자리에 바싹 붙지 않게 ARROW_EDGE_PAD 만큼 안쪽으로 클램프.
+  const cardWidth = windowWidth - TOOLTIP_MARGIN * 2;
+  const ARROW_EDGE_PAD = 20;
+  const targetCenterX = rect ? cutout.x + cutout.width / 2 : windowWidth / 2;
+  const arrowCenterX = Math.max(
+    ARROW_EDGE_PAD,
+    Math.min(targetCenterX - TOOLTIP_MARGIN, cardWidth - ARROW_EDGE_PAD),
+  );
+
   return {
     cutout,
     isCircle,
@@ -78,5 +90,6 @@ export function computeTooltipLayout(args: {
     side,
     top,
     slideWidth,
+    arrowCenterX,
   };
 }

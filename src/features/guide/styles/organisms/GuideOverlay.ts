@@ -22,4 +22,11 @@ export const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 10,
   },
+  arrow: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+  },
 });

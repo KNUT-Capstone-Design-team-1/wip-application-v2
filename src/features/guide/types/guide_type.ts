@@ -58,6 +58,10 @@ export interface GuideTheme {
     textColor?: string;
     skipColor?: string;
   };
+  arrow?: {
+    size?: number;
+    color?: string;
+  };
   dotColor?: string;
   dotActiveColor?: string;
 }

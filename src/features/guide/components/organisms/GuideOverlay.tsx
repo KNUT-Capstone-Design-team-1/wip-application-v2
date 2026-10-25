@@ -142,6 +142,33 @@ export const GuideOverlay: React.FC = () => {
               cardStyle,
             ]}
           >
+            {theme.arrow.size > 0 && (
+              <View
+                pointerEvents="none"
+                style={[
+                  styles.arrow,
+                  layout.side === 'bottom'
+                    ? {
+                        top: -theme.arrow.size + 1,
+                        left: layout.arrowCenterX - theme.arrow.size,
+                        borderLeftWidth: theme.arrow.size,
+                        borderRightWidth: theme.arrow.size,
+                        borderBottomWidth: theme.arrow.size,
+                        borderBottomColor:
+                          theme.arrow.color ?? theme.tooltip.backgroundColor,
+                      }
+                    : {
+                        bottom: -theme.arrow.size + 1,
+                        left: layout.arrowCenterX - theme.arrow.size,
+                        borderLeftWidth: theme.arrow.size,
+                        borderRightWidth: theme.arrow.size,
+                        borderTopWidth: theme.arrow.size,
+                        borderTopColor:
+                          theme.arrow.color ?? theme.tooltip.backgroundColor,
+                      },
+                ]}
+              />
+            )}
             {mode === 'slide' ? (
               <GuideSlides
                 steps={activeTour.steps}
