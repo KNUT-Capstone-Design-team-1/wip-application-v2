@@ -6,10 +6,8 @@ import {
   BackHandler,
   Platform,
   StyleSheet,
-  useWindowDimensions,
 } from 'react-native';
 import Svg, { Defs, Mask, Rect as SvgRect, Circle } from 'react-native-svg';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGuideState } from '@features/guide/hooks/use_guide';
 import { useGuideContext } from '@features/guide/hooks/use_guide_context';
 import { useGuideMeasure } from '@features/guide/hooks/use_guide_measure';
@@ -24,6 +22,7 @@ import { computeTooltipLayout } from '@features/guide/utils/guide_tooltip_layout
 import { GuideTooltip } from '@features/guide/components/molecules/GuideTooltip';
 import { GuideSlides } from '@features/guide/components/molecules/GuideSlides';
 import { styles } from '@features/guide/styles/organisms/GuideOverlay';
+import type { GuideTour } from '@features/guide/types/guide_type';
 
 /**
  * 투어 활성 시 화면 전체를 덮어 dim + 타겟 하이라이트 + 말풍선을 표시.
@@ -39,22 +38,38 @@ import { styles } from '@features/guide/styles/organisms/GuideOverlay';
  */
 export const GuideOverlay: React.FC = () => {
   const { activeTour, stepIndex } = useGuideState();
+  // 활성 투어가 없을 때는 창 치수·safe-area·측정 훅을 아예 호출하지 않도록 조기 분기.
+  // (그 훅들은 앱 수명 내내 깔려 있으면 매 rotation/keyboard 이벤트마다 리렌더를 유발)
+  if (!activeTour) return null;
+  return <GuideOverlayActive activeTour={activeTour} stepIndex={stepIndex} />;
+};
+
+interface GuideOverlayActiveProps {
+  activeTour: GuideTour;
+  stepIndex: number;
+}
+
+const GuideOverlayActive: React.FC<GuideOverlayActiveProps> = ({
+  activeTour,
+  stepIndex,
+}) => {
   const { theme, labels } = useGuideContext();
-  const { width: W, height: H } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
 
-  const step = activeTour ? activeTour.steps[stepIndex] : null;
-  const total = activeTour ? activeTour.steps.length : 0;
-  const mode = activeTour?.tooltipMode ?? 'button';
-  const animation = activeTour?.animation ?? 'fade';
+  const step = activeTour.steps[stepIndex] ?? null;
+  const total = activeTour.steps.length;
+  const mode = activeTour.tooltipMode ?? 'button';
+  const animation = activeTour.animation ?? 'fade';
 
-  const { overlayRef, rect, cardHeight, onCardLayout } = useGuideMeasure(
-    step,
-    stepIndex,
-    W,
-    H,
-    insets,
-  );
+  const {
+    overlayRef,
+    rect,
+    cardHeight,
+    onCardLayout,
+    windowWidth: W,
+    windowHeight: H,
+    insetTop,
+    insetBottom,
+  } = useGuideMeasure(step, stepIndex);
   const { backdrop, cardStyle } = useGuideAnimations(
     activeTour,
     rect,
@@ -66,17 +81,16 @@ export const GuideOverlay: React.FC = () => {
     if (mode === 'button') nextStep();
   }, [mode]);
 
-  // Modal 제거로 Android 하드웨어 백 핸들링을 직접 처리. 투어 활성 동안만 가로채고 종료 시 해제.
   useEffect(() => {
-    if (!activeTour || Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android') return;
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       stopTour();
       return true;
     });
     return () => sub.remove();
-  }, [activeTour]);
+  }, []);
 
-  if (!activeTour || !step) return null;
+  if (!step) return null;
 
   const layout = computeTooltipLayout({
     rect,
@@ -84,10 +98,25 @@ export const GuideOverlay: React.FC = () => {
     step,
     windowWidth: W,
     windowHeight: H,
-    insetTop: insets.top,
-    insetBottom: insets.bottom,
+    insetTop,
+    insetBottom,
     defaultPadding: theme.spotlight.padding,
   });
+
+  const arrowColor = theme.arrow.color ?? theme.tooltip.backgroundColor;
+  const arrowSize = theme.arrow.size;
+  const arrowSideStyle =
+    layout.side === 'bottom'
+      ? {
+          top: -arrowSize + 1,
+          borderBottomWidth: arrowSize,
+          borderBottomColor: arrowColor,
+        }
+      : {
+          bottom: -arrowSize + 1,
+          borderTopWidth: arrowSize,
+          borderTopColor: arrowColor,
+        };
 
   return (
     <View ref={overlayRef} style={styles.overlay} pointerEvents="box-none">
@@ -132,7 +161,6 @@ export const GuideOverlay: React.FC = () => {
         </Svg>
       </Animated.View>
 
-      {/* 배경 터치: 버튼형은 다음으로 진행, 슬라이드형은 무시 */}
       <Pressable
         style={StyleSheet.absoluteFill}
         onPress={handleBackdropPress}
@@ -153,30 +181,17 @@ export const GuideOverlay: React.FC = () => {
             cardStyle,
           ]}
         >
-          {theme.arrow.size > 0 && (
+          {arrowSize > 0 && (
             <View
               pointerEvents="none"
               style={[
                 styles.arrow,
-                layout.side === 'bottom'
-                  ? {
-                      top: -theme.arrow.size + 1,
-                      left: layout.arrowCenterX - theme.arrow.size,
-                      borderLeftWidth: theme.arrow.size,
-                      borderRightWidth: theme.arrow.size,
-                      borderBottomWidth: theme.arrow.size,
-                      borderBottomColor:
-                        theme.arrow.color ?? theme.tooltip.backgroundColor,
-                    }
-                  : {
-                      bottom: -theme.arrow.size + 1,
-                      left: layout.arrowCenterX - theme.arrow.size,
-                      borderLeftWidth: theme.arrow.size,
-                      borderRightWidth: theme.arrow.size,
-                      borderTopWidth: theme.arrow.size,
-                      borderTopColor:
-                        theme.arrow.color ?? theme.tooltip.backgroundColor,
-                    },
+                {
+                  left: layout.arrowCenterX - arrowSize,
+                  borderLeftWidth: arrowSize,
+                  borderRightWidth: arrowSize,
+                },
+                arrowSideStyle,
               ]}
             />
           )}

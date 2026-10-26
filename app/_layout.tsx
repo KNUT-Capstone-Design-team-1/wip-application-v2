@@ -81,9 +81,7 @@ const RootLayout = () => {
             bottomOffset={px(100)}
           />
         </View>
-        {/* 가이드 오버레이는 반드시 마지막에 — 같은 window/root 에서 측정 정렬 + 다른 모든 오버레이 위.
-            feature별 Provider/Overlay 로 두면 Modal 좌표 misalignment 로 홀 위치가 어긋났던 이슈 때문에
-            앱 루트에 1회만 둔다. */}
+        {/* feature별로 두면 Modal 로 인한 좌표 어긋남이 재발하므로 앱 루트 마지막 1회 고정 */}
         <GuideOverlay />
       </GuideProvider>
     </SafeAreaProvider>
