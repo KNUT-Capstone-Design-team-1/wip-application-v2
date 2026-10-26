@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, StyleProp, ViewStyle } from 'react-native';
 import { useGuideTarget } from '@features/guide/hooks/use_guide_target';
+import { notifyTargetLayoutChange } from '@features/guide/store/guide_target_registry';
 import type { GuideChildren } from '@features/guide/types/guide_type';
 
 export interface GuideTargetProps {
@@ -16,6 +17,8 @@ export interface GuideTargetProps {
  *
  * - `collapsable={false}` — Android 에서 자식만 있고 View 가 비면 네이티브 레이어가
  *   병합돼 `measureInWindow` 가 0 을 돌려주므로 반드시 유지.
+ * - `onLayout` — 콘텐츠 로딩/키보드/애니메이션 등으로 타겟 크기·위치가 바뀌면 활성 투어의
+ *   측정 훅에 알려 홀/말풍선을 자동으로 다시 그린다 (한 번 지정하면 알아서 추적).
  * - 자식 측정은 ref 등록 → 투어 활성 스텝 바뀔 때 `useGuideMeasure` 가 조회.
  */
 export const GuideTarget: React.FC<GuideTargetProps> = ({
@@ -24,8 +27,15 @@ export const GuideTarget: React.FC<GuideTargetProps> = ({
   style,
 }) => {
   const ref = useGuideTarget(id);
+
+  // 레이아웃 변경 알림 — 현재 활성 스텝이 이 id 를 보고 있다면 재측정이 트리거된다.
+  // 비활성 id 는 구독자가 없으므로 알림이 no-op 이라 비용 거의 0.
+  const handleLayout = useCallback(() => {
+    notifyTargetLayoutChange(id);
+  }, [id]);
+
   return (
-    <View ref={ref} collapsable={false} style={style}>
+    <View ref={ref} collapsable={false} style={style} onLayout={handleLayout}>
       {children}
     </View>
   );

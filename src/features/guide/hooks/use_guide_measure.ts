@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, LayoutChangeEvent } from 'react-native';
 import type { EdgeInsets } from 'react-native-safe-area-context';
-import { getTargetRef } from '../store/guide_target_registry';
+import {
+  getTargetRef,
+  subscribeTargetLayoutChange,
+} from '../store/guide_target_registry';
 import { getScrollController } from '../store/guide_scroll_registry';
 import {
   MEASURE_RETRY_INTERVAL_MS,
@@ -22,6 +25,13 @@ export interface UseGuideMeasureResult {
 
 /**
  * 활성 스텝의 타겟을 측정하고, off-screen 이면 등록된 스크롤뷰로 자동 스크롤 후 재측정한다.
+ *
+ * 재측정이 트리거되는 조건:
+ * - 스텝 전환 / 윈도우 치수 변경 / safe-area 변경 (dep array)
+ * - 활성 타겟의 `onLayout` — 콘텐츠 로딩, 키보드, 폰트 지연, 애니메이션 종료 등으로
+ *   타겟 크기·위치가 바뀌면 `GuideTarget` 이 notifier 를 쏘고 여기서 받아 다시 측정한다.
+ *   한 번 스크롤한 뒤의 재측정이므로 `scrolled` 플래그는 유지되어 재스크롤되지 않는다.
+ *
  * 스크롤이 필요한 동안은 rect/cardHeight 를 비워 이전 스텝의 하이라이트/말풍선 깜빡임을 막는다.
  */
 export function useGuideMeasure(
@@ -90,7 +100,13 @@ export function useGuideMeasure(
     };
 
     measure();
+
+    // 활성 타겟의 레이아웃이 바뀌면 자동 재측정 (한 번 지정하면 알아서 추적).
+    // 같은 effect 안의 closure 를 공유하므로 `scrolled` 플래그가 유지되어 재스크롤되지 않는다.
+    const unsubscribe = subscribeTargetLayoutChange(step.id, measure);
+
     return () => {
+      unsubscribe();
       if (timer) clearTimeout(timer);
     };
   }, [step, stepIndex, windowWidth, windowHeight, insets.top, insets.bottom]);
