@@ -21,6 +21,8 @@ import CameraGuideModal from '@features/pill_image_search/components/organisms/C
 import ImageSelectBottomSheet from '@features/pill_image_search/components/organisms/ImageSelectBottomSheet';
 import { preloadKoreanHolidays } from '@utils/korean_holidays';
 import { logger } from '@utils/index';
+import { GuideProvider, GuideOverlay } from '@features/guide';
+import { guideStorage } from '@utils/guide_storage';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -65,15 +67,25 @@ const RootLayout = () => {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <Layout />
-      <MainNoticeBottomSheet />
-      <FullSizeLoading />
-      <CommonModal />
-      <CameraGuideModal />
-      <ImageSelectBottomSheet />
-      <View style={styles.toastContainer}>
-        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
-      </View>
+      <GuideProvider storage={guideStorage}>
+        <Layout />
+        <MainNoticeBottomSheet />
+        <FullSizeLoading />
+        <CommonModal />
+        <CameraGuideModal />
+        <ImageSelectBottomSheet />
+        <View style={styles.toastContainer}>
+          <Toast
+            config={toastConfig}
+            position="bottom"
+            bottomOffset={px(100)}
+          />
+        </View>
+        {/* 가이드 오버레이는 반드시 마지막에 — 같은 window/root 에서 측정 정렬 + 다른 모든 오버레이 위.
+            feature별 Provider/Overlay 로 두면 Modal 좌표 misalignment 로 홀 위치가 어긋났던 이슈 때문에
+            앱 루트에 1회만 둔다. */}
+        <GuideOverlay />
+      </GuideProvider>
     </SafeAreaProvider>
   );
 };
