@@ -1,9 +1,10 @@
 import { BaseText } from '@components/common/BaseText';
 import { usePillImageActions } from '@features/pill_image_search/hooks/usePillImageActions';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { styles } from '@features/pill_image_search/styles/organisms/ImageSearchButton';
 import { usePillImageStore } from '@features/pill_image_search/store/pill_image_store';
 import { COLOR_BG, COLOR_TEXT } from '@constants/color';
+import { GuideTarget } from '@features/guide';
 
 // 검색하기 버튼
 const ImageSearchButton = () => {
@@ -20,7 +21,7 @@ const ImageSearchButton = () => {
   };
 
   return (
-    <View style={styles.buttonWrapper}>
+    <GuideTarget id="img.search" style={styles.buttonWrapper}>
       <TouchableOpacity
         activeOpacity={0.7}
         style={[
@@ -41,7 +42,7 @@ const ImageSearchButton = () => {
           검색하기
         </BaseText>
       </TouchableOpacity>
-    </View>
+    </GuideTarget>
   );
 };
 

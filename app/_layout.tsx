@@ -21,6 +21,8 @@ import CameraGuideModal from '@features/pill_image_search/components/organisms/C
 import ImageSelectBottomSheet from '@features/pill_image_search/components/organisms/ImageSelectBottomSheet';
 import { preloadKoreanHolidays } from '@utils/korean_holidays';
 import { logger } from '@utils/index';
+import { GuideProvider, GuideOverlay } from '@features/guide';
+import { guideStorage } from '@utils/guide_storage';
 
 // Mobile Ads SDK 초기화
 initAdMob();
@@ -65,15 +67,23 @@ const RootLayout = () => {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <Layout />
-      <MainNoticeBottomSheet />
-      <FullSizeLoading />
-      <CommonModal />
-      <CameraGuideModal />
-      <ImageSelectBottomSheet />
-      <View style={styles.toastContainer}>
-        <Toast config={toastConfig} position="bottom" bottomOffset={px(100)} />
-      </View>
+      <GuideProvider storage={guideStorage}>
+        <Layout />
+        <MainNoticeBottomSheet />
+        <FullSizeLoading />
+        <CommonModal />
+        <CameraGuideModal />
+        <ImageSelectBottomSheet />
+        <View style={styles.toastContainer}>
+          <Toast
+            config={toastConfig}
+            position="bottom"
+            bottomOffset={px(100)}
+          />
+        </View>
+        {/* feature별로 두면 Modal 로 인한 좌표 어긋남이 재발하므로 앱 루트 마지막 1회 고정 */}
+        <GuideOverlay />
+      </GuideProvider>
     </SafeAreaProvider>
   );
 };
