@@ -1,29 +1,28 @@
 import { styles } from '../styles/PillIdentificationSearchScreen';
-import React from 'react';
-import { View, Pressable } from 'react-native';
-import { CircleQuestionMark } from 'lucide-react-native';
+import React, { useCallback } from 'react';
+import { View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import PillIdentificationSearchForm from '../components/organisms/PillIdentificationSearchForm';
-import { COLOR } from '@constants/color';
-import { fontPx } from '@utils/responsive';
+import { useHeaderActionStore } from '@layouts/header/store/header_action_store';
 import { identificationGuide } from '../guide';
 
 const PillIdentificationSearchScreen: React.FC = () => {
   const replay = identificationGuide.useReplay();
 
+  useFocusEffect(
+    useCallback(() => {
+      useHeaderActionStore.getState().setHelp(replay);
+
+      return () => {
+        if (useHeaderActionStore.getState().onHelp === replay) {
+          useHeaderActionStore.getState().setHelp(null);
+        }
+      };
+    }, [replay]),
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.guideToolbar}>
-        <Pressable
-          onPress={replay}
-          hitSlop={8}
-          style={styles.guideButton}
-          accessibilityRole="button"
-          accessibilityLabel="사용법 보기"
-        >
-          <CircleQuestionMark size={fontPx(22)} color={COLOR['secondary']} />
-        </Pressable>
-      </View>
-
       <PillIdentificationSearchForm />
     </View>
   );

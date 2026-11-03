@@ -1,6 +1,11 @@
 import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Search, X } from 'lucide-react-native';
+import {
+  ChevronLeft,
+  CircleQuestionMark,
+  Search,
+  X,
+} from 'lucide-react-native';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR } from '@constants/color';
 import { fontPx } from '@utils/responsive';
@@ -10,6 +15,7 @@ import { styles } from './styles';
 
 const SubHeader = () => {
   const router = useRouter();
+  const onHelp = useHeaderActionStore((state) => state.onHelp);
   const onSearch = useHeaderActionStore((state) => state.onSearch);
   const isSearchOpen = useHeaderActionStore((state) => state.isSearchOpen);
   const title = useHeaderTitleStore((state) => state.title);
@@ -46,7 +52,16 @@ const SubHeader = () => {
             {title}
           </BaseText>
         </View>
-        {onSearch ? (
+        {onHelp ? (
+          <TouchableOpacity
+            onPress={onHelp}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="사용법 보기"
+          >
+            <CircleQuestionMark size={fontPx(22)} color={COLOR.secondary} />
+          </TouchableOpacity>
+        ) : onSearch ? (
           <TouchableOpacity
             onPress={onSearch}
             style={styles.backButton}
