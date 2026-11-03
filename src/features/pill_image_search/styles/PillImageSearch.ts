@@ -19,4 +19,11 @@ export const styles = StyleSheet.create({
     backgroundColor: COLOR_LINE['separator'],
     marginVertical: px(30),
   },
+  guideButton: {
+    position: 'absolute',
+    top: 8,
+    right: 16,
+    zIndex: 5,
+    padding: 4,
+  },
 });

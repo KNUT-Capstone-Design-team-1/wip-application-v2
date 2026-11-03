@@ -1,5 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
+import { CircleQuestionMark } from 'lucide-react-native';
 import ImageSearchContent from '../components/organisms/ImageSearchContent';
 import ImageLoadButtons from '../components/organisms/ImageLoadButtons';
 import { styles } from '../styles/PillImageSearch';
@@ -9,6 +10,9 @@ import ImageSearchButton from '../components/organisms/ImageSearchButton';
 import { CameraPermissionAlert } from '../components/molecules/CameraPermissionAlert';
 import { usePillImageStore } from '../store/pill_image_store';
 import { usePillImageActions } from '../hooks/usePillImageActions';
+import { COLOR } from '@constants/color';
+import { fontPx } from '@utils/responsive';
+import { imageSearchGuide } from '../guide';
 
 // TODO: 검색 중 취소 로직 필요 (사용자의 뒤로가기, 외부에서 종료)
 
@@ -18,15 +22,26 @@ const PillImageSearch = () => {
     (state) => state.showPermissionAlert,
   );
   const { handlePermissionAlertClose } = usePillImageActions();
+  const replay = imageSearchGuide.useReplay();
+
   return (
     <View style={[styles.container, { marginBottom: insets.bottom }]}>
+      <Pressable
+        onPress={replay}
+        hitSlop={8}
+        style={styles.guideButton}
+        accessibilityRole="button"
+        accessibilityLabel="사용법 보기"
+      >
+        <CircleQuestionMark size={fontPx(22)} color={COLOR['secondary']} />
+      </Pressable>
+
       <View style={styles.contentContainer}>
         <ImageSearchContent />
         <View style={styles.hr} />
         <ImageLoadButtons />
       </View>
       <ImageSearchInfo />
-      {/* 검색하기 버튼 */}
       <ImageSearchButton />
       <CameraPermissionAlert
         visible={showPermissionAlert}
@@ -37,4 +52,4 @@ const PillImageSearch = () => {
   );
 };
 
-export default PillImageSearch;
+export default imageSearchGuide.wrap(PillImageSearch);

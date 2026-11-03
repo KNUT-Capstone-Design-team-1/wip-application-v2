@@ -10,10 +10,11 @@ import { FolderSortModal } from '@features/pill_save/components/organisms/Folder
 import PillSaveFolderList from '@features/pill_save/components/organisms/PillSaveFolderList';
 import { PillSaveEditBottomBar } from '@features/pill_save/components/organisms/PillSaveEditBottomBar';
 import { usePillSaveFolders } from '@features/pill_save/hooks/use_pill_save_folders';
+import { pillSaveGuide } from '@features/pill_save/guide';
 
-// 알약 보관함(폴더 목록) 메인 화면 컴포넌트
 const PillSave = () => {
   const { fetchRemindedItemSeqs } = usePillReminderStore();
+  const replay = pillSaveGuide.useReplay();
 
   useFocusEffect(
     useCallback(() => {
@@ -44,7 +45,6 @@ const PillSave = () => {
     handleBackgroundPress,
   } = usePillSaveFolders();
 
-  // 로딩 중일 때 조기 반환 (Early Return)
   if (loading) {
     return <PillSaveLoadingView />;
   }
@@ -57,6 +57,7 @@ const PillSave = () => {
           folderCount={folders.length}
           onAddRequest={handleOpenAddModal}
           onSortRequest={() => setIsSortModalVisible(true)}
+          onGuideRequest={replay}
         />
 
         <PillSaveFolderList
@@ -95,4 +96,4 @@ const PillSave = () => {
   );
 };
 
-export default PillSave;
+export default pillSaveGuide.wrap(PillSave);

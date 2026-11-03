@@ -1,5 +1,11 @@
+import { px } from '@utils/responsive';
+
 export type FolderSortOption =
   'createdAt_desc' | 'createdAt_asc' | 'name_asc' | 'pillCount_desc';
+
+// 보관함 화면 레이아웃 수치
+export const PILL_SAVE_ROOT_HORIZONTAL_PADDING = px(8);
+export const PILL_SAVE_LOADING_TEXT_MARGIN_TOP = px(12);
 
 // 폴더 정렬 옵션 목록
 export const FOLDER_SORT_OPTIONS: {

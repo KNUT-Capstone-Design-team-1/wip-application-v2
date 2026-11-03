@@ -6,6 +6,7 @@ import { COLOR, COLOR_BG } from '@constants/color';
 import { Camera, ChevronRight, Image } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
 import { usePillImageActions } from '../../hooks/usePillImageActions';
+import { GuideTarget } from '@features/guide';
 
 const ImageLoadButtons = () => {
   const { handleCameraPress, handleAlbumPress, handleFilePress } =
@@ -13,8 +14,8 @@ const ImageLoadButtons = () => {
 
   return (
     <>
-      {/* 촬영/선택 버튼 */}
-      <View style={styles.imageSearchButtonsWrapper}>
+      {/* 촬영/선택 버튼 (가이드 타겟) */}
+      <GuideTarget id="img.load" style={styles.imageSearchButtonsWrapper}>
         <TouchableOpacity
           activeOpacity={0.7}
           style={[styles.button, { backgroundColor: COLOR_BG['btnDark'] }]}
@@ -38,7 +39,7 @@ const ImageLoadButtons = () => {
             앨범에서 선택하기
           </BaseText>
         </TouchableOpacity>
-      </View>
+      </GuideTarget>
       <View style={styles.explorerButtonWrapper}>
         <BaseText size={14} weight="semiBold" style={styles.explorerInfoText}>
           앨범에 모든 사진이 표시되지 않았나요?
