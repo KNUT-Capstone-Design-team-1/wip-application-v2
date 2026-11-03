@@ -12,15 +12,17 @@ const PillIdentificationSearchScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={replay}
-        hitSlop={8}
-        style={styles.guideButton}
-        accessibilityRole="button"
-        accessibilityLabel="사용법 보기"
-      >
-        <CircleQuestionMark size={fontPx(22)} color={COLOR['secondary']} />
-      </Pressable>
+      <View style={styles.guideToolbar}>
+        <Pressable
+          onPress={replay}
+          hitSlop={8}
+          style={styles.guideButton}
+          accessibilityRole="button"
+          accessibilityLabel="사용법 보기"
+        >
+          <CircleQuestionMark size={fontPx(22)} color={COLOR['secondary']} />
+        </Pressable>
+      </View>
 
       <PillIdentificationSearchForm />
     </View>
