@@ -1,19 +1,10 @@
 # Introduction
 
-AI를 활용한 알약 검색 애플리케이션입니다.
-
----
-
-# Requirements
-
-- Node.js `20+`
-- `JDK 11`
+보건의료 종사자와 약 복용자를 위한 AI 기반 알약 외형 검색, 영양제 검색 및 복용 관리
 
 ---
 
 # Initialize
-
-프로젝트 최초 실행 시 필요한 설정입니다.
 
 ```bash
 # EAS CLI 설치
@@ -35,8 +26,6 @@ eas env:pull
 eas credentials
 ```
 
-이후 아래 순서대로 진행합니다.
-
 1. `Android` 또는 `iOS` 선택
 2. Profile 선택
 3. `credentials.json: Upload/Download credentials ...` 선택
@@ -46,8 +35,6 @@ eas credentials
 ---
 
 # Execute & Build
-
-앱 실행 및 개발 환경 검증 명령어입니다.
 
 ```bash
 # Native 프로젝트 재생성
@@ -66,13 +53,11 @@ yarn run apk
 yarn run ipa
 ```
 
-> `apk`, `ipa` 빌드는 Linux 또는 macOS 환경에서만 사용 가능합니다.
+> `apk`, `ipa` 빌드는 Linux 또는 macOS 환경에서만 사용 가능
 
 ---
 
 # Development
-
-개발 중 자주 사용하는 명령어입니다.
 
 ```bash
 # Expo 호환 라이브러리 설치
@@ -94,15 +79,11 @@ yarn test:api
 yarn test:query
 ```
 
-> `expo install` 사용 시 Expo SDK 버전에 맞는 라이브러리 버전이 자동으로 설치됩니다.
-
 ---
 
 # Trouble Shooting
 
-## 프로젝트 초기화
-
-빌드 또는 의존성 문제가 발생할 경우:
+## 프로젝트 초기화 (빌드 또는 의존성 문제가 발생할 경우)
 
 ```bash
 rm -rf android
@@ -118,34 +99,22 @@ yarn rebuild
 
 ## Expo 라이브러리 버전이 낮은 경우
 
-- Expo SDK와 호환되는 버전만 지원될 수 있습니다.
-
-- 공식 문서에서 지원 버전을 확인하세요.
-
-- [Expo Docs](https://docs.expo.dev/?utm_source=chatgpt.com)
+- Expo SDK와 호환되는 버전만 지원될 수 있음
+- 공식 문서에서 지원 버전을 확인
+  - [Expo Docs](https://docs.expo.dev/?utm_source=chatgpt.com)
 
 ---
 
 ## `yarn rebuild` 또는 `expo prebuild --clean` 에러
 
-다음 오류가 발생할 수 있습니다.
-
-```text
+```bash
+# 오류 내용
 Failed to delete android, ios
 code: ENOTEMPTY: directory not empty, rmdir
-```
 
-### 해결 방법
-
-명령어를 다시 실행합니다.
-
-```bash
 yarn rebuild
-```
 
-또는
-
-```bash
+# 또는
 npx expo prebuild --clean
 ```
 
@@ -153,45 +122,23 @@ npx expo prebuild --clean
 
 ## EAS Build 중 메모리 부족 오류
 
-다음 오류가 발생할 수 있습니다.
-
-```text
-Error: Couldn't allocate enough memory
-```
-
-### 원인
-
 - `yarn fetch` 과정에서 Node.js 메모리 부족
 - `yarn.lock` 또는 cache 변경 직후 첫 빌드에서 자주 발생
 
-### 해결 방법
+```
+Error: Couldn't allocate enough memory
 
-- EAS Build 재실행
-- 잠시 후 다시 시도
+# EAS Build 재실행
+# 잠시 후 다시 시도
+```
 
 ---
 
 ## 개발 환경에서 주변 약국 기능이 동작하지 않을 때 (안드로이드)
 
-### 원인
-
 - 구글맵 API 키에 디버그 keystore SHA-1이 등록되어있지 않음
 
-### 해결방법
-
-- debug.keystore를 구글맵 API 키 제한사항에 등록
-
 ```bash
+# debug.keystore를 구글맵 API 키 제한사항에 등록
 keytool -list -v -keystore android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
-
----
-
-# References
-
-- [EAS Environment Variables Docs](https://docs.expo.dev/eas/environment-variables/?utm_source=chatgpt.com)
-- [Expo app.json Props](https://docs.expo.dev/versions/latest/config/app/?utm_source=chatgpt.com)
-- [EAS CLI README](https://github.com/expo/eas-cli/blob/main/packages/eas-cli/README.md?utm_source=chatgpt.com)
-- [EAS eas.json Docs](https://docs.expo.dev/eas/json/?utm_source=chatgpt.com)
-- [Expo Local Credentials Docs](https://docs.expo.dev/app-signing/local-credentials/?utm_source=chatgpt.com)
-- [Expo ESLint Guide](https://docs.expo.dev/guides/using-eslint/?utm_source=chatgpt.com)
