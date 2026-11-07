@@ -18,10 +18,8 @@ export function buildFunctionalFoodWhere(
   const clauses: string[] = [];
   const values: string[] = [];
   if (params.keyword?.trim()) {
-    clauses.push(
-      "(p.PRDLST_NM LIKE ? ESCAPE '!' OR p.RAWMTRL_NM LIKE ? ESCAPE '!' OR p.PRDLST_REPORT_NO LIKE ? ESCAPE '!')",
-    );
-    values.push(...Array(3).fill(contains(params.keyword.trim())));
+    clauses.push("p.PRDLST_NM LIKE ? ESCAPE '!'");
+    values.push(contains(params.keyword.trim()));
   }
   if (params.manufacturer?.trim()) {
     clauses.push("p.BSSH_NM LIKE ? ESCAPE '!'");

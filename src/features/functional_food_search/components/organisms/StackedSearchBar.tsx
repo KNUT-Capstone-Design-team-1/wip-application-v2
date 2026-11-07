@@ -62,7 +62,7 @@ const StackedSearchBar = ({
             value={nameKeyword}
             onChangeText={onChangeName}
             onSubmit={onSubmit}
-            placeholder="제품명 · 원재료 · 신고번호"
+            placeholder="제품명"
           />
           <UnderlineInput
             value={manufacturer}
