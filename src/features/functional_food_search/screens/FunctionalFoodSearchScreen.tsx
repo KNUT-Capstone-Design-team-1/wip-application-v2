@@ -6,11 +6,11 @@ import { BaseText } from '@components/common/BaseText';
 import NotItem from '@components/common/NotItem';
 import { COLOR, COLOR_BG, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
-import { IFunctionalFoodNutrients } from '@services/database/types';
+import { IHealthFunctionalFoodRawMaterial } from '@services/database/types';
 import { useFunctionalFoodSearch } from '../hooks/use_functional_food_search';
 import { useFunctionalFoodCategories } from '../hooks/use_functional_food_categories';
-import StackedSearchBar from '../components/organisms/StackedSearchBar';
 import CategoryChipList from '../components/organisms/CategoryChipList';
+import StackedSearchBar from '../components/organisms/StackedSearchBar';
 import FunctionalFoodListItem from '../components/molecules/FunctionalFoodListItem';
 import FoodSafetyKoreaFloatingButton from '../components/atoms/FoodSafetyKoreaFloatingButton';
 
@@ -22,8 +22,8 @@ const FunctionalFoodSearchScreen = () => {
     nameKeyword,
     setNameKeyword,
     manufacturer,
-    setManufacturer,
     selectedCategory,
+    setManufacturer,
     items,
     totalCount,
     isLoading,
@@ -32,21 +32,20 @@ const FunctionalFoodSearchScreen = () => {
     onSelectCategory,
     loadMore,
   } = useFunctionalFoodSearch();
-
   const { chips } = useFunctionalFoodCategories();
 
   const handlePressItem = useCallback(
-    (foodCode: string) => {
+    (reportNumber: string) => {
       router.push({
         pathname: '/functional-food-detail',
-        params: { foodCode },
+        params: { reportNumber },
       });
     },
     [router],
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: IFunctionalFoodNutrients }) => (
+    ({ item }: { item: IHealthFunctionalFoodRawMaterial }) => (
       <FunctionalFoodListItem item={item} onPress={handlePressItem} />
     ),
     [handlePressItem],
@@ -72,7 +71,7 @@ const FunctionalFoodSearchScreen = () => {
     return (
       <NotItem
         mainText="검색 결과가 없어요"
-        subText="다른 키워드나 카테고리로 찾아보세요"
+        subText="다른 제품명이나 제조사로 찾아보세요"
         marginTop={String(px(60))}
       />
     );
@@ -88,16 +87,18 @@ const FunctionalFoodSearchScreen = () => {
         onSubmit={onSubmitSearch}
       />
 
-      <CategoryChipList
-        chips={chips}
-        selectedCategory={selectedCategory}
-        onSelectCategory={onSelectCategory}
-      />
+      {chips.length > 0 && (
+        <CategoryChipList
+          chips={chips}
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+        />
+      )}
 
       <View style={styles.countRow}>
-        <BaseText weight="medium" size={12} style={styles.countText}>
+        <BaseText weight="medium" size={13} style={styles.countText}>
           검색 결과{' '}
-          <BaseText weight="semiBold" size={12} style={styles.countNumber}>
+          <BaseText weight="semiBold" size={13} style={styles.countNumber}>
             {totalCount.toLocaleString()}
           </BaseText>
           건
@@ -113,7 +114,7 @@ const FunctionalFoodSearchScreen = () => {
           style={styles.list}
           data={items}
           renderItem={renderItem}
-          keyExtractor={(item) => item.foodCode}
+          keyExtractor={(item) => item.PRDLST_REPORT_NO}
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}
           ListFooterComponent={renderFooter}
@@ -142,8 +143,8 @@ const styles = StyleSheet.create({
   },
   countRow: {
     paddingHorizontal: px(20),
-    paddingTop: px(4),
-    paddingBottom: px(10),
+    paddingVertical: px(12),
+    justifyContent: 'center',
   },
   countText: {
     color: COLOR_TEXT.sub,

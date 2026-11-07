@@ -14,8 +14,10 @@ export type TConfigKey =
   | 'psychotropicsDataVersion'
   | 'prohibitedListSchemaVersion'
   | 'prohibitedListDataVersion'
-  | 'functionalFoodNutrientsSchemaVersion'
-  | 'functionalFoodNutrientsDataVersion';
+  | 'functionalFoodClassificationSchemaVersion'
+  | 'functionalFoodClassificationDataVersion'
+  | 'healthFunctionalFoodRawMaterialSchemaVersion'
+  | 'healthFunctionalFoodRawMaterialDataVersion';
 
 // 데이터베이스 내 존재하는 테이블 이름 타입
 export type TDataTable =
@@ -26,7 +28,8 @@ export type TDataTable =
   | 'narcotics'
   | 'psychotropics'
   | 'prohibited_list'
-  | 'functional_food_nutrients';
+  | 'functional_food_classification'
+  | 'health_functional_food_raw_material';
 
 // 동기화가 빠른 순서로 진행
 export const ALL_DATA_TABLES: TDataTable[] = [
@@ -37,7 +40,8 @@ export const ALL_DATA_TABLES: TDataTable[] = [
   'nearby_pharmacies',
   'prohibited_list',
   'pill_data',
-  'functional_food_nutrients',
+  'functional_food_classification',
+  'health_functional_food_raw_material',
 ] as const;
 
 // 테이블명에 대한 한국어 라벨 매핑
@@ -49,7 +53,8 @@ export const TABLE_NAME_MAP: Record<TDataTable, string> = {
   narcotics: '마약 정보',
   psychotropics: '향정신성 의약품 정보',
   prohibited_list: '금지 약물 정보',
-  functional_food_nutrients: '건강기능식품 영양성분 정보',
+  functional_food_classification: '건강기능식품 기능성 기준',
+  health_functional_food_raw_material: '건강기능식품 제품·원재료',
 } as const;
 
 // 테이블명과 해당 테이블의 스키마/데이터 버전 설정 키 매핑
@@ -64,9 +69,13 @@ export const TABLE_CONFIG_KEYS_MAP: Record<TDataTable, TConfigKey[]> = {
   narcotics: ['narcoticsSchemaVersion', 'narcoticsDataVersion'],
   psychotropics: ['psychotropicsSchemaVersion', 'psychotropicsDataVersion'],
   prohibited_list: ['prohibitedListSchemaVersion', 'prohibitedListDataVersion'],
-  functional_food_nutrients: [
-    'functionalFoodNutrientsSchemaVersion',
-    'functionalFoodNutrientsDataVersion',
+  functional_food_classification: [
+    'functionalFoodClassificationSchemaVersion',
+    'functionalFoodClassificationDataVersion',
+  ],
+  health_functional_food_raw_material: [
+    'healthFunctionalFoodRawMaterialSchemaVersion',
+    'healthFunctionalFoodRawMaterialDataVersion',
   ],
 } as const;
 

@@ -1,152 +1,113 @@
-import { useCallback, useEffect, useState } from 'react';
-import { FunctionalFoodNutrientsQuery } from '@services/database/queries';
-import {
-  IFunctionalFoodNutrients,
-  TFunctionalFoodNutrientsSearchParam,
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FunctionalFoodQuery } from '@services/database/queries';
+import type {
+  IHealthFunctionalFoodRawMaterial,
+  TFunctionalFoodSearchParam,
 } from '@services/database/types';
 import { useToast } from '@hooks/use_toast';
 import logger from '@utils/logger';
-import { CATEGORY_GROUPS, PAGE_LIMIT } from '../constants/categories';
 
-// 약 이름/제조사/카테고리로부터 검색 파라미터 구성
-const buildParams = (
-  name: string,
-  manufacturer: string,
-  category: string,
-): Partial<TFunctionalFoodNutrientsSearchParam> => {
-  const params: Partial<TFunctionalFoodNutrientsSearchParam> = {};
+const PAGE_LIMIT = 30;
 
-  const trimmedName = name.trim();
-  if (trimmedName) {
-    params.nameKeyword = trimmedName;
-  }
-
-  const trimmedManufacturer = manufacturer.trim();
-  if (trimmedManufacturer) {
-    params.manufacturerName = trimmedManufacturer;
-  }
-
-  // 카테고리 '전체'는 value === '' 이므로 필터를 적용하지 않는다
-  // 그 외에는 그룹 key를 match 키워드 목록으로 변환해 OR-LIKE 필터로 전달
-  if (category) {
-    const group = CATEGORY_GROUPS.find((g) => g.key === category);
-    if (group && group.match.length) {
-      params.mediumCategoryKeywords = group.match;
-    }
-  }
-
-  return params;
-};
-
-/**
- * 건강기능식품(영양제) 검색 훅
- * - 약 이름(제품명/대표식품명) + 제조사 + 카테고리(중분류) 필터
- * - 무한 스크롤 페이지네이션
- */
+/** 마지막으로 제출한 검색 조건으로 페이지를 이어 읽고 오래된 응답은 무시한다. */
 export const useFunctionalFoodSearch = () => {
   const { showToast } = useToast();
-
   const [nameKeyword, setNameKeyword] = useState('');
   const [manufacturer, setManufacturer] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [items, setItems] = useState<IFunctionalFoodNutrients[]>([]);
+  const [items, setItems] = useState<IHealthFunctionalFoodRawMaterial[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const requestId = useRef(0);
+  const pending = useRef(false);
+  const activeParams = useRef<TFunctionalFoodSearchParam>({});
+  const hasMore = items.length < totalCount;
 
-  const hasMore: boolean = items.length < totalCount;
-
-  // 첫 페이지부터 새로 검색
   const runSearch = useCallback(
-    async (name: string, mfg: string, category: string) => {
+    async (keyword: string, mfg: string, productForm: string) => {
+      const id = ++requestId.current;
+      pending.current = true;
+      activeParams.current = {
+        keyword: keyword.trim(),
+        manufacturer: mfg.trim(),
+        productForm,
+      };
       setIsLoading(true);
-
+      setIsLoadingMore(false);
       try {
-        const params = buildParams(name, mfg, category);
-
         const [list, count] = await Promise.all([
-          FunctionalFoodNutrientsQuery.getFunctionalFoodNutrients(params, {
+          FunctionalFoodQuery.getFunctionalFoods(activeParams.current, {
             page: 1,
             limit: PAGE_LIMIT,
           }),
-          FunctionalFoodNutrientsQuery.getFunctionalFoodNutrientsCount(params),
+          FunctionalFoodQuery.getFunctionalFoodsCount(activeParams.current),
         ]);
-
+        if (id !== requestId.current) return;
         setItems(list);
         setTotalCount(count);
         setPage(1);
       } catch (error) {
-        logger.error(
-          `[FUNCTIONAL-FOOD-SEARCH] Failed to search. ${(error as Error).stack || error}`,
-        );
+        if (id !== requestId.current) return;
+        logger.error('[FUNCTIONAL-FOOD-SEARCH] ' + String(error));
         showToast({
           type: 'error',
-          message: '검색에 실패했습니다.\n잠시 후 다시 시도해 주세요.',
+          message: '검색에 실패했습니다. 잠시 후 다시 시도해 주세요.',
         });
         setItems([]);
         setTotalCount(0);
       } finally {
-        setIsLoading(false);
+        if (id === requestId.current) {
+          pending.current = false;
+          setIsLoading(false);
+        }
       }
     },
     [showToast],
   );
 
-  // 다음 페이지를 이어서 로드
   const loadMore = useCallback(async () => {
-    if (isLoading || isLoadingMore || !hasMore) {
-      return;
-    }
-
+    if (pending.current || !hasMore) return;
+    pending.current = true;
     setIsLoadingMore(true);
-    const nextPage = page + 1;
-
+    const id = requestId.current;
     try {
-      const params = buildParams(nameKeyword, manufacturer, selectedCategory);
-      const list =
-        await FunctionalFoodNutrientsQuery.getFunctionalFoodNutrients(params, {
-          page: nextPage,
-          limit: PAGE_LIMIT,
-        });
-
-      setItems((prev) => [...prev, ...list]);
-      setPage(nextPage);
-    } catch (error) {
-      logger.error(
-        `[FUNCTIONAL-FOOD-SEARCH] Failed to load more. ${(error as Error).stack || error}`,
+      const list = await FunctionalFoodQuery.getFunctionalFoods(
+        activeParams.current,
+        { page: page + 1, limit: PAGE_LIMIT },
       );
+      if (id !== requestId.current) return;
+      setItems((previous) => [...previous, ...list]);
+      setPage(page + 1);
+    } catch (error) {
+      logger.error('[FUNCTIONAL-FOOD-SEARCH] ' + String(error));
     } finally {
-      setIsLoadingMore(false);
+      if (id === requestId.current) {
+        pending.current = false;
+        setIsLoadingMore(false);
+      }
     }
-  }, [
-    isLoading,
-    isLoadingMore,
-    hasMore,
-    page,
-    nameKeyword,
-    manufacturer,
-    selectedCategory,
-  ]);
+  }, [hasMore, page]);
 
-  // 검색 실행 (약 이름/제조사 제출)
   const onSubmitSearch = useCallback(() => {
-    runSearch(nameKeyword, manufacturer, selectedCategory);
+    void runSearch(nameKeyword, manufacturer, selectedCategory);
   }, [runSearch, nameKeyword, manufacturer, selectedCategory]);
-
-  // 카테고리 선택 시 즉시 재검색
   const onSelectCategory = useCallback(
     (category: string) => {
-      setSelectedCategory(category);
-      runSearch(nameKeyword, manufacturer, category);
+      const nextCategory = selectedCategory === category ? '' : category;
+      setSelectedCategory(nextCategory);
+      void runSearch(nameKeyword, manufacturer, nextCategory);
     },
-    [runSearch, nameKeyword, manufacturer],
+    [runSearch, nameKeyword, manufacturer, selectedCategory],
   );
 
-  // 최초 진입 시 전체 목록 로드
   useEffect(() => {
-    runSearch('', '', '');
-    // 마운트 시 1회만 실행
+    void runSearch('', '', '');
+    return () => {
+      requestId.current += 1;
+    };
+    // 최초 마운트에서만 기본 검색을 실행한다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

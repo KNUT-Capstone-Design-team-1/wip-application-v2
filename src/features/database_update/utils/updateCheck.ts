@@ -25,7 +25,16 @@ export const getRequiredDatabaseUpdates =
       }
     }
 
-    const isForceUpdate = updatesNeeded.length === ALL_DATA_TABLES.length;
+    // 기존 설치에서도 새 건강기능식품 테이블이 없으면 필수 동기화한다.
+    const isForceUpdate =
+      updatesNeeded.length === ALL_DATA_TABLES.length ||
+      updatesNeeded.some(
+        (update) =>
+          [
+            'functional_food_classification',
+            'health_functional_food_raw_material',
+          ].includes(update.table) && Number(update.oldSchemaVer) === 0,
+      );
 
     console.log(
       `[UPDATE-CHECK] Check completed. ${updatesNeeded.length} table(s) need updates. (Force update: ${isForceUpdate})`,

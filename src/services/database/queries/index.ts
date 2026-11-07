@@ -3,4 +3,4 @@ export * as InitTableQuery from './init_table';
 export * as PillDataQuery from './pill_data';
 export * as MarkImagesQuery from './mark_images';
 export * as NearbyPharmaciesQuery from './nearby_pharmacies';
-export * as FunctionalFoodNutrientsQuery from './functional_food_nutrients';
+export * as FunctionalFoodQuery from './functional_food';

@@ -21,8 +21,10 @@ const DEFAULT_CONFIG: IConfig[] = [
   { key: 'psychotropicsDataVersion', value: 0 },
   { key: 'prohibitedListSchemaVersion', value: 0 },
   { key: 'prohibitedListDataVersion', value: 0 },
-  { key: 'functionalFoodNutrientsSchemaVersion', value: 0 },
-  { key: 'functionalFoodNutrientsDataVersion', value: 0 },
+  { key: 'functionalFoodClassificationSchemaVersion', value: 0 },
+  { key: 'functionalFoodClassificationDataVersion', value: 0 },
+  { key: 'healthFunctionalFoodRawMaterialSchemaVersion', value: 0 },
+  { key: 'healthFunctionalFoodRawMaterialDataVersion', value: 0 },
 ] as const;
 
 /**
@@ -165,6 +167,14 @@ export const initDatabase = async () => {
     const db = await getDatabase();
 
     await initConfigTable(db);
+    // 교체되는 영양제 캐시만 제거한다. 사용자 보관함·복용 알림은 보존한다.
+    await db.withTransactionAsync(async () => {
+      await db.execAsync('DROP TABLE IF EXISTS functional_food_nutrients');
+      await db.runAsync('DELETE FROM config WHERE key IN (?, ?)', [
+        'functionalFoodNutrientsSchemaVersion',
+        'functionalFoodNutrientsDataVersion',
+      ]);
+    });
     await initSavedPillTables(db);
     await initPillReminderTables(db);
 

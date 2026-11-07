@@ -1,15 +1,13 @@
 import { Linking, TouchableOpacity } from 'react-native';
 import { Search } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BaseText } from '@components/common/BaseText';
 import { COLOR } from '@constants/color';
 import { useExternalUrlStore } from '@store/external_url_store';
 import logger from '@utils/logger';
-import { fontPx, px } from '@utils/responsive';
+import { fontPx } from '@utils/responsive';
 import { styles } from '../../styles/atoms/FoodSafetyKoreaFloatingButton';
 
 const FoodSafetyKoreaFloatingButton = () => {
-  const insets = useSafeAreaInsets();
   const foodSafetyKoreaUrl = useExternalUrlStore(
     (state) => state.foodSafetyKoreaUrl,
   );
@@ -26,7 +24,7 @@ const FoodSafetyKoreaFloatingButton = () => {
 
   return (
     <TouchableOpacity
-      style={[styles.floatingButton, { bottom: px(30) + insets.bottom }]}
+      style={styles.floatingButton}
       onPress={handlePress}
       activeOpacity={0.8}
       accessibilityRole="button"

@@ -108,51 +108,41 @@ export interface IProhibitedList {
   contents: string; // 내용
 }
 
-// 건강기능식품 영양성분 테이블 스키마
-export interface IFunctionalFoodNutrients {
-  foodCode: string; // 식품코드
-  foodName: string; // 식품명
-  foodMajorCategoryName: string; // 식품대분류명
-  representativeFoodName: string; // 대표식품명
-  foodMediumCategoryName: string; // 식품중분류명
-  nutrientServingSize: string; // 영양성분제공단위량
-  energy: string; // 에너지(kcal)
-  moisture: string; // 수분(g)
-  protein: string; // 단백질(g)
-  fat: string; // 지방(g)
-  ash: string; // 회분(g)
-  carbohydrate: string; // 탄수화물(g)
-  sugars: string; // 당류(g)
-  dietaryFiber: string; // 식이섬유(g)
-  calcium: string; // 칼슘(mg)
-  iron: string; // 철(mg)
-  phosphorus: string; // 인(mg)
-  potassium: string; // 칼륨(mg)
-  sodium: string; // 나트륨(mg)
-  vitaminA: string; // 비타민 A(μg RAE)
-  retinol: string; // 레티놀(μg)
-  betaCarotene: string; // 베타카로틴(μg)
-  thiamine: string; // 티아민(mg)
-  riboflavin: string; // 리보플라빈(mg)
-  niacin: string; // 니아신(mg)
-  vitaminC: string; // 비타민 C(mg)
-  vitaminD: string; // 비타민 D(μg)
-  cholesterol: string; // 콜레스테롤(mg)
-  saturatedFattyAcids: string; // 포화지방산(g)
-  transFattyAcids: string; // 트랜스지방산(g)
-  sourceName: string; // 출처명
-  servingSize: string; // 1회분량
-  servingWeightVolume: string; // 1회분량중량/부피
-  dailyIntakeFrequency: string; // 1일섭취횟수
-  intakeTarget: string; // 섭취대상
-  foodWeightVolume: string; // 식품중량/부피
-  itemReportNumber: string; // 품목제조신고번호
-  manufacturerName: string; // 제조사명
-  importerName: string; // 수입업체명
-  distributorName: string; // 유통업체명
-  originCountryName: string; // 원산지국명
-  dataCreatedAt: string; // 데이터생성일자
-  dataReferenceDate: string; // 데이터기준일자
+// 건강기능식품 품목분류정보 (I2710)
+export interface IFunctionalFoodClassification {
+  id: string;
+  PRDCT_NM: string;
+  IFTKN_ATNT_MATR_CN: string;
+  PRIMARY_FNCLTY: string;
+  DAY_INTK_LOWLIMIT: string;
+  DAY_INTK_HIGHLIMIT: string;
+  INTK_UNIT: string;
+  INTK_MEMO: string;
+  SKLL_IX_IRDNT_RAWMTRL: string;
+  CRET_DTM: string;
+  LAST_UPDT_DTM: string;
+}
+
+// 건강기능식품 품목제조신고(원재료) (C003)
+export interface IHealthFunctionalFoodRawMaterial {
+  LCNS_NO: string;
+  BSSH_NM: string;
+  PRDLST_REPORT_NO: string;
+  PRDLST_NM: string;
+  PRMS_DT: string;
+  POG_DAYCNT: string;
+  DISPOS: string;
+  NTK_MTHD: string;
+  PRIMARY_FNCLTY: string;
+  IFTKN_ATNT_MATR_CN: string;
+  CSTDY_MTHD: string;
+  SHAP: string;
+  STDR_STND: string;
+  RAWMTRL_NM: string;
+  CRET_DTM: string;
+  LAST_UPDT_DTM: string;
+  PRDT_SHAP_CD_NM: string;
+  CLASSIFICATION_IDS: string; // 분류 id의 JSON 배열. json_each로 JOIN한다.
 }
 
 // API를 통해 받아오는 원본 데이터 스키마 유니온 타입
@@ -164,7 +154,8 @@ export type TResourceDataSchemas =
   | INarcotics
   | IPsychotropics
   | IProhibitedList
-  | IFunctionalFoodNutrients;
+  | IFunctionalFoodClassification
+  | IHealthFunctionalFoodRawMaterial;
 
 // 테이블 컬럼의 메타데이터 스키마 정의
 export interface ITableColumnSchema {

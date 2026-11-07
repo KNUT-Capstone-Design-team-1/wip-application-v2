@@ -1,9 +1,4 @@
-import {
-  IFunctionalFoodNutrients,
-  IMarkImages,
-  INearbyPharmacies,
-  IPillData,
-} from './schemas';
+import { IMarkImages, INearbyPharmacies, IPillData } from './schemas';
 
 // SQL WHERE 절 생성을 위한 조건절 스키마
 export interface IWhereQueryClause {
@@ -64,23 +59,10 @@ export interface INearbyPharmaciesQueryOption {
   maxRadiusKm?: number;
 }
 
-// 건강기능식품 영양성분 데이터 검색을 위한 파라미터 타입
-export type TFunctionalFoodNutrientsSearchParam = Partial<
-  Pick<
-    IFunctionalFoodNutrients,
-    | 'foodCode'
-    | 'foodName'
-    | 'foodMajorCategoryName'
-    | 'representativeFoodName'
-    | 'foodMediumCategoryName'
-    | 'itemReportNumber'
-    | 'manufacturerName'
-    | 'importerName'
-    | 'distributorName'
-  >
-> & {
-  nameKeyword?: string; // 약 이름 검색어 (제품명/대표식품명 통합)
-  // 카테고리 그룹 필터: 중분류(foodMediumCategoryName)에 대해 OR-LIKE로 결합되는 키워드 목록
-  // (한 그룹이 여러 중분류를 포괄하므로 단일 LIKE가 아닌 다중 키워드가 필요)
-  mediumCategoryKeywords?: string[];
-};
+// 건강기능식품 제품 검색 조건
+export interface TFunctionalFoodSearchParam {
+  keyword?: string;
+  manufacturer?: string;
+  classificationName?: string;
+  productForm?: string;
+}

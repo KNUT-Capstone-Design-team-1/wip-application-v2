@@ -5,29 +5,24 @@ import { BaseText } from '@components/common/BaseText';
 import SearchListRow from '@features/shared/components/SearchListRow';
 import { COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
 import { px } from '@utils/responsive';
-import { IFunctionalFoodNutrients } from '@services/database/types';
+import { IHealthFunctionalFoodRawMaterial } from '@services/database/types';
 
 interface IFunctionalFoodListItemProps {
-  item: IFunctionalFoodNutrients;
-  onPress: (foodCode: string) => void;
+  item: IHealthFunctionalFoodRawMaterial;
+  onPress: (PRDLST_REPORT_NO: string) => void;
 }
 
 const FunctionalFoodListItem = ({
   item,
   onPress,
 }: IFunctionalFoodListItemProps) => {
-  const manufacturer =
-    item.manufacturerName && item.manufacturerName !== '해당없음'
-      ? item.manufacturerName
-      : item.importerName && item.importerName !== '해당없음'
-        ? item.importerName
-        : '';
+  const manufacturer = item.BSSH_NM;
 
   return (
     <View style={styles.container}>
       <SearchListRow
         style={styles.itemWrapper}
-        onPress={() => onPress(item.foodCode)}
+        onPress={() => onPress(item.PRDLST_REPORT_NO)}
         activeOpacity={0.5}
         trailing={<ChevronRight size={px(20)} color={COLOR_TEXT.disabled} />}
       >
@@ -38,18 +33,18 @@ const FunctionalFoodListItem = ({
             numberOfLines={1}
             style={styles.name}
           >
-            {item.foodName}
+            {item.PRDLST_NM}
           </BaseText>
 
           <View style={styles.metaRow}>
-            {!!item.foodMediumCategoryName && (
+            {!!item.PRDT_SHAP_CD_NM && (
               <BaseText
                 weight="medium"
                 size={12}
                 numberOfLines={1}
                 style={styles.category}
               >
-                {item.foodMediumCategoryName}
+                {item.PRDT_SHAP_CD_NM}
               </BaseText>
             )}
             {!!manufacturer && (
@@ -94,7 +89,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px(8),
   },
-  // 품목(중분류): chip 대신 색/크기로 구분 — subTitle 색(teal)으로 제조사(회색)와 구분
+  // 제품형태와 제조사를 함께 표시한다.
   category: {
     color: COLOR_TEXT.subTitle,
   },

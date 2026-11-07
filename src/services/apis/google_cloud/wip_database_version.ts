@@ -14,7 +14,8 @@ export interface IDatabaseVersionResponse {
   narcotics: IDatabaseVersion;
   psychotropics: IDatabaseVersion;
   prohibited_list: IDatabaseVersion;
-  functional_food_nutrients: IDatabaseVersion;
+  functional_food_classification: IDatabaseVersion;
+  health_functional_food_raw_material: IDatabaseVersion;
 }
 
 /**

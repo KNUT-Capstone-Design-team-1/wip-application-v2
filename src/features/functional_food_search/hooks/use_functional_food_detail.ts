@@ -1,52 +1,45 @@
 import { useEffect, useState } from 'react';
-import { FunctionalFoodNutrientsQuery } from '@services/database/queries';
-import { IFunctionalFoodNutrients } from '@services/database/types';
+import { FunctionalFoodQuery } from '@services/database/queries';
+import type {
+  IFunctionalFoodClassification,
+  IHealthFunctionalFoodRawMaterial,
+} from '@services/database/types';
 import logger from '@utils/logger';
 
-/**
- * 식품코드(foodCode)로 단일 건강기능식품 상세 정보를 조회하는 훅
- */
-export const useFunctionalFoodDetail = (foodCode?: string) => {
-  const [data, setData] = useState<IFunctionalFoodNutrients | null>(null);
+export const useFunctionalFoodDetail = (reportNumber?: string) => {
+  const [data, setData] = useState<IHealthFunctionalFoodRawMaterial | null>(
+    null,
+  );
+  const [classifications, setClassifications] = useState<
+    IFunctionalFoodClassification[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchDetail = async () => {
-      if (!foodCode) {
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-
-      try {
-        const result =
-          await FunctionalFoodNutrientsQuery.getFunctionalFoodNutrientByFoodCode(
-            foodCode,
-          );
-
-        if (isMounted) {
-          setData(result);
-        }
-      } catch (error) {
-        logger.error(
-          `[FUNCTIONAL-FOOD-DETAIL] Failed to load detail. ${(error as Error).stack || error}`,
-        );
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchDetail();
-
+    let mounted = true;
+    setData(null);
+    setClassifications([]);
+    setIsLoading(Boolean(reportNumber));
+    if (reportNumber) {
+      Promise.all([
+        FunctionalFoodQuery.getFunctionalFoodByReportNumber(reportNumber),
+        FunctionalFoodQuery.getFunctionalFoodClassifications(reportNumber),
+      ])
+        .then(([product, standards]) => {
+          if (mounted) {
+            setData(product);
+            setClassifications(standards);
+          }
+        })
+        .catch((error) =>
+          logger.error('[FUNCTIONAL-FOOD-DETAIL] ' + String(error)),
+        )
+        .finally(() => {
+          if (mounted) setIsLoading(false);
+        });
+    }
     return () => {
-      isMounted = false;
+      mounted = false;
     };
-  }, [foodCode]);
-
-  return { data, isLoading };
+  }, [reportNumber]);
+  return { data, classifications, isLoading };
 };
