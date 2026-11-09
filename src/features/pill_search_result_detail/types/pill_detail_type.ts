@@ -43,6 +43,8 @@ export interface IPillDetail extends Partial<ISpecialClassificationResult> {
   EE_DOC_DATA?: string;
   UD_DOC_DATA?: string;
   NB_DOC_DATA?: string;
+  isSteroid?: boolean;
+  steroidIngredients?: string[];
   isDrivingWarning?: boolean;
   drivingWarningKeywords?: string[];
 }

@@ -41,9 +41,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  fallbackImageText: {
-    color: COLOR_TEXT['disabled'],
-  },
   infoTitleWrapper: {},
   infoPrintWrapper: {
     flexDirection: 'row',

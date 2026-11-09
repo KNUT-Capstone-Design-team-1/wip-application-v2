@@ -16,12 +16,12 @@ export const pillSearchResultListSqliteDataSource = {
     params: Partial<TPillDataSearchParam>,
     options: { page: number; limit: number },
   ): Promise<IPillData[]> {
-    return queryPillDatas(params, options);
+    return queryPillDatas(params, { ...options, identificationOnly: true });
   },
 
   // 검색 결과 전체 개수를 조회한다.
   countPills(params: Partial<TPillDataSearchParam>): Promise<number> {
-    return queryPillDataCount(params);
+    return queryPillDataCount(params, { identificationOnly: true });
   },
 
   // 검색 조건에 포함된 마크 이미지를 조회한다.

@@ -38,11 +38,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLOR_BG['base'],
   },
-  pillDetailNoImageText: {
-    color: COLOR_TEXT['disabled'],
-    paddingHorizontal: px(16),
-    paddingVertical: px(16),
-  },
   pillResultDetailRoot: {
     flex: 1,
     backgroundColor: COLOR_BG['surface'],

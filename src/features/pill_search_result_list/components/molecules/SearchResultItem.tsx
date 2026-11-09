@@ -1,4 +1,4 @@
-import { memo, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
 import { Image } from '@components/common/CustomImage';
 import { View } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
@@ -11,6 +11,7 @@ import {
   DEFAULT_PILL_BLURHASH,
 } from '@features/pill_search_result_list/utils/pill_image_util';
 import SearchResultAdItem from './SearchResultAdItem';
+import PillImageFallback from '@components/common/PillImageFallback';
 
 interface IPillThumbnail {
   imageUri?: string | null;
@@ -28,6 +29,8 @@ const PillThumbnail = ({
 }: IPillThumbnail) => {
   const normalizedUri = useMemo(() => normalizeImageUri(imageUri), [imageUri]);
 
+  const [failedUri, setFailedUri] = useState<string | null>(null);
+
   // FlashList 재활용 및 스크롤 중 깜빡임 방지를 위한 동기적 래치 (useEffect/useState 제거로 2차 렌더링 방지)
   const loadedSeqRef = useRef<string | null>(shouldLoadImage ? itemSeq : null);
   if (shouldLoadImage) {
@@ -37,7 +40,7 @@ const PillThumbnail = ({
 
   return (
     <View style={styles.searchItemImage}>
-      {normalizedUri ? (
+      {normalizedUri && failedUri !== normalizedUri ? (
         isImageActive ? (
           <Image
             source={{ uri: normalizedUri }}
@@ -50,17 +53,12 @@ const PillThumbnail = ({
             cachePolicy={'memory-disk'}
             priority={'low'}
             onLoad={() => onImageLoad?.(itemSeq)}
+            onError={() => setFailedUri(normalizedUri)}
           />
         ) : null
       ) : (
         <View style={styles.fallbackImageContainer}>
-          <BaseText
-            style={styles.fallbackImageText}
-            weight="semiBold"
-            size={14}
-          >
-            이미지 없음
-          </BaseText>
+          <PillImageFallback />
         </View>
       )}
     </View>

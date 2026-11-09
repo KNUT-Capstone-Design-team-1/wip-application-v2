@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { View } from 'react-native';
+import InfoRow from '@features/shared/components/InfoRow';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '../../styles/molecules/PillSafetySection';
 import type { PillDetailDataProps } from '../../types/pill_detail_component_type';
@@ -64,6 +65,17 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         title="도핑 금지 약물 확인 (KADA)"
         urlKey="kadaUrl"
         materialEngName={data.MATERIAL_ENG_NAME}
+      />
+
+      <InfoRow
+        label="스테로이드 (부신피질호르몬)"
+        value={
+          data.isSteroid === undefined
+            ? '성분 정보 부족으로 확인할 수 없음'
+            : data.isSteroid
+              ? '포함: ' + data.steroidIngredients?.join(', ')
+              : '등록된 스테로이드 성분과 일치하지 않음'
+        }
       />
 
       <PillSafetyDisclaimer data={data} />

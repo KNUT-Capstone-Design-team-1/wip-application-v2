@@ -1,6 +1,7 @@
 import { pillDetailRepository } from '../data/repositories/pill_detail_repository';
 import type { IPillDetail } from '../types/pill_detail_type';
 import { getDrivingWarningKeywords } from './driving_warning_service';
+import { checkSteroidIngredients } from './steroid_ingredient_service';
 import { checkSpecialClassifications } from './special_classification_service';
 
 export const pillDetailService = {
@@ -20,7 +21,11 @@ export const pillDetailService = {
       pillDetailRepository,
     );
 
-    return { ...basicData, ...classifications };
+    return {
+      ...basicData,
+      ...classifications,
+      ...checkSteroidIngredients(basicData),
+    };
   },
 
   // 서버 상세 문서와 운전 주의 정보를 조합한다.

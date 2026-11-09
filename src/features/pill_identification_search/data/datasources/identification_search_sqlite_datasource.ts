@@ -27,7 +27,10 @@ export const identificationSearchSqliteDataSource = {
     options: IPillSearchQueryOption,
   ): Promise<IPillData[]> {
     try {
-      return await queryPillDatas(params, options);
+      return await queryPillDatas(params, {
+        ...options,
+        identificationOnly: true,
+      });
     } catch (e) {
       logDataSourceError('getPillDatas', e);
       return [];
@@ -39,7 +42,7 @@ export const identificationSearchSqliteDataSource = {
     params: Partial<TPillDataSearchParam>,
   ): Promise<number> {
     try {
-      return await queryPillDataCount(params);
+      return await queryPillDataCount(params, { identificationOnly: true });
     } catch (e) {
       logDataSourceError('getPillDataCount', e);
       return 0;

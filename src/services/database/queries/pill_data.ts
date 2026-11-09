@@ -325,6 +325,13 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
   return queryMap;
 };
 
+// 낱알 식별정보의 제형이 등록된 품목만 식별 검색 대상으로 삼는다.
+// 인쇄 문자가 없는 알약도 있으므로 PRINT_FRONT/BACK은 필수 조건이 아니다.
+const withIdentification = (whereClause: string, identificationOnly = false) =>
+  identificationOnly
+    ? `${whereClause ? whereClause + ' AND' : 'WHERE'} TRIM(COALESCE(DRUG_SHAPE, '')) <> ''`
+    : whereClause;
+
 /**
  * 알약 데이터 목록 조회
  * @param params 검색 조건
@@ -333,7 +340,7 @@ const getPillDataWhereQuery: TWhereQueryClauseFunc = (
  */
 export const getPillDatas = async (
   params: Partial<TPillDataSearchParam>,
-  queryOption: { page: number; limit: number },
+  queryOption: { page: number; limit: number; identificationOnly?: boolean },
 ) => {
   const db = await getDatabase();
 
@@ -342,7 +349,7 @@ export const getPillDatas = async (
 
   const sql = `
     SELECT * FROM pill_data 
-    ${whereClause}
+    ${withIdentification(whereClause, queryOption.identificationOnly)}
     ${orderByClause ? `${orderByClause},` : 'ORDER BY'} ITEM_NAME ASC, ITEM_SEQ ASC
     LIMIT ?, ?
   `;
@@ -367,6 +374,7 @@ export const getPillDatas = async (
  */
 export const getPillDataCount = async (
   params: Partial<TPillDataSearchParam>,
+  queryOption: { identificationOnly?: boolean } = {},
 ) => {
   const db = await getDatabase();
 
@@ -376,7 +384,7 @@ export const getPillDataCount = async (
     'AND',
   );
 
-  const sql = `SELECT COUNT(*) as COUNT FROM pill_data ${whereClause}`;
+  const sql = `SELECT COUNT(*) as COUNT FROM pill_data ${withIdentification(whereClause, queryOption.identificationOnly)}`;
 
   const result = await db.getFirstAsync<{ COUNT: number }>(sql, whereValues);
 
