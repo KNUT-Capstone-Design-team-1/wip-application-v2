@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     lineHeight: fontPx(20),
   },
   content: {
-    backgroundColor: COLOR_BG.surface,
+    backgroundColor: COLOR_BG.base,
     paddingBottom: px(40),
   },
   loadingBox: {
@@ -210,13 +210,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR_BG.surface,
   },
   section: {
-    marginTop: 0,
+    marginTop: px(8),
     backgroundColor: COLOR_BG.surface,
     paddingHorizontal: screenPadding.horizontal,
     paddingVertical: px(16),
   },
   productSection: {
-    marginTop: 2,
+    marginTop: 0,
     paddingTop: 0,
   },
   sectionTitle: {
