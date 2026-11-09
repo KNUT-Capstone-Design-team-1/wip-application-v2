@@ -51,6 +51,7 @@ export const buildWhereClause = (
   whereQueryClauseFunc: TWhereQueryClauseFunc,
   param: Record<string, any>,
   operator: 'AND' | 'OR' = 'AND',
+  { includeOrder = true }: { includeOrder?: boolean } = {},
 ) => {
   const queryClauseMap = whereQueryClauseFunc(param);
 
@@ -70,10 +71,11 @@ export const buildWhereClause = (
       whereParts.push(queryClause.query);
       whereValues.push(...queryClause.values(value));
 
-      if (queryClause.weight) {
+      if (includeOrder && queryClause.weight) {
         orderParts.push(queryClause.weight.query);
         orderValues.push(...queryClause.weight.values(value));
-      } else {
+      } else if (includeOrder && operator === 'OR') {
+        // AND 검색은 모든 결과가 조건을 만족하므로 일반 조건 점수는 상수다.
         orderParts.push(`CASE WHEN ${queryClause.query} THEN 1 ELSE 0 END`);
         orderValues.push(...queryClause.values(value));
       }
@@ -84,11 +86,18 @@ export const buildWhereClause = (
     ? `WHERE ${whereParts.join(` ${operator} `)}`
     : '';
 
+  const orderExpression = orderParts.join(' + ');
   const orderByClause = orderParts.length
-    ? `ORDER BY (${orderParts.join(' + ')}) DESC`
+    ? `ORDER BY (${orderExpression}) DESC`
     : '';
 
-  return { whereClause, whereValues, orderByClause, orderValues };
+  return {
+    whereClause,
+    whereValues,
+    orderByClause,
+    orderValues,
+    orderExpression,
+  };
 };
 
 /**

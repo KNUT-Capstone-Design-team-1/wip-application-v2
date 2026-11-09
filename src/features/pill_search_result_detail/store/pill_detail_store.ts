@@ -11,12 +11,15 @@ export const createPillDetailStore = (route: PillDetailRoute) =>
     pillData: null,
     loading: true,
     detailLoading: true,
+    classificationLoading: true,
     savedFolderIds: [],
     isFolderModalVisible: false,
     hasSaved: false,
     setPillData: (pillData) => set({ pillData }),
     setLoading: (loading) => set({ loading }),
     setDetailLoading: (detailLoading) => set({ detailLoading }),
+    setClassificationLoading: (classificationLoading) =>
+      set({ classificationLoading }),
     setSavedFolderIds: (savedFolderIds) => set({ savedFolderIds }),
     setFolderModalVisible: (isFolderModalVisible) =>
       set({ isFolderModalVisible }),

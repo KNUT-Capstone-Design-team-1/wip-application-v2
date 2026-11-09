@@ -1,8 +1,8 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { View } from 'react-native';
 import { useStore } from 'zustand';
 import PillImageFallback from '@components/common/PillImageFallback';
-import { normalizeImageUri } from '@features/pill_search_result_list/utils/pill_image_util';
+import { usePillImageSource } from '@features/shared/hooks/use_pill_image_source';
 import { Image } from '@components/common/CustomImage';
 import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
 import { styles } from '../../styles/PillSearchResultDetailScreen';
@@ -15,18 +15,17 @@ const PillDetailImage = () => {
     (state) => state.image || state.pillData?.ITEM_IMAGE,
   );
 
-  const uri = normalizeImageUri(imageUri);
-  const [failedUri, setFailedUri] = useState<string | null>(null);
+  const { source, hasImage, onError } = usePillImageSource(imageUri);
 
   return (
     <View style={styles.pillImgContainer}>
       <View style={styles.pillImgWrapper}>
-        {uri && failedUri !== uri ? (
+        {hasImage ? (
           <Image
             style={styles.pillImg}
-            source={{ uri }}
+            source={source}
             contentFit="contain"
-            onError={() => setFailedUri(uri)}
+            onError={onError}
           />
         ) : (
           <View style={styles.pillDetailNoImageWrapper}>

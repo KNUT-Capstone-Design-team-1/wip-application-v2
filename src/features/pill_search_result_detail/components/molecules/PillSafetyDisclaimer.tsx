@@ -24,7 +24,8 @@ const PillSafetyDisclaimer = ({ data }: PillDetailDataProps) => {
       </View>
 
       <BaseText weight="semiBold" size={12} style={styles.sourceText}>
-        * 출처: 식약처 마약정보DB, 한국도핑방지위원회(KADA)
+        * 출처: 식약처 마약정보DB, 한국도핑방지위원회(KADA), WHO ATC·WADA
+        (스테로이드 성분 분류)
       </BaseText>
     </>
   );

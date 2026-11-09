@@ -31,8 +31,8 @@ export const styles = StyleSheet.create({
     color: COLOR_TEXT['white'],
   },
   sourceText: {
+    marginTop: px(8),
     color: COLOR_TEXT['sub'],
-    marginTop: px(12),
     textAlign: 'left',
   },
   disclaimerText: {
@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     lineHeight: px(16),
   },
   disclaimerContainer: {
-    marginBottom: px(10),
+    marginTop: px(16),
     gap: px(4),
   },
   reportButton: {

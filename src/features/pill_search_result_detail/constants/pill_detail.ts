@@ -6,5 +6,7 @@ export const SKELETON_MIN_OPACITY = 0.3;
 export const PILL_DETAIL_ACTION_COLOR = '#32D2FF';
 
 export const CLASSIFICATION_CACHE_LIMIT = 200;
+export const REMOTE_DETAIL_CACHE_TTL_MS = 5 * 60 * 1000;
+export const REMOTE_DETAIL_CACHE_LIMIT = 20;
 
 export const KEYWORD_SCROLL_TOP_INSET = 24;

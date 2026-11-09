@@ -1,3 +1,4 @@
+import { initPillSearchIndexes } from './pill_search_indexes';
 import { invalidateClassificationCatalog } from './classification_catalog';
 import { getDatabase } from '../sqlite';
 import { ITableColumnSchema, TDataTable, TResourceDataSchemas } from '../types';
@@ -45,6 +46,9 @@ export const createTable = async (
   const sql = `CREATE TABLE IF NOT EXISTS ${table} (${columnDefs.join(',\n')})`;
 
   await db.execAsync(sql);
+  if (table === 'pill_data') {
+    await initPillSearchIndexes(db);
+  }
 };
 
 // batch 데이터에서 INSERT 대상 column 목록을 추출한다.

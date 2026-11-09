@@ -1,81 +1,70 @@
 import type {
+  IPillDetail,
   PillDetailLoadService,
   PillDetailStore,
 } from '../types/pill_detail_type';
 
-// 기본·원격 정보 순차 갱신과 오래된 응답 차단.
+// 기본 정보, 서버 문서, 성분 분류를 독립적으로 갱신하고 오래된 응답은 버린다.
 export const createPillDetailLoader = (
   store: PillDetailStore,
   service: PillDetailLoadService,
 ) => {
   let sequence = 0;
-
-  // 화면 이탈·재조회 시 진행 중 응답 무효화.
   const cancel = () => {
     sequence++;
   };
 
   const load = async () => {
     const request = ++sequence;
-
-    const { itemSeq, pillData, setPillData, setLoading, setDetailLoading } =
-      store.getState();
-
+    const { itemSeq, pillData } = store.getState();
+    const isCurrent = () =>
+      request === sequence && store.getState().itemSeq === itemSeq;
+    const merge = (patch: Partial<IPillDetail> | null) => {
+      if (!patch || !isCurrent()) return;
+      const current = store.getState().pillData;
+      if (current) store.getState().setPillData({ ...current, ...patch });
+    };
     const hasExistingData = !!pillData && pillData.ITEM_SEQ === itemSeq;
-    const isInitialLoad = !hasExistingData;
-
-    // 재진입 시 기존 화면을 유지해 스크롤·펼침·검색 상태를 보존한다.
-    if (isInitialLoad) {
-      setPillData(null);
-      setLoading(true);
-      setDetailLoading(true);
+    if (!hasExistingData) {
+      store.setState({
+        pillData: null,
+        loading: true,
+        detailLoading: true,
+        classificationLoading: true,
+      });
     }
 
     try {
-      const hasItemSeq = !!itemSeq;
-
-      if (!hasItemSeq) {
-        return;
-      }
-
+      if (!itemSeq) return;
+      // 로컬 분류의 최초 준비와 네트워크 요청을 동시에 진행한다.
+      const remoteRequest = service.getRemoteDetail(itemSeq).catch(() => null);
       const basic = await service.getBasicDetail(itemSeq);
+      if (!isCurrent() || !basic) return;
+      store.setState({
+        pillData: hasExistingData ? { ...pillData, ...basic } : basic,
+        loading: false,
+      });
 
-      const isStaleBasic =
-        request !== sequence || store.getState().itemSeq !== itemSeq;
-      const hasBasic = !!basic;
-
-      const shouldSkipBasic = isStaleBasic || !hasBasic;
-
-      if (shouldSkipBasic) {
-        return;
-      }
-
-      // 로컬 DB 정보는 갱신하고 기존 원격 문서는 응답이 올 때까지 유지한다.
-      const updated = hasExistingData ? { ...pillData, ...basic } : basic;
-
-      setPillData(updated);
-      setLoading(false);
-
-      const remote = await service.getRemoteDetail(itemSeq);
-
-      const isStaleRemote =
-        request !== sequence || store.getState().itemSeq !== itemSeq;
-      const hasRemote = !!remote;
-
-      const shouldSkipRemote = isStaleRemote || !hasRemote;
-
-      if (shouldSkipRemote) {
-        return;
-      }
-
-      setPillData({ ...updated, ...remote });
+      const results = await Promise.allSettled([
+        remoteRequest.then(merge).finally(() => {
+          if (isCurrent()) store.getState().setDetailLoading(false);
+        }),
+        service
+          .getClassificationDetail(basic)
+          .then(merge)
+          .finally(() => {
+            if (isCurrent()) store.getState().setClassificationLoading(false);
+          }),
+      ]);
+      const failure = results.find((result) => result.status === 'rejected');
+      if (failure?.status === 'rejected') throw failure.reason;
     } finally {
-      const isCurrentRequest =
-        request === sequence && store.getState().itemSeq === itemSeq;
-
-      if (isCurrentRequest) {
-        setLoading(false);
-        setDetailLoading(false);
+      if (isCurrent()) {
+        store.setState({
+          loading: false,
+          detailLoading: false,
+          classificationLoading: false,
+        });
       }
     }
   };

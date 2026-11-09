@@ -1,5 +1,6 @@
 import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from './sqlite';
+import { initPillSearchIndexes } from './queries/pill_search_indexes';
 import { IConfig } from './types';
 import logger from '@utils/logger';
 
@@ -177,6 +178,7 @@ export const initDatabase = async () => {
     });
     await initSavedPillTables(db);
     await initPillReminderTables(db);
+    await initPillSearchIndexes(db);
 
     console.log('Database initialized successfully');
   } catch (error) {

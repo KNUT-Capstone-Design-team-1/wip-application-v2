@@ -12,7 +12,7 @@ import { AlertTriangle, Info } from 'lucide-react-native';
 // 분류 여부와 해당 문구 표시.
 const WarningRow = ({
   label,
-  isWarning = false,
+  isWarning,
   variant = 'warning',
   prefixLabel = '해당 성분: ',
   items,
@@ -21,6 +21,10 @@ const WarningRow = ({
   const isReference = variant === 'reference';
   const statusStyle = isReference ? styles.referenceText : styles.warningText;
   const Icon = isReference ? Info : AlertTriangle;
+
+  if (isWarning === undefined) {
+    return <InfoRow label={label} value="확인할 수 없음" />;
+  }
 
   if (!isWarning) {
     return (

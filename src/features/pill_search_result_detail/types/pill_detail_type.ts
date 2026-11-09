@@ -58,12 +58,14 @@ export interface PillDetailState extends PillDetailRoute {
   pillData: IPillDetail | null;
   loading: boolean;
   detailLoading: boolean;
+  classificationLoading: boolean;
   savedFolderIds: number[];
   isFolderModalVisible: boolean;
   hasSaved: boolean;
   setPillData: (pillData: IPillDetail | null) => void;
   setLoading: (loading: boolean) => void;
   setDetailLoading: (detailLoading: boolean) => void;
+  setClassificationLoading: (loading: boolean) => void;
   setSavedFolderIds: (savedFolderIds: number[]) => void;
   setFolderModalVisible: (isFolderModalVisible: boolean) => void;
   setHasSaved: (hasSaved: boolean) => void;
@@ -74,6 +76,9 @@ export type PillDetailStore = ReturnType<typeof createPillDetailStore>;
 export interface PillDetailLoadService {
   getBasicDetail: (itemSeq: string) => Promise<IPillDetail | null>;
   getRemoteDetail: (itemSeq: string) => Promise<Partial<IPillDetail> | null>;
+  getClassificationDetail: (
+    basic: IPillDetail,
+  ) => Promise<Partial<IPillDetail>>;
 }
 
 export interface PillSpecField {

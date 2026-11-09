@@ -1,6 +1,7 @@
 import { requestGetPillDetail } from '@services/apis/google_cloud/wip_pill_detail';
+import { pillDetailCache } from '../cache/pill_detail_cache';
 
-// 원격 상세 문서 API 연결.
 export const pillDetailRemoteDataSource = {
-  getPillDetail: requestGetPillDetail,
+  getPillDetail: (itemSeq: string) =>
+    pillDetailCache.get(itemSeq, requestGetPillDetail),
 };

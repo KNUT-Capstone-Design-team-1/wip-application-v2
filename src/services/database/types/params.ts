@@ -41,6 +41,12 @@ export type TPillDataSearchParam = Omit<
   KEYWORD?: string; // 통합 검색어
 };
 
+export interface PillDataQueryOptions {
+  page: number;
+  limit: number;
+  identificationOnly?: boolean;
+}
+
 // 마크 이미지 검색을 위한 파라미터 타입
 export type TMarkImagesSearchParam = Omit<IMarkImages, 'base64'>;
 

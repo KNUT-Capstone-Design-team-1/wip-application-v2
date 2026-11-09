@@ -5,7 +5,7 @@ import { checkSteroidIngredients } from './steroid_ingredient_service';
 import { checkSpecialClassifications } from './special_classification_service';
 
 export const pillDetailService = {
-  // 로컬 기본 정보와 특수 분류 정보를 조합한다.
+  // 기본 정보는 성분 분류 준비를 기다리지 않고 먼저 반환한다.
   async getBasicDetail(itemSeq: string): Promise<IPillDetail | null> {
     const basicData = await pillDetailRepository.getPillData(itemSeq);
 
@@ -15,17 +15,18 @@ export const pillDetailService = {
       return null;
     }
 
-    const classifications = await checkSpecialClassifications(
-      basicData.MAIN_ITEM_INGR || '',
-      basicData.MATERIAL_ENG_NAME || '',
-      pillDetailRepository,
-    );
-
     return {
       ...basicData,
-      ...classifications,
       ...checkSteroidIngredients(basicData),
     };
+  },
+
+  getClassificationDetail(basic: IPillDetail) {
+    return checkSpecialClassifications(
+      basic.MAIN_ITEM_INGR || '',
+      basic.MATERIAL_ENG_NAME || '',
+      pillDetailRepository,
+    );
   },
 
   // 서버 상세 문서와 운전 주의 정보를 조합한다.
