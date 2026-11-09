@@ -45,12 +45,6 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         items={data.psychotropicIngredients}
       />
 
-      <ExternalLinkButton
-        title="마약 정보 데이터베이스"
-        urlKey="nifdsUrl"
-        materialEngName={data.MATERIAL_ENG_NAME}
-      />
-
       <WarningRow
         label="도핑 관련 문서"
         variant="reference"
@@ -60,16 +54,22 @@ const PillSafetySection = ({ data }: PillDetailDataProps) => {
         footerNote="※ 문서 언급 여부이며 금지 판정이 아닙니다. 적용 조건은 KADA에서 확인해 주세요."
       />
 
-      <ExternalLinkButton
-        title="도핑 금지 약물 확인 (KADA)"
-        urlKey="kadaUrl"
-        materialEngName={data.MATERIAL_ENG_NAME}
-      />
-
       <WarningRow
         label="스테로이드 여부"
         isWarning={data.isSteroid}
         items={data.steroidIngredients}
+      />
+
+      <ExternalLinkButton
+        title="마약 정보 데이터베이스"
+        urlKey="nifdsUrl"
+        materialEngName={data.MATERIAL_ENG_NAME}
+      />
+
+      <ExternalLinkButton
+        title="도핑 금지 약물 확인 (KADA)"
+        urlKey="kadaUrl"
+        materialEngName={data.MATERIAL_ENG_NAME}
       />
 
       <PillSafetyDisclaimer data={data} />
