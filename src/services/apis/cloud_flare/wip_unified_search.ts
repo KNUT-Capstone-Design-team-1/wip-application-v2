@@ -1,10 +1,30 @@
-import axios, { AxiosError, isAxiosError } from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { getToken } from './token';
 
 export interface UnifiedSearchResponse {
   results: string[];
   nextCursor: string | null;
   hasMore: boolean;
+}
+
+const DEFAULT_SEARCH_ERROR_MESSAGE =
+  '통합 검색에 실패했습니다.\n나중에 다시 시도해 주세요.';
+
+// 오류 응답 객체를 Toast의 텍스트로 넘기면 렌더링 오류가 발생한다.
+function getSearchErrorMessage(data: unknown): string {
+  if (typeof data === 'string' && data.trim()) {
+    return data;
+  }
+  if (data && typeof data === 'object') {
+    for (const key of ['message', 'error'] as const) {
+      const message =
+        key in data ? (data as Record<string, unknown>)[key] : undefined;
+      if (typeof message === 'string' && message.trim()) {
+        return message;
+      }
+    }
+  }
+  return DEFAULT_SEARCH_ERROR_MESSAGE;
 }
 
 /**
@@ -19,9 +39,8 @@ export async function requestUnifiedSearch(
   limit: number = 100,
   cursor?: string | null,
 ) {
-  const token = await getToken();
-
   try {
+    const token = await getToken();
     const queryParams = [
       ...keywords.map((k) => `keyword=${encodeURIComponent(k)}`),
       `limit=${limit}`,
@@ -44,10 +63,10 @@ export async function requestUnifiedSearch(
     if (isAxiosError(e)) {
       return {
         success: false,
-        message: (e as AxiosError<string>).response?.data,
+        message: getSearchErrorMessage(e.response?.data),
       };
     }
 
-    return { success: false, message: `${(e as Error).stack}` };
+    return { success: false, message: DEFAULT_SEARCH_ERROR_MESSAGE };
   }
 }
