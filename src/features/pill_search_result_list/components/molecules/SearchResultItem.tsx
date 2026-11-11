@@ -69,6 +69,14 @@ const PillThumbnail = ({
 const PillInfo = ({ pill }: { pill: IPillData }) => {
   const itemNames = pill.ITEM_NAME.split(/(?=\()/, 2);
 
+  // word-break keep-all
+  const formattedKeyword = useMemo(() => {
+    if (!pill.EFFECT_KEYWORD) return '';
+    return pill.EFFECT_KEYWORD.split(',')
+      .map((word) => word.trim().split('').join('\u2060'))
+      .join(' · ');
+  }, [pill.EFFECT_KEYWORD]);
+
   return (
     <View style={styles.searchItemContents}>
       <View style={styles.infoTitleWrapper}>
@@ -87,8 +95,10 @@ const PillInfo = ({ pill }: { pill: IPillData }) => {
         size={12}
         numberOfLines={2}
         ellipsizeMode="tail"
+        lineBreakStrategyIOS="hangul-word"
+        textBreakStrategy="highQuality"
       >
-        {pill.EFFECT_KEYWORD?.replace(/,/g, ' · ')}
+        {formattedKeyword}
       </BaseText>
       <View style={styles.infoBottomWrapper}>
         <View style={styles.infoPrintWrapper}>
