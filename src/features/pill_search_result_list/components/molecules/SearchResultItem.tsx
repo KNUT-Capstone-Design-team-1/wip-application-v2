@@ -69,53 +69,62 @@ const PillThumbnail = ({
 const PillInfo = ({ pill }: { pill: IPillData }) => {
   const itemNames = pill.ITEM_NAME.split(/(?=\()/, 2);
 
+  // word-break keep-all
+  const formattedKeyword = useMemo(() => {
+    if (!pill.EFFECT_KEYWORD) return '';
+    return pill.EFFECT_KEYWORD.split(',')
+      .map((word) => word.trim().split('').join('\u2060'))
+      .join(' · ');
+  }, [pill.EFFECT_KEYWORD]);
+
   return (
     <View style={styles.searchItemContents}>
       <View style={styles.infoTitleWrapper}>
         <BaseText
           style={styles.searchItemTitle}
-          weight="bold"
+          weight="semiBold"
           size={14}
           numberOfLines={1}
         >
           {itemNames[0]}
         </BaseText>
-        {itemNames[1] && (
-          <BaseText
-            style={styles.searchItemTitle}
-            weight="bold"
-            size={12}
-            numberOfLines={1}
-          >
-            {itemNames[1]}
-          </BaseText>
-        )}
       </View>
       <BaseText
-        style={styles.searchItemClassName}
-        weight="medium"
+        style={styles.searchItemEffectKeyword}
+        weight="regular"
         size={12}
-        numberOfLines={1}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+        lineBreakStrategyIOS="hangul-word"
+        textBreakStrategy="highQuality"
       >
-        {pill.CLASS_NAME}
+        {formattedKeyword}
       </BaseText>
-      <View style={styles.infoPrintWrapper}>
-        <BaseText style={styles.searchItemPrintText} weight="medium" size={11}>
-          {pill.PRINT_FRONT || '없음'}
-        </BaseText>
-        <View style={styles.infoSeparator} />
-        <BaseText style={styles.searchItemPrintText} weight="medium" size={11}>
-          {pill.PRINT_BACK || '없음'}
-        </BaseText>
-      </View>
-      <View style={styles.infoEntpWrapper}>
+      <View style={styles.infoBottomWrapper}>
+        <View style={styles.infoPrintWrapper}>
+          <BaseText
+            style={styles.searchItemPrintText}
+            weight="medium"
+            size={11}
+          >
+            {pill.PRINT_FRONT || '없음'}
+          </BaseText>
+          <View style={styles.infoSeparator} />
+          <BaseText
+            style={styles.searchItemPrintText}
+            weight="medium"
+            size={11}
+          >
+            {pill.PRINT_BACK || '없음'}
+          </BaseText>
+        </View>
         <BaseText
-          style={styles.searchItemEntpName}
-          weight="medium"
+          style={styles.searchItemEtcOtcCode}
+          weight="bold"
           size={11}
           numberOfLines={1}
         >
-          {pill.ENTP_NAME}
+          {pill.ETC_OTC_CODE}
         </BaseText>
       </View>
     </View>

@@ -1,10 +1,5 @@
 import { memo, ReactNode } from 'react';
-import {
-  StyleProp,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-} from 'react-native';
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 
 interface ISearchListRowProps {
   onPress: () => void;
@@ -33,15 +28,18 @@ const SearchListRow = ({
   activeOpacity = 0.7,
 }: ISearchListRowProps) => {
   return (
-    <TouchableOpacity
-      style={[styles.row, style]}
+    <Pressable
+      style={({ pressed }) => [
+        styles.row,
+        style,
+        pressed && { opacity: activeOpacity },
+      ]}
       onPress={onPress}
-      activeOpacity={activeOpacity}
     >
       {leading}
       {children}
       {trailing}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
