@@ -48,6 +48,10 @@ export interface IPillData {
   INGR_NAME: string; // 첨가제명
   RARE_DRUG_YN: string; // 희귀의약품여부
   OEM_ENTP_NAME: string; // 위탁제조업체
+  /** 명사형 효능 키워드를 공백 없는 쉼표로 연결한 문자열 */
+  EFFECT_KEYWORD?: string | null;
+  /** 키워드 추출 전 수식어와 적응 조건을 보존한 줄글 */
+  EFFECT_SUMMARY?: string | null;
 }
 
 // 마크 이미지 테이블 스키마

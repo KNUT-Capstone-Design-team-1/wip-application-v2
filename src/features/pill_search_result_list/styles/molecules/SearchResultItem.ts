@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLOR, COLOR_BG, COLOR_LINE, COLOR_TEXT } from '@constants/color';
-import { px } from '@utils/responsive';
+import { fontPx, px } from '@utils/responsive';
 
 export const styles = StyleSheet.create({
   searchItemWrapper: {
@@ -24,11 +24,11 @@ export const styles = StyleSheet.create({
     gap: px(4),
   },
   searchItemTitle: {},
-  searchItemClassName: {
+  searchItemEtcOtcCode: {
     color: COLOR['item'],
   },
-  searchItemEntpName: {
-    color: COLOR_TEXT['label'],
+  searchItemEffectKeyword: {
+    color: COLOR_TEXT['body'],
   },
   searchItemPrintText: {
     color: COLOR_TEXT['body'],
@@ -47,15 +47,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   infoSeparator: {
-    width: px(2),
-    height: '60%',
+    width: px(1),
+    height: px(10),
     backgroundColor: COLOR_LINE['separator'],
     marginHorizontal: px(8),
   },
-  infoEntpWrapper: {
+  infoBottomWrapper: {
+    flexDirection: 'row',
     flexGrow: 1,
     alignItems: 'flex-end',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
   image: { width: '100%', height: '100%' },
 });
