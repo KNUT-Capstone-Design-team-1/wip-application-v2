@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { COLOR } from '@constants/color';
 import { Folder } from 'lucide-react-native';
 import { fontPx } from '@utils/responsive';
-import { Image } from '@components/common/CustomImage';
+import { PillImage } from './PillImage';
 import { BaseText } from '@components/common/BaseText';
 import { styles } from '@features/pill_save/styles/atoms/FolderIconPreview';
 
@@ -16,6 +16,9 @@ export const FolderIconPreview = ({
   totalCount?: number;
 }) => {
   if (!images || images.length === 0) {
+    if (totalCount > 0) {
+      return <PillImage style={styles.imageFolderWrapper} />;
+    }
     return (
       <View style={styles.emptyFolderWrapper}>
         <Folder
@@ -33,52 +36,23 @@ export const FolderIconPreview = ({
   return (
     <View style={styles.imageFolderWrapper}>
       {displayImages.length === 1 ? (
-        <Image
-          source={{ uri: displayImages[0] }}
-          style={styles.fullImage}
-          contentFit="cover"
-        />
+        <PillImage uri={displayImages[0]} style={styles.fullImage} />
       ) : displayImages.length === 2 ? (
         <>
-          <Image
-            source={{ uri: displayImages[0] }}
-            style={styles.halfWidthImage}
-            contentFit="cover"
-          />
-          <Image
-            source={{ uri: displayImages[1] }}
-            style={styles.halfWidthImage}
-            contentFit="cover"
-          />
+          <PillImage uri={displayImages[0]} style={styles.halfWidthImage} />
+          <PillImage uri={displayImages[1]} style={styles.halfWidthImage} />
         </>
       ) : displayImages.length === 3 ? (
         <>
-          <Image
-            source={{ uri: displayImages[0] }}
-            style={styles.halfHeightImage}
-            contentFit="cover"
-          />
+          <PillImage uri={displayImages[0]} style={styles.halfHeightImage} />
           <View style={styles.rowContainer}>
-            <Image
-              source={{ uri: displayImages[1] }}
-              style={styles.halfWidthImage}
-              contentFit="cover"
-            />
-            <Image
-              source={{ uri: displayImages[2] }}
-              style={styles.halfWidthImage}
-              contentFit="cover"
-            />
+            <PillImage uri={displayImages[1]} style={styles.halfWidthImage} />
+            <PillImage uri={displayImages[2]} style={styles.halfWidthImage} />
           </View>
         </>
       ) : (
         displayImages.map((uri, index) => (
-          <Image
-            key={index}
-            source={{ uri }}
-            style={styles.quarterImage}
-            contentFit="cover"
-          />
+          <PillImage key={index} uri={uri} style={styles.quarterImage} />
         ))
       )}
       {totalCount >= 5 && (
