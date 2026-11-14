@@ -5,6 +5,7 @@ import { usePathname } from 'expo-router';
 import { AppState } from 'react-native';
 import { useNotices } from '../hooks/use_notice';
 import { useAppStateStore } from '@store/app_state_store';
+import { useNoticeStore } from '../store/notice_store';
 
 /**
  * 홈 화면 전용 공지사항 바텀시트 컨트롤러 컴포넌트
@@ -23,19 +24,21 @@ const MainNoticeBottomSheet = () => {
 
   useEffect(() => {
     getNoticeBottomSheet();
-  }, []);
+  }, [getNoticeBottomSheet]);
 
   useEffect(() => {
     checkShouldShow();
-  }, [mainBottomSheetData]);
+  }, [mainBottomSheetData, checkShouldShow]);
 
   // 뒤로가기 종료 후 재실행 시 공지사항 데이터 갱신
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
         const { isExited, setIsExited } = useAppStateStore.getState();
+        const { isNeverShowAgain } = useNoticeStore.getState();
 
-        if (isExited) {
+        if (isExited || isNeverShowAgain) {
+          useNoticeStore.setState({ hasDismissedBottomSheet: false });
           getNoticeBottomSheet();
 
           setIsExited(false);

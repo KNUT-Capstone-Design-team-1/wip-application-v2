@@ -1,5 +1,6 @@
 import { deviceRepository } from '@features/nearby_pharmacy/data/repositories/device_repository';
 import logger from '@utils/logger';
+import type { IStockInquiryPillContext } from '../types/pharmacy_domain_type';
 
 // 약국 관련 기기 액션(전화 걸기, 복사 등) 비즈니스 로직 서비스
 export const pharmacyActionService = {
@@ -49,7 +50,15 @@ export const pharmacyActionService = {
   },
 
   // 약국 재고 문의용 추천 멘트 생성
-  generateInquiryScript(pillName: string, className?: string): string {
+  generateInquiryScript(
+    pillName: string,
+    className?: string,
+    productType: IStockInquiryPillContext['productType'] = 'pill',
+  ): string {
+    if (productType === 'functional_food') {
+      const cleanName = pillName?.trim() || '이 영양제';
+      return `안녕하세요, 약사님! 혹시 '${cleanName}' 제품 재고가 있을까요?`;
+    }
     const cleanName = pillName ? pillName.trim() : '알약';
     if (className && className.trim()) {
       return `안녕하세요, 약사님! 혹시 '${cleanName}'(${className.trim()}) 재고가 있을까요? 혹시 없다면 동일 성분/효능으로 대체조제 가능한 약이 있을까요?`;

@@ -33,11 +33,6 @@ export const useNotices = () => {
 
   // 홈 화면 바텀시트용 공지사항 로드 (캐시 우선 전략)
   const getNoticeBottomSheet = useCallback(async () => {
-    const isNeverShowAgain = useNoticeStore.getState().isNeverShowAgain;
-
-    // 하루 동안 보지 않기 상태 시 공지사항 갱신 안함
-    if (isNeverShowAgain) return;
-
     try {
       // 캐시된 데이터 먼저 확인하여 즉시 UI 반영
       const cachedNotices = await noticeService.getCachedNotices();
@@ -47,28 +42,19 @@ export const useNotices = () => {
 
         setNoticeData(cachedNotices);
         setMainBottomSheetData(mustReadNotices);
-
-        // 백그라운드에서 조용히 최신 데이터 갱신
-        getNoticeList()
-          .then((newNotices) => noticeService.cacheNotices(newNotices))
-          .catch((e) =>
-            logger.error(`[USE-NOTICES] Background cache update failed: ${e}`),
-          );
-
-        return;
       }
 
-      // 캐시가 없는 경우 API 호출
-      const allNotices = await getNoticeList();
+      // 캐시 유무와 관계없이 최신 필독 공지를 현재 화면에도 반영한다.
+      const allNotices = await noticeService.getNoticeList();
       const mustReadNotices = noticeService.filterMustReadNotices(allNotices);
 
+      setNoticeData(allNotices);
       setMainBottomSheetData(mustReadNotices);
       await noticeService.cacheNotices(allNotices);
     } catch (e) {
       logger.error(`[USE-NOTICES] Failed to get notice bottom sheet: ${e}`);
-      setMainBottomSheetData([]);
     }
-  }, [setNoticeData, setMainBottomSheetData, getNoticeList]);
+  }, [setNoticeData, setMainBottomSheetData]);
 
   // 반환 객체를 메모이제이션하여 훅을 사용하는 컴포넌트의 불필요한 리렌더링 방지
   return useMemo(

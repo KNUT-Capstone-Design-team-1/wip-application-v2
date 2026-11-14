@@ -12,7 +12,7 @@ import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock
 import { usePillReminderStore } from '@features/pill_reminder/store/pill_reminder_store';
 import { PillSpecificReminderBottomSheet } from '@features/pill_reminder/components/organisms/PillSpecificReminderBottomSheet';
 
-// 특정 알약 보관함(폴더) 내부의 알약 목록을 보여주는 상세 화면 컴포넌트
+// 특정 보관함(폴더) 내부의 알약 목록을 보여주는 상세 화면 컴포넌트
 const PillSaveFolderDetail = () => {
   const { id } = useLocalSearchParams();
   const folderId = parseInt(Array.isArray(id) ? id[0] : id, 10);

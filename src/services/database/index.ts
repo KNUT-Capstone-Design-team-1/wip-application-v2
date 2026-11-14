@@ -1,6 +1,8 @@
+import { runDatabaseTransaction } from '@services/database/transaction';
 import { SQLiteDatabase } from 'expo-sqlite';
 import { getDatabase } from './sqlite';
 import { initPillSearchIndexes } from './queries/pill_search_indexes';
+import { initResourceQueryIndexes } from './queries/resource_query_indexes';
 import { IConfig } from './types';
 import logger from '@utils/logger';
 
@@ -50,7 +52,7 @@ export const initConfigTable = async (db: SQLiteDatabase) => {
   );
 };
 
-//  알약 보관함 테이블 초기화
+// 보관함 테이블 초기화
 export const initSavedPillTables = async (db: SQLiteDatabase) => {
   // 폴더 테이블 생성
   await db.execAsync(`
@@ -78,7 +80,9 @@ export const initSavedPillTables = async (db: SQLiteDatabase) => {
 
   // item_seq로 조회 및 삭제 시 성능 향상을 위한 인덱스 추가
   await db.execAsync(`
-    CREATE INDEX IF NOT EXISTS idx_saved_pills_item_seq ON saved_pills(item_seq);
+    CREATE INDEX IF NOT EXISTS idx_saved_pills_item_folder ON saved_pills(item_seq, folder_id);
+    DROP INDEX IF EXISTS idx_saved_pills_item_seq;
+    CREATE INDEX IF NOT EXISTS idx_saved_pills_folder_recent ON saved_pills(folder_id, idx DESC);
   `);
 
   // 외래키 제약조건 활성화
@@ -137,7 +141,8 @@ export const initPillReminderTables = async (db: SQLiteDatabase) => {
     CREATE INDEX IF NOT EXISTS idx_pill_reminders_folder_id ON pill_reminders(folder_id);
   `);
   await db.execAsync(`
-    CREATE INDEX IF NOT EXISTS idx_pill_reminder_items_item_seq ON pill_reminder_items(item_seq);
+    CREATE INDEX IF NOT EXISTS idx_reminder_item_lookup ON pill_reminder_items(item_seq, reminder_id);
+    DROP INDEX IF EXISTS idx_pill_reminder_items_item_seq;
   `);
   await db.execAsync(`
     CREATE INDEX IF NOT EXISTS idx_pill_reminder_items_reminder_id ON pill_reminder_items(reminder_id);
@@ -169,7 +174,7 @@ export const initDatabase = async () => {
 
     await initConfigTable(db);
     // 교체되는 영양제 캐시만 제거한다. 사용자 보관함·복용 알림은 보존한다.
-    await db.withTransactionAsync(async () => {
+    await runDatabaseTransaction(db, async () => {
       await db.execAsync('DROP TABLE IF EXISTS functional_food_nutrients');
       await db.runAsync('DELETE FROM config WHERE key IN (?, ?)', [
         'functionalFoodNutrientsSchemaVersion',
@@ -179,6 +184,7 @@ export const initDatabase = async () => {
     await initSavedPillTables(db);
     await initPillReminderTables(db);
     await initPillSearchIndexes(db);
+    await initResourceQueryIndexes(db);
 
     console.log('Database initialized successfully');
   } catch (error) {

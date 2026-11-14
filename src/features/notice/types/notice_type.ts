@@ -23,6 +23,7 @@ export interface INoticeStore {
   isNoticeLoading: boolean;
   isVisibleBottomSheet: boolean; // 바텀시트 표시 여부
   isNeverShowAgain: boolean;
+  hasDismissedBottomSheet: boolean;
 
   // Actions
   setNoticeData: (notices: INoticeData[]) => void;

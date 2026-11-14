@@ -11,6 +11,7 @@ import logger from '@utils/logger';
 
 let responseSubscription: { remove: () => void } | null = null;
 let reschedulePromise: Promise<NotificationRescheduleSummary> | null = null;
+let rescheduleRequested = false;
 
 // 복용 알림 로컬 푸시 및 인앱 알림 통합 비즈니스 서비스
 export const pillReminderNotificationService = {
@@ -70,20 +71,26 @@ export const pillReminderNotificationService = {
 
   // 저장된 복용 알림을 OS의 반복 알림으로 다시 등록한다.
   async rescheduleAllNotifications(): Promise<NotificationRescheduleSummary> {
+    rescheduleRequested = true;
     if (reschedulePromise) {
       return await reschedulePromise;
     }
 
-    const currentReschedule = this.rescheduleAllNotificationsInternal();
-    reschedulePromise = currentReschedule;
-
-    try {
-      return await currentReschedule;
-    } finally {
-      if (reschedulePromise === currentReschedule) {
+    const currentReschedule = (async () => {
+      try {
+        let summary: NotificationRescheduleSummary;
+        do {
+          rescheduleRequested = false;
+          summary = await this.rescheduleAllNotificationsInternal();
+        } while (rescheduleRequested);
+        return summary;
+      } finally {
+        // 작업 완료와 포인터 해제 사이에 들어온 변경도 다음 실행을 시작할 수 있다.
         reschedulePromise = null;
       }
-    }
+    })();
+    reschedulePromise = currentReschedule;
+    return await currentReschedule;
   },
 
   // 내부 재등록 유스케이스

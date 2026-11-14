@@ -7,8 +7,25 @@ import {
 } from '@features/pill_save/types/pill_save_folder_type';
 import { useAppTrackStore } from '@store/app_track_store';
 import { FolderSortOption } from '@features/pill_save/constants/pill_save_constant';
+import { pillReminderNotificationService } from '@features/pill_reminder/services/pill_reminder_notification_service';
+import logger from '@utils/logger';
 
-// 알약 보관함 비즈니스 로직 서비스
+// 보관함 편집은 권한 요청을 띄우지 않는다. 예약 갱신 실패로 완료된 저장을 실패 처리하지 않는다.
+const refreshReminderNotifications = async () => {
+  try {
+    const { notificationGranted } =
+      await pillReminderNotificationService.getNotificationPermissionState();
+    if (notificationGranted) {
+      await pillReminderNotificationService.rescheduleAllNotifications();
+    }
+  } catch (error) {
+    logger.error(
+      `[PILL-SAVE] Failed to refresh reminder notifications: ${String(error)}`,
+    );
+  }
+};
+
+// 보관함 비즈니스 로직 서비스
 export const pillSaveService = {
   // 정렬 옵션에 따라 정렬된 폴더 목록 및 각 폴더별 프리뷰 이미지 목록 조회
   async getFolders(
@@ -16,24 +33,13 @@ export const pillSaveService = {
   ): Promise<ISavedFolderWithMeta[]> {
     const rows = await pillSaveRepository.getFolders(sortBy);
 
-    const result = await Promise.all(
-      rows.map(async (row) => {
-        if (row.pill_count === 0) {
-          return { ...row, preview_images: [] };
-        }
-
-        const previewImages = await pillSaveRepository.getFolderPreviewImages(
-          row.id,
-        );
-
-        return {
-          ...row,
-          preview_images: previewImages,
-        };
-      }),
+    const previews = await pillSaveRepository.getFolderPreviewImagesByIds(
+      rows.filter((row) => row.pill_count > 0).map((row) => row.id),
     );
-
-    return result;
+    return rows.map((row) => ({
+      ...row,
+      preview_images: previews[row.id] ?? [],
+    }));
   },
 
   // 새 보관함 폴더 생성 유스케이스
@@ -56,7 +62,9 @@ export const pillSaveService = {
 
   // 특정 폴더 삭제 유스케이스 (기본 폴더 제외)
   async deleteFolder(folderId: number): Promise<boolean> {
-    return await pillSaveRepository.deleteFolder(folderId);
+    const deleted = await pillSaveRepository.deleteFolder(folderId);
+    if (deleted) await refreshReminderNotifications();
+    return deleted;
   },
 
   // 특정 폴더에서 여러 알약 다중 삭제 유스케이스
@@ -68,7 +76,12 @@ export const pillSaveService = {
       return true;
     }
 
-    return await pillSaveRepository.deleteMultiplePills(itemSeqs, folderId);
+    const deleted = await pillSaveRepository.deleteMultiplePills(
+      itemSeqs,
+      folderId,
+    );
+    if (deleted) await refreshReminderNotifications();
+    return deleted;
   },
 
   // 특정 알약이 저장된 폴더 ID 목록 조회 유스케이스
@@ -90,7 +103,12 @@ export const pillSaveService = {
       return;
     }
 
-    await pillSaveRepository.savePillToFolders(itemSeq, itemName, folderIds);
+    const removedFolders = await pillSaveRepository.savePillToFolders(
+      itemSeq,
+      itemName,
+      folderIds,
+    );
+    if (removedFolders) await refreshReminderNotifications();
 
     if (folderIds.length > 0) {
       useAppTrackStore.getState().increaseReviewActionCount('bookmarked');
@@ -107,11 +125,13 @@ export const pillSaveService = {
       return { alreadyExistsItems: [] };
     }
 
-    return await pillSaveRepository.movePillsToFolders(
+    const result = await pillSaveRepository.movePillsToFolders(
       items,
       sourceFolderId,
       targetFolderIds,
     );
+    await refreshReminderNotifications();
+    return result;
   },
 
   // 알약 다중 복사 유스케이스
@@ -135,7 +155,12 @@ export const pillSaveService = {
       return false;
     }
 
-    return await pillSaveRepository.deletePillFromFolder(itemSeq, folderId);
+    const deleted = await pillSaveRepository.deletePillFromFolder(
+      itemSeq,
+      folderId,
+    );
+    if (deleted) await refreshReminderNotifications();
+    return deleted;
   },
 
   // 특정 폴더의 알약 목록 조회 유스케이스

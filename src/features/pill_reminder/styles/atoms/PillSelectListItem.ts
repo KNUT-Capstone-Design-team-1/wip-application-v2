@@ -24,18 +24,11 @@ export const styles = StyleSheet.create({
     marginRight: px(12),
   },
   pillThumb: {
-    borderRadius: px(8),
-    marginRight: px(12),
-    backgroundColor: COLOR_BG.base,
-  },
-  pillThumbPlaceholder: {
     width: px(44),
     height: px(44),
     borderRadius: px(8),
-    backgroundColor: COLOR_BG.base,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginRight: px(12),
+    backgroundColor: COLOR_BG.base,
   },
   pillInfo: {
     flex: 1,

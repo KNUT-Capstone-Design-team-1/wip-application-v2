@@ -10,6 +10,7 @@ import {
 import { styles } from '@features/pill_save/styles/organisms/PillSaveList';
 import NotItem from '@components/common/NotItem';
 import { useAppTrackStore } from '@store/app_track_store';
+import { getFunctionalFoodReportNumber } from '../../utils/saved_item_identity';
 
 // 저장된 데이터가 없을 때 표시할 화면
 const EmptyBox = memo(() => (
@@ -36,6 +37,15 @@ const PillSaveList = ({
   const handlePressDetail = useCallback(
     (itemSeq: string, itemImage: string) => {
       useAppTrackStore.getState().increaseSubActionCount('save_pill');
+
+      const reportNumber = getFunctionalFoodReportNumber(itemSeq);
+      if (reportNumber !== null) {
+        router.push({
+          pathname: '/functional-food-detail',
+          params: { reportNumber },
+        });
+        return;
+      }
 
       router.push({
         pathname: '/pill-search-result-detail',

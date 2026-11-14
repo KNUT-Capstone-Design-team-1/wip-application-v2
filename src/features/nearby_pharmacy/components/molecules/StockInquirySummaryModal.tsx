@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { Image } from '@components/common/CustomImage';
+import PillThumbnail from '@components/common/PillThumbnail';
 import { Phone, Copy, X } from 'lucide-react-native';
 import { COLOR, COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
@@ -27,6 +27,7 @@ const StockInquirySummaryModal = ({
   const script = pharmacyActionService.generateInquiryScript(
     pillContext.name || '',
     pillContext.className,
+    pillContext.productType,
   );
 
   const handleCopyScript = async () => {
@@ -84,13 +85,11 @@ const StockInquirySummaryModal = ({
             {/* 2. 약 정보 요약 카드 */}
             {pillContext.name ? (
               <View style={styles.pillCard}>
-                {pillContext.image ? (
-                  <Image
-                    source={{ uri: pillContext.image }}
-                    style={styles.pillImage}
-                    contentFit="contain"
-                  />
-                ) : null}
+                <PillThumbnail
+                  uri={pillContext.image}
+                  style={styles.pillImage}
+                  contentFit="contain"
+                />
                 <View style={styles.pillInfo}>
                   <BaseText weight="bold" size={15} style={styles.pillName}>
                     {pillContext.name}

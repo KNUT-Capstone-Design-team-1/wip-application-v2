@@ -1,4 +1,6 @@
+import { runDatabaseTransaction } from '@services/database/transaction';
 import { initPillSearchIndexes } from './pill_search_indexes';
+import { initResourceQueryIndexes } from './resource_query_indexes';
 import { invalidateClassificationCatalog } from './classification_catalog';
 import { getDatabase } from '../sqlite';
 import { ITableColumnSchema, TDataTable, TResourceDataSchemas } from '../types';
@@ -46,6 +48,7 @@ export const createTable = async (
   const sql = `CREATE TABLE IF NOT EXISTS ${table} (${columnDefs.join(',\n')})`;
 
   await db.execAsync(sql);
+  await initResourceQueryIndexes(db, table);
   if (table === 'pill_data') {
     await initPillSearchIndexes(db);
   }
@@ -127,7 +130,7 @@ export const insertData = async (
   const db = await getDatabase();
 
   try {
-    await db.withTransactionAsync(async () => {
+    await runDatabaseTransaction(db, async () => {
       for (let i = 0; i < data.length; i += maxRowsPerChunk) {
         const chunk = data.slice(i, i + maxRowsPerChunk);
         const sql = createMultiRowInsertSql(table, columns, chunk.length);

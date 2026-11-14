@@ -5,12 +5,17 @@ import logger from '@utils/logger';
 export const noticeService = {
   // 공지사항 데이터 정렬 (필독 우선 -> 최신순)
   sortNotices(notices: INoticeData[]): INoticeData[] {
-    return [...notices].sort((a, b) => {
-      if (a.mustRead !== b.mustRead) {
-        return b.mustRead - a.mustRead;
-      }
-      return b.idx - a.idx;
-    });
+    return notices
+      .map((notice) => ({
+        ...notice,
+        mustRead: Number(notice.mustRead) === 1 ? 1 : 0,
+      }))
+      .sort((a, b) => {
+        if (a.mustRead !== b.mustRead) {
+          return b.mustRead - a.mustRead;
+        }
+        return b.idx - a.idx;
+      });
   },
 
   // 전체 공지사항 목록을 API로부터 가져와 정렬
@@ -20,13 +25,14 @@ export const noticeService = {
       return this.sortNotices(notices);
     } catch (e) {
       logger.error(`[NOTICE-SERVICE] Failed to get notice list: ${e}`);
-      return [];
+      throw e;
     }
   },
 
   // 캐시된 공지사항 로드
   async getCachedNotices(): Promise<INoticeData[] | null> {
-    return await noticeRepository.getCachedNotices();
+    const notices = await noticeRepository.getCachedNotices();
+    return notices ? this.sortNotices(notices) : null;
   },
 
   // 공지사항 캐싱
@@ -36,6 +42,6 @@ export const noticeService = {
 
   // 필독 공지사항 필터링
   filterMustReadNotices(notices: INoticeData[]): INoticeData[] {
-    return notices.filter((n) => n.mustRead === 1);
+    return notices.filter((n) => Number(n.mustRead) === 1);
   },
 };

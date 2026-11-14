@@ -10,6 +10,10 @@ import { fontPx, px } from '@utils/responsive';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 import type { IHealthFunctionalFoodRawMaterial } from '@services/database/types';
 import { useFunctionalFoodDetail } from '../hooks/use_functional_food_detail';
+import FunctionalFoodSaveButton from '../components/atoms/FunctionalFoodSaveButton';
+import StockInquiryIconButton from '@features/nearby_pharmacy/components/atoms/StockInquiryIconButton';
+import { openStockInquiryModal } from '@features/nearby_pharmacy/hooks/use_stock_inquiry';
+import { PILL_DETAIL_ACTION_COLOR } from '@features/pill_search_result_detail/constants/pill_detail';
 
 const isMeaningless = (value: unknown) =>
   value == null || !String(value).trim() || value === '해당없음';
@@ -39,10 +43,22 @@ const DETAIL_FIELDS: {
 ];
 
 const FunctionalFoodDetailScreen = () => {
-  const { reportNumber } = useLocalSearchParams<{ reportNumber: string }>();
+  const params = useLocalSearchParams<{ reportNumber: string | string[] }>();
+  const reportNumber = Array.isArray(params.reportNumber)
+    ? params.reportNumber[0]
+    : params.reportNumber;
   const { data, classifications, isLoading } =
     useFunctionalFoodDetail(reportNumber);
   const { setTitle, resetTitle } = useHeaderTitleStore();
+  const handleStockInquiry = useCallback(() => {
+    if (!data) return;
+    openStockInquiryModal({
+      productType: 'functional_food',
+      seq: data.PRDLST_REPORT_NO,
+      name: data.PRDLST_NM,
+      entpName: data.BSSH_NM,
+    });
+  }, [data]);
   useFocusEffect(
     useCallback(() => {
       if (data?.PRDLST_NM) setTitle(data.PRDLST_NM);
@@ -71,9 +87,23 @@ const FunctionalFoodDetailScreen = () => {
       showsVerticalScrollIndicator={false}
     >
       <View style={[styles.section, styles.productSection]}>
-        <BaseText weight="bold" size={20} style={styles.sectionTitle}>
-          제품 정보
-        </BaseText>
+        <View style={styles.productHeader}>
+          <BaseText weight="bold" size={20} style={styles.sectionTitle}>
+            제품 정보
+          </BaseText>
+          <View style={styles.productActions}>
+            <StockInquiryIconButton
+              onPress={handleStockInquiry}
+              size={20}
+              color={PILL_DETAIL_ACTION_COLOR}
+            />
+            <FunctionalFoodSaveButton
+              key={data.PRDLST_REPORT_NO}
+              reportNumber={data.PRDLST_REPORT_NO}
+              itemName={data.PRDLST_NM}
+            />
+          </View>
+        </View>
         <View style={styles.rows}>
           {PRODUCT_FIELDS.filter(({ key }) => !isMeaningless(data[key])).map(
             ({ key, label }) => (
@@ -215,9 +245,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: screenPadding.horizontal,
     paddingVertical: px(16),
   },
+  productHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   productSection: {
     marginTop: 0,
     paddingTop: 0,
+  },
+  productActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px(16),
   },
   sectionTitle: {
     color: COLOR_TEXT.subTitle,

@@ -7,7 +7,7 @@ import {
 } from '@features/pill_save/types/pill_save_folder_type';
 import { FolderSortOption } from '@features/pill_save/constants/pill_save_constant';
 
-// 알약 보관함 리포지토리
+// 보관함 리포지토리
 export const pillSaveRepository = {
   // 폴더 목록 조회
   async getFolders(
@@ -19,6 +19,10 @@ export const pillSaveRepository = {
   // 폴더 프리뷰 이미지 목록 조회
   async getFolderPreviewImages(folderId: number): Promise<string[]> {
     return await pillSaveSqliteDataSource.getFolderPreviewImages(folderId);
+  },
+
+  getFolderPreviewImagesByIds(folderIds: number[]) {
+    return pillSaveSqliteDataSource.getFolderPreviewImagesByIds(folderIds);
   },
 
   // 폴더 생성
@@ -57,7 +61,7 @@ export const pillSaveRepository = {
     itemSeq: string,
     itemName: string,
     folderIds: number[],
-  ): Promise<void> {
+  ): Promise<boolean> {
     return await pillSaveSqliteDataSource.savePillToFolders(
       itemSeq,
       itemName,
