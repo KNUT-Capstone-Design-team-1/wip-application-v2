@@ -41,12 +41,12 @@ export const useBottomSheet = () => {
 
     // 상태 초기화하여 즉시 숨김 처리
     setMainBottomSheetData([]);
-  }, [setMainBottomSheetData]);
+  }, [setMainBottomSheetData, setIsVisibleBottomSheet, setIsNeverShowAgain]);
 
   // 닫기 처리
   const handleClose = useCallback(() => {
     setIsVisibleBottomSheet(false);
-  }, []);
+  }, [setIsVisibleBottomSheet]);
 
   // 공지사항 표시 가능 여부 확인
   const checkShouldShow = useCallback(async () => {
@@ -60,7 +60,9 @@ export const useBottomSheet = () => {
     // 저장된 시간 확인
     const hideUntil = await AsyncStorage.getItem(BOTTOM_SHEET_HIDDEN_KEY);
     const now = new Date().getTime();
-    const shouldShowBottomSheet = !hideUntil || now > parseInt(hideUntil, 10);
+    const hiddenUntil = Number(hideUntil);
+    const shouldShowBottomSheet =
+      !Number.isFinite(hiddenUntil) || now >= hiddenUntil;
 
     setIsNeverShowAgain(!shouldShowBottomSheet);
     setIsVisibleBottomSheet(shouldShowBottomSheet);
@@ -68,7 +70,7 @@ export const useBottomSheet = () => {
     if (hideUntil && shouldShowBottomSheet) {
       await AsyncStorage.removeItem(BOTTOM_SHEET_HIDDEN_KEY);
     }
-  }, []);
+  }, [setIsNeverShowAgain, setIsVisibleBottomSheet]);
 
   const moveToDetailContent = useCallback(
     (noticeData: INoticeData) => {

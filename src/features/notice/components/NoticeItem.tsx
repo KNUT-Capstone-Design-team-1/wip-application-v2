@@ -33,7 +33,7 @@ const NoticeInfo = ({ notice }: { notice: INoticeData }) => {
 
 // 필독 공지 뱃지 컴포넌트
 const MustReadBadge = ({ mustRead }: { mustRead: number }) => {
-  if (mustRead !== 1) return null;
+  if (Number(mustRead) !== 1) return null;
 
   return (
     <View style={styles.badge}>
