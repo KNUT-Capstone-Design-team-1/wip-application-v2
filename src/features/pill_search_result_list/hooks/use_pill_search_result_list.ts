@@ -12,11 +12,11 @@ import { useFlashListAdManager } from './useFlashListAdManager';
 
 // 상위 100개 이내에 배치할 광고 위치 (안정적인 고정 오프셋)
 // - 100개 이내에 최대 5개 배치
-// - 1페이지(30개): 8번째, 25번째
-// - 2페이지(30~60개): 45번째
-// - 3페이지(60~90개): 65번째, 85번째
+// - 1페이지(30개): 5번째, 22번째
+// - 2페이지(30~60개): 42번째
+// - 3페이지(60~90개): 62번째, 82번째
 // - 100개 초과(무한 스크롤 추가 데이터): 광고 배치 중단
-const AD_PLACEMENTS = [8, 25, 45, 65, 85];
+const AD_PLACEMENTS = [5, 22, 42, 62, 82];
 
 const insertAdsIntoList = (
   items: IPillData[],

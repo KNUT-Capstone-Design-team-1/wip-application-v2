@@ -4,6 +4,7 @@ import { useSearchResultListStore } from '@features/pill_search_result_list/stor
 import { useRouter, usePathname } from 'expo-router';
 import { useToast } from '@hooks/use_toast';
 import { useAppTrackStore } from '@store/app_track_store';
+import { useReviewStore } from '@store/app_review_store';
 import { useFullLoadingStore } from '@store/full_loading_store';
 import { useRecentKeywordStore } from '@store/recent_keyword_store';
 import { searchResultAdManager } from '@features/ads/services/searchResultAdManager';
@@ -94,6 +95,9 @@ export const useUnifiedSearch = () => {
 
         // 작업 완료 검색 결과 페이지로 이동
         handleNavigation();
+        requestIdleCallback(() => {
+          void useReviewStore.getState().requestReviewIfEligible();
+        });
       } finally {
         setIsLoading(false);
         setHide();

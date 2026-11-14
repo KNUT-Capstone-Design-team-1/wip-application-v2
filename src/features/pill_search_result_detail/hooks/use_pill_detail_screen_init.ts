@@ -1,11 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
-import { useReviewStore } from '@store/app_review_store';
 import { useAppTrackStore } from '@store/app_track_store';
 import { useRecentViewedPillStore } from '@store/recent_viewed_pill_store';
 import { DETAIL_REVIEW_STAY_MS } from '../constants/pill_detail';
-import { usePillDetailContext } from './use_pill_detail_context';
 
 // 조회 기록·헤더 제목 생명주기 관리.
 export const usePillDetailMetadataInit = (itemSeq?: string, name?: string) => {
@@ -34,9 +32,8 @@ export const usePillDetailMetadataInit = (itemSeq?: string, name?: string) => {
   );
 };
 
-// 체류·저장 후 리뷰 요청 생명주기 관리.
+// 상세 화면 체류 기록 관리.
 export const usePillDetailReviewInit = (itemSeq?: string) => {
-  const store = usePillDetailContext();
   useFocusEffect(
     useCallback(() => {
       const hasNoItemSeq = !itemSeq;
@@ -58,17 +55,7 @@ export const usePillDetailReviewInit = (itemSeq?: string) => {
             .getState()
             .increaseReviewActionCount('detail_viewed');
         }
-
-        const shouldSkipReview = !stayed && !store.getState().hasSaved;
-
-        if (shouldSkipReview) {
-          return;
-        }
-
-        requestIdleCallback(() => {
-          useReviewStore.getState().requestReviewIfEligible();
-        });
       };
-    }, [store, itemSeq]),
+    }, [itemSeq]),
   );
 };
