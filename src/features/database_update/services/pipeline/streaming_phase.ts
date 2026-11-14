@@ -107,7 +107,7 @@ export const executeStreamingPhase = async (
         callbacks.setUpdateCurrentPage(page);
         callbacks.setOverallProgress(progress);
         callbacks.setUpdateProgress({
-          status: `데이터를 받아 기기에 적용하는 중... (${page}/${totalPages})`,
+          status: '데이터를 받아 기기에 적용하는 중...',
           progress,
           isUpdating: true,
         });
