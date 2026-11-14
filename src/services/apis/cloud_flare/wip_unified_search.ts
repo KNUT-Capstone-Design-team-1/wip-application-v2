@@ -44,6 +44,8 @@ export async function requestUnifiedSearch(
     const queryParams = [
       ...keywords.map((k) => `keyword=${encodeURIComponent(k)}`),
       `limit=${limit}`,
+      // Bypass legacy 30-day cache entries; v2 responses use the 1-day cache.
+      'v=2',
     ];
 
     if (cursor) {

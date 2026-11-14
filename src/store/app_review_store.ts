@@ -1,4 +1,3 @@
-// store/useReviewStore.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,13 +5,14 @@ import * as StoreReview from 'expo-store-review';
 import { useAppTrackStore } from './app_track_store';
 
 const REVIEW_CONFIG = {
-  MIN_TOTAL_ACTIONS: 5,
-  COOLDOWN_MS: 30 * 24 * 60 * 60 * 1000,
+  MIN_UNIFIED_SEARCHES: 5,
 };
+
+let reviewRequestInFlight = false;
 
 interface ReviewState {
   lastPromptDate: number;
-  // 팝업을 띄웠을 당시의 누적 액션 수를 기억하는 상태 추가
+  // 기존 버전의 요청 이력도 유지하여 업데이트 후 재요청을 방지한다.
   lastPromptedActionCount: number;
   hasAgreedToReview: boolean;
   hasDeclinedReview: boolean;
@@ -26,52 +26,58 @@ export const useReviewStore = create<ReviewState>()(
   persist(
     (set, get) => ({
       lastPromptDate: 0,
-      lastPromptedActionCount: 0, // 초기값 0
+      lastPromptedActionCount: 0,
       hasAgreedToReview: false,
       hasDeclinedReview: false,
 
       requestReviewIfEligible: async () => {
-        const {
-          lastPromptDate,
-          lastPromptedActionCount,
-          hasAgreedToReview,
-          hasDeclinedReview,
-        } = get();
+        if (reviewRequestInFlight) return;
+        reviewRequestInFlight = true;
 
-        if (hasAgreedToReview || hasDeclinedReview) return;
+        try {
+          // 저장된 요청 이력을 읽기 전에 판단하면 앱 재시작 시 중복 요청할 수 있다.
+          if (!useReviewStore.persist.hasHydrated()) {
+            await useReviewStore.persist.rehydrate();
+          }
+          if (!useAppTrackStore.persist.hasHydrated()) {
+            await useAppTrackStore.persist.rehydrate();
+          }
 
-        const now = Date.now();
-        const isCooldownPassed =
-          now - lastPromptDate > REVIEW_CONFIG.COOLDOWN_MS;
+          const {
+            lastPromptDate,
+            lastPromptedActionCount,
+            hasAgreedToReview,
+            hasDeclinedReview,
+          } = get();
 
-        if (!isCooldownPassed && lastPromptDate !== 0) return;
+          if (
+            lastPromptDate > 0 ||
+            lastPromptedActionCount > 0 ||
+            hasAgreedToReview ||
+            hasDeclinedReview
+          )
+            return;
 
-        // 트래킹 스토어에서 영구 누적된 데이터를 그대로 가져옴
-        const trackingState = useAppTrackStore.getState().reviewActionCounts;
-        const currentTotalActions = Object.values(trackingState).reduce(
-          (total, count) => total + count,
-          0,
-        );
+          const searchCount =
+            useAppTrackStore.getState().coreActionCounts.unified_search;
+          if (searchCount < REVIEW_CONFIG.MIN_UNIFIED_SEARCHES) return;
+          if (!(await StoreReview.hasAction())) return;
 
-        // [핵심 변경점] 현재 누적값에서 마지막 팝업 당시의 누적값을 뺌 (Delta 계산)
-        const actionsSinceLastPrompt =
-          currentTotalActions - lastPromptedActionCount;
-
-        // 뺀 값이 기준치(5회)를 넘겼는지 확인
-        if (actionsSinceLastPrompt < REVIEW_CONFIG.MIN_TOTAL_ACTIONS) return;
-
-        if (await StoreReview.hasAction()) {
+          // OS는 별점 제출 여부를 반환하지 않으므로 요청 자체를 1회로 제한한다.
+          set({
+            lastPromptDate: Date.now(),
+            lastPromptedActionCount: searchCount,
+          });
           try {
             await StoreReview.requestReview();
-
-            // 트래킹 리셋 없이, 리뷰 스토어에 "현재 누적값"을 새롭게 기록
-            set({
-              lastPromptDate: now,
-              lastPromptedActionCount: currentTotalActions, // 5 -> 10 -> 15로 갱신됨
-            });
           } catch (error) {
-            console.error('[StoreReview] Failed to show OS prompt:', error);
+            set({ lastPromptDate: 0, lastPromptedActionCount: 0 });
+            throw error;
           }
+        } catch (error) {
+          console.error('[StoreReview] Failed to show OS prompt:', error);
+        } finally {
+          reviewRequestInFlight = false;
         }
       },
 
