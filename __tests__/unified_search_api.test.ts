@@ -68,7 +68,7 @@ it('preserves successful results and encodes the keyword and cursor', async () =
   });
   expect(axios.get).toHaveBeenCalledWith(
     expect.stringContaining(
-      'keyword=%EB%8F%85%EA%B0%90&limit=100&cursor=a%2Bb',
+      'keyword=%EB%8F%85%EA%B0%90&limit=100&v=2&cursor=a%2Bb',
     ),
     expect.objectContaining({
       headers: expect.objectContaining({ 'x-auth-token': 'test-token' }),
