@@ -113,6 +113,48 @@ const createMultiRowInsertSql = (
 // 파라미터 한도를 알 수 없는 빌드에서는 기존의 안전한 900개 제한을 사용한다.
 const BULK_CHUNK_ROW_SIZE = 200;
 const variableLimits = new WeakMap<SQLiteDatabase, Promise<number>>();
+const jsonSupport = new WeakMap<SQLiteDatabase, Promise<boolean>>();
+const supportsJsonInsert = (db: SQLiteDatabase): Promise<boolean> => {
+  let supported = jsonSupport.get(db);
+  if (!supported) {
+    supported = db
+      .getFirstAsync<{ valid: number }>("SELECT json_valid('[]') AS valid")
+      .then((result) => result?.valid === 1)
+      .catch(() => false);
+    jsonSupport.set(db, supported);
+  }
+  return supported;
+};
+
+// JSON을 한 번만 바인딩하고 SQLite 내부에서 행을 펼친다.
+// 이미지 BLOB은 기존 디코딩/바인딩 경로를 사용한다.
+const insertJsonData = async (
+  db: SQLiteDatabase,
+  table: TDataTable,
+  columns: string[],
+  data: Partial<TResourceDataSchemas>[],
+): Promise<void> => {
+  const names = columns.map((column) => `"${column.replace(/"/g, '""')}"`);
+  const values = columns.map((column) => {
+    const path = `$.${JSON.stringify(column)}`.replace(/'/g, "''");
+    return `json_extract(value, '${path}')`;
+  });
+  await runDatabaseTransaction(db, async () => {
+    const statement = await db.prepareAsync(
+      `INSERT OR REPLACE INTO ${table} (${names.join(', ')}) SELECT ${values.join(', ')} FROM json_each(?)`,
+    );
+    try {
+      for (let i = 0; i < data.length; i += BULK_CHUNK_ROW_SIZE) {
+        await statement.executeAsync([
+          JSON.stringify(data.slice(i, i + BULK_CHUNK_ROW_SIZE)),
+        ]);
+      }
+    } finally {
+      await statement.finalizeAsync();
+    }
+  });
+};
+
 const getVariableLimit = (db: SQLiteDatabase): Promise<number> => {
   let limit = variableLimits.get(db);
   if (!limit) {
@@ -151,6 +193,14 @@ export const insertData = async (
 
   // 기기의 빌드 한도를 확인하고, 브리지에 한 번에 넘기는 데이터도 제한한다.
   const db = await getDatabase();
+  if (!columns.includes('base64') && (await supportsJsonInsert(db))) {
+    try {
+      await insertJsonData(db, table, columns, data);
+    } finally {
+      invalidateClassificationCatalog(table);
+    }
+    return;
+  }
   const variableLimit = await getVariableLimit(db);
   const maxRowsPerChunk = Math.max(
     1,

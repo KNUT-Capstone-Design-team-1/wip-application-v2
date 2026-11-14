@@ -19,6 +19,7 @@ import {
   handlePipelineFailure,
 } from './pipeline/pipeline_handlers';
 import { PIPELINE_RETRY_CONFIG } from '../constants';
+import { executeStreamingPhase } from './pipeline/streaming_phase';
 
 // 하위 호환성을 위해 단계별 개별 함수 export 유지
 export {
@@ -47,30 +48,10 @@ const executePipelinePhases = async (
     hasPersistedProgress ? persistedState!.overallProgress : 0,
   );
 
-  // 1단계: API 데이터 백그라운드 수신 및 캐싱
-  callbacks.setUpdateStatus('downloading');
-  const tableMetadataMap = await executeFetchPhase(
+  // 페이지 다운로드/검증과 앞 페이지 DB 삽입을 겹쳐 실행한다.
+  await executeStreamingPhase(
     tablesToUpdate,
     currentTableIndexRef,
-    isCancelled,
-    callbacks,
-  );
-  if (isCancelled()) {
-    return false;
-  }
-
-  // 2단계: 데이터 유효성 검증
-  callbacks.setUpdateStatus('download_completed');
-  await executeValidationPhase(tablesToUpdate, tableMetadataMap, callbacks);
-  if (isCancelled()) {
-    return false;
-  }
-
-  // 3단계: SQLite 데이터베이스 반영
-  callbacks.setUpdateStatus('installing');
-  await executeDatabaseApplyPhase(
-    tablesToUpdate,
-    tableMetadataMap,
     isCancelled,
     callbacks,
   );
@@ -91,7 +72,9 @@ const prepareForRetry = async (
   callbacks: ISyncPipelineCallbacks,
 ): Promise<void> => {
   handlePipelineFailure(err, callbacks);
-  await executeCleanupPhase();
+  // 실패 시 중단 복구 표시는 유지한다. 스트리밍 삽입 도중 종료되어도
+  // 다음 실행에서 부분 적용된 테이블의 업데이트를 반드시 이어가야 한다.
+  await databaseDownloadService.cleanTempCache();
 
   if (currentTableIndexRef) {
     currentTableIndexRef.current = 0;

@@ -119,9 +119,9 @@ export const databaseDownloadService = {
     const filePath = this.getPageFilePath(table, page);
 
     // 이미 유효한 캐시 파일이 있으면 네트워크 요청 생략
-    const isCacheValid: boolean = await this.isPageDataCached(table, page);
-    if (isCacheValid) {
-      return this.readCachedPageData(table, page);
+    const cached = await databaseFileCache.readCachedPageData(table, page);
+    if (cached) {
+      return cached;
     }
 
     let lastError: Error | null = null;

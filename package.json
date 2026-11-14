@@ -17,7 +17,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
-    "test:sqlite": "node --test __tests__/saved_functional_food.integration.cjs __tests__/query_performance.integration.cjs __tests__/database_concurrency.integration.cjs",
+    "test:sqlite": "node --test __tests__/saved_functional_food.integration.cjs __tests__/query_performance.integration.cjs __tests__/database_concurrency.integration.cjs __tests__/database_streaming.integration.cjs",
     "test:api": "jest __tests__/api_call/"
   },
   "dependencies": {

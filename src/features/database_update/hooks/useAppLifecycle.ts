@@ -86,7 +86,10 @@ export const useAppLifecycle = (
 
             if (shouldUpdateLocalProgress && setUpdateProgress) {
               setUpdateProgress({
-                status: SYNC_PHASE_STATUS.DOWNLOADING,
+                status:
+                  persistedState.status === 'installing'
+                    ? '데이터를 받아 기기에 적용하는 중...'
+                    : SYNC_PHASE_STATUS.DOWNLOADING,
                 progress: persistedState.overallProgress,
                 isUpdating: true,
               });
