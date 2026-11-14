@@ -27,6 +27,7 @@ const StockInquirySummaryModal = ({
   const script = pharmacyActionService.generateInquiryScript(
     pillContext.name || '',
     pillContext.className,
+    pillContext.productType,
   );
 
   const handleCopyScript = async () => {

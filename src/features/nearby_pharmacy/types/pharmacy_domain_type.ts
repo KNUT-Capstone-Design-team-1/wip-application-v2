@@ -53,8 +53,9 @@ export interface ILastFetchedCenter {
   lng: number;
 }
 
-// 재고 문의를 위한 대상 알약 컨텍스트 모델
+// 의약품·영양제 재고 문의 대상 정보
 export interface IStockInquiryPillContext {
+  productType?: 'pill' | 'functional_food';
   seq?: string;
   name?: string;
   entpName?: string;

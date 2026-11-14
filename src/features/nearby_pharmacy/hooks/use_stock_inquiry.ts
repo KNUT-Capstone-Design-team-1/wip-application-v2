@@ -21,6 +21,7 @@ export const openStockInquiryModal = (
         pathname: STOCK_INQUIRY_ROUTE,
         params: {
           stockInquiry: 'true',
+          productType: pillContext?.productType || 'pill',
           pillSeq: pillContext?.seq || '',
           pillName: pillContext?.name || '',
           pillEntpName: pillContext?.entpName || '',
@@ -36,6 +37,7 @@ export const openStockInquiryModal = (
 export const useStockInquiry = (): IUseStockInquiryReturn => {
   const params = useLocalSearchParams<{
     stockInquiry?: string;
+    productType?: string;
     pillSeq?: string;
     pillName?: string;
     pillEntpName?: string;
@@ -44,6 +46,8 @@ export const useStockInquiry = (): IUseStockInquiryReturn => {
   }>();
   const isStockInquiryMode = params.stockInquiry === 'true';
   const pillContext: IStockInquiryPillContext = {
+    productType:
+      params.productType === 'functional_food' ? 'functional_food' : 'pill',
     seq: params.pillSeq,
     name: params.pillName,
     entpName: params.pillEntpName,

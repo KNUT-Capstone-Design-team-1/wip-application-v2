@@ -13,6 +13,8 @@ const StockInquiryIconButton = ({
 }: IStockInquiryIconButtonProps) => {
   return (
     <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel="약국 재고 문의"
       onPress={(e) => {
         e.stopPropagation();
         Keyboard.dismiss();
