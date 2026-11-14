@@ -7,7 +7,7 @@ import { Image } from '@components/common/CustomImage';
 import { usePillDetailContext } from '../../hooks/use_pill_detail_context';
 import { styles } from '../../styles/PillSearchResultDetailScreen';
 
-// 알약 사진 또는 앱 로고 표시.
+// 알약 사진 또는 공통 대체 이미지 표시.
 const PillDetailImage = () => {
   const store = usePillDetailContext();
   const imageUri = useStore(

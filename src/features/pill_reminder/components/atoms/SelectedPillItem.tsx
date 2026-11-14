@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { BaseText } from '@components/common/BaseText';
-import { X, Pill } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import { COLOR_TEXT } from '@constants/color';
 import { fontPx } from '@utils/responsive';
-import { Image } from '@components/common/CustomImage';
+import PillThumbnail from '@components/common/PillThumbnail';
 import { ISelectedPillItem } from '@features/pill_reminder/hooks/use_pill_reminder_setting_form';
 import { styles } from '@features/pill_reminder/styles/atoms/SelectedPillItem';
 
@@ -26,17 +26,7 @@ export const SelectedPillItem = memo(
         disabled={!hasOnPress}
         activeOpacity={0.7}
       >
-        {pill.item_image ? (
-          <Image
-            source={{ uri: pill.item_image }}
-            contentFit="cover"
-            style={styles.pillThumb}
-          />
-        ) : (
-          <View style={styles.pillThumbPlaceholder}>
-            <Pill size={fontPx(16)} color={COLOR_TEXT.sub} />
-          </View>
-        )}
+        <PillThumbnail uri={pill.item_image} style={styles.pillThumb} />
 
         <View style={styles.pillInfo}>
           <BaseText
