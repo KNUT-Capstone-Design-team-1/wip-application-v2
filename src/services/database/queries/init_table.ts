@@ -1,3 +1,8 @@
+import type {
+  SQLiteDatabase,
+  SQLiteStatement,
+  SQLiteBindValue,
+} from 'expo-sqlite';
 import { runDatabaseTransaction } from '@services/database/transaction';
 import { initPillSearchIndexes } from './pill_search_indexes';
 import { initResourceQueryIndexes } from './resource_query_indexes';
@@ -40,6 +45,7 @@ export const dropTable = async (table: TDataTable) => {
 export const createTable = async (
   table: TDataTable,
   columnData: ITableColumnSchema[],
+  { deferIndexes = false }: { deferIndexes?: boolean } = {},
 ) => {
   const db = await getDatabase();
 
@@ -48,6 +54,12 @@ export const createTable = async (
   const sql = `CREATE TABLE IF NOT EXISTS ${table} (${columnDefs.join(',\n')})`;
 
   await db.execAsync(sql);
+  if (!deferIndexes) await initTableIndexes(table);
+};
+
+// 전체 교체 시에는 데이터 삽입 후 검색 인덱스를 한 번에 생성한다.
+export const initTableIndexes = async (table: TDataTable) => {
+  const db = await getDatabase();
   await initResourceQueryIndexes(db, table);
   if (table === 'pill_data') {
     await initPillSearchIndexes(db);
@@ -59,9 +71,7 @@ const getBatchColumns = (batch: Partial<TResourceDataSchemas>[]): string[] => {
   const columnSet = new Set<string>();
 
   for (const row of batch) {
-    const preparedRow = prepareRowForInsert(row);
-
-    Object.entries(preparedRow).forEach(([key, value]) => {
+    Object.entries(row).forEach(([key, value]) => {
       const hasValue = value !== undefined;
 
       if (hasValue) {
@@ -100,10 +110,28 @@ const createMultiRowInsertSql = (
           VALUES ${allRowPlaceholders}`;
 };
 
-// SQLite 파라미터 한도(999개)를 고려한 최적의 벌크 청크 크기 계산 (최대 50행)
-const BULK_CHUNK_ROW_SIZE = 50;
+// 파라미터 한도를 알 수 없는 빌드에서는 기존의 안전한 900개 제한을 사용한다.
+const BULK_CHUNK_ROW_SIZE = 200;
+const variableLimits = new WeakMap<SQLiteDatabase, Promise<number>>();
+const getVariableLimit = (db: SQLiteDatabase): Promise<number> => {
+  let limit = variableLimits.get(db);
+  if (!limit) {
+    limit = db
+      .getAllAsync<{ compile_options: string }>('PRAGMA compile_options')
+      .then((options) => {
+        const option = options.find((row) =>
+          row.compile_options.startsWith('MAX_VARIABLE_NUMBER='),
+        );
+        const compiledLimit = Number(option?.compile_options.split('=')[1]);
+        return compiledLimit > 0 ? Math.min(compiledLimit, 8000) : 900;
+      })
+      .catch(() => 900);
+    variableLimits.set(db, limit);
+  }
+  return limit;
+};
 
-// 대량 데이터를 multi-row bulk 단위 및 단일 트랜잭션으로 초고속 INSERT 한다.
+// 페이지 단위 트랜잭션에서 같은 크기의 INSERT 문을 재사용한다.
 export const insertData = async (
   table: TDataTable,
   data: Partial<TResourceDataSchemas>[],
@@ -121,27 +149,38 @@ export const insertData = async (
     return;
   }
 
-  // SQLite 최대 변수 한도(999개) 내에서 안전한 청크 크기 결정
+  // 기기의 빌드 한도를 확인하고, 브리지에 한 번에 넘기는 데이터도 제한한다.
+  const db = await getDatabase();
+  const variableLimit = await getVariableLimit(db);
   const maxRowsPerChunk = Math.max(
     1,
-    Math.min(BULK_CHUNK_ROW_SIZE, Math.floor(900 / columns.length)),
+    Math.min(BULK_CHUNK_ROW_SIZE, Math.floor(variableLimit / columns.length)),
   );
-
-  const db = await getDatabase();
 
   try {
     await runDatabaseTransaction(db, async () => {
-      for (let i = 0; i < data.length; i += maxRowsPerChunk) {
-        const chunk = data.slice(i, i + maxRowsPerChunk);
-        const sql = createMultiRowInsertSql(table, columns, chunk.length);
+      const statements = new Map<number, SQLiteStatement>();
+      try {
+        for (let i = 0; i < data.length; i += maxRowsPerChunk) {
+          const rowCount = Math.min(maxRowsPerChunk, data.length - i);
+          let statement = statements.get(rowCount);
+          if (!statement) {
+            statement = await db.prepareAsync(
+              createMultiRowInsertSql(table, columns, rowCount),
+            );
+            statements.set(rowCount, statement);
+          }
 
-        const chunkParams: any[] = [];
-
-        for (const row of chunk) {
-          chunkParams.push(...createInsertValues(row, columns));
+          const chunkParams: SQLiteBindValue[] = [];
+          for (let j = i; j < i + rowCount; j++) {
+            chunkParams.push(...createInsertValues(data[j], columns));
+          }
+          await statement.executeAsync(chunkParams);
         }
-
-        await db.runAsync(sql, chunkParams);
+      } finally {
+        for (const statement of statements.values()) {
+          await statement.finalizeAsync();
+        }
       }
     });
   } finally {

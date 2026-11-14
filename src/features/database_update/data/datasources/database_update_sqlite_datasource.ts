@@ -21,8 +21,13 @@ export const databaseUpdateSqliteDataSource = {
   async createTable(
     table: TDataTable,
     columns: Parameters<typeof InitTableQuery.createTable>[1],
+    options?: { deferIndexes?: boolean },
   ): Promise<void> {
-    await InitTableQuery.createTable(table, columns);
+    await InitTableQuery.createTable(table, columns, options);
+  },
+
+  initTableIndexes(table: TDataTable): Promise<void> {
+    return InitTableQuery.initTableIndexes(table);
   },
 
   // 페이지 데이터를 로컬 테이블에 저장한다.

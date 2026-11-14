@@ -33,8 +33,16 @@ export const databaseUpdateRepository = {
   },
 
   // SQLite 데이터소스에서 테이블을 생성한다.
-  createTable(table: TDataTable, columns: ITableColumnSchema[]): Promise<void> {
-    return databaseUpdateSqliteDataSource.createTable(table, columns);
+  createTable(
+    table: TDataTable,
+    columns: ITableColumnSchema[],
+    options?: { deferIndexes?: boolean },
+  ): Promise<void> {
+    return databaseUpdateSqliteDataSource.createTable(table, columns, options);
+  },
+
+  initTableIndexes(table: TDataTable): Promise<void> {
+    return databaseUpdateSqliteDataSource.initTableIndexes(table);
   },
 
   // SQLite 데이터소스에 페이지 데이터를 삽입한다.

@@ -16,6 +16,19 @@ exports.createSqliteRuntime = (overrides = {}) => {
     getAllAsync: async (sql, values) => execute('all', sql, values),
     getFirstAsync: async (sql, values) => execute('get', sql, values),
     runAsync: async (sql, values) => execute('run', sql, values),
+    prepareAsync: async (sql) => {
+      queries.push({ kind: 'prepare', sql });
+      const statement = sqlite.prepare(sql);
+      return {
+        executeAsync: async (values = []) => {
+          queries.push({ kind: 'execute', sql, values });
+          return statement.run(...values);
+        },
+        finalizeAsync: async () => {
+          queries.push({ kind: 'finalize', sql });
+        },
+      };
+    },
     execAsync: async (sql) => sqlite.exec(sql),
     withTransactionAsync: async (action) => {
       sqlite.exec('BEGIN');
@@ -31,7 +44,10 @@ exports.createSqliteRuntime = (overrides = {}) => {
   const root = path.join(__dirname, '../..');
   const modules = new Map();
   const load = (file) => {
-    const fullPath = path.resolve(root, file);
+    let fullPath = path.resolve(root, file);
+    if (!fs.existsSync(fullPath) && fullPath.endsWith('.ts')) {
+      fullPath = path.join(fullPath.slice(0, -3), 'index.ts');
+    }
     if (modules.has(fullPath)) return modules.get(fullPath).exports;
     const module = { exports: {} };
     modules.set(fullPath, module);

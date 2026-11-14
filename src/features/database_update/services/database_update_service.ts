@@ -92,7 +92,9 @@ export const databaseUpdateService = {
     }
 
     try {
-      await databaseUpdateRepository.createTable(table, schema.columns);
+      await databaseUpdateRepository.createTable(table, schema.columns, {
+        deferIndexes: true,
+      });
       return 'OK';
     } catch (error) {
       logger.error(
@@ -151,6 +153,7 @@ export const databaseUpdateService = {
     expectedTotalCount: number,
     onProgress?: (insertedPages: number, totalPages: number) => void,
   ): Promise<'OK' | 'ERROR'> {
+    const startedAt = Date.now();
     // 1단계: 테이블 초기화 (DROP 후 CREATE)
     const initResult = await this.initTable(table);
     const isInitSuccessful: boolean = initResult === 'OK';
@@ -162,6 +165,12 @@ export const databaseUpdateService = {
 
     // 2단계: 캐시된 JSON 데이터 배치 삽입
     await this.insertCachedPages(table, totalPages, onProgress);
+
+    const insertedAt = Date.now();
+    await databaseUpdateRepository.initTableIndexes(table);
+    logger.info(
+      `[APPLY-DB] ${table}: load=${insertedAt - startedAt}ms, indexes=${Date.now() - insertedAt}ms`,
+    );
 
     // 3단계: 정합성 검증
     await this.verifyInsertedRowCount(table, expectedTotalCount);
