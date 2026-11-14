@@ -52,7 +52,7 @@ export const initConfigTable = async (db: SQLiteDatabase) => {
   );
 };
 
-//  알약 보관함 테이블 초기화
+// 보관함 테이블 초기화
 export const initSavedPillTables = async (db: SQLiteDatabase) => {
   // 폴더 테이블 생성
   await db.execAsync(`

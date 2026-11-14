@@ -25,7 +25,7 @@ const refreshReminderNotifications = async () => {
   }
 };
 
-// 알약 보관함 비즈니스 로직 서비스
+// 보관함 비즈니스 로직 서비스
 export const pillSaveService = {
   // 정렬 옵션에 따라 정렬된 폴더 목록 및 각 폴더별 프리뷰 이미지 목록 조회
   async getFolders(

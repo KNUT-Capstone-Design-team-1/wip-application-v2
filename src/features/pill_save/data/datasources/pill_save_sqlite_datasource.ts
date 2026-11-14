@@ -23,7 +23,7 @@ const createPlaceholders = (count: number): string =>
 
 const savedMetadata = buildSavedItemMetadata('s', 'p');
 
-// SQLite 기반 알약 보관함 데이터 소스 구현체
+// SQLite 기반 보관함 데이터 소스 구현체
 export const pillSaveSqliteDataSource = {
   // 폴더 목록 및 각 폴더별 알약 개수 조회
   async getFolders(

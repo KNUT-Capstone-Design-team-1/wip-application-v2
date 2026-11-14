@@ -25,7 +25,7 @@ export interface IPillSaveData {
   PRINT_BACK: string;
 }
 
-// 알약 보관함 리스트 컴포넌트 Props 인터페이스
+// 보관함 리스트 컴포넌트 Props 인터페이스
 export interface IPillSaveListProps {
   // 보관된 알약 목록
   pillSaveData: IPillSaveData[];
@@ -52,7 +52,7 @@ export interface IPillSaveListProps {
   onPressReminder?: (itemSeq: string, itemName: string) => void;
 }
 
-// 개별 알약 보관함 아이템 컴포넌트 Props 인터페이스
+// 개별 보관함 아이템 컴포넌트 Props 인터페이스
 export interface IPillSaveContentProps {
   // 표시할 알약 정보
   saveData: IPillSaveData;

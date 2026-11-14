@@ -56,7 +56,7 @@ export const validatePillLimit = (
     if (isSelected && willExceedLimit) {
       return {
         isValid: false,
-        errorMessage: `알약 보관함 폴더 내 알약 개수는 최대 ${MAX_PILL_COUNT_PER_FOLDER}개입니다. (${f.name})`,
+        errorMessage: `보관함 폴더 내 알약 개수는 최대 ${MAX_PILL_COUNT_PER_FOLDER}개입니다. (${f.name})`,
       };
     }
   }

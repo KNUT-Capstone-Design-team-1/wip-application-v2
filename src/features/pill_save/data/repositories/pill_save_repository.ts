@@ -7,7 +7,7 @@ import {
 } from '@features/pill_save/types/pill_save_folder_type';
 import { FolderSortOption } from '@features/pill_save/constants/pill_save_constant';
 
-// 알약 보관함 리포지토리
+// 보관함 리포지토리
 export const pillSaveRepository = {
   // 폴더 목록 조회
   async getFolders(

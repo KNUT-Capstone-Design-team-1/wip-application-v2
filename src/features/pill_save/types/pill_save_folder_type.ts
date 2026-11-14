@@ -24,7 +24,7 @@ export interface IPillSaveOperationResult {
   alreadyExistsItems: IPillSaveOperationItem[];
 }
 
-// 알약 보관함 폴더 리스트 컴포넌트 Props 인터페이스
+// 보관함 폴더 리스트 컴포넌트 Props 인터페이스
 export interface IPillSaveFolderListProps {
   // 폴더 목록
   folders: ISavedFolderWithMeta[];
