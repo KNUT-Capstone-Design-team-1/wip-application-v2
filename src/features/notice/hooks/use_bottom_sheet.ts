@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useShallow } from 'zustand/react/shallow';
 import { INoticeData } from '@features/notice/types/notice_type';
 import { useNoticeStore } from '@features/notice/store/notice_store';
+import logger from '@utils/logger';
 
 const BOTTOM_SHEET_HIDDEN_KEY = 'bottomSheetHiddenUntil';
 
@@ -34,17 +35,23 @@ export const useBottomSheet = () => {
     );
     const hideUntil = nextMidnight.getTime(); // 다음날 자정(00:00)
 
-    await AsyncStorage.setItem(BOTTOM_SHEET_HIDDEN_KEY, hideUntil.toString());
-
+    // 저장을 기다리는 동안 진행 중인 새로고침이 공지를 다시 열지 않도록 먼저 닫는다.
+    useNoticeStore.setState({ hasDismissedBottomSheet: true });
     setIsVisibleBottomSheet(false);
     setIsNeverShowAgain(true);
 
     // 상태 초기화하여 즉시 숨김 처리
     setMainBottomSheetData([]);
+    try {
+      await AsyncStorage.setItem(BOTTOM_SHEET_HIDDEN_KEY, hideUntil.toString());
+    } catch (error) {
+      logger.error(`[NOTICE] Failed to save dismissal: ${error}`);
+    }
   }, [setMainBottomSheetData, setIsVisibleBottomSheet, setIsNeverShowAgain]);
 
   // 닫기 처리
   const handleClose = useCallback(() => {
+    useNoticeStore.setState({ hasDismissedBottomSheet: true });
     setIsVisibleBottomSheet(false);
   }, [setIsVisibleBottomSheet]);
 
@@ -52,13 +59,29 @@ export const useBottomSheet = () => {
   const checkShouldShow = useCallback(async () => {
     const bottomSheetNotices = useNoticeStore.getState().mainBottomSheetData;
     // 데이터가 없으면 표시 안 함
-    if (!bottomSheetNotices || bottomSheetNotices.length === 0) {
+    if (
+      bottomSheetNotices.length === 0 ||
+      useNoticeStore.getState().hasDismissedBottomSheet
+    ) {
       setIsVisibleBottomSheet(false);
       return;
     }
 
     // 저장된 시간 확인
-    const hideUntil = await AsyncStorage.getItem(BOTTOM_SHEET_HIDDEN_KEY);
+    let hideUntil: string | null;
+    try {
+      hideUntil = await AsyncStorage.getItem(BOTTOM_SHEET_HIDDEN_KEY);
+    } catch (error) {
+      logger.error(`[NOTICE] Failed to read dismissal: ${error}`);
+      return;
+    }
+    // 비동기 저장소 조회 중 닫기 또는 데이터 갱신이 발생했다면 이전 판단은 버린다.
+    const currentState = useNoticeStore.getState();
+    if (
+      currentState.hasDismissedBottomSheet ||
+      currentState.mainBottomSheetData !== bottomSheetNotices
+    )
+      return;
     const now = new Date().getTime();
     const hiddenUntil = Number(hideUntil);
     const shouldShowBottomSheet =

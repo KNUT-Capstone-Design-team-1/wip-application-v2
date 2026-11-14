@@ -38,6 +38,7 @@ const MainNoticeBottomSheet = () => {
         const { isNeverShowAgain } = useNoticeStore.getState();
 
         if (isExited || isNeverShowAgain) {
+          useNoticeStore.setState({ hasDismissedBottomSheet: false });
           getNoticeBottomSheet();
 
           setIsExited(false);

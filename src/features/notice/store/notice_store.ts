@@ -9,6 +9,7 @@ export const useNoticeStore = create<INoticeStore>((set) => ({
   isNoticeLoading: false, // 공지사항 데이터 로딩 상태
   isVisibleBottomSheet: false, // 홈 화면 바텀시트 표시 여부
   isNeverShowAgain: false, // 하루 동안 보지 않기 상태
+  hasDismissedBottomSheet: false, // 현재 실행 중 사용자가 닫은 공지
 
   // 전체 공지사항 목록 설정
   setNoticeData: (noticeData) => set({ noticeData }),

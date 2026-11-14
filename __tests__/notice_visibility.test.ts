@@ -61,6 +61,7 @@ beforeEach(async () => {
     mainBottomSheetData: [],
     isVisibleBottomSheet: false,
     isNeverShowAgain: false,
+    hasDismissedBottomSheet: false,
   });
   jest.mocked(noticeRepository.getCachedNotices).mockResolvedValue(null);
   jest.mocked(noticeRepository.fetchRemoteNotices).mockResolvedValue([]);
@@ -132,4 +133,48 @@ it('shows notices again after the stored dismissal expires, even if memory still
   expect(useNoticeStore.getState().isVisibleBottomSheet).toBe(true);
   expect(useNoticeStore.getState().isNeverShowAgain).toBe(false);
   expect(await AsyncStorage.getItem('bottomSheetHiddenUntil')).toBeNull();
+});
+
+it('does not reopen a closed notice when a background refresh finishes', async () => {
+  useNoticeStore.setState({ mainBottomSheetData: [notice(1, 1)] });
+  await useBottomSheet().checkShouldShow();
+  useBottomSheet().handleClose();
+  jest
+    .mocked(noticeRepository.fetchRemoteNotices)
+    .mockResolvedValue([notice(2, 1)]);
+  await useNotices().getNoticeBottomSheet();
+  await useBottomSheet().checkShouldShow();
+  expect(useNoticeStore.getState().isVisibleBottomSheet).toBe(false);
+});
+
+it('ignores a visibility check that finishes after the user closes the sheet', async () => {
+  useNoticeStore.setState({ mainBottomSheetData: [notice(1, 1)] });
+  let finishRead!: (value: string | null) => void;
+  jest.mocked(AsyncStorage.getItem).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finishRead = resolve;
+      }),
+  );
+  const checking = useBottomSheet().checkShouldShow();
+  useBottomSheet().handleClose();
+  finishRead(null);
+  await checking;
+  expect(useNoticeStore.getState().isVisibleBottomSheet).toBe(false);
+});
+
+it('ignores a visibility check for data that has been removed', async () => {
+  useNoticeStore.setState({ mainBottomSheetData: [notice(1, 1)] });
+  let finishRead!: (value: string | null) => void;
+  jest.mocked(AsyncStorage.getItem).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finishRead = resolve;
+      }),
+  );
+  const checking = useBottomSheet().checkShouldShow();
+  useNoticeStore.setState({ mainBottomSheetData: [] });
+  finishRead(null);
+  await checking;
+  expect(useNoticeStore.getState().isVisibleBottomSheet).toBe(false);
 });
