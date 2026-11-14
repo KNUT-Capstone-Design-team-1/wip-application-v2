@@ -51,7 +51,13 @@ export async function getFunctionalFoods(
   const page = Math.max(1, Math.floor(options.page));
   const limit = Math.max(1, Math.floor(options.limit));
   return db.getAllAsync<IHealthFunctionalFoodRawMaterial>(
-    `SELECT p.* FROM ${PRODUCT_TABLE} p ${where} ORDER BY p.PRMS_DT DESC, p.PRDLST_REPORT_NO LIMIT ? OFFSET ?`,
+    `WITH page AS (
+       SELECT p.rowid AS product_rowid FROM ${PRODUCT_TABLE} p ${where}
+       ORDER BY p.PRMS_DT DESC, p.PRDLST_REPORT_NO LIMIT ? OFFSET ?
+     )
+     SELECT p.* FROM page
+     JOIN ${PRODUCT_TABLE} p ON p.rowid = page.product_rowid
+     ORDER BY p.PRMS_DT DESC, p.PRDLST_REPORT_NO`,
     [...values, limit, (page - 1) * limit],
   );
 }

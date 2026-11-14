@@ -1,4 +1,7 @@
-import { SQLiteDatabase } from 'expo-sqlite';
+import { buildSavedItemMetadata } from '@services/database/queries/saved_item_metadata';
+import { transferSavedPills } from './pill_save_transfer';
+import { runDatabaseTransaction } from '@services/database/transaction';
+import { splitQueryValues } from '@services/database/query_batch';
 import { getDatabase } from '@services/database/sqlite';
 import { IPillSaveData } from '@features/pill_save/types/pill_save_item_type';
 import {
@@ -18,32 +21,7 @@ const logDataSourceError = (action: string, error: unknown) => {
 const createPlaceholders = (count: number): string =>
   count > 0 ? new Array(count).fill('?').join(',') : '';
 
-// 트랜잭션 실행 헬퍼 함수
-const runInTransaction = async (
-  db: SQLiteDatabase,
-  action: () => Promise<void>,
-) => {
-  if (typeof db.withTransactionAsync === 'function') {
-    await db.withTransactionAsync(async () => {
-      await action();
-    });
-  } else {
-    await db.runAsync('BEGIN TRANSACTION');
-
-    try {
-      await action();
-      await db.runAsync('COMMIT');
-    } catch (e: unknown) {
-      try {
-        await db.runAsync('ROLLBACK');
-      } catch (rollbackError) {
-        logDataSourceError('rollback transaction', rollbackError);
-      }
-
-      throw e;
-    }
-  }
-};
+const savedMetadata = buildSavedItemMetadata('s', 'p');
 
 // SQLite 기반 알약 보관함 데이터 소스 구현체
 export const pillSaveSqliteDataSource = {
@@ -53,17 +31,6 @@ export const pillSaveSqliteDataSource = {
   ): Promise<ISavedFolderWithPillCount[]> {
     try {
       const db = await getDatabase();
-
-      await db.runAsync(
-        `
-        INSERT INTO saved_pill_folders (name, is_default, sort_order)
-        SELECT ?, 1, 0
-        WHERE NOT EXISTS (
-          SELECT 1 FROM saved_pill_folders WHERE is_default = 1
-        )
-      `,
-        ['기본'],
-      );
 
       const orderBySql: Record<FolderSortOption, string> = {
         createdAt_desc: 'f.created_at DESC',
@@ -112,6 +79,40 @@ export const pillSaveSqliteDataSource = {
     } catch (e) {
       logDataSourceError('get folder preview images', e);
       return [];
+    }
+  },
+
+  // 폴더마다 브리지를 왕복하지 않고, 각 폴더의 최근 이미지 4개만 읽는다.
+  async getFolderPreviewImagesByIds(
+    folderIds: number[],
+  ): Promise<Record<number, string[]>> {
+    if (folderIds.length === 0) return {};
+    try {
+      const db = await getDatabase();
+      const rows = await db.getAllAsync<{
+        folder_id: number;
+        images: string;
+      }>(
+        `SELECT f.id AS folder_id, (
+          SELECT json_group_array(ITEM_IMAGE) FROM (
+            SELECT p.ITEM_IMAGE
+            FROM saved_pills s
+            JOIN pill_data p ON s.item_seq = p.ITEM_SEQ
+            WHERE s.folder_id = f.id
+              AND p.ITEM_IMAGE IS NOT NULL AND p.ITEM_IMAGE != ''
+            ORDER BY s.idx DESC LIMIT 4
+          )
+        ) AS images
+        FROM saved_pill_folders f
+        WHERE f.id IN (${createPlaceholders(folderIds.length)})`,
+        folderIds,
+      );
+      return Object.fromEntries(
+        rows.map((row) => [row.folder_id, JSON.parse(row.images)]),
+      );
+    } catch (e) {
+      logDataSourceError('get folder preview images in batch', e);
+      return {};
     }
   },
 
@@ -174,19 +175,18 @@ export const pillSaveSqliteDataSource = {
       }
 
       const db = await getDatabase();
-      const placeholders = createPlaceholders(itemSeqs.length);
-
-      const deletePillsQuery = `
-        DELETE FROM saved_pills 
-        WHERE folder_id = ? AND item_seq IN (${placeholders})
-      `;
-
-      const result = await db.runAsync(deletePillsQuery, [
-        folderId,
-        ...itemSeqs,
-      ]);
-
-      return result.changes > 0;
+      let changes = 0;
+      await runDatabaseTransaction(db, async () => {
+        for (const chunk of splitQueryValues([...new Set(itemSeqs)], 1)) {
+          const result = await db.runAsync(
+            `DELETE FROM saved_pills WHERE folder_id = ?
+             AND item_seq IN (${createPlaceholders(chunk.length)})`,
+            [folderId, ...chunk],
+          );
+          changes += result.changes;
+        }
+      });
+      return changes > 0;
     } catch (e) {
       logDataSourceError('delete multiple pills', e);
       return false;
@@ -221,229 +221,71 @@ export const pillSaveSqliteDataSource = {
     itemSeq: string,
     itemName: string,
     folderIds: number[],
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       const db = await getDatabase();
+      let removedFolders = false;
 
-      await runInTransaction(db, async () => {
-        const deleteQuery = `DELETE FROM saved_pills WHERE item_seq = ?`;
-
-        await db.runAsync(deleteQuery, [itemSeq]);
-
-        if (folderIds.length === 0) {
-          return;
-        }
-
-        const insertQuery = `
-          INSERT INTO saved_pills (folder_id, item_seq, item_name) 
-          VALUES (?, ?, ?)
-        `;
-
-        for (const folderId of folderIds) {
-          await db.runAsync(insertQuery, [folderId, itemSeq, itemName]);
+      await runDatabaseTransaction(db, async () => {
+        const targets = [...new Set(folderIds)];
+        // 유지하는 폴더는 삭제하지 않아 생성 순서와 연결된 복용 알림을 보존한다.
+        const deletion = await db.runAsync(
+          `DELETE FROM saved_pills WHERE item_seq = ?${
+            targets.length
+              ? ` AND folder_id NOT IN (${createPlaceholders(targets.length)})`
+              : ''
+          }`,
+          [itemSeq, ...targets],
+        );
+        removedFolders = deletion.changes > 0;
+        for (let start = 0; start < targets.length; start += 300) {
+          const chunk = targets.slice(start, start + 300);
+          await db.runAsync(
+            `INSERT INTO saved_pills (folder_id, item_seq, item_name)
+             VALUES ${chunk.map(() => '(?, ?, ?)').join(',')}
+             ON CONFLICT(folder_id, item_seq) DO UPDATE SET item_name = excluded.item_name`,
+            chunk.flatMap((folderId) => [folderId, itemSeq, itemName]),
+          );
         }
       });
+      return removedFolders;
     } catch (e) {
       logDataSourceError('save pill to folders', e);
       throw e;
     }
   },
 
-  // 알약 다중 이동 처리
   async movePillsToFolders(
     items: IPillSaveOperationItem[],
     sourceFolderId: number,
     targetFolderIds: number[],
   ): Promise<IPillSaveOperationResult> {
     try {
-      if (items.length === 0 || targetFolderIds.length === 0) {
-        return { alreadyExistsItems: [] };
-      }
-
-      const db = await getDatabase();
-      const itemSeqs = items.map((i) => i.seq);
-
-      const targetPlaceholders = createPlaceholders(targetFolderIds.length);
-      const itemPlaceholders = createPlaceholders(itemSeqs.length);
-
-      const selectExistingPillsQuery = `
-        SELECT s.folder_id, s.item_seq, f.name as folder_name 
-        FROM saved_pills s
-        LEFT JOIN saved_pill_folders f ON s.folder_id = f.id
-        WHERE s.folder_id IN (${targetPlaceholders}) 
-          AND s.item_seq IN (${itemPlaceholders})
-      `;
-
-      const existingRows = await db.getAllAsync<{
-        folder_id: number;
-        item_seq: string;
-        folder_name: string | null;
-      }>(selectExistingPillsQuery, [...targetFolderIds, ...itemSeqs]);
-
-      const existingSet = new Set(
-        existingRows.map((r) => `${r.folder_id}_${r.item_seq}`),
+      return await transferSavedPills(
+        await getDatabase(),
+        items,
+        targetFolderIds,
+        sourceFolderId,
       );
-
-      const folderNameMap = new Map<number, string>();
-      existingRows.forEach((r) => {
-        if (r.folder_name) {
-          folderNameMap.set(r.folder_id, r.folder_name);
-        }
-      });
-
-      const combinations = items
-        .flatMap((item) =>
-          targetFolderIds.map((targetId) => ({ item, targetId })),
-        )
-        .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
-
-      const existingCombinations = items
-        .flatMap((item) =>
-          targetFolderIds.map((targetId) => ({ item, targetId })),
-        )
-        .filter((c) => existingSet.has(`${c.targetId}_${c.item.seq}`));
-
-      const alreadyExistsItemsMap = new Map<string, IPillSaveOperationItem>();
-
-      existingCombinations.forEach((c) =>
-        alreadyExistsItemsMap.set(`${c.targetId}_${c.item.seq}`, {
-          ...c.item,
-          folderId: c.targetId,
-          folderName: folderNameMap.get(c.targetId) || '',
-        }),
-      );
-
-      // 대상 폴더에 없는 알약만 기존 폴더에서 삭제 (이미 존재하는 알약은 삭제하지 않음)
-      const seqsToDelete = combinations
-        .map((c) => c.item.seq)
-        .filter((seq, idx, arr) => arr.indexOf(seq) === idx);
-
-      await runInTransaction(db, async () => {
-        if (seqsToDelete.length > 0) {
-          const deletePlaceholders = createPlaceholders(seqsToDelete.length);
-
-          const deleteFromSourceQuery = `
-            DELETE FROM saved_pills 
-            WHERE folder_id = ? AND item_seq IN (${deletePlaceholders})
-          `;
-
-          await db.runAsync(deleteFromSourceQuery, [
-            sourceFolderId,
-            ...seqsToDelete,
-          ]);
-        }
-
-        if (combinations.length > 0) {
-          const insertToTargetQuery = `
-            INSERT INTO saved_pills (folder_id, item_seq, item_name) 
-            VALUES (?, ?, ?)
-          `;
-
-          for (const { item, targetId } of combinations) {
-            await db.runAsync(insertToTargetQuery, [
-              targetId,
-              item.seq,
-              item.name,
-            ]);
-          }
-        }
-      });
-
-      return {
-        alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()),
-      };
-    } catch (e) {
-      logDataSourceError('move pills', e);
-      throw e;
+    } catch (error) {
+      logDataSourceError('move pills', error);
+      throw error;
     }
   },
 
-  // 알약 다중 복사 처리
   async copyPillsToFolders(
     items: IPillSaveOperationItem[],
     targetFolderIds: number[],
   ): Promise<IPillSaveOperationResult> {
     try {
-      if (items.length === 0 || targetFolderIds.length === 0) {
-        return { alreadyExistsItems: [] };
-      }
-
-      const db = await getDatabase();
-      const itemSeqs = items.map((i) => i.seq);
-
-      const targetPlaceholders = createPlaceholders(targetFolderIds.length);
-      const itemPlaceholders = createPlaceholders(itemSeqs.length);
-
-      const selectExistingPillsQuery = `
-        SELECT s.folder_id, s.item_seq, f.name as folder_name 
-        FROM saved_pills s
-        LEFT JOIN saved_pill_folders f ON s.folder_id = f.id
-        WHERE s.folder_id IN (${targetPlaceholders}) 
-          AND s.item_seq IN (${itemPlaceholders})
-      `;
-
-      const existingRows = await db.getAllAsync<{
-        folder_id: number;
-        item_seq: string;
-        folder_name: string | null;
-      }>(selectExistingPillsQuery, [...targetFolderIds, ...itemSeqs]);
-
-      const existingSet = new Set(
-        existingRows.map((r) => `${r.folder_id}_${r.item_seq}`),
+      return await transferSavedPills(
+        await getDatabase(),
+        items,
+        targetFolderIds,
       );
-
-      const folderNameMap = new Map<number, string>();
-      existingRows.forEach((r) => {
-        if (r.folder_name) {
-          folderNameMap.set(r.folder_id, r.folder_name);
-        }
-      });
-
-      const combinations = items
-        .flatMap((item) =>
-          targetFolderIds.map((targetId) => ({ item, targetId })),
-        )
-        .filter((c) => !existingSet.has(`${c.targetId}_${c.item.seq}`));
-
-      const existingCombinations = items
-        .flatMap((item) =>
-          targetFolderIds.map((targetId) => ({ item, targetId })),
-        )
-        .filter((c) => existingSet.has(`${c.targetId}_${c.item.seq}`));
-
-      const alreadyExistsItemsMap = new Map<string, IPillSaveOperationItem>();
-
-      existingCombinations.forEach((c) =>
-        alreadyExistsItemsMap.set(`${c.targetId}_${c.item.seq}`, {
-          ...c.item,
-          folderId: c.targetId,
-          folderName: folderNameMap.get(c.targetId) || '',
-        }),
-      );
-
-      if (combinations.length > 0) {
-        await runInTransaction(db, async () => {
-          const insertPillsQuery = `
-            INSERT INTO saved_pills (folder_id, item_seq, item_name) 
-            VALUES (?, ?, ?)
-          `;
-
-          for (const { item, targetId } of combinations) {
-            await db.runAsync(insertPillsQuery, [
-              targetId,
-              item.seq,
-              item.name,
-            ]);
-          }
-        });
-      }
-
-      return {
-        alreadyExistsItems: Array.from(alreadyExistsItemsMap.values()),
-      };
-    } catch (e) {
-      logDataSourceError('copy pills', e);
-      throw e;
+    } catch (error) {
+      logDataSourceError('copy pills', error);
+      throw error;
     }
   },
 
@@ -477,15 +319,15 @@ export const pillSaveSqliteDataSource = {
       const selectPillsQuery = `
         SELECT 
           s.item_seq as ITEM_SEQ,
-          COALESCE(p.ITEM_NAME, s.item_name, '정보가 없는 약') as ITEM_NAME,
-          COALESCE(p.ENTP_NAME, '') as ENTP_NAME,
+          ${savedMetadata.itemName} as ITEM_NAME,
+          ${savedMetadata.manufacturer} as ENTP_NAME,
           COALESCE(p.CHART, '') as CHART,
           COALESCE(p.ITEM_IMAGE, '') as ITEM_IMAGE,
-          COALESCE(p.CLASS_NAME, '') as CLASS_NAME,
+          ${savedMetadata.className} as CLASS_NAME,
           COALESCE(p.PRINT_FRONT, '') as PRINT_FRONT,
           COALESCE(p.PRINT_BACK, '') as PRINT_BACK
         FROM saved_pills s
-        LEFT JOIN pill_data p ON s.item_seq = p.ITEM_SEQ
+        ${savedMetadata.joins}
         WHERE s.folder_id = ?
         ORDER BY s.idx DESC
       `;

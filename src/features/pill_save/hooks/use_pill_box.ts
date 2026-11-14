@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { pillSaveService } from '@features/pill_save/services/pill_save_service';
 import logger from '@utils/logger';
 
@@ -6,26 +7,33 @@ import logger from '@utils/logger';
 export const usePillBox = (itemSeq: string) => {
   const [savedFolderIds, setSavedFolderIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const requestId = useRef(0);
 
   // 저장 여부 확인 핸들러
   const checkSavedStatus = useCallback(async () => {
+    const currentRequest = ++requestId.current;
     setLoading(true);
 
     try {
       const folderIds = await pillSaveService.getPillSavedFolderIds(itemSeq);
-      setSavedFolderIds(folderIds);
+      if (requestId.current === currentRequest) setSavedFolderIds(folderIds);
     } catch (e: any) {
       logger.error(`Failed to check saved status. ${e.stack || e}`);
-      setSavedFolderIds([]);
+      if (requestId.current === currentRequest) setSavedFolderIds([]);
     } finally {
-      setLoading(false);
+      if (requestId.current === currentRequest) setLoading(false);
     }
   }, [itemSeq]);
 
   // itemSeq 변경 시 저장 상태 조회
-  useEffect(() => {
-    checkSavedStatus();
-  }, [checkSavedStatus]);
+  useFocusEffect(
+    useCallback(() => {
+      void checkSavedStatus();
+      return () => {
+        requestId.current++;
+      };
+    }, [checkSavedStatus]),
+  );
 
   return {
     savedFolderIds,

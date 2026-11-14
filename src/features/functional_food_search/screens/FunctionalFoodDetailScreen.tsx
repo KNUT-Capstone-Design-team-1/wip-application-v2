@@ -10,6 +10,7 @@ import { fontPx, px } from '@utils/responsive';
 import { useHeaderTitleStore } from '@layouts/header/store/header_title_store';
 import type { IHealthFunctionalFoodRawMaterial } from '@services/database/types';
 import { useFunctionalFoodDetail } from '../hooks/use_functional_food_detail';
+import FunctionalFoodSaveButton from '../components/atoms/FunctionalFoodSaveButton';
 
 const isMeaningless = (value: unknown) =>
   value == null || !String(value).trim() || value === '해당없음';
@@ -39,7 +40,10 @@ const DETAIL_FIELDS: {
 ];
 
 const FunctionalFoodDetailScreen = () => {
-  const { reportNumber } = useLocalSearchParams<{ reportNumber: string }>();
+  const params = useLocalSearchParams<{ reportNumber: string | string[] }>();
+  const reportNumber = Array.isArray(params.reportNumber)
+    ? params.reportNumber[0]
+    : params.reportNumber;
   const { data, classifications, isLoading } =
     useFunctionalFoodDetail(reportNumber);
   const { setTitle, resetTitle } = useHeaderTitleStore();
@@ -71,9 +75,16 @@ const FunctionalFoodDetailScreen = () => {
       showsVerticalScrollIndicator={false}
     >
       <View style={[styles.section, styles.productSection]}>
-        <BaseText weight="bold" size={20} style={styles.sectionTitle}>
-          제품 정보
-        </BaseText>
+        <View style={styles.productHeader}>
+          <BaseText weight="bold" size={20} style={styles.sectionTitle}>
+            제품 정보
+          </BaseText>
+          <FunctionalFoodSaveButton
+            key={data.PRDLST_REPORT_NO}
+            reportNumber={data.PRDLST_REPORT_NO}
+            itemName={data.PRDLST_NM}
+          />
+        </View>
         <View style={styles.rows}>
           {PRODUCT_FIELDS.filter(({ key }) => !isMeaningless(data[key])).map(
             ({ key, label }) => (
@@ -214,6 +225,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR_BG.surface,
     paddingHorizontal: screenPadding.horizontal,
     paddingVertical: px(16),
+  },
+  productHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   productSection: {
     marginTop: 0,

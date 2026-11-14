@@ -21,6 +21,10 @@ export const pillSaveRepository = {
     return await pillSaveSqliteDataSource.getFolderPreviewImages(folderId);
   },
 
+  getFolderPreviewImagesByIds(folderIds: number[]) {
+    return pillSaveSqliteDataSource.getFolderPreviewImagesByIds(folderIds);
+  },
+
   // 폴더 생성
   async createFolder(name: string): Promise<number | null> {
     return await pillSaveSqliteDataSource.createFolder(name);
@@ -57,7 +61,7 @@ export const pillSaveRepository = {
     itemSeq: string,
     itemName: string,
     folderIds: number[],
-  ): Promise<void> {
+  ): Promise<boolean> {
     return await pillSaveSqliteDataSource.savePillToFolders(
       itemSeq,
       itemName,
